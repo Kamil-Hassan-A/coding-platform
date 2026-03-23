@@ -59,29 +59,41 @@ const Login = () => {
   });
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
+    <div style={{
+      minHeight: "100vh",
+      position: "relative",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 24,
+      backgroundImage: "url('/assets/login-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+    }}>
+      {/* Dark overlay to make background crisp and card readable */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "rgba(0, 0, 0, 0.55)",
+        zIndex: 0,
+      }} />
+      
+      {/* Card sits above overlay */}
+      <section style={{
+        position: "relative",
+        zIndex: 1,
+        background: "#ffffff",
+        borderRadius: 12,
+        border: "1px solid #e2e8f0",
+        padding: "40px 36px",
+        width: "100%",
+        maxWidth: 400,
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        backgroundImage: "url('/assets/login-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Card */}
-      <section
-        style={{
-          background: "#ffffff",
-          borderRadius: 8,
-          padding: "40px 36px",
-          width: 400,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
-        }}
-      >
+        flexDirection: "column",
+        gap: 20,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+      }}>
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img src="/indium-logo.png" alt="Indium" style={{ height: 40 }} />
@@ -192,7 +204,7 @@ const Login = () => {
           By signing in, you agree to our Terms & Privacy Policy
         </p>
       </section>
-    </main>
+    </div>
   );
 };
 

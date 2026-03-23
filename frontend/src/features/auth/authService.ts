@@ -1,6 +1,6 @@
 import axiosInstance from "../../api/axiosInstance";
 import useUserStore from "../../stores/userStore";
-import type { User } from "../../types/user";
+import type { User, UserRole } from "../../types/user";
 
 type LoginResponse = User;
 
@@ -25,12 +25,17 @@ export const loginWithSSO = async (): Promise<User> => {
   await Promise.resolve();
 
   // --- TEMPORARY: REMOVE WHEN REAL SSO IS READY ---
-  // Change role to "admin" here to verify admin route handling.
+  // Read role from localStorage for testing (defaults to "admin")
+  const storedRole = localStorage.getItem("test_role");
+  const role: UserRole = (storedRole === "admin" || storedRole === "candidate") 
+    ? storedRole 
+    : "admin";
+
   const user: User = {
     id: "1",
-    name: "Test User",
-    role: "candidate",
-    department: "Engineering",
+    name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+    role,
+    department: role === "admin" ? "Engineering" : "Candidate Relations",
     token: "dummy-sso-token-12345",
   };
 
