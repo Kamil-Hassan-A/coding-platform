@@ -1,77 +1,83 @@
-import requests
+import os
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from database import get_db
-from judge0_service import Judge0Service
-from models import Candidate, Question, Submission
-from schemas import SubmitRequest, SubmitResponse
+from dependencies import require_candidate
+from models import AssessmentSession, Level, Submission, User, UserSkillProgress
+from schemas import SubmissionResultsResponse
 
-router = APIRouter()
-judge0_service = Judge0Service()
+router = APIRouter(tags=["submissions"])
+LEVEL_ORDER = [
+    Level.BEGINNER,
+    Level.INTERMEDIATE_1,
+    Level.INTERMEDIATE_2,
+    Level.SPECIALIST_1,
+    Level.SPECIALIST_2,
+]
 
 
-@router.post("/submit", response_model=SubmitResponse, status_code=status.HTTP_201_CREATED)
-def submit_solution(payload: SubmitRequest, db: Session = Depends(get_db)) -> SubmitResponse:
-    candidate = db.scalar(select(Candidate).where(Candidate.candidate_id == payload.candidate_id))
-    if candidate is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Candidate not found",
-        )
-
-    question = db.scalar(select(Question).where(Question.question_id == payload.question_id))
-    if question is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Question not found",
-        )
-
-    test_inputs = question.sample_test_cases or []
+def get_max_attempts() -> int:
     try:
-        execution_result = judge0_service.execute(
-            code=payload.code,
-            language=payload.language,
-            test_inputs=test_inputs,
+        return int(os.getenv("MAX_ATTEMPTS_PER_LEVEL", "5"))
+    except ValueError:
+        return 5
+
+
+def get_next_level(level: Level) -> Level | None:
+    index = LEVEL_ORDER.index(level)
+    if index + 1 >= len(LEVEL_ORDER):
+        return None
+    return LEVEL_ORDER[index + 1]
+
+
+@router.get("/submissions/{submission_id}/results", response_model=SubmissionResultsResponse)
+def get_submission_results(
+    submission_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_candidate),
+) -> SubmissionResultsResponse:
+    submission = db.scalar(select(Submission).where(Submission.id == submission_id))
+    if submission is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Submission not found")
+    if submission.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Submission does not belong to current user")
+
+    attempts_used = db.scalar(
+        select(func.count(AssessmentSession.id)).where(
+            AssessmentSession.user_id == current_user.id,
+            AssessmentSession.skill_id == submission.skill_id,
+            AssessmentSession.level == submission.level,
         )
-    except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
-    except (requests.RequestException, TimeoutError, RuntimeError) as exc:
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Judge0 execution failed: {exc}",
-        ) from exc
+    ) or 0
+    attempts_used = int(attempts_used)
+    attempts_remaining = max(0, get_max_attempts() - attempts_used)
 
-    submission = Submission(
-        candidate_id=candidate.id,
-        question_id=question.id,
-        code=payload.code,
-        language=payload.language,
-        result=execution_result,
-        score=execution_result.get("score", 0),
-        time_taken=execution_result.get("time_taken", 0),
-    )
+    next_level_unlocked = False
+    next_level = get_next_level(submission.level)
+    if next_level is not None:
+        next_progress = db.scalar(
+            select(UserSkillProgress).where(
+                UserSkillProgress.user_id == current_user.id,
+                UserSkillProgress.skill_id == submission.skill_id,
+                UserSkillProgress.level == next_level,
+            )
+        )
+        next_level_unlocked = bool(next_progress.unlocked) if next_progress else False
 
-    try:
-        db.add(submission)
-        db.commit()
-        db.refresh(submission)
-    except SQLAlchemyError as exc:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to persist submission",
-        ) from exc
-
-    return SubmitResponse(
-        submission_id=str(submission.id),
-        candidate_id=candidate.candidate_id,
-        question_id=question.question_id,
-        language=submission.language,
+    cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
+    return SubmissionResultsResponse(
+        submission_id=submission.id,
+        status=submission.status,
         score=submission.score,
-        time_taken=submission.time_taken,
-        submitted_at=submission.submitted_at,
-        result=execution_result,
+        passed_tests=submission.passed_tests,
+        total_tests=submission.total_tests,
+        time_taken_seconds=submission.time_taken_seconds,
+        attempts_used=attempts_used,
+        attempts_remaining=attempts_remaining,
+        next_level_unlocked=next_level_unlocked,
+        cases=cases,
     )

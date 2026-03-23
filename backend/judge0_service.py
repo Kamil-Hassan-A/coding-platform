@@ -122,7 +122,10 @@ class Judge0Service:
             status_id = status.get("id")
             stdout_value = result.get("stdout")
             stderr_value = result.get("stderr")
-            passed = status_id == 3
+            if expected_output is None:
+                passed = status_id == 3
+            else:
+                passed = (status_id == 3) and ((stdout_value or "").strip() == expected_output.strip())
 
             case_results.append(
                 {

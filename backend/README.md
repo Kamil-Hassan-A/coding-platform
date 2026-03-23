@@ -2,6 +2,8 @@
 
 This backend is a FastAPI app deployed on AWS Lambda through Mangum, exposed by API Gateway HTTP API, backed by RDS PostgreSQL, and connected to a self-hosted Judge0 CE instance running on EC2.
 
+For frontend integration contracts (current mounted routes, auth requirements, request/response payloads), see `ROUTES.md`.
+
 ## What this stack contains
 
 The CDK stack in `backend/infra` creates:
@@ -78,6 +80,12 @@ pip install -r requirements.txt
 
 # Set DB env vars or DATABASE_URL first
 uvicorn main:app --reload --port 8000
+```
+
+Seed local test data (users, skills, problems, and progress):
+
+```powershell
+python scripts/seed.py
 ```
 
 Health check:

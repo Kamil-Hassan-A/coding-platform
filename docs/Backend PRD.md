@@ -5,7 +5,7 @@
 
 ## 1. Overview
 
-This document defines the complete backend specification for the Internal Assessment Platform — a self-hosted, proctored coding assessment system for evaluating employees through AI-generated challenges, automated Judge0 CE scoring, and AI-powered feedback.
+This document defines the complete backend specification for the Internal Assessment Platform — a self-hosted coding assessment system for evaluating employees through AI-generated challenges, automated Judge0 CE scoring, and AI-powered feedback.
 
 The backend is a FastAPI application deployed on AWS Lambda via Mangum, exposed through API Gateway HTTP API, backed by Amazon RDS PostgreSQL, and integrated with a self-hosted Judge0 CE instance on EC2.
 
@@ -271,35 +271,7 @@ CREATE INDEX ix_submissions_session ON submissions(session_id);
 
 ---
 
-### 4.8 Table: `proctoring_flags`
-
-Captures proctoring events raised during an active session.
-
-```sql
-CREATE TABLE proctoring_flags (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    session_id      UUID NOT NULL REFERENCES assessment_sessions(id) ON DELETE CASCADE,
-    user_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    event_type      VARCHAR(50) NOT NULL
-                        CHECK (event_type IN ('paste', 'tab_switch', 'right_click', 'focus_lost', 'copy')),
-    severity        VARCHAR(10) NOT NULL DEFAULT 'low'
-                        CHECK (severity IN ('low', 'medium', 'high')),
-    payload         JSONB,                -- event metadata (e.g. pasted content length, timestamp)
-    frame_snapshot  TEXT,                -- base64 image from webcam (if proctored)
-    admin_notes     TEXT,
-    reviewed        BOOLEAN NOT NULL DEFAULT FALSE,
-    escalated       BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX ix_flags_session  ON proctoring_flags(session_id);
-CREATE INDEX ix_flags_user     ON proctoring_flags(user_id);
-CREATE INDEX ix_flags_reviewed ON proctoring_flags(reviewed);
-```
-
----
-
-### 4.9 Table: `badges`
+### 4.8 Table: `badges`
 
 ```sql
 CREATE TABLE badges (
@@ -312,7 +284,7 @@ CREATE TABLE badges (
 );
 ```
 
-### 4.10 Table: `user_badges`
+### 4.9 Table: `user_badges`
 
 ```sql
 CREATE TABLE user_badges (
@@ -329,14 +301,13 @@ CREATE INDEX ix_user_badges_user ON user_badges(user_id);
 
 ---
 
-### 4.11 Schema Summary
+### 4.10 Schema Summary
 
 ```
 users
   └── user_skill_progress     (user_id, skill_id, level → cleared/unlocked)
   └── assessment_sessions     (user_id, problem_id, skill_id, level → session state)
         └── submissions       (session_id → score, judge_result, ai_feedback)
-        └── proctoring_flags  (session_id → event captures)
   └── user_badges             (user_id, badge_id)
 
 skills
@@ -671,9 +642,7 @@ data: ""
   "language": "python",
   "cases": [...],
   "ai_feedback": "The solution is efficient...",
-  "ai_feedback_status": "done",
-  "flags_count": 2,
-  "flags_link": "/admin/flags?user_id=uuid&session_id=uuid"
+  "ai_feedback_status": "done"
 }
 ```
 
@@ -730,40 +699,7 @@ data: ""
 
 ---
 
-### 6.12 Admin — Proctoring Flags
-
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/admin/flags` | Admin | List all flags, filterable |
-| `PATCH` | `/admin/flags/{flag_id}` | Admin | Update flag — mark reviewed, add notes, escalate |
-| `POST` | `/proctoring/flag` | Candidate | Submit a proctoring event from frontend |
-
-**`GET /admin/flags` query params:** `user_id`, `session_id`, `severity`, `reviewed`, `date_from`, `date_to`
-
-**`POST /proctoring/flag` request (from candidate frontend):**
-
-```json
-{
-  "session_id": "uuid",
-  "event_type": "paste",
-  "payload": { "content_length": 342 },
-  "frame_snapshot": "<base64 image string or null>"
-}
-```
-
-**`PATCH /admin/flags/{flag_id}` request:**
-
-```json
-{
-  "reviewed": true,
-  "admin_notes": "Candidate pasted boilerplate, not suspicious.",
-  "escalated": false
-}
-```
-
----
-
-### 6.13 Utility
+### 6.12 Utility
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
@@ -882,7 +818,6 @@ backend/
 │   │   ├── problem.py
 │   │   ├── session.py
 │   │   ├── submission.py
-│   │   ├── proctoring.py
 │   │   └── badge.py
 │   ├── schemas/
 │   │   ├── auth.py
@@ -891,7 +826,6 @@ backend/
 │   │   ├── problem.py
 │   │   ├── session.py
 │   │   ├── submission.py
-│   │   ├── proctoring.py
 │   │   └── badge.py
 │   ├── routers/
 │   │   ├── auth.py
@@ -899,14 +833,12 @@ backend/
 │   │   ├── sessions.py
 │   │   ├── submissions.py
 │   │   ├── history.py
-│   │   ├── proctoring.py
 │   │   └── admin/
 │   │       ├── candidates.py
 │   │       ├── scores.py
 │   │       ├── leaderboard.py
 │   │       ├── reports.py
-│   │       ├── badges.py
-│   │       └── flags.py
+│   │       └── badges.py
 │   └── services/
 │       ├── judge0_service.py      # Judge0 API client
 │       ├── ai_feedback_service.py # Claude API async feedback generator
@@ -969,7 +901,6 @@ All error responses follow this shape:
 
 - Read all candidate data, profiles, submissions, and reports
 - Read AI feedback on any submission
-- Read and update proctoring flags (review, add notes, escalate)
 - Read scores overview and leaderboard
 - Create, view, and assign badges
 - Generate and download reports (Excel, CSV, PDF)

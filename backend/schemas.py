@@ -1,32 +1,97 @@
 from datetime import datetime
 from typing import Any
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from models import Level, SessionStatus, SubmissionStatus, UserRole
 
-class CandidateResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
 
-    candidate_id: str
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1)
+
+
+class LoginUser(BaseModel):
+    user_id: UUID
+    role: UserRole
     name: str
     email: EmailStr
-    assigned_questions: list[str]
 
 
-class QuestionResponse(BaseModel):
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    user: LoginUser
+
+
+class SkillResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    question_id: str
+    skill_id: UUID
+    name: str
+    description: str | None
+    icon_url: str | None
+
+
+class LevelProgressItem(BaseModel):
+    level: Level
+    label: str
+    unlocked: bool
+    cleared: bool
+    attempts_used: int
+    attempts_remaining: int
+
+
+class SkillProgressResponse(BaseModel):
+    skill_id: UUID
+    skill_name: str
+    levels: list[LevelProgressItem]
+
+
+class SessionStartRequest(BaseModel):
+    skill_id: UUID
+    level: Level
+
+
+class SessionProblemPayload(BaseModel):
     title: str
     description: str
     sample_test_cases: list[Any]
-    difficulty: str
+    time_limit_minutes: int
 
 
-class SubmitRequest(BaseModel):
-    candidate_id: str = Field(min_length=1)
-    question_id: str = Field(min_length=1)
-    code: str = Field(min_length=1)
+class SessionStartResponse(BaseModel):
+    session_id: UUID
+    problem_id: UUID
+    expires_at: datetime
+    attempt_number: int
+    attempts_remaining: int
+    problem: SessionProblemPayload
+
+
+class SessionDetailResponse(BaseModel):
+    session_id: UUID
+    status: SessionStatus
+    expires_at: datetime
+    seconds_remaining: int
+    problem: SessionProblemPayload
+    last_draft_code: str | None
+    last_draft_lang: str | None
+
+
+class SessionDraftRequest(BaseModel):
+    code: str
+    language: str = Field(min_length=1)
+
+
+class SessionDraftResponse(BaseModel):
+    saved_at: datetime
+
+
+class SessionSubmitRequest(BaseModel):
+    code: str
     language: str = Field(min_length=1)
 
 
@@ -44,21 +109,25 @@ class TestCaseResult(BaseModel):
     passed: bool
 
 
-class JudgeResultResponse(BaseModel):
-    passed: bool
+class SessionSubmitResponse(BaseModel):
+    submission_id: UUID
+    session_id: UUID
+    status: SubmissionStatus
+    score: int
     passed_tests: int
     total_tests: int
-    score: int
-    time_taken: int
+    time_taken_seconds: int
     cases: list[TestCaseResult]
 
 
-class SubmitResponse(BaseModel):
-    submission_id: str
-    candidate_id: str
-    question_id: str
-    language: str
+class SubmissionResultsResponse(BaseModel):
+    submission_id: UUID
+    status: SubmissionStatus
     score: int
-    time_taken: int
-    submitted_at: datetime
-    result: JudgeResultResponse
+    passed_tests: int
+    total_tests: int
+    time_taken_seconds: int
+    attempts_used: int
+    attempts_remaining: int
+    next_level_unlocked: bool
+    cases: list[TestCaseResult]

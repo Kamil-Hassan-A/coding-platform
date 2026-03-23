@@ -4,12 +4,17 @@ import json
 import os
 from collections.abc import Generator
 from functools import lru_cache
+from pathlib import Path
 
 import boto3
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from models import Base
+
+# Load local backend/.env if present so local uvicorn/scripts get DB settings.
+load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=False)
 
 
 def get_db_credentials() -> dict:

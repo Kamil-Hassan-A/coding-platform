@@ -3,8 +3,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
-from routes.candidates import router as candidates_router
-from routes.questions import router as questions_router
+from routes.auth import router as auth_router
+from routes.sessions import router as sessions_router
+from routes.skills import router as skills_router
 from routes.submissions import router as submissions_router
 
 app = FastAPI(
@@ -32,8 +33,9 @@ def health_check() -> dict[str, str]:
     return {"status": "healthy"}
 
 
-app.include_router(candidates_router)
-app.include_router(questions_router)
+app.include_router(auth_router)
+app.include_router(skills_router)
+app.include_router(sessions_router)
 app.include_router(submissions_router)
 
 
