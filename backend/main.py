@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
+from routes.admin import router as admin_router
 from routes.auth import router as auth_router
 from routes.sessions import router as sessions_router
 from routes.skills import router as skills_router
@@ -37,6 +38,7 @@ app.include_router(auth_router)
 app.include_router(skills_router)
 app.include_router(sessions_router)
 app.include_router(submissions_router)
+app.include_router(admin_router)
 
 
 # ---- Mangum handler for AWS Lambda ----

@@ -25,6 +25,9 @@ This document describes the routes that are currently mounted by the FastAPI app
   - `POST /sessions/{session_id}/submit`
   - `GET /submissions/{submission_id}/results`
 
+- Admin-only routes:
+  - `GET /admin/stats`
+
 Error format:
 
 ```json

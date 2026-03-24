@@ -11,9 +11,9 @@ BACKEND_DIR = CURRENT_FILE.parent.parent
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
-from database import get_session_local  # noqa: E402
-from models import Level, Problem, Skill, User, UserRole, UserSkillProgress  # noqa: E402
-from security import hash_password  # noqa: E402
+from database import get_session_local
+from models import Level, Problem, Skill, User, UserRole, UserSkillProgress 
+from security import hash_password 
 
 
 LEVEL_ORDER = [

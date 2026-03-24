@@ -131,3 +131,12 @@ class SubmissionResultsResponse(BaseModel):
     attempts_remaining: int
     next_level_unlocked: bool
     cases: list[TestCaseResult]
+
+
+class AdminStatsResponse(BaseModel):
+    totalEmployees: int
+    totalAssessments: int
+    inProgress: int
+    completed: int
+    terminated: int
+    pendingReview: int
