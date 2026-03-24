@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
 import SkillModal from "./SkillModal";
 import { logout } from "../auth/authService";
+import { getSkills, type Skill } from "./candidateService";
+import { useStartSession } from "../assessment/hooks/useAssessment";
 
-const SKILLS = [
+const MOCK_SKILLS = [
   "Agile", "HTML, CSS, JS", "React JS", "React JS with Redux", "TypeScript",
   "Next JS", "Angular", "Python with Flask", "Python with Django",
   "Python for Data Science", "Java", "Java Springboot", ".NET, C#",
@@ -30,9 +33,23 @@ export default function CandidateDashboard() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [confirmed, setConfirmed] = useState<{ skill: string; level: string } | null>(null);
+  const [confirmedIds, setConfirmedIds] = useState<{ skill_id: string; level: string } | null>(null);
   const [screen, setScreen] = useState<Screen>("home");
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { mutate: startSession, isPending: isStarting } = useStartSession();
+
+  const { data: apiSkills, isLoading, isError } = useQuery({
+    queryKey: ["skills"],
+    queryFn: getSkills,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const skillsList =
+    !isLoading && !isError && apiSkills
+      ? apiSkills
+      : (MOCK_SKILLS.map((name, i) => ({ skill_id: `mock-${i}`, name, description: null, icon_url: null })) as Skill[]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -44,10 +61,25 @@ export default function CandidateDashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef]);
 
-  const handleConfirm = (skill: string, level: string) => {
+  const handleConfirm = (skill: string, level: string, skill_id: string) => {
     setConfirmed({ skill, level });
+    setConfirmedIds({ skill_id, level });
     setShowModal(false);
     setScreen("confirmed");
+  };
+
+  const handleBeginAssessment = () => {
+    if (!confirmedIds) return;
+    startSession(confirmedIds, {
+      onSuccess: (data) => {
+        navigate("/assessment", {
+          state: { session_id: data.session_id, problem: data.problem },
+        });
+      },
+      onError: () => {
+        alert("Failed to start session. Please try again.");
+      },
+    });
   };
 
   return (
@@ -130,6 +162,8 @@ export default function CandidateDashboard() {
               <ConfirmedScreen
                 confirmed={confirmed}
                 onChangeSkill={() => { setScreen("home"); setShowModal(true); }}
+                onBegin={handleBeginAssessment}
+                isStarting={isStarting}
               />
             )
           )}
@@ -137,7 +171,7 @@ export default function CandidateDashboard() {
 
         {showModal && (
           <SkillModal
-            skills={SKILLS}
+            skills={skillsList}
             levels={LEVELS}
             onClose={() => setShowModal(false)}
             onConfirm={handleConfirm}
@@ -216,9 +250,13 @@ function HomeScreen({ onStart }: { onStart: () => void }) {
 function ConfirmedScreen({
   confirmed,
   onChangeSkill,
+  onBegin,
+  isStarting,
 }: {
   confirmed: { skill: string; level: string };
   onChangeSkill: () => void;
+  onBegin: () => void;
+  isStarting: boolean;
 }) {
   return (
     <div style={{ width: "100%", maxWidth: "600px", textAlign: "center" }}>
@@ -274,6 +312,44 @@ function ConfirmedScreen({
             Waiting for Monaco Editor to be launched...
           </span>
         </div>
+
+        <button
+          onClick={onBegin}
+          disabled={isStarting}
+          style={{
+            width: "100%",
+            background: "#E8620A",
+            color: "#fff",
+            border: "none",
+            borderRadius: "10px",
+            padding: "16px",
+            fontSize: "16px",
+            fontWeight: 700,
+            cursor: isStarting ? "not-allowed" : "pointer",
+            boxShadow: "0 6px 24px rgba(232,98,10,0.25)",
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            opacity: isStarting ? 0.7 : 1,
+          }}
+        >
+          {isStarting ? (
+            <>
+              <div style={{
+                width: "18px", height: "18px", border: "2px solid #fff",
+                borderTopColor: "transparent", borderRadius: "50%",
+                animation: "spin 0.8s linear infinite"
+              }} />
+              <span>Starting Session...</span>
+            </>
+          ) : (
+            "Begin Assessment →"
+          )}
+        </button>
+
+        <style>{`@keyframes spin { from {transform:rotate(0deg)} to {transform:rotate(360deg)} }`}</style>
 
         <button
           onClick={onChangeSkill}
