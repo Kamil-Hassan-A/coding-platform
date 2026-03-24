@@ -18,13 +18,13 @@ The backend is a FastAPI application deployed on AWS Lambda via Mangum, exposed 
 | **Runtime** | Python 3.11+ |
 | **Framework** | FastAPI |
 | **Lambda Adapter** | Mangum |
-| **Deployment** | AWS Lambda (ARM64) |
+| **Deployment** | AWS Lambda (x86_64) |
 | **API Gateway** | Amazon API Gateway HTTP API |
 | **Database** | Amazon RDS PostgreSQL (db.t4g.micro) |
 | **ORM** | SQLAlchemy 2.x (async) + Alembic |
-| **Code Execution** | Judge0 CE self-hosted on EC2 (t4g.micro) |
+| **Code Execution** | Judge0 CE self-hosted on EC2 (t3.small) |
 | **Auth** | JWT (python-jose) + bcrypt password hashing |
-| **AI Feedback** | Anthropic Claude API (async, post-submission) |
+| **AI Feedback** | API (async, post-submission) |
 | **Networking** | Amazon VPC — Lambda and RDS in private subnets; Judge0 EC2 in private subnet |
 | **Secrets** | AWS Secrets Manager |
 | **Logging** | AWS CloudWatch |
@@ -46,7 +46,7 @@ AWS Lambda (FastAPI + Mangum)
         │
         ├─── Judge0 CE on EC2 (code execution — /submit only)
         │
-        └─── Anthropic Claude API (AI feedback — async post-submission)
+        └─── AI feedback — async post-submission
 ```
 
 **Request lifecycle:**
@@ -768,7 +768,7 @@ The AI is given:
 - Judge0 result summary (passed/failed per test case, score)
 - Instruction to provide constructive code review
 
-System prompt (sent to Claude API):
+System prompt (sent to API):
 
 ```
 You are a senior software engineer reviewing a coding assessment submission.
@@ -841,14 +841,12 @@ backend/
 │   │       └── badges.py
 │   └── services/
 │       ├── judge0_service.py      # Judge0 API client
-│       ├── ai_feedback_service.py # Claude API async feedback generator
 │       ├── scoring_service.py     # Score computation + level unlock logic
 │       ├── session_service.py     # Session creation, expiry, auto-submit
 │       └── report_service.py      # Excel/CSV/PDF generation
 ├── infra/
-│   ├── app.py                     # CDK stack entry point
-│   ├── stacks/
-│   │   └── coding_platform_stack.py
+│   ├── app.py                     # CDK app entry point
+│   ├── cdk_stack.py               # CodingPlatformStack (all resources in one file)
 │   └── requirements.txt
 ```
 
@@ -860,14 +858,17 @@ All sensitive values are stored in AWS Secrets Manager and injected into Lambda 
 
 | Variable | Source | Description |
 |---|---|---|
-| `DATABASE_URL` | Secrets Manager | PostgreSQL connection string |
-| `JWT_SECRET_KEY` | Secrets Manager | Secret for signing JWTs |
-| `JUDGE0_HOST` | Secrets Manager | Internal EC2 IP/hostname for Judge0 |
-| `JUDGE0_PORT` | Env | Default: `2358` |
-| `ANTHROPIC_API_KEY` | Secrets Manager | Claude API key for AI feedback |
+| `DB_SECRET_ARN` | CDK (Secrets Manager) | ARN of the RDS credentials secret (`coding-platform/db-credentials`) |
+| `DB_HOST` | CDK (RDS endpoint) | PostgreSQL host address |
+| `DB_PORT` | CDK (RDS endpoint) | PostgreSQL port |
+| `DB_NAME` | CDK (hardcoded) | Database name — `codingplatform` |
+| `JUDGE0_BASE_URL` | CDK (EC2 private IP) | Full base URL for Judge0 CE, e.g. `http://<private-ip>:2358` |
+| `JWT_SECRET_KEY` | Secrets Manager (manual) | Secret for signing JWTs |
 | `JWT_EXPIRE_HOURS` | Env | Default: `8` |
 | `SCORE_PASS_THRESHOLD` | Env | Default: `70` (percent) |
 | `MAX_ATTEMPTS_PER_LEVEL` | Env | Default: `5` |
+
+**Secrets Manager secret name:** `coding-platform/db-credentials` (contains `username` and auto-generated `password`).
 
 ---
 
@@ -927,14 +928,15 @@ These actions have no corresponding endpoint and are intentionally absent:
 
 | Resource | Details |
 |---|---|
-| VPC | Public + private subnets, NAT Gateway |
-| Lambda | Python 3.11, ARM64, 512MB memory, 30s timeout |
-| API Gateway | HTTP API, `/{proxy+}` catch-all route |
-| RDS | PostgreSQL 15, db.t4g.micro, private subnet, encrypted |
-| EC2 (Judge0) | t4g.micro, private subnet, Judge0 CE via Docker |
-| Secrets Manager | DB credentials, JWT secret, API keys |
-| CloudWatch | Lambda log group, 14-day retention |
-| EventBridge | Scheduled rule every 5 minutes for session expiry sweep |
+| VPC | 2 public + 2 private subnets across 2 AZs, 1 NAT Gateway |
+| Lambda | Python 3.11, x86_64, 512MB memory, 30s timeout, private subnets |
+| API Gateway | HTTP API, `/{proxy+}` + `/` catch-all routes |
+| RDS | PostgreSQL 15, db.t4g.micro, private subnet, 20GB storage (auto-scale to 100GB) |
+| EC2 (Judge0) | t3.small, Amazon Linux 2, private subnet, Docker + Docker Compose, Judge0 CE on port 2358 |
+| Secrets Manager | `coding-platform/db-credentials` (username + auto-generated password) |
+| CloudWatch | Default Lambda log group (managed by AWS) |
+
+> **Note:** EventBridge session expiry sweep is **not yet implemented** in the CDK stack. The timeout auto-submit logic must be handled within the Lambda handler itself for now.
 
 ### Deploy Commands
 
@@ -982,8 +984,6 @@ python scripts/seed.py
 | `422 Unsupported language` | Language not in Judge0 ID map | Add mapping in `judge0_service.py` |
 | `502 Judge0 execution failed` | Network path broken or Judge0 not running | Check EC2 instance and security groups |
 | `500 Failed to persist submission` | DB write failure | Check RDS connectivity and CloudWatch logs |
-| AI feedback stuck at `generating` | Claude API timeout or error | Check CloudWatch for background task errors |
-
 ---
 
 *End of Document — Internal Assessment Platform Backend PRD v1.0*
