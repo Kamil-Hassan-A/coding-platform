@@ -7,7 +7,7 @@ import type { User } from "../../types/user";
 
 const getRedirectPathByRole = (user: User): string => {
   if (user.role === "admin") return "/admin/dashboard";
-  return "/dashboard";
+  return "/candidate/dashboard";
 };
 
 const Login = () => {

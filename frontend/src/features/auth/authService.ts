@@ -57,6 +57,7 @@ export const loginWithSSO = async (): Promise<User> => {
     id: "1",
     name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
     role,
+    level: role === "candidate" ? "Beginner" : null,
     department: role === "admin" ? "Engineering" : "Candidate Relations",
     token: "dummy-sso-token-12345",
   };
