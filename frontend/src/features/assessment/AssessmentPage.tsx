@@ -8,6 +8,20 @@ import Editor from "./components/Editor";
 import TestCases from "./components/TestCases";
 import type { SessionSubmitResponse, SessionProblemPayload } from "./types/assessment";
 
+// DEV_MODE
+const DEV_MODE = true;
+
+const MOCK_PROBLEM: SessionProblemPayload = {
+  title: "Mock Assessment: Sum of Two Numbers",
+  description: "Write a function that takes two numbers as input and returns their sum.\n\n### Example\nInput: 2 3\nOutput: 5",
+  templateCode: "def solve(a, b):\n    # TODO: Implement sum logic\n    return a + b\n\n# Standard boilerplate\nimport sys\nif __name__ == '__main__':\n    line = sys.stdin.readline()\n    if line:\n        a, b = map(int, line.split())\n        print(solve(a, b))",
+  sample_test_cases: [
+    { stdin: "2 3", expected_output: "5" },
+    { stdin: "10 20", expected_output: "30" }
+  ],
+  time_limit_minutes: 60
+};
+
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,15 +43,19 @@ export default function AssessmentPage() {
   }, [initialState]);
 
   // 2. Data Fetching (Recovery/Refresh)
-  const { data: recoveredSession, isLoading: isRecovering, isError: recoveryError } = useGetSession(
-    !initialState ? sessionId : null
+  const { data: recoveredSession, isLoading: isRecovering } = useGetSession(
+    !DEV_MODE && !initialState ? sessionId : null
   );
 
-  const activeProblem = initialProblem || recoveredSession?.problem;
+  const activeProblem = DEV_MODE ? MOCK_PROBLEM : (initialProblem || recoveredSession?.problem);
   const draftCode = recoveredSession?.draft_code;
 
   // 3. Editor & Language State
-  const { code, setCode } = useEditor(initialState?.problem?.templateCode ?? recoveredSession?.draft_code ?? "");
+  const { code, setCode } = useEditor(
+    DEV_MODE 
+      ? MOCK_PROBLEM.templateCode 
+      : (initialState?.problem?.templateCode ?? recoveredSession?.draft_code ?? "")
+  );
   const [language, setLanguage] = useState("python");
   const [submissionResult, setSubmissionResult] = useState<SessionSubmitResponse | null>(null);
 
@@ -45,6 +63,30 @@ export default function AssessmentPage() {
   const { mutate: submit, isPending: isSubmitting } = useSubmitSession();
 
   const handleSubmit = () => {
+    if (DEV_MODE) {
+      alert("DEV_MODE: Submission mocked successfully!");
+      setSubmissionResult({
+        submission_id: "mock-sub-123",
+        session_id: sessionId || "mock-sess-123",
+        status: "cleared",
+        score: 100,
+        passed_tests: 2,
+        total_tests: 2,
+        time_taken_seconds: 45,
+        cases: [
+          {
+            stdin: "2 3", expected_output: "5", stdout: "5", stderr: null,
+            message: "Correct", status: { id: 3, description: "Accepted" }, passed: true
+          },
+          {
+            stdin: "10 20", expected_output: "30", stdout: "30", stderr: null,
+            message: "Correct", status: { id: 3, description: "Accepted" }, passed: true
+          }
+        ]
+      });
+      return;
+    }
+
     if (!sessionId) return;
     submit(
       { session_id: sessionId, payload: { code, language } },
@@ -60,7 +102,7 @@ export default function AssessmentPage() {
     );
   };
 
-  if (isSessionResolved && !sessionId && !isRecovering) {
+  if (!DEV_MODE && isSessionResolved && !sessionId && !isRecovering) {
     return (
       <div style={{ 
         height: "100vh", display: "flex", flexDirection: "column", 
