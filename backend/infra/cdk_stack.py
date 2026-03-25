@@ -5,7 +5,7 @@ Creates:
 - VPC with 2 public and 2 private subnets + NAT Gateway
 - RDS PostgreSQL (db.t4g.micro) in private subnets
 - Lambda function (Python 3.11) in private subnets
-- EC2 instance for self-hosted Judge0 CE
+- ECS Fargate service for self-hosted Judge0 CE behind internal ALB
 - HTTP API Gateway with {proxy+} route
 - Secrets Manager secret for RDS credentials
 """
@@ -23,6 +23,8 @@ from aws_cdk import (
     aws_apigatewayv2 as apigwv2,
     aws_apigatewayv2_integrations as apigwv2_integrations,
     aws_iam as iam,
+    aws_ecs as ecs,
+    aws_elasticloadbalancingv2 as elbv2,
 )
 from constructs import Construct
 
@@ -173,72 +175,127 @@ class CodingPlatformStack(Stack):
         
 
         # -----------------------------------------------------------
-        # EC2 for self-hosted Judge0 CE
+        # ECS Fargate for self-hosted Judge0 CE (internal)
         # -----------------------------------------------------------
-        judge0_sg = ec2.SecurityGroup(
+        judge0_cluster = ecs.Cluster(
             self,
-            "Judge0Ec2SG",
+            "Judge0Cluster",
             vpc=vpc,
-            description="Security group for Judge0 CE EC2 host",
+            cluster_name="judge0-cluster",
+        )
+
+        judge0_task_execution_role = iam.Role(
+            self,
+            "Judge0TaskExecutionRole",
+            assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+            managed_policies=[
+                iam.ManagedPolicy.from_aws_managed_policy_name(
+                    "service-role/AmazonECSTaskExecutionRolePolicy"
+                )
+            ],
+            description="Execution role for Judge0 Fargate tasks",
+        )
+
+        judge0_task_definition = ecs.FargateTaskDefinition(
+            self,
+            "Judge0TaskDefinition",
+            cpu=1024,
+            memory_limit_mib=2048,
+            execution_role=judge0_task_execution_role,
+        )
+
+        judge0_container = judge0_task_definition.add_container(
+            "Judge0Container",
+            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0"),
+        )
+        judge0_container.add_port_mappings(
+            ecs.PortMapping(container_port=2358, protocol=ecs.Protocol.TCP)
+        )
+
+        judge0_alb_sg = ec2.SecurityGroup(
+            self,
+            "Judge0AlbSG",
+            vpc=vpc,
+            description="Security group for internal Judge0 ALB",
             allow_all_outbound=True,
         )
-
-        # Restrict inbound traffic to this VPC only.
-        judge0_sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(vpc.vpc_cidr_block),
-            connection=ec2.Port.tcp(22),
-            description="Allow SSH only from VPC",
-        )
-        judge0_sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(vpc.vpc_cidr_block),
-            connection=ec2.Port.tcp(80),
-            description="Allow HTTP only from VPC",
-        )
-        judge0_sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(vpc.vpc_cidr_block),
-            connection=ec2.Port.tcp(443),
-            description="Allow HTTPS only from VPC",
-        )
-        judge0_sg.add_ingress_rule(
-            peer=ec2.Peer.ipv4(vpc.vpc_cidr_block),
+        judge0_alb_sg.add_ingress_rule(
+            peer=lambda_sg,
             connection=ec2.Port.tcp(2358),
-            description="Allow Judge0 API only from VPC",
+            description="Allow Lambda to call Judge0 through ALB",
         )
 
-        judge0_role = iam.Role(
+        judge0_tasks_sg = ec2.SecurityGroup(
             self,
-            "Judge0Ec2Role",
-            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
-            description="IAM role for Judge0 CE EC2 host",
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchAgentServerPolicy"),
-            ],
-        )
-
-        judge0_instance = ec2.Instance(
-            self,
-            "Judge0Ec2Instance",
+            "Judge0TasksSG",
             vpc=vpc,
+            description="Security group for Judge0 Fargate tasks",
+            allow_all_outbound=True,
+        )
+        judge0_tasks_sg.add_ingress_rule(
+            peer=lambda_sg,
+            connection=ec2.Port.tcp(2358),
+            description="Allow Lambda to reach Judge0 tasks on port 2358",
+        )
+        judge0_tasks_sg.add_ingress_rule(
+            peer=judge0_alb_sg,
+            connection=ec2.Port.tcp(2358),
+            description="Allow internal ALB to reach Judge0 tasks",
+        )
+
+        judge0_service = ecs.FargateService(
+            self,
+            "Judge0Service",
+            cluster=judge0_cluster,
+            task_definition=judge0_task_definition,
+            desired_count=1,
+            assign_public_ip=False,
+            security_groups=[judge0_tasks_sg],
+            health_check_grace_period=Duration.minutes(5),
             vpc_subnets=ec2.SubnetSelection(
                 subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS,
             ),
-            security_group=judge0_sg,
-            role=judge0_role,
-            instance_type=ec2.InstanceType("t3.small"),
-            machine_image=ec2.MachineImage.latest_amazon_linux2(),
         )
 
-        judge0_instance.add_user_data(
-            "#!/bin/bash",
-            "set -euxo pipefail",
-            "yum update -y",
-            "amazon-linux-extras install docker -y",
-            "systemctl enable docker",
-            "systemctl start docker",
-            "usermod -aG docker ec2-user",
-            "curl -L \"https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64\" -o /usr/local/bin/docker-compose",
-            "chmod +x /usr/local/bin/docker-compose",
-            "ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose",
+        judge0_alb = elbv2.ApplicationLoadBalancer(
+            self,
+            "Judge0InternalAlb",
+            vpc=vpc,
+            internet_facing=False,
+            security_group=judge0_alb_sg,
+            vpc_subnets=ec2.SubnetSelection(
+                subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS,
+            ),
+            load_balancer_name="judge0-internal-alb",
+        )
+
+        judge0_listener = judge0_alb.add_listener(
+            "Judge0Listener",
+            port=2358,
+            protocol=elbv2.ApplicationProtocol.HTTP,
+            open=False,
+        )
+
+        judge0_listener.add_targets(
+            "Judge0FargateTargets",
+            port=2358,
+            protocol=elbv2.ApplicationProtocol.HTTP,
+            targets=[
+                judge0_service.load_balancer_target(
+                    container_name="Judge0Container",
+                    container_port=2358,
+                )
+            ],
+            health_check=elbv2.HealthCheck(
+                enabled=True,
+                path="/",
+                interval=Duration.seconds(30),
+                timeout=Duration.seconds(10),
+                healthy_threshold_count=2,
+                unhealthy_threshold_count=5,
+                healthy_http_codes="200-499",
+            ),
         )
 
         # -----------------------------------------------------------
@@ -251,7 +308,10 @@ class CodingPlatformStack(Stack):
             description="HTTP API for the Coding Assessment Platform",
         )
 
-        backend_lambda.add_environment("JUDGE0_BASE_URL", f"http://{judge0_instance.instance_private_ip}:2358")
+        backend_lambda.add_environment(
+            "JUDGE0_BASE_URL",
+            f"http://{judge0_alb.load_balancer_dns_name}:2358",
+        )
 
         lambda_integration = apigwv2_integrations.HttpLambdaIntegration(
             "LambdaIntegration",
@@ -290,14 +350,7 @@ class CodingPlatformStack(Stack):
 
         CfnOutput(
             self,
-            "Judge0InstanceId",
-            value=judge0_instance.instance_id,
-            description="EC2 instance ID for self-hosted Judge0 CE",
-        )
-
-        CfnOutput(
-            self,
-            "Judge0PrivateIp",
-            value=judge0_instance.instance_private_ip,
-            description="Private IP of self-hosted Judge0 CE host",
+            "Judge0AlbDnsName",
+            value=judge0_alb.load_balancer_dns_name,
+            description="Internal ALB DNS name for Judge0 CE",
         )

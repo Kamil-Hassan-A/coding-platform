@@ -1,4 +1,10 @@
 infra/venv
+# Keep only the infra directory tracked under /backend.
+# This ignores all immediate subdirectories in /backend except /backend/infra.
+*/
+!infra/
+!infra/**
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
