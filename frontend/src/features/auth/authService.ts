@@ -2,7 +2,16 @@ import axiosInstance from "../../api/axiosInstance";
 import useUserStore from "../../stores/userStore";
 import type { User, UserRole } from "../../types/user";
 
-type LoginResponse = User;
+type LoginResponse = {
+  access_token: string;
+  expires_in: number;
+  user: {
+    user_id: number;
+    role: string;
+    name: string;
+    email: string;
+  };
+};
 
 export const loginWithCredentials = async (
   email: string,
@@ -13,7 +22,20 @@ export const loginWithCredentials = async (
     password,
   });
 
-  const user = response.data;
+  const { access_token, user: backendUser } = response.data;
+
+  const isValidRole = (role: string): role is UserRole => {
+    return role === "admin" || role === "candidate";
+  };
+
+  const user: User = {
+    id: backendUser.user_id.toString(),
+    name: backendUser.name,
+    role: isValidRole(backendUser.role) ? backendUser.role : "candidate",
+    department: "N/A",
+    token: access_token,
+  };
+
   useUserStore.getState().setUser(user);
 
   return user;
@@ -35,6 +57,7 @@ export const loginWithSSO = async (): Promise<User> => {
     id: "1",
     name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
     role,
+    level: role === "candidate" ? "Beginner" : null,
     department: role === "admin" ? "Engineering" : "Candidate Relations",
     token: "dummy-sso-token-12345",
   };

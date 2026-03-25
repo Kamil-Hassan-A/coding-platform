@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { Skill } from "./candidateService";
 
 interface Level {
   id: string;
@@ -8,19 +9,19 @@ interface Level {
 }
 
 interface Props {
-  skills: string[];
+  skills: Skill[];
   levels: Level[];
   onClose: () => void;
-  onConfirm: (skill: string, level: string) => void;
+  onConfirm: (skill_name: string, level_label: string, skill_id: string) => void;
 }
 
 export default function SkillModal({ skills, levels, onClose, onConfirm }: Props) {
-  const [selectedSkill, setSelectedSkill] = useState("");
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [selectedLevel, setSelectedLevel] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
 
-  const canProceedStep1 = selectedSkill !== "";
+  const canProceedStep1 = selectedSkill !== null;
   const canProceedStep2 = selectedLevel !== "";
 
   const handleProceed = () => {
@@ -28,8 +29,8 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
       setStep(2);
     } else if (step === 2 && canProceedStep2) {
       const levelObj = levels.find(l => l.id === selectedLevel);
-      if (levelObj) {
-        onConfirm(selectedSkill, levelObj.label);
+      if (levelObj && selectedSkill) {
+        onConfirm(selectedSkill.name, levelObj.label, selectedSkill.skill_id);
       }
     }
   };
@@ -111,7 +112,7 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
                     transition: "border-color 0.2s",
                   }}
                 >
-                  <span>{selectedSkill || "— Choose a skill —"}</span>
+                  <span>{selectedSkill?.name || "— Choose a skill —"}</span>
                   <span style={{
                     transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
                     transition: "transform 0.2s",
@@ -129,15 +130,15 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
                   }}>
                     {skills.map((skill, i) => (
                       <div
-                        key={skill}
+                        key={skill.skill_id}
                         onClick={() => { setSelectedSkill(skill); setDropdownOpen(false); }}
                         style={{
                           padding: "12px 16px",
                           cursor: "pointer",
                           fontSize: "14px",
-                          color: selectedSkill === skill ? "#E8620A" : "#333",
-                          fontWeight: selectedSkill === skill ? 700 : 400,
-                          background: selectedSkill === skill ? "rgba(232,98,10,0.06)" : "transparent",
+                          color: selectedSkill?.skill_id === skill.skill_id ? "#E8620A" : "#333",
+                          fontWeight: selectedSkill?.skill_id === skill.skill_id ? 700 : 400,
+                          background: selectedSkill?.skill_id === skill.skill_id ? "rgba(232,98,10,0.06)" : "transparent",
                           borderBottom: i < skills.length - 1 ? "1px solid #f0f0f0" : "none",
                           display: "flex", alignItems: "center", gap: "10px",
                           transition: "background 0.1s",
@@ -145,13 +146,13 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
                       >
                         <span style={{
                           width: "24px", height: "24px", borderRadius: "50%",
-                          background: selectedSkill === skill ? "#E8620A" : "#f0f0f0",
+                          background: selectedSkill?.skill_id === skill.skill_id ? "#E8620A" : "#f0f0f0",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           fontSize: "11px", fontWeight: 700,
-                          color: selectedSkill === skill ? "#fff" : "#999",
+                          color: selectedSkill?.skill_id === skill.skill_id ? "#fff" : "#999",
                           flexShrink: 0,
                         }}>{i + 1}</span>
-                        {skill}
+                        {skill.name}
                       </div>
                     ))}
                   </div>
@@ -167,7 +168,7 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
                 }}>
                   <span style={{ fontSize: "18px" }}>✓</span>
                   <span style={{ fontSize: "13px", color: "#333" }}>
-                    Selected: <strong style={{ color: "#E8620A" }}>{selectedSkill}</strong>
+                    Selected: <strong style={{ color: "#E8620A" }}>{selectedSkill.name}</strong>
                   </span>
                 </div>
               )}
@@ -175,7 +176,7 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Props
           ) : (
             <div>
               <label style={{ fontSize: "13px", fontWeight: 600, color: "#555", display: "block", marginBottom: "16px" }}>
-                Choose your proficiency level for <span style={{ color: "#E8620A" }}>{selectedSkill}</span>
+                Choose your proficiency level for <span style={{ color: "#E8620A" }}>{selectedSkill?.name}</span>
               </label>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

@@ -1,95 +1,105 @@
 # Internal Assessment Platform — Frontend
 
-## Project Overview
+## 🚀 Project Overview
+A modern, enterprise-grade assessment platform built for **Indium Software**. This React-based frontend manages the end-to-end lifecycle of internal skill evaluations, from authentication to candidate management and live coding assessments.
 
-A modern, high-performance internal assessment platform built for Indium Software. This frontend application provides a secure login interface (supporting both credentials and Microsoft SSO), role-based routing (Admin vs. Candidate), and a rich Admin Dashboard featuring real-time data visualization of employee assessment statistics.
+---
 
-## Tech Stack
+## 🛠️ Core Tech Stack
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 19.2.4 | Core UI library |
-| **Vite** | 8.0.1 | Next-generation frontend build tool |
-| **TypeScript** | 5.9.3 | Static typing for enterprise-grade reliability |
-| **Zustand** | 5.0.12 | Lightweight, persisted state management |
-| **React Router DOM** | 7.13.1 | Declarative, client-side routing |
-| **Axios** | 1.13.6 | Promise-based HTTP client with interceptors |
-| **Recharts**| 3.8.0 | Composable charting library for data visualization |
-| **Tailwind CSS** | 4.2.2 | Utility-first CSS framework (v4) |
-| **Lucide React** | 0.577.0 | Beautiful & consistent icon library |
-| **Zustand Persist** | — | Automatic localStorage session persistence |
+| Layer | Technology | Version | Key Purpose |
+| :--- | :--- | :--- | :--- |
+| **UI Library** | React | 19.2.4 | Component-based architecture |
+| **Build Tool** | Vite | 8.0.1 | HMR and optimized production builds |
+| **Language** | TypeScript | 5.9.3 | Type safety across features |
+| **State** | Zustand | 5.0.12 | Global store with persistence |
+| **Data Fetching**| React Query | 5.66.9 | Server state management & caching |
+| **Routing** | React Router | 7.13.1 | Declarative, role-based navigation |
+| **HTTP Client** | Axios | 1.13.6 | Interceptor-driven API communication |
+| **Charts** | Recharts | 3.8.0 | SVG-based data visualization |
+| **Styles** | Tailwind CSS | 4.2.2 | Utility-first styling (v4) |
 
-## Project Structure (Key Directories)
+---
+
+## 📂 Project Architecture
+
+The project follows a **Feature-Based Module** approach, ensuring logic is encapsulated near the UI it serves.
 
 ```text
 src/
-├── App.tsx                   # Root component rendering AppRoutes
-├── main.tsx                  # Application entry point & provider setup
-├── index.css                 # Global styles and Tailwind v4 configuration
+├── api/
+│   └── axiosInstance.ts      # Global Axios setup (Auth headers + 401 handling)
 ├── components/
 │   └── layout/
-│       └── Sidebar.tsx       # Reusable, configurable side navigation
+│       └── Sidebar.tsx       # Reusable navigation for all dashboards
 ├── features/
-│   ├── admin/
-│   │   ├── AdminDashboard.tsx # Comprehensive admin view (Recharts)
-│   │   └── Dashboard.tsx      # Filterable stats & candidate table
-│   ├── assessment/
-│   │   ├── AssessmentPage.tsx # Main entry for coding assessments
-│   │   ├── components/        # Editor, ProblemPanel, TestCases, Toolbar
-│   │   ├── hooks/             # useEditor (In-progress)
-│   │   ├── services/          # assessmentService (API logic)
-│   │   └── types/             # assessment.ts (Core types)
-│   ├── auth/
-│   │   ├── Login.tsx          # Login page (Credentials + Mock SSO)
-│   │   ├── authService.ts     # Auth logic & dynamic role switching
-│   │   └── ProtectedRoute.tsx # Route guard for role-based access
-│   ├── candidate/
-│   │   └── CandidateDashboard.tsx # Dash with sidebar & skill selection
-│   └── dashboard/
-│       └── (Merged into Admin/Candidate dashboards)
+│   ├── admin/                # Admin views, Recharts logic, Candidate management
+│   ├── assessment/           # Coding environment (Monaco, Split-pane)
+│   ├── auth/                 # Login, Protected routes, Auth services
+│   └── candidate/            # Candidate-specific dashboards & services
 ├── routes/
-│   └── AppRoutes.tsx         # Central routing configuration
+│   └── AppRoutes.tsx         # Central Routing (Role-guarded)
 ├── stores/
-│   └── userStore.ts          # Zustand store for user session
+│   └── userStore.ts          # Zustand store (User session + Token)
 └── types/
-    └── user.ts               # User and UserRole definitions
+    └── user.ts               # Core interface definitions
 ```
 
-## Core Logic & Context
+---
 
-### 1. Authentication & Session Management
-- **Persistence**: User accounts are stored in `userStore.ts` using Zustand's `persist` middleware.
-- **Dynamic Role Switching**: `authService.ts` supports testing different personas by reading from `localStorage.getItem("test_role")`. If nothing is set, it defaults to **"admin"**.
-- **Axios Interceptor**: `axiosInstance.ts` injects the current JWT into all outgoing requests.
+## 🧠 Logical Implementation Details
 
-### 2. Layout & Reusable Side Navigation
-- **Sidebar Component**: Centralized in `src/components/layout/Sidebar.tsx`, this component handles the side-nav branding, icons, and active-state highlighting.
-- **Unified Look**: Both Admin and Candidate dashboards now utilize the same `Sidebar` component with unique menu configurations (`NAV` vs `CANDIDATE_MENU`).
-- **Profile Head**: Both dashboards include a professional user profile section in the top-right header with a functional **Logout** dropdown.
+### 1. Authentication & Role-Based Access
+*   **Persistent Session**: Managed via `userStore.ts` utilizing Zustand's `persist` middleware (localSync).
+*   **Auth Service (`authService.ts`)**:
+    *   `loginWithCredentials`: Maps backend response to frontend `User` model safely.
+    *   `loginWithSSO`: Mock implementation for development; reads `test_role` from `localStorage` for persona switching.
+*   **Route Guards**: `ProtectedRoute.tsx` wraps specific routes, intercepting unauthorized access and redirecting based on `UserRole`.
 
-### 3. Feature Modules
-- **Admin Dashboard**: Advanced analytics via **Recharts** (Pass/Fail Breakdown, Skill Density) and a searchable candidate management table.
-- **Candidate Assessment**: A work-in-progress module (`/assessment`) designed for hands-on coding. It is scaffolded with a split-pane layout to support a Monaco-based editor, problem description, and test case results.
+### 2. API Integration & Server State
+*   **Axios Interceptor**: 
+    *   **Request**: Automatically attaches `Authorization: Bearer <token>` to all calls.
+    *   **Response**: Catches `401 Unauthorized`, clears local state, and redirects to `/auth/login`.
+*   **React Query Patterns**:
+    *   Used in `CandidateDashboard.tsx` and `AdminDashboard.tsx`.
+    *   Implements `staleTime` (5m) for efficient caching.
+    *   **Safe Fallbacks**: All API-driven UI includes a `MOCK_DATA` fallback to maintain a functional UI if the backend is unavailable.
 
-## Environment Configuration
+### 3. Feature Capabilities
+*   **Admin Dashboard**:
+    *   Real-time analytics using **Recharts**.
+    *   Candidate Management table with filtering by Gender, Department, and Skill.
+    *   Stat Cards derived from API summary counters.
+*   **Candidate Dashboard**:
+    *   Dynamic skill loading from `GET /skills`.
+    *   Recursive `SkillModal` for technology and proficiency level selection.
+    *   Visual pulse indicators for assessment readiness.
+*   **Coding Assessment (Alpha)**:
+    *   Split-pane layout separating "Problem Description" from "Code Editor".
+    *   Mock proctoring logic and timed evaluation status.
 
-Create a `.env.local` file in the root directory:
+---
+
+## 🛠️ Environment Setup
+
+Create `.env.local` in the `frontend` root:
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-## Getting Started
+---
 
-1.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
-2.  **Run development server**:
-    ```bash
-    npm run dev
-    ```
+## 🏃 Getting Started
 
-## Development Patterns
-- **Styles**: Mix of Tailwind CSS (v4) and inline React styles for layout precision.
-- **Icons**: Sourced from `lucide-react`.
-- **API**: Always use `axiosInstance`.
+```bash
+# 1. Install
+npm install
+
+# 2. Run Dev
+npm run dev
+```
+
+## 📜 Development Rules
+1. **API**: Never call `axios` or `fetch` in components; use services in `features/<module>/service.ts`.
+2. **State**: Prefer `local state` for UI toggles, and `Zustand` for global user session. Use `React Query` for all server data.
+3. **Styles**: Use Tailwind v4 primary classes. Maintain the **Indium Orange** (`#f97316`) theme consistency.

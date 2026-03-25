@@ -37,7 +37,7 @@ def get_max_attempts() -> int:
 @router.get("/skills", response_model=list[SkillResponse])
 def list_skills(
     db: Session = Depends(get_db),
-    _: User = Depends(require_candidate),
+    # _: User = Depends(require_candidate),
 ) -> list[SkillResponse]:
     skills = db.scalars(select(Skill).order_by(Skill.name.asc())).all()
     return [
