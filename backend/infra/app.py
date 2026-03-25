@@ -4,5 +4,5 @@ import aws_cdk as cdk
 from cdk_stack import CodingPlatformStack
 
 app = cdk.App()
-CodingPlatformStack(app, "CodingPlatformStack")
+CodingPlatformStack(app, "CodingPlatformStackV2")
 app.synth()

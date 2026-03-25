@@ -24,6 +24,7 @@ from aws_cdk import (
     aws_apigatewayv2_integrations as apigwv2_integrations,
     aws_iam as iam,
     aws_ecs as ecs,
+    aws_efs as efs,
     aws_elasticloadbalancingv2 as elbv2,
 )
 from constructs import Construct
@@ -177,42 +178,6 @@ class CodingPlatformStack(Stack):
         # -----------------------------------------------------------
         # ECS Fargate for self-hosted Judge0 CE (internal)
         # -----------------------------------------------------------
-        judge0_cluster = ecs.Cluster(
-            self,
-            "Judge0Cluster",
-            vpc=vpc,
-            cluster_name="judge0-cluster",
-        )
-
-        judge0_task_execution_role = iam.Role(
-            self,
-            "Judge0TaskExecutionRole",
-            assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "service-role/AmazonECSTaskExecutionRolePolicy"
-                )
-            ],
-            description="Execution role for Judge0 Fargate tasks",
-        )
-
-        judge0_task_definition = ecs.FargateTaskDefinition(
-            self,
-            "Judge0TaskDefinition",
-            cpu=1024,
-            memory_limit_mib=2048,
-            execution_role=judge0_task_execution_role,
-        )
-
-        judge0_container = judge0_task_definition.add_container(
-            "Judge0Container",
-            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
-            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0"),
-        )
-        judge0_container.add_port_mappings(
-            ecs.PortMapping(container_port=2358, protocol=ecs.Protocol.TCP)
-        )
-
         judge0_alb_sg = ec2.SecurityGroup(
             self,
             "Judge0AlbSG",
@@ -243,6 +208,248 @@ class CodingPlatformStack(Stack):
             connection=ec2.Port.tcp(2358),
             description="Allow internal ALB to reach Judge0 tasks",
         )
+
+        judge0_efs_sg = ec2.SecurityGroup(
+            self,
+            "Judge0EfsSG",
+            vpc=vpc,
+            description="Security group for Judge0 EFS",
+            allow_all_outbound=True,
+        )
+        judge0_efs_sg.add_ingress_rule(
+            peer=judge0_tasks_sg,
+            connection=ec2.Port.tcp(2049),
+            description="Allow NFS from Judge0 ECS tasks",
+        )
+
+        judge0_efs = efs.FileSystem(
+            self,
+            "Judge0Efs",
+            vpc=vpc,
+            encrypted=True,
+            security_group=judge0_efs_sg,
+            vpc_subnets=ec2.SubnetSelection(
+                subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS,
+            ),
+            removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        postgres_access_point = efs.AccessPoint(
+            self,
+            "Judge0PostgresAccessPoint",
+            file_system=judge0_efs,
+            path="/judge0-postgres",
+            create_acl=efs.Acl(
+                owner_gid="999",
+                owner_uid="999",
+                permissions="750",
+            ),
+            posix_user=efs.PosixUser(uid="999", gid="999"),
+        )
+
+        judge0_postgres_password_secret = secretsmanager.Secret(
+            self,
+            "Judge0PostgresPasswordSecret",
+            secret_name="coding-platform/judge0/postgres-password",
+            generate_secret_string=secretsmanager.SecretStringGenerator(
+                secret_string_template='{"username":"judge0"}',
+                generate_string_key="password",
+                exclude_punctuation=True,
+                include_space=False,
+                password_length=30,
+            ),
+        )
+
+        judge0_redis_password_secret = secretsmanager.Secret(
+            self,
+            "Judge0RedisPasswordSecret",
+            secret_name="coding-platform/judge0/redis-password",
+            generate_secret_string=secretsmanager.SecretStringGenerator(
+                secret_string_template='{"username":"judge0-redis"}',
+                generate_string_key="password",
+                exclude_punctuation=True,
+                include_space=False,
+                password_length=30,
+            ),
+        )
+
+        judge0_cluster = ecs.Cluster(
+            self,
+            "Judge0Cluster",
+            vpc=vpc,
+            cluster_name="judge0-cluster",
+        )
+
+        judge0_task_execution_role = iam.Role(
+            self,
+            "Judge0TaskExecutionRole",
+            assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+            managed_policies=[
+                iam.ManagedPolicy.from_aws_managed_policy_name(
+                    "service-role/AmazonECSTaskExecutionRolePolicy"
+                )
+            ],
+            description="Execution role for Judge0 Fargate tasks",
+        )
+
+        judge0_task_role = iam.Role(
+            self,
+            "Judge0TaskRole",
+            assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+            description="Task role for Judge0 containers",
+        )
+
+        judge0_task_role.add_to_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "elasticfilesystem:ClientMount",
+                    "elasticfilesystem:ClientWrite",
+                    "elasticfilesystem:ClientRootAccess",
+                ],
+                resources=[
+                    judge0_efs.file_system_arn,
+                    postgres_access_point.access_point_arn,
+                ],
+            )
+        )
+
+        judge0_postgres_password_secret.grant_read(judge0_task_execution_role)
+        judge0_postgres_password_secret.grant_read(judge0_task_role)
+        judge0_redis_password_secret.grant_read(judge0_task_execution_role)
+        judge0_redis_password_secret.grant_read(judge0_task_role)
+
+        judge0_task_definition = ecs.FargateTaskDefinition(
+            self,
+            "Judge0TaskDefinition",
+            cpu=1024,
+            memory_limit_mib=2048,
+            execution_role=judge0_task_execution_role,
+            task_role=judge0_task_role,
+        )
+
+        judge0_task_definition.add_volume(
+            name="judge0-efs-postgres",
+            efs_volume_configuration=ecs.EfsVolumeConfiguration(
+                file_system_id=judge0_efs.file_system_id,
+                transit_encryption="ENABLED",
+                authorization_config=ecs.AuthorizationConfig(
+                    access_point_id=postgres_access_point.access_point_id,
+                    iam="ENABLED",
+                ),
+            ),
+        )
+
+        judge0_postgres_container = judge0_task_definition.add_container(
+            "judge0-postgres",
+            image=ecs.ContainerImage.from_registry("postgres:16"),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-postgres"),
+            environment={
+                "POSTGRES_USER": "judge0",
+                "POSTGRES_DB": "judge0",
+            },
+            secrets={
+                "POSTGRES_PASSWORD": ecs.Secret.from_secrets_manager(
+                    judge0_postgres_password_secret,
+                    field="password",
+                ),
+            },
+            health_check=ecs.HealthCheck(
+                command=["CMD-SHELL", "pg_isready -U judge0 -d judge0"],
+                interval=Duration.seconds(10),
+                timeout=Duration.seconds(5),
+                start_period=Duration.seconds(60),
+                retries=5,
+            ),
+        )
+        judge0_postgres_container.add_mount_points(
+            ecs.MountPoint(
+                source_volume="judge0-efs-postgres",
+                container_path="/var/lib/postgresql/data",
+                read_only=False,
+            )
+        )
+
+        judge0_redis_container = judge0_task_definition.add_container(
+            "judge0-redis",
+            image=ecs.ContainerImage.from_registry("redis:7"),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-redis"),
+            command=["sh", "-c", 'exec redis-server --requirepass "$REDIS_PASSWORD"'],
+            secrets={
+                "REDIS_PASSWORD": ecs.Secret.from_secrets_manager(
+                    judge0_redis_password_secret,
+                    field="password",
+                ),
+            },
+            health_check=ecs.HealthCheck(
+                command=["CMD-SHELL", 'redis-cli -a "$REDIS_PASSWORD" ping'],
+                interval=Duration.seconds(10),
+                timeout=Duration.seconds(5),
+                start_period=Duration.seconds(30),
+                retries=5,
+            ),
+        )
+
+        judge0_common_env = {
+            "POSTGRES_HOST": "127.0.0.1",
+            "POSTGRES_USER": "judge0",
+            "POSTGRES_DB": "judge0",
+            "REDIS_HOST": "127.0.0.1",
+            "RAILS_ENV": "production",
+            "JUDGE0_API_URL": "http://127.0.0.1:2358",
+        }
+        judge0_common_secrets = {
+            "POSTGRES_PASSWORD": ecs.Secret.from_secrets_manager(
+                judge0_postgres_password_secret,
+                field="password",
+            ),
+            "REDIS_PASSWORD": ecs.Secret.from_secrets_manager(
+                judge0_redis_password_secret,
+                field="password",
+            ),
+        }
+
+        judge0_server_container = judge0_task_definition.add_container(
+            "judge0-server",
+            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-server"),
+            environment=judge0_common_env,
+            secrets=judge0_common_secrets,
+        )
+        judge0_server_container.add_port_mappings(
+            ecs.PortMapping(container_port=2358, protocol=ecs.Protocol.TCP)
+        )
+        judge0_server_container.add_container_dependencies(
+            ecs.ContainerDependency(
+                container=judge0_postgres_container,
+                condition=ecs.ContainerDependencyCondition.HEALTHY,
+            ),
+            ecs.ContainerDependency(
+                container=judge0_redis_container,
+                condition=ecs.ContainerDependencyCondition.HEALTHY,
+            )
+        )
+
+        judge0_worker_container = judge0_task_definition.add_container(
+            "judge0-worker",
+            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-worker"),
+            command=["bash", "-lc", "bundle exec rake jobs:work"],
+            environment=judge0_common_env,
+            secrets=judge0_common_secrets,
+        )
+        judge0_worker_container.add_container_dependencies(
+            ecs.ContainerDependency(
+                container=judge0_postgres_container,
+                condition=ecs.ContainerDependencyCondition.HEALTHY,
+            ),
+            ecs.ContainerDependency(
+                container=judge0_redis_container,
+                condition=ecs.ContainerDependencyCondition.HEALTHY,
+            )
+        )
+
+        judge0_task_definition.node.add_dependency(judge0_efs)
+        judge0_task_definition.node.add_dependency(postgres_access_point)
 
         judge0_service = ecs.FargateService(
             self,
@@ -283,7 +490,7 @@ class CodingPlatformStack(Stack):
             protocol=elbv2.ApplicationProtocol.HTTP,
             targets=[
                 judge0_service.load_balancer_target(
-                    container_name="Judge0Container",
+                    container_name="judge0-server",
                     container_port=2358,
                 )
             ],
