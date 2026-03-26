@@ -6,10 +6,11 @@ type LoginResponse = {
   access_token: string;
   expires_in: number;
   user: {
-    user_id: number;
+    user_id: string;
     role: string;
     name: string;
     email: string;
+    department?: string | null;
   };
 };
 
@@ -29,10 +30,10 @@ export const loginWithCredentials = async (
   };
 
   const user: User = {
-    id: backendUser.user_id.toString(),
+    id: backendUser.user_id,
     name: backendUser.name,
     role: isValidRole(backendUser.role) ? backendUser.role : "candidate",
-    department: "N/A",
+    department: backendUser.department ?? "N/A",
     token: access_token,
   };
 
@@ -42,28 +43,7 @@ export const loginWithCredentials = async (
 };
 
 export const loginWithSSO = async (): Promise<User> => {
-  // --- TEMPORARY: REMOVE WHEN REAL SSO IS READY ---
-  // Simulate async SSO flow so UI/loading logic behaves like production.
-  await Promise.resolve();
-
-  // --- TEMPORARY: REMOVE WHEN REAL SSO IS READY ---
-  // Read role from localStorage for testing (defaults to "admin")
-  const storedRole = localStorage.getItem("test_role");
-  const role: UserRole = (storedRole === "admin" || storedRole === "candidate") 
-    ? storedRole 
-    : "admin";
-
-  const user: User = {
-    id: "1",
-    name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
-    role,
-    level: role === "candidate" ? "Beginner" : null,
-    department: role === "admin" ? "Engineering" : "Candidate Relations",
-    token: "dummy-sso-token-12345",
-  };
-
-  useUserStore.getState().setUser(user);
-  return user;
+  throw new Error("SSO is not configured on the backend.");
 };
 
 export const logout = async (): Promise<void> => {

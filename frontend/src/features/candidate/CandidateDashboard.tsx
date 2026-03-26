@@ -1,15 +1,18 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
-import SkillModal from "./SkillModal";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
-import PastAssessmentsScreen from "./PastAssessmentsScreen";
-import { getSkills, type Skill } from "./candidateService";
+import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
+import {
+  getSkills,
+  getUserProgress,
+  type ProgressLevel,
+  type Skill,
+} from "./candidateService";
 import { useStartSession } from "../assessment/hooks/useAssessment";
-import { MOCK_SKILLS, SKILL_CATEGORIES, LEVELS } from "./candidateConstants";
 
 const CANDIDATE_MENU = [
   { id: "dashboard", label: "Dashboard" },
@@ -17,29 +20,78 @@ const CANDIDATE_MENU = [
 ];
 
 type Screen = "home" | "confirmed" | "past_assessments";
+type BackendLevel = "beginner" | "intermediate_1" | "intermediate_2" | "specialist_1" | "specialist_2";
+
+type SkillWithProgress = Skill & {
+  levels: ProgressLevel[];
+};
+
+const LEVEL_META: Record<string, { label: string; desc: string; color: string }> = {
+  beginner: {
+    label: "Beginner",
+    desc: "Foundational concepts and basics",
+    color: "#22c55e",
+  },
+  intermediate_1: {
+    label: "Intermediate 1",
+    desc: "Core proficiency with common patterns",
+    color: "#3b82f6",
+  },
+  intermediate_2: {
+    label: "Intermediate 2",
+    desc: "Advanced problem solving and application",
+    color: "#8b5cf6",
+  },
+  specialist_1: {
+    label: "Specialist 1",
+    desc: "Expert-level depth and architecture",
+    color: "#f59e0b",
+  },
+  specialist_2: {
+    label: "Specialist 2",
+    desc: "Master-level execution and mentorship",
+    color: "#E8620A",
+  },
+};
 
 export default function CandidateDashboard() {
   const navigate = useNavigate();
   const user = useUserStore();
-  const [showModal, setShowModal] = useState(false);
-  const [confirmed, setConfirmed] = useState<{ skill: string; level: string } | null>(null);
-  const [confirmedIds, setConfirmedIds] = useState<{ skill_id: string; level: string } | null>(null);
+  const [confirmed, setConfirmed] = useState<{ skill: string; levelLabel: string } | null>(null);
+  const [confirmedIds, setConfirmedIds] = useState<{ skill_id: string; level: BackendLevel } | null>(null);
   const [screen, setScreen] = useState<Screen>("home");
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const { mutate: startSession, isPending: isStarting } = useStartSession();
 
-  const { data: apiSkills, isLoading, isError } = useQuery({
+  const {
+    data: apiSkills,
+    isLoading: isSkillsLoading,
+    isError: isSkillsError,
+  } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,
     staleTime: 1000 * 60 * 5,
   });
 
-  const skillsList =
-    !isLoading && !isError && apiSkills
-      ? apiSkills
-      : (MOCK_SKILLS.map((name, i) => ({ skill_id: `mock-${i}`, name, description: null, icon_url: null })) as Skill[]);
+  const {
+    data: progress,
+    isLoading: isProgressLoading,
+    isError: isProgressError,
+  } = useQuery({
+    queryKey: ["user-progress"],
+    queryFn: getUserProgress,
+    staleTime: 1000 * 60,
+  });
+
+  const skillsList: SkillWithProgress[] = useMemo(() => {
+    const progressBySkill = new Map((progress ?? []).map((item) => [item.skill_id, item.levels]));
+    return (apiSkills ?? []).map((skill) => ({
+      ...skill,
+      levels: progressBySkill.get(skill.skill_id) ?? [],
+    }));
+  }, [apiSkills, progress]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,16 +103,15 @@ export default function CandidateDashboard() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef]);
 
-  const handleConfirm = (skill: string, level: string, skill_id: string) => {
-    setConfirmed({ skill, level });
+  const handleConfirm = (skill: string, level: BackendLevel, levelLabel: string, skill_id: string) => {
+    setConfirmed({ skill, levelLabel });
     setConfirmedIds({ skill_id, level });
-    setShowModal(false);
     setScreen("confirmed");
   };
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   const handleBeginAssessment = () => {
@@ -130,16 +181,33 @@ export default function CandidateDashboard() {
 
         <main style={{
           flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
           padding: "40px 24px",
           overflowY: "auto",
         }}>
+          {(isSkillsLoading || isProgressLoading) && (
+            <div style={{ textAlign: "center", color: "#64748b", marginTop: 40 }}>Loading your skills...</div>
+          )}
+
+          {(isSkillsError || isProgressError) && (
+            <div style={{
+              margin: "0 auto",
+              maxWidth: 900,
+              padding: "16px 20px",
+              borderRadius: 12,
+              border: "1px solid #fecaca",
+              background: "#fff1f2",
+              color: "#b91c1c",
+              fontSize: 14,
+            }}>
+              Failed to load dashboard data from backend. Please try again.
+            </div>
+          )}
+
           {screen === "home" ? (
             <HomeScreen
               skillsList={skillsList}
               onStart={(data) => {
-                handleConfirm(data.skill, data.level, data.skill_id);
+                handleConfirm(data.skill, data.level, data.levelLabel, data.skill_id);
               }}
             />
           ) : screen === "past_assessments" ? (
@@ -155,15 +223,6 @@ export default function CandidateDashboard() {
             )
           )}
         </main>
-
-        {showModal && (
-          <SkillModal
-            skills={skillsList}
-            levels={LEVELS}
-            onClose={() => setShowModal(false)}
-            onConfirm={handleConfirm}
-          />
-        )}
       </div>
     </div>
   );
@@ -173,38 +232,32 @@ function HomeScreen({
   skillsList,
   onStart,
 }: {
-  skillsList: Skill[];
-  onStart: (data: { skill: string; level: string; skill_id: string }) => void;
+  skillsList: SkillWithProgress[];
+  onStart: (data: { skill: string; level: BackendLevel; levelLabel: string; skill_id: string }) => void;
 }) {
   const user = useUserStore();
-  const currentLevel = user?.level || "Beginner";
-
   const [search, setSearch] = useState("");
-  const [filterCategory, setFilterCategory] = useState("All");
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<BackendLevel | null>(null);
 
-  const allSkills = useMemo(() => {
-    return SKILL_CATEGORIES.flatMap(cat =>
-      cat.skills.map(skill => ({ skill, category: cat.name })),
-    );
-  }, []);
+  const filteredSkills = useMemo(
+    () => skillsList.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())),
+    [skillsList, search],
+  );
 
-  const filteredSkills = useMemo(() => {
-    return allSkills.filter(item => {
-      const matchesSearch = item.skill.toLowerCase().includes(search.toLowerCase());
-      const matchesCategory = filterCategory === "All" || item.category === filterCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [search, filterCategory, allSkills]);
+  const selectedSkill = useMemo(
+    () => skillsList.find((item) => item.skill_id === selectedSkillId) ?? null,
+    [skillsList, selectedSkillId],
+  );
 
   const handleStart = () => {
     if (!selectedSkill || !selectedLevel) return;
-    const matchedSkill = skillsList.find(skill => skill.name === selectedSkill);
+
     onStart({
-      skill: selectedSkill,
+      skill: selectedSkill.name,
       level: selectedLevel,
-      skill_id: matchedSkill?.skill_id ?? "",
+      levelLabel: LEVEL_META[selectedLevel]?.label ?? selectedLevel,
+      skill_id: selectedSkill.skill_id,
     });
   };
 
@@ -227,7 +280,7 @@ function HomeScreen({
       </div>
 
       <div style={{ marginBottom: "32px", background: "#fff", padding: "24px", borderRadius: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)", border: "1px solid #e2e8f0" }}>
-        <div style={{ display: "flex", gap: "16px", marginBottom: "24px", flexWrap: "wrap" }}>
+        <div style={{ marginBottom: "24px" }}>
           <div style={{ flex: 1, minWidth: "200px" }}>
             <input
               placeholder="Search skills..."
@@ -236,27 +289,17 @@ function HomeScreen({
               style={{ width: "100%", padding: "12px 16px", borderRadius: "10px", border: "1.5px solid #e2e8f0", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             />
           </div>
-          <div style={{ width: "200px" }}>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              style={{ width: "100%", padding: "12px 16px", borderRadius: "10px", border: "1.5px solid #e2e8f0", fontSize: "14px", outline: "none", boxSizing: "border-box", background: "#fff", cursor: "pointer" }}
-            >
-              <option value="All">All Categories</option>
-              {SKILL_CATEGORIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-            </select>
-          </div>
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          {filteredSkills.length === 0 && <div style={{ color: "#94a3b8", fontSize: "14px", width: "100%", textAlign: "center", padding: "20px 0" }}>No skills found matching your filters.</div>}
-          {filteredSkills.map(({ skill }) => {
-            const isSelected = selectedSkill === skill;
+          {filteredSkills.length === 0 && <div style={{ color: "#94a3b8", fontSize: "14px", width: "100%", textAlign: "center", padding: "20px 0" }}>No skills found.</div>}
+          {filteredSkills.map((skill) => {
+            const isSelected = selectedSkillId === skill.skill_id;
             return (
               <button
-                key={skill}
+                key={skill.skill_id}
                 onClick={() => {
-                  setSelectedSkill(skill);
+                  setSelectedSkillId(skill.skill_id);
                   setSelectedLevel(null);
                 }}
                 style={{
@@ -272,7 +315,7 @@ function HomeScreen({
                   boxShadow: isSelected ? "0 4px 12px rgba(249,115,22,0.25)" : "none",
                 }}
               >
-                {skill}
+                {skill.name}
               </button>
             );
           })}
@@ -290,40 +333,52 @@ function HomeScreen({
 
           <div style={{ marginBottom: "32px", background: "#fff", padding: "24px", borderRadius: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)", border: "1px solid #e2e8f0" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {LEVELS.map((lvl) => {
-                const isUnlocked = currentLevel === lvl.label;
-                const isSelected = selectedLevel === lvl.label;
+              {selectedSkill.levels.length === 0 && (
+                <div style={{ color: "#94a3b8", textAlign: "center", padding: "12px 0" }}>
+                  No level data available for this skill.
+                </div>
+              )}
+              {selectedSkill.levels.map((lvl) => {
+                const meta = LEVEL_META[lvl.level] ?? {
+                  label: lvl.label,
+                  desc: "",
+                  color: "#64748b",
+                };
+                const backendLevel = lvl.level as BackendLevel;
+                const isSelected = selectedLevel === backendLevel;
                 return (
                   <div
-                    key={lvl.id}
+                    key={lvl.level}
                     onClick={() => {
-                      if (isUnlocked) setSelectedLevel(lvl.label);
+                      if (lvl.unlocked) setSelectedLevel(backendLevel);
                     }}
                     style={{
                       display: "flex", alignItems: "center", padding: "16px 20px",
-                      borderRadius: "12px", border: isSelected ? `2px solid ${lvl.color}` : "1px solid #e2e8f0",
-                      background: isUnlocked ? (isSelected ? `${lvl.color}08` : "#fff") : "#f8fafc",
-                      cursor: isUnlocked ? "pointer" : "not-allowed",
-                      opacity: isUnlocked ? 1 : 0.6,
+                      borderRadius: "12px", border: isSelected ? `2px solid ${meta.color}` : "1px solid #e2e8f0",
+                      background: lvl.unlocked ? (isSelected ? `${meta.color}08` : "#fff") : "#f8fafc",
+                      cursor: lvl.unlocked ? "pointer" : "not-allowed",
+                      opacity: lvl.unlocked ? 1 : 0.6,
                       transition: "all 0.2s",
                     }}
                   >
-                    {!isUnlocked && (
+                    {!lvl.unlocked && (
                       <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", marginRight: 16, fontSize: 16 }}>🔒</div>
                     )}
-                    {isUnlocked && (
+                    {lvl.unlocked && (
                       <div style={{
                         width: 20, height: 20, borderRadius: "50%",
-                        border: isSelected ? `6px solid ${lvl.color}` : "2px solid #cbd5e1",
+                        border: isSelected ? `6px solid ${meta.color}` : "2px solid #cbd5e1",
                         background: "#fff", marginRight: 16, transition: "all 0.2s",
                       }} />
                     )}
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: isUnlocked ? lvl.color : "#64748b" }}>{lvl.label}</h3>
-                        {isUnlocked && <span style={{ padding: "2px 8px", background: "#fef3c7", color: "#d97706", fontSize: 10, fontWeight: 800, borderRadius: "99px", textTransform: "uppercase" }}>Current Tier</span>}
+                        <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: lvl.unlocked ? meta.color : "#64748b" }}>{meta.label}</h3>
+                        {lvl.cleared && <span style={{ padding: "2px 8px", background: "#dcfce7", color: "#15803d", fontSize: 10, fontWeight: 800, borderRadius: "99px", textTransform: "uppercase" }}>Cleared</span>}
                       </div>
-                      <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>{lvl.desc}</p>
+                      <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#64748b" }}>
+                        {meta.desc || ""} Attempts left: {lvl.attempts_remaining}
+                      </p>
                     </div>
                   </div>
                 );
@@ -362,7 +417,7 @@ function ConfirmedScreen({
   onBegin,
   isStarting,
 }: {
-  confirmed: { skill: string; level: string };
+  confirmed: { skill: string; levelLabel: string };
   onChangeSkill: () => void;
   onBegin: () => void;
   isStarting: boolean;
@@ -405,7 +460,7 @@ function ConfirmedScreen({
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px" }}>
             <span style={{ fontSize: "10px", color: "#999", fontWeight: 600, letterSpacing: "0.8px" }}>LEVEL</span>
             <span style={{ fontSize: "16px", fontWeight: 800, color: "#111", marginTop: "4px" }}>
-              {confirmed.level}
+              {confirmed.levelLabel}
             </span>
           </div>
         </div>

@@ -1,3 +1,5 @@
+import axiosInstance from "../../api/axiosInstance";
+
 import type { CSSProperties } from "react";
 
 export type SkillTag = "fe" | "be" | "db" | "qa" | "pm";
@@ -23,6 +25,27 @@ export type DashboardStats = {
   completed: number;
   terminated: number;
   pendingReview: number;
+};
+
+export type AdminCandidate = {
+  user_id: string;
+  name: string;
+  gender: string;
+  dept: string;
+  skill: string;
+  score: number;
+  status: "Pass" | "Fail" | "Pending";
+};
+
+export type AdminCredential = {
+  id: string;
+  employeeId: string;
+  name: string;
+  department: string;
+  expIndium: number;
+  expOverall: number;
+  verifiedSkills: string[];
+  status: "Active" | "Inactive";
 };
 
 export const SKILLS: Skill[] = [
@@ -84,16 +107,16 @@ export const STAT_CARDS: StatCard[] = [
 ];
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {
-  // --- TEMPORARY: REMOVE WHEN BACKEND IS READY ---
-  return {
-    totalEmployees: 0,
-    totalAssessments: 0,
-    inProgress: 0,
-    completed: 0,
-    terminated: 0,
-    pendingReview: 0,
-  };
-  // --- REPLACE WITH THIS WHEN BACKEND IS READY ---
-  // const response = await axiosInstance.get<DashboardStats>("/admin/stats");
-  // return response.data;
+  const response = await axiosInstance.get<DashboardStats>("/admin/stats");
+  return response.data;
+};
+
+export const getAdminCandidates = async (): Promise<AdminCandidate[]> => {
+  const response = await axiosInstance.get<{ candidates: AdminCandidate[] }>("/admin/candidates");
+  return response.data.candidates;
+};
+
+export const getAdminCredentials = async (): Promise<AdminCredential[]> => {
+  const response = await axiosInstance.get<{ credentials: AdminCredential[] }>("/admin/credentials");
+  return response.data.credentials;
 };

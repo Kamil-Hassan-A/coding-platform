@@ -29,5 +29,13 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> LoginResponse
     return LoginResponse(
         access_token=token,
         expires_in=expires_in,
-        user=LoginUser(user_id=user.id, role=user.role, name=user.name, email=user.email),
+        user=LoginUser(
+            user_id=user.id,
+            role=user.role,
+            name=user.name,
+            email=user.email,
+            employee_id=user.employee_id,
+            gender=user.gender,
+            department=user.department,
+        ),
     )
