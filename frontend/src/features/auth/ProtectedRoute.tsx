@@ -12,11 +12,11 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const role = useUserStore((state) => state.role);
 
   if (!token) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && (!role || !allowedRoles.includes(role))) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;

@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 
 import { logout } from '../auth/authService';
 import Sidebar from '../../components/layout/Sidebar';
+import CredentialsPage from './CredentialsPage';
 import {
   getAdminCandidates,
   getDashboardStats,
@@ -70,7 +71,7 @@ function ActiveTag({ label }: { label: string }) {
 }
 
 export default function AdminDashboard() {
-  const [page, setPage] = useState<'dashboard' | 'candidates'>('dashboard');
+  const [page, setPage] = useState<'dashboard' | 'candidates' | 'credentials'>('dashboard');
   const [showMenu, setShowMenu] = useState(false);
   const [dashSkill, setDashSkill] = useState('');
   const [filterGender, setFilterGender] = useState('All');
@@ -89,12 +90,12 @@ export default function AdminDashboard() {
     staleTime: 1000 * 60,
   });
 
-  const SKILLS = useMemo(
+  const skills = useMemo(
     () => Array.from(new Set(candidateRows.map((c) => c.skill).filter((skill) => skill && skill !== 'Not Attempted'))).sort(),
     [candidateRows],
   );
 
-  const DEPARTMENTS = useMemo(
+  const departments = useMemo(
     () => ['All', ...Array.from(new Set(candidateRows.map((c) => c.dept))).sort()],
     [candidateRows],
   );
@@ -151,6 +152,7 @@ export default function AdminDashboard() {
   const NAV = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'candidates', label: 'Candidates' },
+    { id: 'credentials', label: 'Credentials' },
   ];
 
   return (
@@ -158,12 +160,14 @@ export default function AdminDashboard() {
       <Sidebar
         items={NAV}
         active={page}
-        onChange={(id) => setPage(id as 'dashboard' | 'candidates')}
+        onChange={(id) => setPage(id as 'dashboard' | 'candidates' | 'credentials')}
       />
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <header style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '0 28px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: C.textMuted }}>{page === 'dashboard' ? 'Dashboard' : 'Candidates'}</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: C.textMuted }}>
+            {page === 'credentials' ? 'Credentials' : page === 'dashboard' ? 'Dashboard' : 'Candidates'}
+          </span>
           <div style={{ position: 'relative' }}>
             <div
               onClick={() => setShowMenu((prev) => !prev)}
@@ -211,14 +215,14 @@ export default function AdminDashboard() {
               <div style={{ marginBottom: 22, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
                 <div>
                   <div style={{ fontSize: 10, fontWeight: 700, color: C.textLight, letterSpacing: 1.2, marginBottom: 8, textTransform: 'uppercase' }}>Filter by Skill</div>
-                  <select value={dashSkill} onChange={(e) => setDashSkill(e.target.value)} style={dropdownStyle(dashSkill !== '') }>
+                  <select value={dashSkill} onChange={(e) => setDashSkill(e.target.value)} style={dropdownStyle(dashSkill !== '')}>
                     <option value=''>- All Skills -</option>
-                    {SKILLS.map((s) => <option key={s} value={s}>{s}</option>)}
+                    {skills.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 {dashSkill && (
                   <button onClick={() => setDashSkill('')} style={{ padding: '9px 14px', fontSize: 12, color: C.red, background: C.redBg, border: 'none', cursor: 'pointer', fontWeight: 700, borderRadius: 8 }}>
-                    ✕ Clear
+                    Clear
                   </button>
                 )}
               </div>
@@ -304,7 +308,7 @@ export default function AdminDashboard() {
                   <div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: C.textLight, letterSpacing: 1.2, marginBottom: 8, textTransform: 'uppercase' }}>Department</div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      {DEPARTMENTS.map((d) => (
+                      {departments.map((d) => (
                         <FilterBtn key={d} label={d} active={filterDept === d} onClick={() => { setFilterDept(d); setFilterSkill(''); }} />
                       ))}
                     </div>
@@ -314,7 +318,7 @@ export default function AdminDashboard() {
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
                   <div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: C.textLight, letterSpacing: 1.2, marginBottom: 8, textTransform: 'uppercase' }}>Skill</div>
-                    <select value={filterSkill} onChange={(e) => setFilterSkill(e.target.value)} style={dropdownStyle(filterSkill !== '') }>
+                    <select value={filterSkill} onChange={(e) => setFilterSkill(e.target.value)} style={dropdownStyle(filterSkill !== '')}>
                       <option value=''>- All Skills -</option>
                       {availableSkills.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
@@ -394,8 +398,10 @@ export default function AdminDashboard() {
               </div>
             </>
           )}
+
+          {page === 'credentials' && <CredentialsPage />}
         </div>
       </main>
     </div>
-  )
+  );
 }
