@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { logout } from "../auth/authService"
 import Sidebar from "../../components/layout/Sidebar"
+import CredentialsPage from "./CredentialsPage"
 
 const C = {
   orange:      '#f97316',
@@ -109,7 +110,7 @@ function ActiveTag({ label }: { label: string }) {
 }
 
 export default function AdminDashboard() {
-  const [page, setPage] = useState<'dashboard' | 'candidates'>('dashboard')
+  const [page, setPage] = useState<'dashboard' | 'candidates' | 'credentials'>('dashboard')
   const [showMenu, setShowMenu] = useState(false)
   const [dashSkill, setDashSkill] = useState('')
   const [filterGender, setFilterGender] = useState('All')
@@ -142,6 +143,7 @@ export default function AdminDashboard() {
   const NAV = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'candidates', label: 'Candidates' },
+    { id: 'credentials', label: 'Credentials' },
   ]
 
   return (
@@ -149,13 +151,13 @@ export default function AdminDashboard() {
       <Sidebar 
         items={NAV} 
         active={page} 
-        onChange={(id) => setPage(id as 'dashboard' | 'candidates')} 
+        onChange={(id) => setPage(id as any)} 
       />
 
       {/* MAIN */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <header style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '0 28px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: C.textMuted }}>{page === 'dashboard' ? 'Dashboard' : 'Candidates'}</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: C.textMuted }}>{page.charAt(0).toUpperCase() + page.slice(1)}</span>
           <div style={{ position: 'relative' }}>
             <div
               onClick={() => setShowMenu(prev => !prev)}
@@ -401,6 +403,11 @@ export default function AdminDashboard() {
                 </table>
               </div>
             </>
+          )}
+
+          {/* ── CREDENTIALS ── */}
+          {page === 'credentials' && (
+            <CredentialsPage />
           )}
         </div>
       </main>

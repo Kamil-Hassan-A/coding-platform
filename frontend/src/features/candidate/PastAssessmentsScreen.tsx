@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { SKILL_CATEGORIES, LEVELS } from "./candidateConstants";
+import { SKILL_CATEGORIES, LEVELS } from "./CandidateDashboard";
 import { Eye, X } from "lucide-react";
 
 interface TopicBreakdown {

@@ -1,35 +1,26 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import RoleSelection from "../features/auth/RoleSelection";
 import Login from "../features/auth/Login";
 import ProtectedRoute from "../features/auth/ProtectedRoute";
 import AdminDashboard from "../features/admin/AdminDashboard";
-import SkillDetail from "../features/admin/SkillDetail";
-import CredentialsPage from "../features/admin/CredentialsPage";
 import CandidateDashboard from "../features/candidate/CandidateDashboard";
 import AssessmentPage from "../features/assessment/AssessmentPage";
-import PastScores from "../features/assessment/PastScores";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<RoleSelection />} />
       <Route path="/auth/login" element={<Login />} />
-      <Route path="/assessment" element={<AssessmentPage />} />
 
       <Route element={<ProtectedRoute allowedRoles={["candidate"]} />}>
-        <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
-        <Route path="/candidate/assessment" element={<AssessmentPage />} />
-        <Route path="/candidate/scores" element={<PastScores />} />
+        <Route path="/dashboard" element={<CandidateDashboard />} />
+        <Route path="/assessment" element={<AssessmentPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/credentials" element={<CredentialsPage />} />
-        <Route path="/admin/skills/:id" element={<SkillDetail />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
 };

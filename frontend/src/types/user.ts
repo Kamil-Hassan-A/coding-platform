@@ -10,3 +10,4 @@ export type User = {
   token: string | null;
   department: string | null;
 };
+

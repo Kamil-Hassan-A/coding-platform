@@ -12,11 +12,6 @@ export default function RoleSelection() {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState<"candidate" | "admin" | null>(null);
 
-  const handleEnter = (role: "candidate" | "admin") => {
-    localStorage.setItem("test_role", role);
-    navigate("/auth/login");
-  };
-
   return (
     <div style={styles.root}>
       {/* Ambient glow blobs */}
@@ -52,7 +47,10 @@ export default function RoleSelection() {
             }}
             onMouseEnter={() => setHovered("candidate")}
             onMouseLeave={() => setHovered(null)}
-            onClick={() => void handleEnter("candidate")}
+            onClick={() => {
+              localStorage.setItem("test_role", "candidate");
+              navigate("/login");
+            }}
           >
             <div
               style={{
@@ -113,7 +111,10 @@ export default function RoleSelection() {
             }}
             onMouseEnter={() => setHovered("admin")}
             onMouseLeave={() => setHovered(null)}
-            onClick={() => void handleEnter("admin")}
+            onClick={() => {
+              localStorage.setItem("test_role", "admin");
+              navigate("/login");
+            }}
           >
             <div
               style={{
