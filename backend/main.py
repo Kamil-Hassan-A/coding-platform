@@ -8,6 +8,7 @@ from routes.auth import router as auth_router
 from routes.sessions import router as sessions_router
 from routes.skills import router as skills_router
 from routes.submissions import router as submissions_router
+from routes.system import router as system_router
 
 app = FastAPI(
     title="Coding Assessment Platform API",
@@ -39,6 +40,7 @@ app.include_router(skills_router)
 app.include_router(sessions_router)
 app.include_router(submissions_router)
 app.include_router(admin_router)
+app.include_router(system_router)
 
 
 # ---- Mangum handler for AWS Lambda ----
