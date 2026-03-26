@@ -14,7 +14,7 @@ export default function RoleSelection() {
 
   const handleEnter = (role: "candidate" | "admin") => {
     localStorage.setItem("test_role", role);
-    navigate("/auth/login");
+    navigate("/login");
   };
 
   return (
