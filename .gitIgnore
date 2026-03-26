@@ -4,6 +4,8 @@ infra/venv
 */
 !infra/
 !infra/**
+!routes/
+!scripts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

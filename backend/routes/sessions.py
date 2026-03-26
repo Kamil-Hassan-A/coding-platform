@@ -98,7 +98,7 @@ def score_submission(
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     except (requests.RequestException, TimeoutError, RuntimeError) as exc:
-        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Judge0 execution failed") from exc
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Judge0 execution failed: {str(exc)}") from exc
 
     score = int(execution_result.get("score", 0))
     passed_tests = int(execution_result.get("passed_tests", 0))

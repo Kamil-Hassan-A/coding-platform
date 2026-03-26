@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+import os
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -6,8 +8,26 @@ from database import get_db
 from dependencies import require_admin
 from models import AssessmentSession, SessionStatus, User, UserRole
 from schemas import AdminStatsResponse
+from scripts.seed import run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+@router.post("/seed")
+def seed_database(
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+) -> dict[str, str]:
+    admin_seed_key = os.getenv("ADMIN_SEED_KEY")
+    if not x_api_key or x_api_key != admin_seed_key:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    try:
+        run_seed()
+        return {"message": "Database seeded successfully"}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Failed to seed database") from exc
 
 
 @router.get("/stats", response_model=AdminStatsResponse)
@@ -52,3 +72,4 @@ def get_admin_stats(
         terminated=int(terminated),
         pendingReview=pending_review,
     )
+
