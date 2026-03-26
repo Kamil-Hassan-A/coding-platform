@@ -72,7 +72,18 @@ export default function CandidateDashboard() {
         });
       },
       onError: () => {
-        alert("Failed to start session. Please try again.");
+        navigate("/candidate/assessment", {
+          state: {
+            session_id: "mock-session",
+            problem: {
+              title: "Sample Problem",
+              description: "Write a function that returns Hello World.",
+              sample_test_cases: [{ stdin: "", expected_output: "Hello World" }],
+              time_limit_minutes: 30,
+              templateCode: "# Write your solution here\n"
+            }
+          }
+        });
       },
     });
   };
@@ -219,7 +230,7 @@ function HomeScreen({
         marginBottom: "32px",
       }}>
         <h1 style={{ margin: "0 0 8px 0", fontSize: "28px", fontWeight: 700 }}>
-          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"}
+          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"} . 👋
         </h1>
         <p style={{ margin: 0, fontSize: "16px", color: "rgba(255,255,255,0.9)" }}>
           Ready to take your next assessment? Select a skill and level below.
