@@ -65,5 +65,6 @@ export interface SubmissionResultsResponse {
 export interface ActiveSession {
   session_id: string;
   problem: SessionProblemPayload;
-  draft_code?: string;
+  last_draft_code?: string;
+  last_draft_lang?: string;
 }

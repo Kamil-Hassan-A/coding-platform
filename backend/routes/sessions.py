@@ -45,10 +45,6 @@ LEVEL_ORDER = [
 ]
 
 
-def now_utc() -> datetime:
-    return datetime.now(timezone.utc)
-
-
 def get_max_attempts() -> int:
     try:
         return int(os.getenv("MAX_ATTEMPTS_PER_LEVEL", "5"))
@@ -107,8 +103,9 @@ def score_submission(
     default_status = SubmissionStatus.CLEARED if score >= get_pass_threshold() else SubmissionStatus.FAILED
     submission_status = forced_status or default_status
 
-    current_time = now_utc()
-    time_taken_seconds = max(0, int((current_time - session_obj.started_at).total_seconds()))
+    current_time = datetime.now(timezone.utc)
+    started_at = session_obj.started_at.astimezone(timezone.utc) if session_obj.started_at.tzinfo else session_obj.started_at.replace(tzinfo=timezone.utc)
+    time_taken_seconds = max(0, int((current_time - started_at).total_seconds()))
 
     submission = Submission(
         session_id=session_obj.id,
@@ -224,7 +221,7 @@ def start_session(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
 
     selected_problem = random.choice(problems)
-    started = now_utc()
+    started = datetime.now(timezone.utc)
     expires_at = started + timedelta(minutes=selected_problem.time_limit_minutes)
 
     session_obj = AssessmentSession(
@@ -268,17 +265,19 @@ def get_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionDetailResponse:
+
     session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    current_time = now_utc()
-    if session_obj.status == SessionStatus.ACTIVE and session_obj.expires_at <= current_time:
+    current_time = datetime.now(timezone.utc)
+    expires_at = session_obj.expires_at.astimezone(timezone.utc) if session_obj.expires_at.tzinfo else session_obj.expires_at.replace(tzinfo=timezone.utc)
+    if session_obj.status == SessionStatus.ACTIVE and expires_at <= current_time:
         session_obj.status = SessionStatus.TIMED_OUT
         db.commit()
 
-    seconds_remaining = max(0, int((session_obj.expires_at - current_time).total_seconds()))
+    seconds_remaining = max(0, int((expires_at - current_time).total_seconds()))
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
@@ -286,7 +285,7 @@ def get_session(
     return SessionDetailResponse(
         session_id=session_obj.id,
         status=session_obj.status,
-        expires_at=session_obj.expires_at,
+        expires_at=expires_at,
         seconds_remaining=seconds_remaining,
         problem=SessionProblemPayload(
             title=problem.title,
@@ -316,7 +315,7 @@ def save_draft(
 
     session_obj.last_draft_code = payload.code
     session_obj.last_draft_lang = payload.language
-    session_obj.draft_saved_at = now_utc()
+    session_obj.draft_saved_at = datetime.now(timezone.utc)
     db.commit()
 
     return SessionDraftResponse(saved_at=session_obj.draft_saved_at)
@@ -337,8 +336,9 @@ def submit_session(
     if session_obj.status in (SessionStatus.SUBMITTED, SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already closed")
 
-    current_time = now_utc()
-    if session_obj.expires_at <= current_time:
+    current_time = datetime.now(timezone.utc)
+    expires_at = session_obj.expires_at.astimezone(timezone.utc) if session_obj.expires_at.tzinfo else session_obj.expires_at.replace(tzinfo=timezone.utc)
+    if expires_at <= current_time:
         code_to_submit = session_obj.last_draft_code or ""
         lang_to_submit = session_obj.last_draft_lang or payload.language
         try:

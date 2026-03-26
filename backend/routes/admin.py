@@ -6,8 +6,14 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from dependencies import require_admin
-from models import AssessmentSession, SessionStatus, User, UserRole
-from schemas import AdminStatsResponse
+from models import AssessmentSession, SessionStatus, Skill, Submission, SubmissionStatus, User, UserRole
+from schemas import (
+    AdminCandidateRow,
+    AdminCandidatesResponse,
+    AdminCredentialRow,
+    AdminCredentialsResponse,
+    AdminStatsResponse,
+)
 from scripts.seed import run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -73,3 +79,85 @@ def get_admin_stats(
         pendingReview=pending_review,
     )
 
+
+
+@router.get("/candidates", response_model=AdminCandidatesResponse)
+def get_admin_candidates(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+) -> AdminCandidatesResponse:
+    candidate_users = db.scalars(select(User).where(User.role == UserRole.CANDIDATE).order_by(User.created_at.desc())).all()
+
+    rows: list[AdminCandidateRow] = []
+    for candidate in candidate_users:
+        latest_submission = db.scalar(
+            select(Submission)
+            .where(Submission.user_id == candidate.id)
+            .order_by(Submission.submitted_at.desc())
+            .limit(1)
+        )
+
+        latest_skill_name: str | None = None
+        score = 0
+        status = "Pending"
+
+        if latest_submission is not None:
+            latest_skill = db.scalar(select(Skill).where(Skill.id == latest_submission.skill_id))
+            latest_skill_name = latest_skill.name if latest_skill else None
+            score = latest_submission.score
+            status = "Pass" if latest_submission.status == SubmissionStatus.CLEARED else "Fail"
+
+        rows.append(
+            AdminCandidateRow(
+                user_id=candidate.id,
+                name=candidate.name,
+                gender=candidate.gender or "Unknown",
+                dept=candidate.department or "N/A",
+                skill=latest_skill_name or "Not Attempted",
+                score=score,
+                status=status,
+            )
+        )
+
+    return AdminCandidatesResponse(candidates=rows)
+
+
+@router.get("/credentials", response_model=AdminCredentialsResponse)
+def get_admin_credentials(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+) -> AdminCredentialsResponse:
+    candidate_users = db.scalars(select(User).where(User.role == UserRole.CANDIDATE).order_by(User.created_at.desc())).all()
+
+    rows: list[AdminCredentialRow] = []
+    for candidate in candidate_users:
+        verified_skill_names = db.scalars(
+            select(func.distinct(Skill.name))
+            .join(Submission, Submission.skill_id == Skill.id)
+            .where(
+                Submission.user_id == candidate.id,
+                Submission.status == SubmissionStatus.CLEARED,
+            )
+        ).all()
+
+        has_active_session = db.scalar(
+            select(func.count(AssessmentSession.id)).where(
+                AssessmentSession.user_id == candidate.id,
+                AssessmentSession.status == SessionStatus.ACTIVE,
+            )
+        ) or 0
+
+        rows.append(
+            AdminCredentialRow(
+                id=candidate.id,
+                employeeId=candidate.employee_id or str(candidate.id),
+                name=candidate.name,
+                department=candidate.department or "N/A",
+                expIndium=max(0, candidate.exp_indium_years),
+                expOverall=max(0, candidate.exp_overall_years),
+                verifiedSkills=list(verified_skill_names),
+                status="Active" if has_active_session > 0 or len(verified_skill_names) > 0 else "Inactive",
+            )
+        )
+
+    return AdminCredentialsResponse(credentials=rows)

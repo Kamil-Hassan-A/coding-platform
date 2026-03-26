@@ -17,6 +17,9 @@ class LoginUser(BaseModel):
     role: UserRole
     name: str
     email: EmailStr
+    employee_id: str 
+    gender: str
+    department: str
 
 
 class LoginResponse(BaseModel):
@@ -140,3 +143,32 @@ class AdminStatsResponse(BaseModel):
     completed: int
     terminated: int
     pendingReview: int
+
+
+class AdminCandidateRow(BaseModel):
+    user_id: UUID
+    name: str
+    gender: str
+    dept: str
+    skill: str
+    score: int
+    status: str
+
+
+class AdminCandidatesResponse(BaseModel):
+    candidates: list[AdminCandidateRow]
+
+
+class AdminCredentialRow(BaseModel):
+    id: UUID
+    employeeId: str
+    name: str
+    department: str
+    expIndium: int
+    expOverall: int
+    verifiedSkills: list[str]
+    status: str
+
+
+class AdminCredentialsResponse(BaseModel):
+    credentials: list[AdminCredentialRow]

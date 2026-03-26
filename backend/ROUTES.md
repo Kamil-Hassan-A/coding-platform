@@ -14,6 +14,11 @@ This document describes the routes that are currently mounted by the FastAPI app
 - Public routes:
   - `GET /`
   - `GET /health`
+  - `GET /health/judge0`
+  - `GET /health/judge0/smoke`
+  - `GET /judge0/languages`
+  - `GET /judge0/language`
+  - `GET /judge0/docs`
   - `POST /auth/login`
 - Candidate-only routes:
   - `GET /skills`
@@ -55,6 +60,108 @@ Response:
 ```json
 {
   "status": "healthy"
+}
+```
+
+### GET /health/judge0
+
+Public Judge0 reachability probe (calls Judge0 `/languages`).
+
+Success response:
+
+```json
+{
+  "status": "ok",
+  "judge0_reachable": true,
+  "judge0_base_url": "http://judge0-host:2358",
+  "latency_ms": 42
+}
+```
+
+Failure response (`503`):
+
+```json
+{
+  "status": "down",
+  "judge0_reachable": false,
+  "judge0_base_url": "http://judge0-host:2358",
+  "error": "..."
+}
+```
+
+### GET /health/judge0/smoke
+
+Public end-to-end Judge0 execution check (runs a tiny Python snippet).
+
+Success response:
+
+```json
+{
+  "status": "ok",
+  "judge0_execution": true,
+  "judge0_base_url": "http://judge0-host:2358",
+  "latency_ms": 180,
+  "passed_tests": 1,
+  "total_tests": 1
+}
+```
+
+Failure response (`503`):
+
+```json
+{
+  "status": "down",
+  "judge0_execution": false,
+  "judge0_base_url": "http://judge0-host:2358",
+  "error": "..."
+}
+```
+
+### GET /judge0/languages (or /judge0/language)
+
+Public proxy route to fetch Judge0 language catalog.
+
+Success response:
+
+```json
+{
+  "status": "ok",
+  "judge0_base_url": "http://judge0-host:2358",
+  "latency_ms": 57,
+  "count": 90,
+  "languages": [
+    { "id": 71, "name": "Python (3.8.1)" }
+  ]
+}
+```
+
+Failure response (`503`):
+
+```json
+{
+  "status": "down",
+  "judge0_base_url": "http://judge0-host:2358",
+  "error": "..."
+}
+```
+
+### GET /judge0/docs
+
+Public discovery route that returns Judge0 docs URLs and checks commonly useful endpoints.
+
+Response:
+
+```json
+{
+  "status": "ok",
+  "judge0_base_url": "http://judge0-host:2358",
+  "latency_ms": 105,
+  "docs_url": "http://judge0-host:2358/docs",
+  "openapi_url": "http://judge0-host:2358/openapi.json",
+  "docs_reachable": true,
+  "openapi_reachable": true,
+  "available_endpoints": ["/languages", "/statuses", "/submissions"],
+  "common_useful_endpoints": ["/languages", "/statuses", "/submissions", "/config_info", "/system_info"]
 }
 ```
 
