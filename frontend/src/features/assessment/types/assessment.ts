@@ -38,6 +38,16 @@ export interface SessionStartResponse {
   problem: SessionProblemPayload;
 }
 
+export interface StartSessionPayload {
+  skill_id: string;
+  level: string;
+}
+
+export interface SubmitSessionPayload {
+  code: string;
+  language: string;
+}
+
 export interface SessionSubmitResponse {
   submission_id: string;
   session_id: string;

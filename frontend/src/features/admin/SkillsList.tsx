@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 import SkillCard from "./SkillCard";
-import { CATEGORIES, SKILLS, type SkillCategory } from "./dashboardService";
-
-type CategoryFilter = "All" | SkillCategory;
+import { CATEGORIES, SKILLS } from "./dashboardService";
+import type { CategoryFilter } from "./types/admin";
 
 const SkillsList = () => {
   const [active, setActive] = useState<CategoryFilter>("All");
@@ -11,32 +10,16 @@ const SkillsList = () => {
   const filtered = active === "All" ? SKILLS : SKILLS.filter((sk) => sk.category === active);
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: 12,
-        border: "1px solid #e2e8f0",
-        padding: 20,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 16,
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
+    <div className='rounded-xl border border-slate-200 bg-white p-5'>
+      <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
         <div>
-          <span style={{ fontSize: 15, fontWeight: 600, color: "#0d1117" }}>Available Skills</span>
-          <span style={{ fontSize: 12, color: "#94a3b8", marginLeft: 8 }}>
+          <span className='text-[15px] font-semibold text-[#0d1117]'>Available Skills</span>
+          <span className='ml-2 text-[12px] text-slate-400'>
             {filtered.length} of {SKILLS.length}
           </span>
         </div>
 
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div className='flex flex-wrap gap-2'>
           {CATEGORIES.map((cat) => {
             const isActive = active === cat;
             return (
@@ -44,27 +27,11 @@ const SkillsList = () => {
                 key={cat}
                 type="button"
                 onClick={() => setActive(cat)}
-                style={
+                className={`cursor-pointer rounded-[20px] px-3 py-1 text-[12px] ${
                   isActive
-                    ? {
-                        border: "1px solid #0d1117",
-                        background: "#0d1117",
-                        color: "#fff",
-                        padding: "4px 12px",
-                        borderRadius: 20,
-                        fontSize: 12,
-                        cursor: "pointer",
-                      }
-                    : {
-                        border: "1px solid #e2e8f0",
-                        background: "transparent",
-                        color: "#64748b",
-                        padding: "4px 12px",
-                        borderRadius: 20,
-                        fontSize: 12,
-                        cursor: "pointer",
-                      }
-                }
+                    ? 'border border-[#0d1117] bg-[#0d1117] text-white'
+                    : 'border border-slate-200 bg-transparent text-slate-500'
+                }`}
               >
                 {cat}
               </button>
@@ -73,14 +40,7 @@ const SkillsList = () => {
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-          gap: 12,
-          marginTop: 4,
-        }}
-      >
+      <div className='mt-1 grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]'>
         {filtered.map((skill) => (
           <SkillCard key={skill.id} skill={skill} />
         ))}

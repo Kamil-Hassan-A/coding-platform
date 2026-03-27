@@ -16,26 +16,26 @@ const SkillDetail = () => {
   const skill = skills.find((item) => item.skill_id === id);
 
   return (
-    <div style={{ padding: 24, background: "#fff", borderRadius: 12, border: "1px solid #e2e8f0" }}>
+    <div className='rounded-xl border border-slate-200 bg-white p-6'>
       <button 
         onClick={() => navigate(-1)}
-        style={{ marginBottom: 16, cursor: "pointer", background: "none", border: "none", color: "#f97316", fontWeight: 600 }}
+        className='mb-4 cursor-pointer border-none bg-transparent font-semibold text-admin-orange'
       >
         &larr; Back
       </button>
 
-      {isLoading && <p style={{ color: "#64748b" }}>Loading skill details...</p>}
-      {isError && <p style={{ color: "#b91c1c" }}>Failed to load skill details from backend.</p>}
+      {isLoading && <p className='text-slate-500'>Loading skill details...</p>}
+      {isError && <p className='text-red-700'>Failed to load skill details from backend.</p>}
 
       {!isLoading && !isError && !skill && (
-        <p style={{ color: "#64748b" }}>No skill found for ID: <strong>{id}</strong></p>
+        <p className='text-slate-500'>No skill found for ID: <strong>{id}</strong></p>
       )}
 
       {!isLoading && !isError && skill && (
         <>
-          <h2 style={{ marginTop: 0 }}>{skill.name}</h2>
-          <p style={{ color: "#334155" }}>{skill.description || "No description available."}</p>
-          <p style={{ fontSize: 13, color: "#64748b", marginBottom: 0 }}>
+          <h2 className='mt-0'>{skill.name}</h2>
+          <p className='text-slate-700'>{skill.description || "No description available."}</p>
+          <p className='mb-0 text-[13px] text-slate-500'>
             Skill ID: <strong>{skill.skill_id}</strong>
           </p>
         </>

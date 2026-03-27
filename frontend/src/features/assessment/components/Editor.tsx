@@ -1,4 +1,3 @@
-import React from "react";
 import Editor from "@monaco-editor/react";
 
 interface Props {
@@ -12,23 +11,14 @@ export default function CodeEditor({ code, onChange, language }: Props) {
   const monacoLanguage = language === "cpp" ? "cpp" : language;
 
   const loadingFallback = (
-    <div style={{
-      width: "100%",
-      height: "100%",
-      background: "#1e1e1e",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "#888",
-      fontSize: "14px",
-      fontFamily: "sans-serif"
-    }}>
-      Loading editor...
+    <div className='flex h-full w-full flex-col items-center justify-center bg-[#1e1e1e] font-sans'>
+      <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-admin-orange/20 border-t-admin-orange" />
+      <span className="text-[14px] font-medium text-slate-400">Initializing editor...</span>
     </div>
   );
 
   return (
-    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+    <div className='h-full w-full overflow-hidden bg-[#1e1e1e]'>
       <Editor
         height="100%"
         width="100%"
@@ -39,11 +29,43 @@ export default function CodeEditor({ code, onChange, language }: Props) {
         loading={loadingFallback}
         options={{
           fontSize: 14,
+          fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+          fontLigatures: true,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
+          padding: { top: 20, bottom: 20 },
           wordWrap: "on",
           lineNumbers: "on",
           automaticLayout: true,
+          cursorBlinking: "smooth",
+          cursorSmoothCaretAnimation: "on",
+          smoothScrolling: true,
+          formatOnPaste: true,
+          formatOnType: true,
+          renderLineHighlight: "all",
+          suggestOnTriggerCharacters: true,
+          acceptSuggestionOnEnter: "on",
+          tabCompletion: "on",
+          wordBasedSuggestions: "currentDocument",
+          snippetSuggestions: "inline",
+          autoClosingBrackets: "always",
+          autoClosingQuotes: "always",
+          autoIndent: "full",
+          matchBrackets: "always",
+          bracketPairColorization: { enabled: true },
+          guides: { bracketPairs: true, indentation: true },
+          suggest: {
+            showKeywords: true,
+            showSnippets: true,
+            showClasses: true,
+            showMethods: true,
+            showFunctions: true,
+            showVariables: true,
+          },
+          scrollbar: {
+            verticalScrollbarSize: 8,
+            horizontalScrollbarSize: 8,
+          },
         }}
       />
     </div>

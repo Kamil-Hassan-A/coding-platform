@@ -1,7 +1,4 @@
-type SSOButtonProps = {
-  onClick: () => void;
-  loading: boolean;
-};
+import type { SSOButtonProps } from './types/auth';
 
 const SSOButton = ({ onClick, loading }: SSOButtonProps) => {
   return (
@@ -9,22 +6,7 @@ const SSOButton = ({ onClick, loading }: SSOButtonProps) => {
       type="button"
       onClick={onClick}
       disabled={loading}
-      style={{
-        width: "100%",
-        background: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 6,
-        padding: 12,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-        fontSize: 14,
-        color: "#374151",
-        fontWeight: 500,
-        cursor: loading ? "not-allowed" : "pointer",
-        opacity: loading ? 0.6 : 1,
-      }}
+      className='flex w-full items-center justify-center gap-2.5 rounded-md border border-gray-200 bg-white p-3 text-[14px] font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-60'
     >
       <svg width="18" height="18" viewBox="0 0 21 21" fill="none">
         <rect x="1" y="1" width="9" height="9" fill="#f25022" />

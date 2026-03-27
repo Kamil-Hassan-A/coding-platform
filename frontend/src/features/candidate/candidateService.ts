@@ -1,26 +1,7 @@
 import axiosInstance from "../../api/axiosInstance";
+import type { Skill, SkillProgress } from "./types/candidate";
 
-export type Skill = {
-  skill_id: string;
-  name: string;
-  description: string | null;
-  icon_url: string | null;
-};
-
-export type ProgressLevel = {
-  level: string;
-  label: string;
-  unlocked: boolean;
-  cleared: boolean;
-  attempts_used: number;
-  attempts_remaining: number;
-};
-
-export type SkillProgress = {
-  skill_id: string;
-  skill_name: string;
-  levels: ProgressLevel[];
-};
+export type { ProgressLevel, Skill, SkillProgress } from "./types/candidate";
 
 export const getSkills = async (): Promise<Skill[]> => {
   const response = await axiosInstance.get<Skill[]>("/skills");

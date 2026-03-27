@@ -1,11 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import useUserStore from "../../stores/userStore";
-import type { UserRole } from "../../types/user";
-
-type ProtectedRouteProps = {
-  allowedRoles?: UserRole[];
-};
+import type { ProtectedRouteProps } from "./types/auth";
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const token = useUserStore((state) => state.token);

@@ -25,101 +25,132 @@ LEVEL_ORDER = [
     Level.SPECIALIST_2,
 ]
 
+LANGS = {
+    "python": {"id": 71, "name": "Python (3.8.1)", "monaco": "python"},
+    "javascript": {"id": 63, "name": "JavaScript (Node.js 12.14.0)", "monaco": "javascript"},
+    "typescript": {"id": 74, "name": "TypeScript (3.7.4)", "monaco": "typescript"},
+    "java": {"id": 62, "name": "Java (OpenJDK 13.0.1)", "monaco": "java"},
+    "cpp": {"id": 54, "name": "C++ (GCC 9.2.0)", "monaco": "cpp"},
+    "csharp": {"id": 51, "name": "C# (Mono 6.6.0.161)", "monaco": "csharp"},
+    "sql": {"id": 82, "name": "SQL (SQLite 3.27.2)", "monaco": "sql"},
+}
+
+GEN_LANGS = [LANGS["python"], LANGS["javascript"], LANGS["java"], LANGS["cpp"]]
+
 SKILL_SEEDS = [
     {
         "name": "Agile",
         "description": "Agile values, ceremonies, and delivery practices",
         "icon_url": None,
+        "allowed_languages": GEN_LANGS,
     },
     {
         "name": "HTML, CSS, JS",
         "description": "Frontend fundamentals using HTML, CSS, and JavaScript",
         "icon_url": None,
+        "allowed_languages": [LANGS["javascript"], LANGS["typescript"]],
     },
     {
         "name": "React JS",
         "description": "Building component-based user interfaces with React",
         "icon_url": None,
+        "allowed_languages": [LANGS["javascript"], LANGS["typescript"]],
     },
     {
         "name": "React JS with Redux",
         "description": "State-managed React applications using Redux",
         "icon_url": None,
+        "allowed_languages": [LANGS["javascript"], LANGS["typescript"]],
     },
     {
         "name": "TypeScript",
         "description": "Typed JavaScript development with TypeScript",
         "icon_url": None,
+        "allowed_languages": [LANGS["typescript"], LANGS["javascript"]],
     },
     {
         "name": "Next JS",
         "description": "Full-stack React applications with Next.js",
         "icon_url": None,
+        "allowed_languages": [LANGS["javascript"], LANGS["typescript"]],
     },
     {
         "name": "Angular",
         "description": "Web application development using Angular",
         "icon_url": None,
+        "allowed_languages": [LANGS["typescript"], LANGS["javascript"]],
     },
     {
         "name": "Python with Flask",
         "description": "Backend API development with Flask",
         "icon_url": None,
+        "allowed_languages": [LANGS["python"]],
     },
     {
         "name": "Python with Django",
         "description": "Backend and web application development with Django",
         "icon_url": None,
+        "allowed_languages": [LANGS["python"]],
     },
     {
         "name": "Python for Data Science",
         "description": "Data analysis and modeling workflows in Python",
         "icon_url": None,
+        "allowed_languages": [LANGS["python"], LANGS["sql"]],
     },
     {
         "name": "Java",
         "description": "Core Java programming and object-oriented design",
         "icon_url": None,
+        "allowed_languages": [LANGS["java"]],
     },
     {
         "name": "Java Springboot",
         "description": "Building Java backend services with Spring Boot",
         "icon_url": None,
+        "allowed_languages": [LANGS["java"]],
     },
     {
         "name": ".NET, C#",
         "description": "Application development with .NET and C#",
         "icon_url": None,
+        "allowed_languages": [LANGS["csharp"], LANGS["cpp"]],
     },
     {
         "name": ".NET, VB.NET",
         "description": "Application development with .NET and VB.NET",
         "icon_url": None,
+        "allowed_languages": [LANGS["csharp"], LANGS["cpp"]],
     },
     {
         "name": "SQL",
         "description": "Relational querying and data manipulation",
         "icon_url": None,
+        "allowed_languages": [LANGS["sql"]],
     },
     {
         "name": "MongoDB",
         "description": "NoSQL document modeling and querying with MongoDB",
         "icon_url": None,
+        "allowed_languages": [LANGS["javascript"], LANGS["python"]],
     },
     {
         "name": "PostgreSQL",
         "description": "Advanced SQL and relational database design in PostgreSQL",
         "icon_url": None,
+        "allowed_languages": [LANGS["sql"], LANGS["python"]],
     },
     {
         "name": "Java Selenium",
         "description": "UI automation testing using Selenium with Java",
         "icon_url": None,
+        "allowed_languages": [LANGS["java"]],
     },
     {
         "name": "Python Selenium",
         "description": "UI automation testing using Selenium with Python",
         "icon_url": None,
+        "allowed_languages": [LANGS["python"]],
     },
 ]
 
@@ -306,12 +337,14 @@ def get_or_create_user(
 def get_or_create_skill(db, payload: dict) -> tuple[Skill, bool]:
     skill = db.scalar(select(Skill).where(Skill.name == payload["name"]))
     if skill:
+        skill.allowed_languages = payload.get("allowed_languages", [])
         return skill, False
 
     skill = Skill(
         name=payload["name"],
         description=payload.get("description"),
         icon_url=payload.get("icon_url"),
+        allowed_languages=payload.get("allowed_languages", []),
     )
     db.add(skill)
     db.flush()

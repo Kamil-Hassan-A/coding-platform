@@ -29,6 +29,12 @@ class LoginResponse(BaseModel):
     user: LoginUser
 
 
+class LanguageResponse(BaseModel):
+    id: int
+    name: str
+    monaco: str
+
+
 class SkillResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -36,6 +42,7 @@ class SkillResponse(BaseModel):
     name: str
     description: str | None
     icon_url: str | None
+    allowed_languages: list[LanguageResponse]
 
 
 class LevelProgressItem(BaseModel):

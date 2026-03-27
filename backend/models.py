@@ -98,6 +98,7 @@ class Skill(Base):
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
     icon_url: Mapped[str | None] = mapped_column(String(500))
+    allowed_languages: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     problems: Mapped[list["Problem"]] = relationship(back_populates="skill", cascade="all, delete-orphan")

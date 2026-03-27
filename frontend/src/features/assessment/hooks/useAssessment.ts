@@ -4,9 +4,8 @@ import {
   submitSession,
   getSession,
   getSubmissionResults,
-  type StartSessionPayload,
-  type SubmitSessionPayload,
 } from "../services/assessmentService";
+import type { StartSessionPayload, SubmitSessionPayload } from "../types/assessment";
 
 export const useStartSession = () => {
   return useMutation({

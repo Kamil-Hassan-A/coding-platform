@@ -1,14 +1,10 @@
-import { type CSSProperties, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { getAdminCredentials, type AdminCredential } from "./dashboardService";
-
-const ORANGE = "#F97316";
+import { getAdminCredentials } from "./dashboardService";
+import type { SortKey, SortOrder } from "./types/admin";
 
 const DEPARTMENTS = ["All", "Engineering", "Data", "Design", "QA", "HR", "Sales", "Product"];
-
-type SortKey = keyof AdminCredential;
-type SortOrder = "asc" | "desc";
 
 export default function CredentialsPage() {
   const [empIdFilter, setEmpIdFilter] = useState("");
@@ -80,109 +76,166 @@ export default function CredentialsPage() {
   };
 
   const SortIcon = ({ colKey }: { colKey: SortKey }) => {
-    if (sortKey !== colKey) return <span style={{ color: "#d1d5db", marginLeft: 4 }}>↕</span>;
-    return <span style={{ color: ORANGE, marginLeft: 4 }}>{sortOrder === "asc" ? "↑" : "↓"}</span>;
+    if (sortKey !== colKey) return <span className='ml-1 text-gray-300'>↕</span>;
+    return <span className='ml-1 text-admin-orange'>{sortOrder === "asc" ? "↑" : "↓"}</span>;
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <div style={{ marginBottom: 4 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>
-          <span style={{ color: ORANGE }}>Credentials</span> Management
+    <div className='flex flex-col gap-5'>
+      <div className='mb-1'>
+        <h1 className='m-0 text-[26px] font-bold'>
+          <span className='text-admin-orange'>Credentials</span> Management
         </h1>
-        <p style={{ margin: "4px 0 0", color: "#6b7280", fontSize: 13 }}>
+        <p className='mt-1 text-[13px] text-admin-text-muted'>
           Filter and manage employee certifications, experience, and verified skills.
         </p>
       </div>
 
-      <div style={{ background: "#fff", padding: "20px", borderRadius: "12px", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 16, color: "#374151", textTransform: "uppercase", letterSpacing: 0.5 }}>Filters</div>
+      <div className='rounded-xl border border-admin-border bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'>
+        <div className='mb-4 text-[13px] font-bold uppercase tracking-[0.5px] text-gray-700'>Filters</div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "20px" }}>
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Employee ID</label>
-            <input style={styles.input} value={empIdFilter} onChange={(e) => { setEmpIdFilter(e.target.value); setPage(1); }} placeholder="e.g. IND-1042" />
+        <div className='mb-5 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]'>
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-[12px] font-semibold text-gray-600'>Employee ID</label>
+            <input
+              className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+              value={empIdFilter}
+              onChange={(e) => {
+                setEmpIdFilter(e.target.value);
+                setPage(1);
+              }}
+              placeholder='e.g. IND-1042'
+            />
           </div>
 
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Department</label>
-            <select style={styles.input} value={deptFilter} onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }}>
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-[12px] font-semibold text-gray-600'>Department</label>
+            <select
+              className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+              value={deptFilter}
+              onChange={(e) => {
+                setDeptFilter(e.target.value);
+                setPage(1);
+              }}
+            >
               {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
 
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Years with Indium (Min - Max)</label>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <input type="number" min="0" style={styles.input} value={expIndiumMin} onChange={(e) => { setExpIndiumMin(e.target.value as unknown as number); setPage(1); }} placeholder="Min" />
-              <input type="number" min="0" style={styles.input} value={expIndiumMax} onChange={(e) => { setExpIndiumMax(e.target.value as unknown as number); setPage(1); }} placeholder="Max" />
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-[12px] font-semibold text-gray-600'>Years with Indium (Min - Max)</label>
+            <div className='flex gap-2'>
+              <input
+                type='number'
+                min='0'
+                className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                value={expIndiumMin}
+                onChange={(e) => {
+                  setExpIndiumMin(e.target.value as unknown as number);
+                  setPage(1);
+                }}
+                placeholder='Min'
+              />
+              <input
+                type='number'
+                min='0'
+                className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                value={expIndiumMax}
+                onChange={(e) => {
+                  setExpIndiumMax(e.target.value as unknown as number);
+                  setPage(1);
+                }}
+                placeholder='Max'
+              />
             </div>
           </div>
 
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Overall Experience (Min - Max)</label>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <input type="number" min="0" style={styles.input} value={expOverallMin} onChange={(e) => { setExpOverallMin(e.target.value as unknown as number); setPage(1); }} placeholder="Min" />
-              <input type="number" min="0" style={styles.input} value={expOverallMax} onChange={(e) => { setExpOverallMax(e.target.value as unknown as number); setPage(1); }} placeholder="Max" />
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-[12px] font-semibold text-gray-600'>Overall Experience (Min - Max)</label>
+            <div className='flex gap-2'>
+              <input
+                type='number'
+                min='0'
+                className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                value={expOverallMin}
+                onChange={(e) => {
+                  setExpOverallMin(e.target.value as unknown as number);
+                  setPage(1);
+                }}
+                placeholder='Min'
+              />
+              <input
+                type='number'
+                min='0'
+                className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                value={expOverallMax}
+                onChange={(e) => {
+                  setExpOverallMax(e.target.value as unknown as number);
+                  setPage(1);
+                }}
+                placeholder='Max'
+              />
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-          <button style={styles.resetBtn} onClick={handleReset}>Reset</button>
+        <div className='flex justify-end gap-3'>
+          <button className='cursor-pointer rounded-md border-none bg-gray-100 px-4 py-2 text-[13px] font-semibold text-gray-600' onClick={handleReset}>Reset</button>
         </div>
       </div>
 
-      <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #e5e7eb", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
+      <div className='overflow-hidden rounded-xl border border-admin-border bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]'>
+        <div className='overflow-x-auto'>
+          <table className='min-w-[800px] w-full border-collapse'>
             <thead>
-              <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e5e7eb" }}>
-                <th style={styles.th} onClick={() => handleSort("employeeId")}>Employee ID <SortIcon colKey="employeeId" /></th>
-                <th style={styles.th} onClick={() => handleSort("name")}>Name <SortIcon colKey="name" /></th>
-                <th style={styles.th} onClick={() => handleSort("department")}>Department <SortIcon colKey="department" /></th>
-                <th style={styles.th} onClick={() => handleSort("expIndium")}>Years (Indium) <SortIcon colKey="expIndium" /></th>
-                <th style={styles.th} onClick={() => handleSort("expOverall")}>Years (Overall) <SortIcon colKey="expOverall" /></th>
-                <th style={styles.th} onClick={() => handleSort("verifiedSkills")}>Verified Skills <SortIcon colKey="verifiedSkills" /></th>
-                <th style={styles.th} onClick={() => handleSort("status")}>Status <SortIcon colKey="status" /></th>
+              <tr className='border-b border-admin-border bg-admin-bg'>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("employeeId")}>Employee ID <SortIcon colKey="employeeId" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("name")}>Name <SortIcon colKey="name" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("department")}>Department <SortIcon colKey="department" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("expIndium")}>Years (Indium) <SortIcon colKey="expIndium" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("expOverall")}>Years (Overall) <SortIcon colKey="expOverall" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("verifiedSkills")}>Verified Skills <SortIcon colKey="verifiedSkills" /></th>
+                <th className='cursor-pointer select-none whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase text-admin-text-muted' onClick={() => handleSort("status")}>Status <SortIcon colKey="status" /></th>
               </tr>
             </thead>
             <tbody>
               {currentData.length > 0 ? currentData.map((row) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={styles.td}><span style={styles.idBadge}>{row.employeeId}</span></td>
-                  <td style={{ ...styles.td, fontWeight: 600, color: "#111827" }}>{row.name}</td>
-                  <td style={styles.td}>{row.department}</td>
-                  <td style={styles.td}>{row.expIndium}</td>
-                  <td style={styles.td}>{row.expOverall}</td>
-                  <td style={styles.td}>
-                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                <tr key={row.id} className='border-b border-slate-100'>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'><span className='rounded-md bg-gray-100 px-2 py-1 font-mono text-[12px] font-semibold text-admin-text'>{row.employeeId}</span></td>
+                  <td className='align-middle px-4 py-3.5 text-[13px] font-semibold text-admin-text'>{row.name}</td>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'>{row.department}</td>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'>{row.expIndium}</td>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'>{row.expOverall}</td>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'>
+                    <div className='flex flex-wrap gap-1.5'>
                       {row.verifiedSkills.length === 0 ? (
-                        <span style={{ background: "#f3f4f6", color: "#6b7280", padding: "2px 8px", borderRadius: "4px", fontSize: 11, fontWeight: 600 }}>
+                        <span className='rounded bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-admin-text-muted'>
                           None
                         </span>
                       ) : (
                         row.verifiedSkills.map((s) => (
-                          <span key={s} style={{ background: "#eff6ff", color: "#2563eb", padding: "2px 8px", borderRadius: "4px", fontSize: 11, fontWeight: 600 }}>
+                          <span key={s} className='rounded bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-600'>
                             {s}
                           </span>
                         ))
                       )}
                     </div>
                   </td>
-                  <td style={styles.td}>
-                    <span style={{
-                      background: row.status === "Active" ? "#dcfce7" : "#fee2e2",
-                      color: row.status === "Active" ? "#16a34a" : "#dc2626",
-                      padding: "4px 10px", borderRadius: "99px", fontSize: 12, fontWeight: 600,
-                    }}>
+                  <td className='align-middle px-4 py-3.5 text-[13px] text-gray-600'>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${
+                        row.status === "Active"
+                          ? 'bg-admin-green-bg text-admin-green'
+                          : 'bg-admin-red-bg text-admin-red'
+                      }`}
+                    >
                       {row.status}
                     </span>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={7} style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>No credentials found matching your filters.</td>
+                  <td colSpan={7} className='px-4 py-10 text-center text-admin-text-muted'>No credentials found matching your filters.</td>
                 </tr>
               )}
             </tbody>
@@ -190,21 +243,21 @@ export default function CredentialsPage() {
         </div>
         
         {/* PAGINATION */}
-        <div style={{ padding: "16px", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 13, color: "#6b7280" }}>
+        <div className='flex items-center justify-between border-t border-admin-border p-4'>
+          <div className='text-[13px] text-admin-text-muted'>
             Showing {Math.min((page - 1) * rowsPerPage + 1, sortedData.length)} to {Math.min(page * rowsPerPage, sortedData.length)} of {sortedData.length} records
           </div>
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className='flex gap-2'>
             <button
-              style={{ ...styles.pageBtn, opacity: page === 1 ? 0.5 : 1 }}
+              className='cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1.5 text-[13px] font-semibold text-gray-700 disabled:cursor-not-allowed disabled:opacity-50'
               disabled={page === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Previous
             </button>
-            <span style={{ padding: "6px 12px", fontSize: 13, fontWeight: 600, color: "#374151" }}>Page {page} of {totalPages}</span>
+            <span className='px-3 py-1.5 text-[13px] font-semibold text-gray-700'>Page {page} of {totalPages}</span>
             <button
-              style={{ ...styles.pageBtn, opacity: page === totalPages ? 0.5 : 1 }}
+              className='cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-1.5 text-[13px] font-semibold text-gray-700 disabled:cursor-not-allowed disabled:opacity-50'
               disabled={page === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
@@ -216,14 +269,3 @@ export default function CredentialsPage() {
     </div>
   );
 }
-
-const styles: Record<string, CSSProperties> = {
-  filterGroup: { display: "flex", flexDirection: "column", gap: "6px" },
-  label: { fontSize: 12, fontWeight: 600, color: "#4b5563" },
-  input: { padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: 13, outline: "none", width: "100%", boxSizing: "border-box", background: "#f9fafb" },
-  resetBtn: { padding: "8px 16px", background: "#f3f4f6", color: "#4b5563", border: "none", borderRadius: "6px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
-  th: { padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" },
-  td: { padding: "14px 16px", fontSize: 13, color: "#4b5563", verticalAlign: "middle" },
-  idBadge: { background: "#f3f4f6", padding: "4px 8px", borderRadius: "6px", fontSize: 12, fontFamily: "monospace", color: "#111827", fontWeight: 600 },
-  pageBtn: { padding: "6px 12px", border: "1px solid #d1d5db", background: "#fff", borderRadius: "6px", fontSize: 13, fontWeight: 600, cursor: "pointer", color: "#374151" },
-};
