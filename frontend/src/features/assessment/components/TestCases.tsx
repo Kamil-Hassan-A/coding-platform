@@ -48,6 +48,12 @@ export default function TestCases({ result }: Props) {
 
 function TestCaseRow({ index, tc }: { index: number; tc: TestCaseResult }) {
   const [expanded, setExpanded] = useState(false);
+  const statusDescription =
+    typeof tc.status?.description === "string"
+      ? tc.status.description
+      : tc.passed
+        ? "Accepted"
+        : "Wrong Answer";
 
   return (
     <div className='overflow-hidden rounded-[10px] border border-[#eee]'>
@@ -62,7 +68,7 @@ function TestCaseRow({ index, tc }: { index: number; tc: TestCaseResult }) {
           <span className='text-[14px] font-semibold text-[#333]'>Test Case {index + 1}</span>
         </div>
         <div className='flex items-center gap-1 text-[12px] text-[#999]'>
-          {(tc.status.description as string) || (tc.passed ? "Accepted" : "Wrong Answer")}
+          {statusDescription}
           <span className={`transition-transform ${expanded ? "rotate-180" : "rotate-0"}`}>▾</span>
         </div>
       </div>

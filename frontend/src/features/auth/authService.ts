@@ -37,5 +37,5 @@ export const loginWithSSO = async (): Promise<User> => {
 
 export const logout = async (): Promise<void> => {
   useUserStore.getState().clear();
-  window.location.href = "/auth/login";
+  window.location.href = "/login";
 };

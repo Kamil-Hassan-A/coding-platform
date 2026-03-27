@@ -9,22 +9,53 @@ import TestCases from "./components/TestCases";
 import type { SessionSubmitResponse, SessionProblemPayload } from "./types/assessment";
 import type { AllowedLanguage } from "../../features/candidate/types/candidate";
 
+const SESSION_ID_STORAGE_KEY = "assessment_session_id";
+const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
+
+type InitialAssessmentState = {
+  session_id: string;
+  problem: SessionProblemPayload;
+  skill_name?: string;
+  allowed_languages?: AllowedLanguage[];
+};
+
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // 1. Session ID Recovery
-  const initialState = location.state as { session_id: string; problem: SessionProblemPayload; skill_name?: string; allowed_languages?: AllowedLanguage[] } | null;
+  const initialState = location.state as InitialAssessmentState | null;
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
+  const [storedAllowedLanguages, setStoredAllowedLanguages] = useState<AllowedLanguage[]>([]);
   const [isSessionResolved, setIsSessionResolved] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
 
   useEffect(() => {
     if (initialState?.session_id) {
-      sessionStorage.setItem("assessment_session_id", initialState.session_id);
+      sessionStorage.setItem(SESSION_ID_STORAGE_KEY, initialState.session_id);
+      if (initialState.allowed_languages?.length) {
+        sessionStorage.setItem(
+          SESSION_LANGUAGES_STORAGE_KEY,
+          JSON.stringify(initialState.allowed_languages),
+        );
+        setStoredAllowedLanguages(initialState.allowed_languages);
+      }
     } else {
-      const savedId = sessionStorage.getItem("assessment_session_id");
+      const savedId = sessionStorage.getItem(SESSION_ID_STORAGE_KEY);
       if (savedId) setSessionId(savedId);
+
+      const savedLanguages = sessionStorage.getItem(SESSION_LANGUAGES_STORAGE_KEY);
+      if (savedLanguages) {
+        try {
+          const parsed = JSON.parse(savedLanguages) as AllowedLanguage[];
+          if (Array.isArray(parsed)) {
+            setStoredAllowedLanguages(parsed);
+          }
+        } catch {
+          setStoredAllowedLanguages([]);
+        }
+      }
     }
     setIsSessionResolved(true);
   }, [initialState]);
@@ -37,19 +68,24 @@ export default function AssessmentPage() {
   const activeProblem = initialProblem || recoveredSession?.problem;
   const draftCode = recoveredSession?.last_draft_code;
 
-  const allowedLanguages = initialState?.allowed_languages || [];
+  const allowedLanguages =
+    initialState?.allowed_languages?.length
+      ? initialState.allowed_languages
+      : recoveredSession?.allowed_languages?.length
+        ? recoveredSession.allowed_languages
+        : storedAllowedLanguages;
 
   // Infer default language if creating a new draft
-  const getSmartDefaultLanguage = () => {
+  const getSmartDefaultLanguage = (): string => {
     if (allowedLanguages.length > 0) return allowedLanguages[0].id.toString();
-    return "71"; // Fallback directly to Python 3 ID
+    return recoveredSession?.last_draft_lang ?? "71";
   };
 
   // 3. Editor & Language State
   const { code, setCode } = useEditor(
     initialState?.problem?.templateCode ?? draftCode ?? "",
   );
-  const [languageId, setLanguageId] = useState(recoveredSession?.last_draft_lang ?? getSmartDefaultLanguage());
+  const [languageId, setLanguageId] = useState(getSmartDefaultLanguage());
   const activeLanguage = allowedLanguages.find(l => l.id.toString() === languageId) || allowedLanguages[0];
   const [submissionResult, setSubmissionResult] = useState<SessionSubmitResponse | null>(null);
 
@@ -58,15 +94,23 @@ export default function AssessmentPage() {
 
   const handleSubmit = () => {
     if (!sessionId) return;
+
+    if (!languageId) {
+      setSubmissionError("No language selected. Please pick a language before submitting.");
+      return;
+    }
+
+    setSubmissionError(null);
     submit(
       { session_id: sessionId, payload: { code, language: languageId } },
       {
         onSuccess: (data) => {
           setSubmissionResult(data);
-          sessionStorage.removeItem("assessment_session_id");
+          sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
+          sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
         },
         onError: () => {
-          alert("Submission failed. Please try again.");
+          setSubmissionError("Submission failed. Please try again.");
         },
       }
     );
@@ -76,13 +120,24 @@ export default function AssessmentPage() {
     if (draftCode) {
       setCode(draftCode);
     }
-  }, [draftCode, setCode]);
-
-  useEffect(() => {
     if (recoveredSession?.last_draft_lang) {
       setLanguageId(recoveredSession.last_draft_lang);
+      return;
     }
-  }, [recoveredSession?.last_draft_lang]);
+
+    if (
+      allowedLanguages.length > 0
+      && !allowedLanguages.some((lang) => lang.id.toString() === languageId)
+    ) {
+      setLanguageId(allowedLanguages[0].id.toString());
+    }
+  }, [
+    allowedLanguages,
+    draftCode,
+    languageId,
+    recoveredSession?.last_draft_lang,
+    setCode,
+  ]);
 
   if (isSessionResolved && !sessionId && !isRecovering) {
     return (
@@ -119,6 +174,12 @@ export default function AssessmentPage() {
         timeLimit={activeProblem.time_limit_minutes}
         allowedLanguages={allowedLanguages}
       />
+
+      {submissionError && (
+        <div className='border-b border-rose-200 bg-rose-50 px-6 py-2.5 text-sm text-rose-700'>
+          {submissionError}
+        </div>
+      )}
 
       <div className='flex flex-1 overflow-hidden'>
         {/* Left Panel - 40% */}

@@ -81,5 +81,10 @@ export type SkillModalProps = {
   skills: Skill[];
   levels: LevelOption[];
   onClose: () => void;
-  onConfirm: (skill_name: string, level_label: string, skill_id: string) => void;
+  onConfirm: (
+    skill_name: string,
+    level_label: string,
+    skill_id: string,
+    level: BackendLevel,
+  ) => void;
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Skill, SkillModalProps } from "./types/candidate";
+import type { BackendLevel, Skill, SkillModalProps } from "./types/candidate";
 
 export default function SkillModal({ skills, levels, onClose, onConfirm }: SkillModalProps) {
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
@@ -16,7 +16,7 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Skill
     } else if (step === 2 && canProceedStep2) {
       const levelObj = levels.find((l) => l.id === selectedLevel);
       if (levelObj && selectedSkill) {
-        onConfirm(selectedSkill.name, levelObj.label, selectedSkill.skill_id);
+        onConfirm(selectedSkill.name, levelObj.label, selectedSkill.skill_id, selectedLevel as BackendLevel);
       }
     }
   };

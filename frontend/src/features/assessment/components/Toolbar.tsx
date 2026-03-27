@@ -71,15 +71,21 @@ export default function Toolbar({
         )}
 
         <div className='flex items-center gap-3'>
-          <select
-            value={languageId}
-            onChange={(e) => onLanguageChange(e.target.value)}
-            className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
-          >
-            {allowedLanguages.map((lang) => (
-               <option key={lang.id} value={lang.id.toString()}>{lang.name}</option>
-            ))}
-          </select>
+          {allowedLanguages.length > 0 ? (
+            <select
+              value={languageId}
+              onChange={(e) => onLanguageChange(e.target.value)}
+              className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
+            >
+              {allowedLanguages.map((lang) => (
+                <option key={lang.id} value={lang.id.toString()}>{lang.name}</option>
+              ))}
+            </select>
+          ) : (
+            <div className='rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-semibold text-rose-700'>
+              No languages available
+            </div>
+          )}
 
           <button
             disabled
