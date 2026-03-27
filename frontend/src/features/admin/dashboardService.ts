@@ -1,52 +1,24 @@
 import axiosInstance from "../../api/axiosInstance";
 
-import type { CSSProperties } from "react";
+import type {
+  AdminCandidate,
+  AdminCredential,
+  DashboardStats,
+  Skill,
+  SkillCategory,
+  SkillTag,
+  StatCard,
+  TagConfig,
+} from "./types/admin";
 
-export type SkillTag = "fe" | "be" | "db" | "qa" | "pm";
-
-export type SkillCategory =
-  | "Frontend"
-  | "Backend"
-  | "Database"
-  | "QA"
-  | "Process";
-
-export type Skill = {
-  id: number;
-  name: string;
-  category: SkillCategory;
-  tag: SkillTag;
-};
-
-export type DashboardStats = {
-  totalEmployees: number;
-  totalAssessments: number;
-  inProgress: number;
-  completed: number;
-  terminated: number;
-  pendingReview: number;
-};
-
-export type AdminCandidate = {
-  user_id: string;
-  name: string;
-  gender: string;
-  dept: string;
-  skill: string;
-  score: number;
-  status: "Pass" | "Fail" | "Pending";
-};
-
-export type AdminCredential = {
-  id: string;
-  employeeId: string;
-  name: string;
-  department: string;
-  expIndium: number;
-  expOverall: number;
-  verifiedSkills: string[];
-  status: "Active" | "Inactive";
-};
+export type {
+  AdminCandidate,
+  AdminCredential,
+  DashboardStats,
+  Skill,
+  SkillCategory,
+  SkillTag,
+} from "./types/admin";
 
 export const SKILLS: Skill[] = [
   { id: 1, name: "Agile", category: "Process", tag: "pm" },
@@ -70,11 +42,6 @@ export const SKILLS: Skill[] = [
   { id: 19, name: "Python Selenium", category: "QA", tag: "qa" },
 ];
 
-type TagConfig = {
-  label: string;
-  style: CSSProperties;
-};
-
 export const TAG_CONFIG: Record<SkillTag, TagConfig> = {
   fe: { label: "Frontend", style: { background: "#fff7ed", color: "#c2410c" } },
   be: { label: "Backend", style: { background: "#f0fdf4", color: "#15803d" } },
@@ -91,11 +58,6 @@ export const CATEGORIES: Array<"All" | SkillCategory> = [
   "QA",
   "Process",
 ];
-
-type StatCard = {
-  key: keyof DashboardStats;
-  label: string;
-};
 
 export const STAT_CARDS: StatCard[] = [
   { key: "totalEmployees", label: "Total Employees" },

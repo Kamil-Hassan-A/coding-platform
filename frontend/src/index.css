@@ -1,67 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-100: #FB851E;
-  --color-primary-200: #FB371E;
-  --color-brand-bg: #EFEAE3;
-  --color-brand-text: #3A3A3A;
-  --color-accent-success: #86FE90;
-  --color-accent-highlight: #EDFC81;
-  --color-accent-teal: #23979C;
-}
+  --color-primary-100: #fb851e;
+  --color-primary-200: #fb371e;
+  --color-brand-bg: #efeae3;
+  --color-brand-text: #3a3a3a;
+  --color-accent-success: #86fe90;
+  --color-accent-highlight: #edfc81;
+  --color-accent-teal: #23979c;
+  --color-admin-orange: #f97316;
+  --color-admin-orange-light: #fff7ed;
+  --color-admin-white: #ffffff;
+  --color-admin-bg: #f8fafc;
+  --color-admin-border: #e5e7eb;
+  --color-admin-text: #111827;
+  --color-admin-text-muted: #6b7280;
+  --color-admin-text-light: #9ca3af;
+  --color-admin-green: #16a34a;
+  --color-admin-green-bg: #dcfce7;
+  --color-admin-red: #dc2626;
+  --color-admin-red-bg: #fee2e2;
 
-/* Reset */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  --animate-slide-in: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-fast: pulseFast 1.5s ease-in-out infinite;
 
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #0a0a0a;
-  color: #3A3A3A;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-/* SSO Button (KEEP THIS) */
-.btn-sso {
-  background: #fff;
-  color: #3A3A3A;
-  border: 1px solid rgba(58, 58, 58, 0.15);
-  border-radius: 8px;
-  padding: 11px 16px;
-  font-size: 13px;
-  cursor: pointer;
-  width: 100%;
-}
-
-/* Animations (optional keep) */
-@keyframes glow-pulse {
-
-  0%,
-  100% {
-    opacity: 0.35;
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  50% {
-    opacity: 0.55;
+  @keyframes pulseFast {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.3);
+    }
   }
 }
+

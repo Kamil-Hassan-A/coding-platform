@@ -1,3 +1,5 @@
+import type { AllowedLanguage } from "../../candidate/types/candidate";
+
 export interface Problem {
   id: string;
   title: string;
@@ -21,7 +23,7 @@ export interface TestCaseResult {
   stdout: string | null;
   stderr: string | null;
   message: string | null;
-  status: Record<string, unknown>;
+  status: { description?: string } & Record<string, unknown>;
   passed: boolean;
 }
 
@@ -36,6 +38,16 @@ export interface SessionProblemPayload {
 export interface SessionStartResponse {
   session_id: string;
   problem: SessionProblemPayload;
+}
+
+export interface StartSessionPayload {
+  skill_id: string;
+  level: string;
+}
+
+export interface SubmitSessionPayload {
+  code: string;
+  language: string;
 }
 
 export interface SessionSubmitResponse {
@@ -67,4 +79,5 @@ export interface ActiveSession {
   problem: SessionProblemPayload;
   last_draft_code?: string;
   last_draft_lang?: string;
+  allowed_languages?: AllowedLanguage[];
 }

@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import type { AllowedLanguage } from "../../candidate/types/candidate";
 
 interface Props {
   onSubmit: () => void;
   isSubmitting: boolean;
-  language: string;
-  onLanguageChange: (lang: string) => void;
+  languageId: string;
+  onLanguageChange: (langId: string) => void;
   timeLimit?: number; // in minutes
+  allowedLanguages: AllowedLanguage[];
 }
 
 export default function Toolbar({
   onSubmit,
   isSubmitting,
-  language,
+  languageId,
   onLanguageChange,
-  timeLimit
+  timeLimit,
+  allowedLanguages
 }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
     timeLimit ? timeLimit * 60 : null
@@ -45,70 +48,48 @@ export default function Toolbar({
   };
 
   return (
-    <header style={{
-      height: "64px",
-      background: "#fff",
-      borderBottom: "1px solid #e0e0e0",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 24px",
-      flexShrink: 0,
-      boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
-    }}>
+    <header className='flex h-16 shrink-0 items-center justify-between border-b border-admin-border bg-white px-6 shadow-sm'>
       {/* Left: Branding/Title */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div style={{
-          background: "#E8620A", color: "#fff", padding: "4px 12px",
-          borderRadius: "6px", fontSize: "12px", fontWeight: 800, letterSpacing: "0.5px"
-        }}>
+      <div className='flex items-center gap-3'>
+        <div className='rounded-md bg-admin-orange px-3 py-1 text-[12px] font-extrabold tracking-[0.5px] text-white'>
           ASSESSMENT
         </div>
-        <div style={{ fontSize: "15px", fontWeight: 600, color: "#333" }}>
+        <div className='text-[15px] font-semibold text-admin-text'>
           Coding Evaluation
         </div>
       </div>
 
       {/* Right: Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+      <div className='flex items-center gap-6'>
         {timeLeft !== null && (
-          <div style={{
-            display: "flex", alignItems: "center", gap: "8px",
-            padding: "6px 14px", borderRadius: "8px", background: "#fdf2f0",
-            border: "1px solid #fee2e2"
-          }}>
-            <span style={{ fontSize: "18px" }}>⏱</span>
-            <span style={{
-              fontFamily: "monospace", fontSize: "16px", fontWeight: 700,
-              color: timeLeft < 60 ? "#dc2626" : "#E8620A"
-            }}>
+          <div className='flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3.5 py-1.5'>
+            <span className='text-[18px]'>⏱</span>
+            <span className={`font-mono text-[16px] font-bold ${timeLeft < 60 ? 'text-red-600' : 'text-admin-orange'}`}>
               {formatTime(timeLeft)}
             </span>
           </div>
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <select
-            value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
-            style={{
-              padding: "8px 12px", borderRadius: "8px", border: "1px solid #ddd",
-              fontSize: "13px", background: "#fff", outline: "none", cursor: "pointer"
-            }}
-          >
-            <option value="python">Python 3</option>
-            <option value="javascript">JavaScript</option>
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
-          </select>
+        <div className='flex items-center gap-3'>
+          {allowedLanguages.length > 0 ? (
+            <select
+              value={languageId}
+              onChange={(e) => onLanguageChange(e.target.value)}
+              className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
+            >
+              {allowedLanguages.map((lang) => (
+                <option key={lang.id} value={lang.id.toString()}>{lang.name}</option>
+              ))}
+            </select>
+          ) : (
+            <div className='rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-semibold text-rose-700'>
+              No languages available
+            </div>
+          )}
 
           <button
             disabled
-            style={{
-              padding: "9px 20px", borderRadius: "8px", border: "1px solid #ddd",
-              fontSize: "13px", fontWeight: 600, color: "#999",
-              background: "#f9fafb", cursor: "not-allowed"
-            }}
+            className='cursor-not-allowed rounded-lg border border-slate-200 bg-slate-50 px-5 py-[9px] text-[13px] font-semibold text-slate-400'
           >
             Run Code
           </button>
@@ -116,13 +97,7 @@ export default function Toolbar({
           <button
             onClick={onSubmit}
             disabled={isSubmitting}
-            style={{
-              padding: "10px 24px", borderRadius: "8px", border: "none",
-              fontSize: "14px", fontWeight: 700, color: "#fff",
-              background: isSubmitting ? "#aaa" : "#E8620A",
-              cursor: isSubmitting ? "not-allowed" : "pointer",
-              boxShadow: "0 4px 12px rgba(232,98,10,0.2)"
-            }}
+            className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white shadow-lg shadow-admin-orange/20 transition-all ${isSubmitting ? 'cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none' : 'cursor-pointer bg-admin-orange hover:-translate-y-0.5 hover:shadow-admin-orange/40'}`}
           >
             {isSubmitting ? "Submitting..." : "Submit Solution"}
           </button>

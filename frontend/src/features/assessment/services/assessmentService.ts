@@ -1,20 +1,14 @@
 import axiosInstance from "../../../api/axiosInstance";
 import type {
   ActiveSession,
+  StartSessionPayload,
   SessionStartResponse,
   SessionSubmitResponse,
+  SubmitSessionPayload,
   SubmissionResultsResponse,
 } from "../types/assessment";
 
-export interface StartSessionPayload {
-  skill_id: string;
-  level: string;
-}
-
-export interface SubmitSessionPayload {
-  code: string;
-  language: string;
-}
+export type { StartSessionPayload, SubmitSessionPayload } from "../types/assessment";
 
 export const startSession = async (
   payload: StartSessionPayload

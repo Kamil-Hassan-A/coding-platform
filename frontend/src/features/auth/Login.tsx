@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SSOButton from "./SSOButton";
@@ -17,9 +17,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const handleCredentialLogin = async (e: FormEvent) => {
+  const handleCredentialLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -48,55 +47,19 @@ const Login = () => {
     }
   };
 
-  const inputStyle = (field: string): React.CSSProperties => ({
-    width: "100%",
-    border: `1px solid ${focusedField === field ? "#f97316" : "#e5e7eb"}`,
-    borderRadius: 6,
-    padding: "12px 14px",
-    fontSize: 14,
-    outline: "none",
-    boxSizing: "border-box",
-  });
-
   return (
-    <div style={{
-      minHeight: "100vh",
-      position: "relative",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 24,
-      backgroundImage: "url('/assets/login-bg.png')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-    }}>
+    <div
+      className="relative flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat p-6"
+      style={{ backgroundImage: "url('/assets/login-bg.png')" }}
+    >
       {/* Dark overlay to make background crisp and card readable */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(0, 0, 0, 0.55)",
-        zIndex: 0,
-      }} />
-      
+      <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-sm" />
+
       {/* Card sits above overlay */}
-      <section style={{
-        position: "relative",
-        zIndex: 1,
-        background: "#ffffff",
-        borderRadius: 12,
-        border: "1px solid #e2e8f0",
-        padding: "40px 36px",
-        width: "100%",
-        maxWidth: 400,
-        display: "flex",
-        flexDirection: "column",
-        gap: 20,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
-      }}>
+      <section className="animate-slide-in relative z-10 flex w-full max-w-[400px] flex-col gap-5 rounded-2xl border border-white/40 bg-white/95 px-9 py-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
         {/* Brand */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="/indium-logo.png" alt="Indium" style={{ height: 40 }} />
+        <div className="mb-8 text-center">
+          <img src="/indium-logo.png" alt="Indium" className="mx-auto h-10" />
         </div>
 
         {/* Form */}
@@ -109,9 +72,7 @@ const Login = () => {
             disabled={loading}
             placeholder="Username"
             required
-            style={{ ...inputStyle("username"), marginBottom: 14 }}
-            onFocus={() => setFocusedField("username")}
-            onBlur={() => setFocusedField(null)}
+            className="mb-3.5 w-full rounded-xl border border-gray-200 bg-white/80 px-3.5 py-3 text-[14px] outline-none transition-all placeholder:text-gray-400 hover:border-admin-orange/50 focus:border-admin-orange focus:bg-white focus:ring-4 focus:ring-admin-orange/10"
           />
 
           {/* Password */}
@@ -122,20 +83,12 @@ const Login = () => {
             disabled={loading}
             placeholder="Password"
             required
-            style={{ ...inputStyle("password"), marginBottom: 8 }}
-            onFocus={() => setFocusedField("password")}
-            onBlur={() => setFocusedField(null)}
+            className="mb-2 w-full rounded-xl border border-gray-200 bg-white/80 px-3.5 py-3 text-[14px] outline-none transition-all placeholder:text-gray-400 hover:border-admin-orange/50 focus:border-admin-orange focus:bg-white focus:ring-4 focus:ring-admin-orange/10"
           />
 
           {/* Forgot password */}
-          <div style={{ textAlign: "right", marginBottom: 20 }}>
-            <span
-              style={{
-                fontSize: 12,
-                color: "#f97316",
-                cursor: "pointer",
-              }}
-            >
+          <div className="mb-5 text-right">
+            <span className="cursor-pointer text-[12px] text-admin-orange">
               Forgot password?
             </span>
           </div>
@@ -144,34 +97,21 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: "100%",
-              background: "linear-gradient(135deg, #f97316, #ea580c)",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: 6,
-              padding: 13,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: loading ? "not-allowed" : "pointer",
-              marginBottom: 16,
-              opacity: loading ? 0.7 : 1,
-            }}
+            className="mb-4 w-full rounded-xl border-none bg-gradient-to-br from-admin-orange to-orange-600 p-[13px] text-[15px] font-semibold text-white shadow-admin-orange/20 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-admin-orange/40 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-admin-orange/20"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-[3px] border-white/30 border-t-white"></span>
+                Signing in…
+              </span>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
 
         {/* Divider */}
-        <div
-          style={{
-            textAlign: "center",
-            fontSize: 11,
-            color: "#9ca3af",
-            letterSpacing: 1,
-            marginBottom: 14,
-          }}
-        >
+        <div className="mb-3.5 text-center text-[11px] tracking-[1px] text-gray-400">
           OR CONTINUE WITH
         </div>
 
@@ -180,27 +120,13 @@ const Login = () => {
 
         {/* Error */}
         {error && (
-          <div
-            style={{
-              color: "#dc2626",
-              fontSize: 13,
-              textAlign: "center",
-              marginTop: 12,
-            }}
-          >
+          <div className="mt-3 text-center text-[13px] text-red-600">
             {error}
           </div>
         )}
 
         {/* Footer */}
-        <p
-          style={{
-            fontSize: 11,
-            color: "#9ca3af",
-            textAlign: "center",
-            marginTop: 16,
-          }}
-        >
+        <p className="mt-4 text-center text-[11px] text-gray-400">
           By signing in, you agree to our Terms & Privacy Policy
         </p>
       </section>

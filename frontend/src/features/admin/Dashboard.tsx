@@ -37,111 +37,50 @@ const Dashboard = () => {
   const displayName = name ?? "User";
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f0f2f5" }}>
-      <nav
-        style={{
-          background: "#0d1117",
-          height: 56,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 28px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <img src="/indium-logo2.png" alt="Indium" style={{ height: 28 }} />
-          <span
-            style={{
-              background: "rgba(249,115,22,0.15)",
-              color: "#f97316",
-              padding: "4px 12px",
-              borderRadius: 6,
-              fontSize: 12,
-              fontWeight: 600,
-            }}
-          >
+    <div className='flex min-h-screen flex-col bg-slate-100'>
+      <nav className='flex h-14 items-center justify-between bg-[#0d1117] px-7'>
+        <div className='flex items-center gap-6'>
+          <img src='/indium-logo2.png' alt='Indium' className='h-7' />
+          <span className='rounded-md bg-[rgba(249,115,22,0.15)] px-3 py-1 text-[12px] font-semibold text-admin-orange'>
             Dashboard
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>{displayName}</div>
-            <div style={{ color: "#94a3b8", fontSize: 12 }}>
+        <div className='flex items-center gap-3.5'>
+          <div className='text-right'>
+            <div className='text-[14px] font-semibold text-white'>{displayName}</div>
+            <div className='text-[12px] text-slate-400'>
               {role ?? "candidate"} · {department ?? "Indium Software"}
             </div>
           </div>
 
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              background: "#f97316",
-              color: "#fff",
-              fontSize: 12,
-              fontWeight: 700,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <div className='flex h-8 w-8 items-center justify-center rounded-full bg-admin-orange text-[12px] font-bold text-white'>
             {initials(displayName)}
           </div>
 
           <button
-            type="button"
+            type='button'
             onClick={handleSignOut}
-            style={{
-              border: "1px solid #334155",
-              color: "#94a3b8",
-              background: "transparent",
-              padding: "4px 12px",
-              borderRadius: 6,
-              fontSize: 12,
-              cursor: "pointer",
-            }}
+            className='cursor-pointer rounded-md border border-slate-700 bg-transparent px-3 py-1 text-[12px] text-slate-400'
           >
             Sign out
           </button>
         </div>
       </nav>
 
-      <div
-        style={{
-          flex: 1,
-          padding: "24px 28px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "baseline" }}>
-          <span style={{ fontSize: 20, fontWeight: 700, color: "#0d1117" }}>Admin Dashboard</span>
-          <span style={{ fontSize: 12, color: "#94a3b8", marginLeft: 8 }}>{today}</span>
+      <div className='flex flex-1 flex-col gap-5 px-7 py-6'>
+        <div className='flex items-baseline'>
+          <span className='text-[20px] font-bold text-[#0d1117]'>Admin Dashboard</span>
+          <span className='ml-2 text-[12px] text-slate-400'>{today}</span>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-            gap: 14,
-          }}
-        >
+        <div className='grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]'>
           {STAT_CARDS.map(({ key, label }) => (
-            <div
-              key={key}
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                padding: 20,
-                border: "1px solid #e2e8f0",
-              }}
-            >
-              <div style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500, marginBottom: 8 }}>
+            <div key={key} className='rounded-xl border border-slate-200 bg-white p-5'>
+              <div className='mb-2 text-[12px] font-medium text-slate-400'>
                 {label}
               </div>
-              <div style={{ fontSize: 30, fontWeight: 700, color: "#0d1117" }}>
+              <div className='text-[30px] font-bold text-[#0d1117]'>
                 {isLoading ? 0 : (data?.[key] ?? 0)}
               </div>
             </div>

@@ -41,7 +41,13 @@ def list_skills(
 ) -> list[SkillResponse]:
     skills = db.scalars(select(Skill).order_by(Skill.name.asc())).all()
     return [
-        SkillResponse(skill_id=skill.id, name=skill.name, description=skill.description, icon_url=skill.icon_url)
+        SkillResponse(
+            skill_id=skill.id, 
+            name=skill.name, 
+            description=skill.description, 
+            icon_url=skill.icon_url,
+            allowed_languages=skill.allowed_languages
+        )
         for skill in skills
     ]
 

@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getSkills, getUserProgress } from "../candidate/candidateService";
 
-const ORANGE = "#F97316";
-
 const LEVEL_LABELS: Record<string, string> = {
   beginner: "Beginner",
   intermediate_1: "Intermediate 1",
@@ -24,7 +22,9 @@ type LevelRow = {
 
 export default function PastScores() {
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "cleared" | "active" | "locked">("all");
+  const [filter, setFilter] = useState<"all" | "cleared" | "active" | "locked">(
+    "all",
+  );
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
 
   const { data: skills = [] } = useQuery({
@@ -58,7 +58,8 @@ export default function PastScores() {
   const filtered = useMemo(() => {
     if (filter === "all") return levelRows;
     if (filter === "cleared") return levelRows.filter((r) => r.cleared);
-    if (filter === "active") return levelRows.filter((r) => r.unlocked && !r.cleared);
+    if (filter === "active")
+      return levelRows.filter((r) => r.unlocked && !r.cleared);
     return levelRows.filter((r) => !r.unlocked);
   }, [levelRows, filter]);
 
@@ -68,27 +69,32 @@ export default function PastScores() {
   const unlockedCount = levelRows.filter((r) => r.unlocked).length;
 
   return (
-    <div style={styles.page}>
-      <div style={styles.summaryRow}>
+    <div className="mx-auto w-full max-w-[980px] pb-10">
+      <div className="mb-5 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))]">
         <SummaryCard label="Levels" value={`${totalLevels}`} icon="📋" />
         <SummaryCard label="Attempted" value={`${attemptedCount}`} icon="🧪" />
         <SummaryCard label="Unlocked" value={`${unlockedCount}`} icon="🔓" />
-        <SummaryCard label="Cleared" value={`${clearedCount}`} icon="✅" highlight />
+        <SummaryCard
+          label="Cleared"
+          value={`${clearedCount}`}
+          icon="✅"
+          highlight
+        />
       </div>
 
-      <div style={styles.header}>
-        <h2 style={styles.title}>
-          <span style={{ color: ORANGE }}>Past</span> Assessment Progress
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="m-0 text-[24px] font-bold">
+          <span className="text-admin-orange">Past</span> Assessment Progress
         </h2>
 
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+        <div className="flex flex-wrap items-center gap-2.5">
           <select
             value={activeSkillId ?? ""}
             onChange={(e) => {
               setSelectedSkillId(e.target.value || null);
               setExpanded(null);
             }}
-            style={styles.skillSelect}
+            className="min-w-[220px] rounded-lg border border-gray-300 bg-white px-3 py-2 text-[13px] outline-none"
           >
             {skills.map((skill) => (
               <option key={skill.skill_id} value={skill.skill_id}>
@@ -97,20 +103,22 @@ export default function PastScores() {
             ))}
           </select>
 
-          <div style={styles.filterRow}>
-            {([
-              ["all", "All"],
-              ["cleared", "Cleared"],
-              ["active", "Unlocked"],
-              ["locked", "Locked"],
-            ] as const).map(([key, label]) => (
+          <div className="flex flex-wrap gap-1.5">
+            {(
+              [
+                ["all", "All"],
+                ["cleared", "Cleared"],
+                ["active", "Unlocked"],
+                ["locked", "Locked"],
+              ] as const
+            ).map(([key, label]) => (
               <button
                 key={key}
-                style={{
-                  ...styles.filterBtn,
-                  background: filter === key ? ORANGE : "#F3F4F6",
-                  color: filter === key ? "#fff" : "#666",
-                }}
+                className={`cursor-pointer rounded-lg border-none px-3 py-1.5 text-[12px] font-semibold ${
+                  filter === key
+                    ? "bg-admin-orange text-white"
+                    : "bg-gray-100 text-gray-600"
+                }`}
                 onClick={() => setFilter(key)}
               >
                 {label}
@@ -120,65 +128,92 @@ export default function PastScores() {
         </div>
       </div>
 
-      <div style={styles.cardsList}>
+      <div className="flex flex-col gap-3">
         {filtered.length === 0 && (
-          <div style={styles.empty}>No level records match the selected filter.</div>
+          <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-gray-400">
+            No level records match the selected filter.
+          </div>
         )}
 
         {filtered.map((row) => {
           const recordId = `${activeSkillId}-${row.level}`;
           const isOpen = expanded === recordId;
           const status = row.cleared
-            ? { label: "Cleared", bg: "#DCFCE7", color: "#16A34A" }
+            ? { label: "Cleared", bg: "bg-green-100", color: "text-green-600" }
             : row.unlocked
-              ? { label: "Unlocked", bg: "#FEF3C7", color: "#D97706" }
-              : { label: "Locked", bg: "#F1F5F9", color: "#64748B" };
+              ? {
+                  label: "Unlocked",
+                  bg: "bg-amber-100",
+                  color: "text-amber-600",
+                }
+              : {
+                  label: "Locked",
+                  bg: "bg-slate-100",
+                  color: "text-slate-500",
+                };
 
-          const attemptPercent = row.attemptsUsed + row.attemptsRemaining > 0
-            ? Math.round((row.attemptsUsed / (row.attemptsUsed + row.attemptsRemaining)) * 100)
-            : 0;
+          const totalAttempts = row.attemptsUsed + row.attemptsRemaining;
+          const attemptPercent =
+            totalAttempts > 0
+              ? Math.round((row.attemptsUsed / totalAttempts) * 100)
+              : 0;
 
           return (
-            <div key={recordId} style={styles.scoreCard}>
-              <div style={styles.cardMain} onClick={() => setExpanded(isOpen ? null : recordId)}>
+            <div
+              key={recordId}
+              className="overflow-hidden rounded-xl border border-gray-200 bg-white"
+            >
+              <div
+                className="flex cursor-pointer items-center gap-3.5 px-4 py-3.5"
+                onClick={() => setExpanded(isOpen ? null : recordId)}
+              >
                 <ScoreRing pct={attemptPercent} />
 
-                <div style={styles.cardInfo}>
-                  <p style={styles.campaign}>{activeSkill?.name ?? "Skill"}</p>
-                  <p style={styles.meta}>
-                    {row.label} • Attempts used: {row.attemptsUsed} • Remaining: {row.attemptsRemaining}
+                <div className="min-w-0 flex-1">
+                  <p className="m-0 text-[15px] font-bold text-admin-text">
+                    {activeSkill?.name ?? "Skill"}
+                  </p>
+                  <p className="mt-1 text-[12px] text-admin-text-muted">
+                    {row.label} • Attempts used: {row.attemptsUsed} • Remaining:{" "}
+                    {row.attemptsRemaining}
                   </p>
                 </div>
 
-                <div style={styles.cardRight}>
-                  <span style={{ ...styles.statusBadge, background: status.bg, color: status.color }}>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span
+                    className={`rounded-lg px-2.5 py-1 text-[12px] font-bold ${status.bg} ${status.color}`}
+                  >
                     {status.label}
                   </span>
-                  <button style={styles.expandBtn}>{isOpen ? "▲ Hide" : "▼ Details"}</button>
+                  <button className="cursor-pointer border-none bg-transparent p-0 text-[12px] font-semibold text-admin-text-muted">
+                    {isOpen ? "▲ Hide" : "▼ Details"}
+                  </button>
                 </div>
               </div>
 
               {isOpen && (
-                <div style={styles.breakdown}>
-                  <p style={styles.breakdownTitle}>Progress Details</p>
-                  <div style={styles.breakdownGrid}>
+                <div className="border-t border-gray-100 bg-gray-50 px-4 py-3.5">
+                  <p className="mb-2 text-[13px] font-semibold text-admin-text">
+                    Progress Details
+                  </p>
+                  <div className="flex flex-col gap-2">
                     <TopicRow
                       topic="Eligibility"
                       score={row.unlocked ? 1 : 0}
                       max={1}
-                      color={row.unlocked ? "#22c55e" : "#ef4444"}
+                      barClass={row.unlocked ? "bg-green-500" : "bg-red-500"}
                     />
                     <TopicRow
                       topic="Completion"
                       score={row.cleared ? 1 : 0}
                       max={1}
-                      color={row.cleared ? "#22c55e" : "#f59e0b"}
+                      barClass={row.cleared ? "bg-green-500" : "bg-amber-500"}
                     />
                     <TopicRow
                       topic="Attempts Remaining"
                       score={row.attemptsRemaining}
-                      max={Math.max(1, row.attemptsUsed + row.attemptsRemaining)}
-                      color="#3b82f6"
+                      max={Math.max(1, totalAttempts)}
+                      barClass="bg-blue-500"
                     />
                   </div>
                 </div>
@@ -191,7 +226,6 @@ export default function PastScores() {
   );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 function SummaryCard({
   label,
   value,
@@ -205,239 +239,69 @@ function SummaryCard({
 }) {
   return (
     <div
-      style={{
-        ...styles.summaryCard,
-        background: highlight ? ORANGE : "#fff",
-        color: highlight ? "#fff" : "#111",
-        border: highlight ? "none" : "1px solid #E5E7EB",
-      }}
+      className={`rounded-xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${
+        highlight
+          ? "border-none bg-admin-orange text-white"
+          : "border border-admin-border bg-white text-admin-text"
+      }`}
     >
-      <span style={{ fontSize: "22px" }}>{icon}</span>
-      <p style={{ margin: "8px 0 2px", fontSize: "13px", opacity: 0.85 }}>{label}</p>
-      <h3 style={{ margin: 0, fontSize: "24px", fontWeight: 700 }}>{value}</h3>
+      <span className="text-[22px]">{icon}</span>
+      <p className="mb-0.5 mt-2 text-[13px] opacity-85">{label}</p>
+      <h3 className="m-0 text-[24px] font-bold">{value}</h3>
     </div>
   );
 }
 
 function ScoreRing({ pct }: { pct: number }) {
   const clamped = Math.max(0, Math.min(100, pct));
+
   return (
     <div
+      className="grid h-16 w-16 shrink-0 place-items-center rounded-full"
       style={{
-        width: 64,
-        height: 64,
-        borderRadius: "50%",
-        background: `conic-gradient(${ORANGE} ${clamped * 3.6}deg, #e5e7eb 0deg)`,
-        display: "grid",
-        placeItems: "center",
-        flexShrink: 0,
+        background: `conic-gradient(#f97316 ${clamped * 3.6}deg, #e5e7eb 0deg)`,
       }}
     >
-      <div
-        style={{
-          width: 50,
-          height: 50,
-          borderRadius: "50%",
-          background: "#fff",
-          display: "grid",
-          placeItems: "center",
-          fontSize: 11,
-          fontWeight: 700,
-          color: "#111",
-        }}
-      >
+      <div className="grid h-[50px] w-[50px] place-items-center rounded-full bg-white text-[11px] font-bold text-admin-text">
         {clamped}%
       </div>
     </div>
   );
 }
 
-function TopicRow({ topic, score, max, color }: { topic: string; score: number; max: number; color: string }) {
+function TopicRow({
+  topic,
+  score,
+  max,
+  barClass,
+}: {
+  topic: string;
+  score: number;
+  max: number;
+  barClass: string;
+}) {
   const pct = max > 0 ? Math.round((score / max) * 100) : 0;
+  const safePct = Math.max(0, Math.min(100, pct));
+
   return (
-    <div style={styles.topicRow}>
-      <div style={styles.topicMeta}>
-        <span style={styles.topicName}>{topic}</span>
-        <span style={styles.topicScore}>
-          {score}/{max}
-        </span>
+    <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+      <div>
+        <div className="mb-1 flex items-center justify-between text-[12px] text-admin-text-muted">
+          <span className="font-semibold text-admin-text">{topic}</span>
+          <span>
+            {score}/{max}
+          </span>
+        </div>
+        <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+          <div
+            className={`h-full rounded-full ${barClass}`}
+            style={{ width: `${safePct}%` }}
+          />
+        </div>
       </div>
-      <div style={styles.barTrack}>
-        <div style={{ ...styles.barFill, width: `${Math.max(0, Math.min(100, pct))}%`, background: color }} />
-      </div>
-      <span style={styles.topicPct}>{pct}%</span>
+      <span className="w-10 text-right text-[12px] font-semibold text-admin-text-muted">
+        {safePct}%
+      </span>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  page: {
-    width: "100%",
-    maxWidth: 980,
-    margin: "0 auto",
-    paddingBottom: 40,
-  },
-  summaryRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
-    gap: 12,
-    marginBottom: 20,
-  },
-  summaryCard: {
-    borderRadius: 12,
-    padding: "16px 16px 14px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  title: {
-    margin: 0,
-    fontSize: 24,
-    fontWeight: 700,
-  },
-  skillSelect: {
-    padding: "8px 12px",
-    borderRadius: 8,
-    border: "1px solid #d1d5db",
-    fontSize: 13,
-    outline: "none",
-    minWidth: 220,
-    background: "#fff",
-  },
-  filterRow: {
-    display: "flex",
-    gap: 6,
-    flexWrap: "wrap",
-  },
-  filterBtn: {
-    border: "none",
-    borderRadius: 8,
-    fontSize: 12,
-    fontWeight: 600,
-    padding: "7px 12px",
-    cursor: "pointer",
-  },
-  cardsList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
-  },
-  scoreCard: {
-    borderRadius: 12,
-    border: "1px solid #e5e7eb",
-    background: "#fff",
-    overflow: "hidden",
-  },
-  cardMain: {
-    display: "flex",
-    alignItems: "center",
-    gap: 14,
-    padding: "14px 16px",
-    cursor: "pointer",
-  },
-  cardInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-  campaign: {
-    margin: 0,
-    fontSize: 15,
-    fontWeight: 700,
-    color: "#111827",
-  },
-  meta: {
-    margin: "4px 0 0",
-    fontSize: 12,
-    color: "#6b7280",
-  },
-  cardRight: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    gap: 6,
-  },
-  statusBadge: {
-    padding: "6px 10px",
-    borderRadius: 8,
-    fontSize: 12,
-    fontWeight: 700,
-  },
-  expandBtn: {
-    border: "none",
-    background: "transparent",
-    color: "#6b7280",
-    fontSize: 12,
-    fontWeight: 600,
-    cursor: "pointer",
-    padding: 0,
-  },
-  breakdown: {
-    borderTop: "1px solid #f1f5f9",
-    padding: "14px 16px 16px",
-    background: "#fcfcfd",
-  },
-  breakdownTitle: {
-    margin: "0 0 10px",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "#374151",
-    textTransform: "uppercase",
-    letterSpacing: 0.3,
-  },
-  breakdownGrid: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-  },
-  topicRow: {
-    display: "grid",
-    gridTemplateColumns: "1.2fr 2fr auto",
-    gap: 10,
-    alignItems: "center",
-  },
-  topicMeta: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  topicName: {
-    fontSize: 12,
-    color: "#374151",
-    fontWeight: 600,
-  },
-  topicScore: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
-  barTrack: {
-    height: 8,
-    borderRadius: 999,
-    background: "#e5e7eb",
-    overflow: "hidden",
-  },
-  barFill: {
-    height: "100%",
-    borderRadius: 999,
-  },
-  topicPct: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#374151",
-    minWidth: 36,
-    textAlign: "right",
-  },
-  empty: {
-    border: "1px dashed #cbd5e1",
-    borderRadius: 12,
-    padding: 24,
-    textAlign: "center",
-    color: "#64748b",
-    background: "#fff",
-  },
-};

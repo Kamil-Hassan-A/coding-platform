@@ -1,4 +1,3 @@
-import React from "react";
 import type { SessionProblemPayload } from "../types/assessment";
 
 interface Props {
@@ -7,80 +6,49 @@ interface Props {
 
 export default function ProblemPanel({ problem }: Props) {
   return (
-    <div style={{ 
-      flex: 1, 
-      display: "flex", 
-      flexDirection: "column", 
-      background: "#fff", 
-      height: "100%",
-      overflowY: "auto"
-    }}>
-      <div style={{ padding: "32px" }}>
+    <div className='flex h-full flex-1 flex-col overflow-y-auto bg-white'>
+      <div className='p-8'>
         {/* Title */}
-        <h1 style={{ 
-          fontSize: "24px", 
-          fontWeight: 800, 
-          color: "#111", 
-          marginBottom: "20px",
-          lineHeight: 1.3
-        }}>
+        <h1 className='mb-5 text-[24px] font-extrabold leading-[1.3] text-[#111]'>
           {problem.title}
         </h1>
 
         {/* Description */}
-        <div style={{ 
-          fontSize: "15px", 
-          color: "#444", 
-          lineHeight: 1.7, 
-          whiteSpace: "pre-wrap",
-          marginBottom: "40px"
-        }}>
+        <div className='mb-10 whitespace-pre-wrap text-[15px] leading-[1.7] text-[#444]'>
           {problem.description}
         </div>
 
         {/* Sample Test Cases */}
-        <div style={{ borderTop: "1px solid #eee", paddingTop: "32px" }}>
-          <h3 style={{ 
-            fontSize: "14px", 
-            fontWeight: 700, 
-            color: "#999", 
-            letterSpacing: "0.5px",
-            textTransform: "uppercase",
-            marginBottom: "20px"
-          }}>
+        <div className='border-t border-[#eee] pt-8'>
+          <h3 className='mb-5 text-[14px] font-bold uppercase tracking-[0.5px] text-[#999]'>
             Sample Test Cases
           </h3>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {problem.sample_test_cases.map((tc, i) => (
-              <div key={i} style={{
-                background: "#f8f9fa",
-                borderRadius: "12px",
-                padding: "20px",
-                border: "1px solid #eef0f2"
-              }}>
-                <div style={{ display: "flex", gap: "24px" }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#aaa", marginBottom: "8px" }}>INPUT</div>
-                    <pre style={{ 
-                      margin: 0, padding: "10px", background: "#fff", borderRadius: "6px",
-                      fontSize: "13px", color: "#333", border: "1px solid #eee", fontFamily: "monospace"
-                    }}>
+          <div className='flex flex-col gap-4'>
+            {(problem.sample_test_cases ?? []).map((tc, i) => (
+              <div key={i} className='rounded-xl border border-[#eef0f2] bg-[#f8f9fa] p-5'>
+                <div className='flex gap-6'>
+                  <div className='flex-1'>
+                    <div className='mb-2 text-[11px] font-bold text-[#aaa]'>INPUT</div>
+                    <pre className='m-0 rounded-md border border-[#eee] bg-white p-2.5 font-mono text-[13px] text-[#333]'>
                       {tc.stdin || " (empty) "}
                     </pre>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#aaa", marginBottom: "8px" }}>EXPECTED OUTPUT</div>
-                    <pre style={{ 
-                      margin: 0, padding: "10px", background: "#fff", borderRadius: "6px",
-                      fontSize: "13px", color: "#333", border: "1px solid #eee", fontFamily: "monospace"
-                    }}>
-                      {tc.expected_output}
+                  <div className='flex-1'>
+                    <div className='mb-2 text-[11px] font-bold text-[#aaa]'>EXPECTED OUTPUT</div>
+                    <pre className='m-0 rounded-md border border-[#eee] bg-white p-2.5 font-mono text-[13px] text-[#333]'>
+                      {tc.expected_output || "(empty)"}
                     </pre>
                   </div>
                 </div>
               </div>
             ))}
+
+            {(problem.sample_test_cases ?? []).length === 0 && (
+              <div className='rounded-lg border border-dashed border-[#ddd] bg-[#fafafa] p-4 text-sm text-[#777]'>
+                No sample test cases available.
+              </div>
+            )}
           </div>
         </div>
       </div>

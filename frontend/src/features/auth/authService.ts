@@ -1,18 +1,7 @@
 import axiosInstance from "../../api/axiosInstance";
 import useUserStore from "../../stores/userStore";
 import type { User, UserRole } from "../../types/user";
-
-type LoginResponse = {
-  access_token: string;
-  expires_in: number;
-  user: {
-    user_id: string;
-    role: string;
-    name: string;
-    email: string;
-    department?: string | null;
-  };
-};
+import type { LoginResponse } from "./types/auth";
 
 export const loginWithCredentials = async (
   email: string,
@@ -48,5 +37,5 @@ export const loginWithSSO = async (): Promise<User> => {
 
 export const logout = async (): Promise<void> => {
   useUserStore.getState().clear();
-  window.location.href = "/auth/login";
+  window.location.href = "/login";
 };
