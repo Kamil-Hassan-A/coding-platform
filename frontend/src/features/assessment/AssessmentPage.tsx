@@ -22,7 +22,7 @@ type InitialAssessmentState = {
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [language, setLanguage] = useState("python");
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
@@ -64,6 +64,12 @@ export default function AssessmentPage() {
   const { data: recoveredSession, isLoading: isRecovering } = useGetSession(
     !initialState ? sessionId : null,
   );
+
+  useEffect(() => {
+    if (recoveredSession?.last_draft_lang !== null && recoveredSession?.last_draft_lang !== undefined) {
+      setLanguage(recoveredSession.last_draft_lang);
+    }
+  }, [recoveredSession]);
 
   const activeProblem = initialProblem || recoveredSession?.problem;
   const draftCode = recoveredSession?.last_draft_code;
@@ -116,36 +122,16 @@ export default function AssessmentPage() {
     );
   };
 
-  useEffect(() => {
-    if (draftCode) {
-      setCode(draftCode);
-    }
-    if (recoveredSession?.last_draft_lang) {
-      setLanguageId(recoveredSession.last_draft_lang);
-      return;
-    }
-
-    if (
-      allowedLanguages.length > 0
-      && !allowedLanguages.some((lang) => lang.id.toString() === languageId)
-    ) {
-      setLanguageId(allowedLanguages[0].id.toString());
-    }
-  }, [
-    allowedLanguages,
-    draftCode,
-    languageId,
-    recoveredSession?.last_draft_lang,
-    setCode,
-  ]);
-
   if (isSessionResolved && !sessionId && !isRecovering) {
     return (
       <div className="flex h-screen flex-col items-center justify-center bg-admin-bg font-['Segoe_UI',sans-serif]">
         <h2 className='mb-5 text-admin-text'>No active session found.</h2>
         <button 
           onClick={() => navigate("/candidate/dashboard")}
-          className='cursor-pointer rounded-xl border-none bg-admin-orange px-8 py-3 font-bold text-white shadow-lg shadow-admin-orange/20 transition-all hover:-translate-y-0.5'
+          style={{
+            background: "#E8620A", color: "#fff", border: "none",
+            borderRadius: "8px", padding: "12px 32px", fontWeight: 700, cursor: "pointer"
+          }}
         >
           Go back to Dashboard
         </button>
@@ -172,7 +158,7 @@ export default function AssessmentPage() {
         languageId={languageId}
         onLanguageChange={setLanguageId}
         timeLimit={activeProblem.time_limit_minutes}
-        allowedLanguages={allowedLanguages}
+        secondsRemaining={recoveredSession?.seconds_remaining}
       />
 
       {submissionError && (

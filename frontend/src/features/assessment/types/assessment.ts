@@ -76,8 +76,10 @@ export interface SubmissionResultsResponse {
 
 export interface ActiveSession {
   session_id: string;
+  status: string;
+  expires_at: string;
+  seconds_remaining: number;
   problem: SessionProblemPayload;
-  last_draft_code?: string;
-  last_draft_lang?: string;
-  allowed_languages?: AllowedLanguage[];
+  last_draft_code: string | null;
+  last_draft_lang: string | null;
 }

@@ -7,7 +7,7 @@ interface Props {
   languageId: string;
   onLanguageChange: (langId: string) => void;
   timeLimit?: number; // in minutes
-  allowedLanguages: AllowedLanguage[];
+  secondsRemaining?: number;
 }
 
 export default function Toolbar({
@@ -16,10 +16,10 @@ export default function Toolbar({
   languageId,
   onLanguageChange,
   timeLimit,
-  allowedLanguages
+  secondsRemaining
 }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
-    timeLimit ? timeLimit * 60 : null
+    secondsRemaining !== undefined ? secondsRemaining : (timeLimit ? timeLimit * 60 : null)
   );
 
   const onSubmitRef = useRef(onSubmit);

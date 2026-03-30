@@ -32,10 +32,32 @@ export const loginWithCredentials = async (
 };
 
 export const loginWithSSO = async (): Promise<User> => {
-  throw new Error("SSO is not configured on the backend.");
+  // --- TEMPORARY: REMOVE WHEN REAL SSO IS READY ---
+  // Simulate async SSO flow so UI/loading logic behaves like production.
+  await Promise.resolve();
+
+  // --- TEMPORARY: REMOVE WHEN REAL SSO IS READY ---
+  // Read role from localStorage for testing (defaults to "admin")
+  const storedRole = localStorage.getItem("test_role");
+  const role: UserRole = (storedRole === "admin" || storedRole === "candidate") 
+    ? storedRole 
+    : "admin";
+
+  const user: User = {
+    id: "1",
+    name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+    role,
+    level: role === "candidate" ? "Beginner" : null,
+    department: role === "admin" ? "Engineering" : "Candidate Relations",
+    token: "dummy-sso-token-12345",
+  };
+
+  useUserStore.getState().setUser(user);
+  localStorage.removeItem("test_role");
+  return user;
 };
 
 export const logout = async (): Promise<void> => {
   useUserStore.getState().clear();
-  window.location.href = "/login";
+  window.location.href = "/";
 };

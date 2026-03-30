@@ -124,7 +124,6 @@ export default function CandidateDashboard() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
   };
 
   const handleBeginAssessment = () => {
