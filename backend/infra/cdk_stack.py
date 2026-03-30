@@ -25,6 +25,7 @@ from aws_cdk import (
     aws_iam as iam,
     aws_ecs as ecs,
     aws_efs as efs,
+    aws_ecr as ecr,
     aws_elasticloadbalancingv2 as elbv2,
 )
 from constructs import Construct
@@ -176,6 +177,15 @@ class CodingPlatformStack(Stack):
         
 
         # -----------------------------------------------------------
+        # ECR Repositories for Judge0, Postgres, Redis
+        # -----------------------------------------------------------
+        judge0_ecr = ecr.Repository.from_repository_name(
+            self,
+            "Judge0Repo",
+            "judge0",
+        )
+
+        # -----------------------------------------------------------
         # ECS Fargate for self-hosted Judge0 CE (internal)
         # -----------------------------------------------------------
         judge0_alb_sg = ec2.SecurityGroup(
@@ -207,6 +217,36 @@ class CodingPlatformStack(Stack):
             peer=judge0_alb_sg,
             connection=ec2.Port.tcp(2358),
             description="Allow internal ALB to reach Judge0 tasks",
+        )
+
+        # Self-ingress on HTTPS so that tasks can reach VPC endpoints using this SG
+        judge0_tasks_sg.add_ingress_rule(
+            peer=judge0_tasks_sg,
+            connection=ec2.Port.tcp(443),
+            description="Allow VPC endpoint access from tasks within same SG",
+        )
+
+        # -----------------------------------------------------------
+        # VPC Endpoints to bypass NAT Gateway for ECR/S3 pull
+        # -----------------------------------------------------------
+        vpc.add_gateway_endpoint(
+            "S3GatewayEndpoint",
+            service=ec2.GatewayVpcEndpointAwsService.S3,
+            subnets=[ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS)],
+        )
+
+        vpc.add_interface_endpoint(
+            "EcrDockerEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
+        vpc.add_interface_endpoint(
+            "EcrApiEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.ECR,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
         )
 
         judge0_efs_sg = ec2.SecurityGroup(
@@ -318,6 +358,9 @@ class CodingPlatformStack(Stack):
         judge0_redis_password_secret.grant_read(judge0_task_execution_role)
         judge0_redis_password_secret.grant_read(judge0_task_role)
 
+        # Grant ECS Task Execution Role permissions to pull images from ECR
+        judge0_ecr.grant_pull(judge0_task_execution_role)
+
         judge0_task_definition = ecs.FargateTaskDefinition(
             self,
             "Judge0TaskDefinition",
@@ -341,7 +384,7 @@ class CodingPlatformStack(Stack):
 
         judge0_postgres_container = judge0_task_definition.add_container(
             "judge0-postgres",
-            image=ecs.ContainerImage.from_registry("postgres:16"),
+            image=ecs.ContainerImage.from_registry("public.ecr.aws/docker/library/postgres:16"),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-postgres"),
             environment={
                 "POSTGRES_USER": "judge0",
@@ -371,7 +414,7 @@ class CodingPlatformStack(Stack):
 
         judge0_redis_container = judge0_task_definition.add_container(
             "judge0-redis",
-            image=ecs.ContainerImage.from_registry("redis:7"),
+            image=ecs.ContainerImage.from_registry("public.ecr.aws/docker/library/redis:7"),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-redis"),
             command=["sh", "-c", 'exec redis-server --requirepass "$REDIS_PASSWORD"'],
             secrets={
@@ -410,7 +453,7 @@ class CodingPlatformStack(Stack):
 
         judge0_server_container = judge0_task_definition.add_container(
             "judge0-server",
-            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
+            image=ecs.ContainerImage.from_ecr_repository(judge0_ecr, "1.13.1"),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-server"),
             environment=judge0_common_env,
             secrets=judge0_common_secrets,
@@ -431,7 +474,7 @@ class CodingPlatformStack(Stack):
 
         judge0_worker_container = judge0_task_definition.add_container(
             "judge0-worker",
-            image=ecs.ContainerImage.from_registry("judge0/judge0:1.13.1"),
+            image=ecs.ContainerImage.from_ecr_repository(judge0_ecr, "1.13.1"),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="judge0-worker"),
             command=["bash", "-lc", "bundle exec rake jobs:work"],
             environment=judge0_common_env,
@@ -560,4 +603,11 @@ class CodingPlatformStack(Stack):
             "Judge0AlbDnsName",
             value=judge0_alb.load_balancer_dns_name,
             description="Internal ALB DNS name for Judge0 CE",
+        )
+
+        CfnOutput(
+            self,
+            "Judge0EcrUri",
+            value=judge0_ecr.repository_uri,
+            description="ECR Repository URI for Judge0 CE",
         )
