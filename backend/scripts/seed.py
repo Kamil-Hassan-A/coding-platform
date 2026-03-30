@@ -1,10 +1,11 @@
+import argparse
+import hashlib
 import os
-import re
+import runpy
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-
-from sqlalchemy import inspect, select, text
+from typing import Any
 
 # Allow running as: python scripts/seed.py from backend/
 CURRENT_FILE = Path(__file__).resolve()
@@ -14,7 +15,7 @@ if str(BACKEND_DIR) not in sys.path:
 
 from database import get_session_local
 from models import Base, Level, Problem, Skill, User, UserRole, UserSkillProgress
-from security import hash_password 
+from security import hash_password
 
 
 LEVEL_ORDER = [
@@ -105,7 +106,7 @@ SKILL_SEEDS = [
         "allowed_languages": [LANGS["java"]],
     },
     {
-        "name": "Java Springboot",
+        "name": "Java Spring Boot",
         "description": "Building Java backend services with Spring Boot",
         "icon_url": None,
         "allowed_languages": [LANGS["java"]],
@@ -154,148 +155,100 @@ SKILL_SEEDS = [
     },
 ]
 
-SKILL_CONTEXT = {
-    "Agile": {"focus": "agile ceremonies and iterative delivery", "keyword": "sprint"},
-    "HTML, CSS, JS": {"focus": "web markup, styling, and browser scripting", "keyword": "frontend"},
-    "React JS": {"focus": "component architecture and UI composition", "keyword": "component"},
-    "React JS with Redux": {"focus": "state management and predictable updates", "keyword": "redux"},
-    "TypeScript": {"focus": "type safety and static analysis", "keyword": "types"},
-    "Next JS": {"focus": "server rendering and full-stack routing", "keyword": "routing"},
-    "Angular": {"focus": "modules, services, and reactive patterns", "keyword": "module"},
-    "Python with Flask": {"focus": "microservice APIs and request handlers", "keyword": "flask"},
-    "Python with Django": {"focus": "ORM-backed apps and MVC workflows", "keyword": "django"},
-    "Python for Data Science": {"focus": "data cleaning and analysis pipelines", "keyword": "dataset"},
-    "Java": {"focus": "object-oriented design and core language features", "keyword": "class"},
-    "Java Springboot": {"focus": "REST APIs and dependency injection", "keyword": "spring"},
-    ".NET, C#": {"focus": "typed application services on .NET", "keyword": "dotnet"},
-    ".NET, VB.NET": {"focus": "business application workflows on .NET", "keyword": "vbnet"},
-    "SQL": {"focus": "query planning and relational operations", "keyword": "query"},
-    "MongoDB": {"focus": "document models and aggregation concepts", "keyword": "document"},
-    "PostgreSQL": {"focus": "advanced relational features and indexing", "keyword": "postgres"},
-    "Java Selenium": {"focus": "UI automation and regression testing", "keyword": "selenium"},
-    "Python Selenium": {"focus": "browser automation and test scripting", "keyword": "webdriver"},
-}
+DEFAULT_DATASET_ROOT = BACKEND_DIR.parent / "dataset"
+DATASET_VARIABLE_CANDIDATES = [
+    "KNOWLEDGE_BASE",
+    "KNOWLEDGE_BASE_EXTENSION",
+]
 
 
-def slugify_skill(name: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "_", name.lower())
-    return slug.strip("_") or "skill"
+def normalize_level(level_raw: Any) -> Level:
+    value = str(level_raw or "").strip().lower().replace("-", " ").replace("_", " ")
+    if value in {"beginner", "easy"}:
+        return Level.BEGINNER
+    if value in {"intermediate 1", "intermediate1", "medium", "intermediate"}:
+        return Level.INTERMEDIATE_1
+    if value in {"intermediate 2", "intermediate2", "mid advanced"}:
+        return Level.INTERMEDIATE_2
+    if value in {"specialist 1", "specialist1", "hard"}:
+        return Level.SPECIALIST_1
+    if value in {"specialist 2", "specialist2", "expert"}:
+        return Level.SPECIALIST_2
+    return Level.BEGINNER
 
 
-def build_problem_templates_for_skill(skill_name: str) -> dict:
-    context = SKILL_CONTEXT.get(skill_name, {"focus": "software engineering fundamentals", "keyword": "skill"})
-    focus = context["focus"]
-    keyword = context["keyword"]
-    skill_slug = slugify_skill(skill_name)
-    skill_bonus = max(2, len(skill_slug) % 9 + 1)
-
-    return {
-        Level.BEGINNER: {
-            "title": "Skill Tag Formatter",
-            "description": (
-                f"Read one line and print '{skill_slug}|<input>'. "
-                f"The scenario is themed around {focus}."
-            ),
-            "sample_test_cases": [
-                {
-                    "stdin": keyword,
-                    "expected_output": f"{skill_slug}|{keyword}",
-                    "explanation": "Prefix input with skill tag",
-                }
-            ],
-            "hidden_test_cases": [{"stdin": "practice", "expected_output": f"{skill_slug}|practice"}],
-            "difficulty_label": "Beginner",
-            "time_limit_minutes": 45,
-        },
-        Level.INTERMEDIATE_1: {
-            "title": "Skill Bonus Sum",
-            "description": (
-                "Read two integers and print their sum plus a fixed skill bonus "
-                f"of {skill_bonus}."
-            ),
-            "sample_test_cases": [
-                {
-                    "stdin": "2 3",
-                    "expected_output": str(2 + 3 + skill_bonus),
-                    "explanation": f"2 + 3 + {skill_bonus}",
-                }
-            ],
-            "hidden_test_cases": [{"stdin": "10 40", "expected_output": str(10 + 40 + skill_bonus)}],
-            "difficulty_label": "Intermediate 1",
-            "time_limit_minutes": 45,
-        },
-        Level.INTERMEDIATE_2: {
-            "title": "Keyword Counter",
-            "description": (
-                f"Read a line and count how many words exactly match '{keyword}' "
-                "(case-insensitive)."
-            ),
-            "sample_test_cases": [
-                {
-                    "stdin": f"{keyword} test {keyword}",
-                    "expected_output": "2",
-                    "explanation": "Two exact keyword matches",
-                }
-            ],
-            "hidden_test_cases": [{"stdin": f"x {keyword} y", "expected_output": "1"}],
-            "difficulty_label": "Intermediate 2",
-            "time_limit_minutes": 45,
-        },
-        Level.SPECIALIST_1: {
-            "title": "Delimited Reverse",
-            "description": (
-                "Read comma-separated tokens and print them in reverse order joined "
-                "by a single space."
-            ),
-            "sample_test_cases": [
-                {
-                    "stdin": "a,b,c,d",
-                    "expected_output": "d c b a",
-                    "explanation": "Reverse token order",
-                }
-            ],
-            "hidden_test_cases": [{"stdin": "one,two", "expected_output": "two one"}],
-            "difficulty_label": "Specialist 1",
-            "time_limit_minutes": 45,
-        },
-        Level.SPECIALIST_2: {
-            "title": "Unique Sorted Values",
-            "description": (
-                "Read space-separated integers and print unique sorted values in "
-                "ascending order."
-            ),
-            "sample_test_cases": [
-                {
-                    "stdin": "3 1 2 2 3",
-                    "expected_output": "1 2 3",
-                    "explanation": "Sort and deduplicate",
-                }
-            ],
-            "hidden_test_cases": [{"stdin": "5 4 5 1", "expected_output": "1 4 5"}],
-            "difficulty_label": "Specialist 2",
-            "time_limit_minutes": 45,
-        },
-    }
+def stable_external_task_id(source_dataset: str, skill_name: str, level_raw: str, title: str, prompt: str) -> str:
+    payload = f"{source_dataset}|{skill_name}|{level_raw}|{title}|{prompt}".encode("utf-8")
+    digest = hashlib.sha1(payload).hexdigest()[:28]
+    return f"kb:{digest}"
 
 
-def ensure_user_profile_columns(db) -> None:
-    inspector = inspect(db.bind)
-    existing_columns = {column["name"] for column in inspector.get_columns("users")}
-
-    column_statements = {
-        "employee_id": "ALTER TABLE users ADD COLUMN employee_id VARCHAR(50)",
-        "gender": "ALTER TABLE users ADD COLUMN gender VARCHAR(20)",
-        "department": "ALTER TABLE users ADD COLUMN department VARCHAR(100)",
-        "exp_indium_years": "ALTER TABLE users ADD COLUMN exp_indium_years INTEGER DEFAULT 0",
-        "exp_overall_years": "ALTER TABLE users ADD COLUMN exp_overall_years INTEGER DEFAULT 0",
-    }
-
-    for column_name, statement in column_statements.items():
-        if column_name not in existing_columns:
-            db.execute(text(statement))
+def to_str(value: Any) -> str:
+    if value is None:
+        return ""
+    return str(value).strip()
 
 
-def get_or_create_user(
+def normalize_tags(raw_tags: Any, skill_name: str, level_raw: str) -> list[str]:
+    tags: list[str] = []
+
+    if isinstance(raw_tags, list):
+        tags.extend([to_str(item) for item in raw_tags])
+    elif isinstance(raw_tags, str):
+        tags.extend([part.strip() for part in raw_tags.split(",")])
+
+    tags.extend([skill_name, level_raw])
+
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for tag in tags:
+        if not tag:
+            continue
+        normalized = tag.lower()
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        deduped.append(tag)
+    return deduped
+
+
+def normalize_test_cases(raw_cases: Any) -> list[dict[str, str]]:
+    normalized: list[dict[str, str]] = []
+    if not isinstance(raw_cases, list):
+        return normalized
+
+    for case in raw_cases:
+        if isinstance(case, dict):
+            input_value = to_str(case.get("input", case.get("stdin", "")))
+            output_value = to_str(case.get("output", case.get("expected_output", case.get("expected", ""))))
+            normalized.append({"input": input_value, "output": output_value})
+        elif isinstance(case, str):
+            normalized.append({"input": case, "output": ""})
+
+    return normalized
+
+
+def get_starter_code(record: dict[str, Any]) -> dict[str, Any] | None:
+    candidate = record.get("starter_code")
+    if isinstance(candidate, dict):
+        return candidate
+    if isinstance(candidate, str) and candidate.strip():
+        return {"default": candidate}
+
+    template_code = record.get("templateCode")
+    if isinstance(template_code, str) and template_code.strip():
+        return {"default": template_code}
+
+    language = to_str(record.get("language")).lower()
+    if language:
+        return {
+            language: "",
+            "default": "",
+        }
+    return {"default": ""}
+
+
+def create_user(
     db,
     email: str,
     password: str,
@@ -306,18 +259,7 @@ def get_or_create_user(
     department: str,
     exp_indium_years: int,
     exp_overall_years: int,
-) -> tuple[User, bool]:
-    user = db.scalar(select(User).where(User.email == email))
-    if user:
-        user.employee_id = user.employee_id or employee_id
-        user.gender = user.gender or gender
-        user.department = user.department or department
-        if user.exp_indium_years is None:
-            user.exp_indium_years = exp_indium_years
-        if user.exp_overall_years is None:
-            user.exp_overall_years = exp_overall_years
-        return user, False
-
+) -> User:
     user = User(
         email=email,
         password_hash=hash_password(password),
@@ -331,81 +273,183 @@ def get_or_create_user(
     )
     db.add(user)
     db.flush()
-    return user, True
+    return user
 
 
-def get_or_create_skill(db, payload: dict) -> tuple[Skill, bool]:
-    skill = db.scalar(select(Skill).where(Skill.name == payload["name"]))
-    if skill:
-        skill.allowed_languages = payload.get("allowed_languages", [])
-        return skill, False
-
-    skill = Skill(
-        name=payload["name"],
-        description=payload.get("description"),
-        icon_url=payload.get("icon_url"),
-        allowed_languages=payload.get("allowed_languages", []),
-    )
-    db.add(skill)
+def create_skills(db) -> list[Skill]:
+    skills: list[Skill] = []
+    for payload in SKILL_SEEDS:
+        skill = Skill(
+            name=payload["name"],
+            description=payload.get("description"),
+            icon_url=payload.get("icon_url"),
+            allowed_languages=payload.get("allowed_languages", []),
+        )
+        db.add(skill)
+        skills.append(skill)
     db.flush()
-    return skill, True
+    return skills
 
 
-def get_or_create_problem(db, skill: Skill, level: Level, template: dict) -> bool:
-    title = f"{skill.name} - {template['title']}"
-    existing = db.scalar(
-        select(Problem).where(
-            Problem.skill_id == skill.id,
-            Problem.level == level,
-        )
-    )
-    if existing:
-        return False
-
-    problem = Problem(
-        skill_id=skill.id,
-        level=level,
-        title=title,
-        description=template["description"],
-        sample_test_cases=template["sample_test_cases"],
-        hidden_test_cases=template["hidden_test_cases"],
-        time_limit_minutes=template["time_limit_minutes"],
-        difficulty_label=template["difficulty_label"],
-    )
-    db.add(problem)
-    return True
-
-
-def ensure_progress_for_candidate(db, user: User, skill: Skill) -> int:
+def create_progress_for_candidate(db, user: User, skills: list[Skill]) -> int:
     inserted = 0
-    for level in LEVEL_ORDER:
-        existing = db.scalar(
-            select(UserSkillProgress).where(
-                UserSkillProgress.user_id == user.id,
-                UserSkillProgress.skill_id == skill.id,
-                UserSkillProgress.level == level,
+    for skill in skills:
+        for level in LEVEL_ORDER:
+            progress = UserSkillProgress(
+                user_id=user.id,
+                skill_id=skill.id,
+                level=level,
+                unlocked=(level == Level.BEGINNER),
+                cleared=False,
+                cleared_at=None,
             )
-        )
-        if existing:
-            if level == Level.BEGINNER and not existing.unlocked:
-                existing.unlocked = True
-            continue
-
-        progress = UserSkillProgress(
-            user_id=user.id,
-            skill_id=skill.id,
-            level=level,
-            unlocked=(level == Level.BEGINNER),
-            cleared=False,
-            cleared_at=None,
-        )
-        db.add(progress)
-        inserted += 1
-
+            db.add(progress)
+            inserted += 1
     return inserted
 
 
-def run_seed() -> None:
+def load_dataset_records(file_path: Path, variable_name: str) -> list[dict[str, Any]]:
+    module_globals = runpy.run_path(str(file_path))
+    data = module_globals.get(variable_name)
+    if not isinstance(data, list):
+        raise ValueError(f"Expected list variable '{variable_name}' in {file_path}")
+    return [row for row in data if isinstance(row, dict)]
+
+
+def discover_dataset_sources(dataset_root: Path) -> list[dict[str, Any]]:
+    if not dataset_root.exists():
+        raise FileNotFoundError(f"Dataset directory not found: {dataset_root}")
+
+    discovered: list[dict[str, Any]] = []
+    for py_file in dataset_root.rglob("*.py"):
+        # Ignore helper/seed scripts and cache paths.
+        if py_file.name.startswith("seed_"):
+            continue
+        if "__pycache__" in py_file.parts:
+            continue
+
+        module_globals = runpy.run_path(str(py_file))
+        selected_variable = None
+        for variable_name in DATASET_VARIABLE_CANDIDATES:
+            candidate = module_globals.get(variable_name)
+            if isinstance(candidate, list):
+                selected_variable = variable_name
+                break
+
+        # Fallback: pick the first top-level list of dict records.
+        if selected_variable is None:
+            for variable_name, value in module_globals.items():
+                if isinstance(value, list) and value and isinstance(value[0], dict):
+                    selected_variable = variable_name
+                    break
+
+        if selected_variable is None:
+            continue
+
+        discovered.append(
+            {
+                "file": py_file,
+                "variable": selected_variable,
+                "source_dataset": py_file.parent.name,
+            }
+        )
+
+    if not discovered:
+        raise ValueError(f"No dataset Python files found under: {dataset_root}")
+
+    return sorted(discovered, key=lambda item: str(item["file"]))
+
+
+def seed_problems_from_datasets(
+    db,
+    skills_by_name: dict[str, Skill],
+    dataset_sources: list[dict[str, Any]],
+) -> dict[str, int]:
+    counts = {
+        "problems_created": 0,
+        "problems_skipped_invalid": 0,
+        "problems_skipped_unknown_skill": 0,
+    }
+
+    seen_external_ids: set[str] = set()
+
+    for source in dataset_sources:
+        dataset_file = source["file"]
+        variable_name = source["variable"]
+        source_dataset = source["source_dataset"]
+
+        if not dataset_file.exists():
+            raise FileNotFoundError(f"Dataset file not found: {dataset_file}")
+
+        records = load_dataset_records(dataset_file, variable_name)
+
+        for record in records:
+            skill_raw = to_str(record.get("skill"))
+            title = to_str(record.get("title"))
+            level_raw = to_str(record.get("level"))
+            prompt = to_str(record.get("problem"))
+
+            if not skill_raw or not title or not prompt:
+                counts["problems_skipped_invalid"] += 1
+                continue
+
+            skill = skills_by_name.get(skill_raw)
+            if not skill:
+                counts["problems_skipped_unknown_skill"] += 1
+                continue
+
+            level = normalize_level(level_raw)
+            external_task_id = stable_external_task_id(source_dataset, skill_raw, level_raw, title, prompt)
+            if external_task_id in seen_external_ids:
+                counts["problems_skipped_invalid"] += 1
+                continue
+
+            source_name = to_str(record.get("source")) or None
+            solution_text = to_str(record.get("solution")) or None
+
+            sample_test_cases = normalize_test_cases(record.get("sample_test_cases"))
+            hidden_test_cases = normalize_test_cases(record.get("hidden_test_cases"))
+            if not sample_test_cases:
+                sample_test_cases = normalize_test_cases(record.get("test_cases"))
+
+            tags = normalize_tags(record.get("tags"), skill_raw, level_raw)
+            starter_code = get_starter_code(record)
+
+            problem = Problem(
+                skill_id=skill.id,
+                level=level,
+                title=title[:255],
+                description=prompt,
+                sample_test_cases=sample_test_cases,
+                hidden_test_cases=hidden_test_cases,
+                time_limit_minutes=45,
+                tags=tags,
+                starter_code=starter_code,
+                difficulty_label=(level_raw[:50] if level_raw else None),
+                external_task_id=external_task_id,
+                source_name=source_name,
+                source_dataset=source_dataset,
+                solution_text=solution_text,
+            )
+            db.add(problem)
+            seen_external_ids.add(external_task_id)
+            counts["problems_created"] += 1
+
+    return counts
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Reset DB and seed users/skills/progress/problems in one pass.")
+    parser.add_argument(
+        "--dataset-root",
+        type=Path,
+        default=DEFAULT_DATASET_ROOT,
+        help="Root dataset directory to auto-discover Python dataset files.",
+    )
+    return parser.parse_args()
+
+
+def run_seed(dataset_root: Path) -> None:
     admin_email = os.getenv("SEED_ADMIN_EMAIL", "admin@example.com")
     admin_password = os.getenv("SEED_ADMIN_PASSWORD", "AdminPass123!")
     admin_name = os.getenv("SEED_ADMIN_NAME", "Local Admin")
@@ -415,6 +459,7 @@ def run_seed() -> None:
     candidate_name = os.getenv("SEED_CANDIDATE_NAME", "Local Candidate")
 
     session_local = get_session_local()
+    dataset_sources = discover_dataset_sources(dataset_root)
 
     # Always start from a clean database for deterministic local seed data.
     reset_db_session = session_local()
@@ -433,12 +478,12 @@ def run_seed() -> None:
         "skills_created": 0,
         "problems_created": 0,
         "progress_created": 0,
+        "problems_skipped_invalid": 0,
+        "problems_skipped_unknown_skill": 0,
     }
 
     try:
-        ensure_user_profile_columns(db)
-
-        _, admin_created = get_or_create_user(
+        create_user(
             db=db,
             email=admin_email,
             password=admin_password,
@@ -450,9 +495,9 @@ def run_seed() -> None:
             exp_indium_years=int(os.getenv("SEED_ADMIN_EXP_INDIUM", "5")),
             exp_overall_years=int(os.getenv("SEED_ADMIN_EXP_OVERALL", "10")),
         )
-        counts["users_created"] += int(admin_created)
+        counts["users_created"] += 1
 
-        candidate_user, candidate_created = get_or_create_user(
+        candidate_user = create_user(
             db=db,
             email=candidate_email,
             password=candidate_password,
@@ -464,30 +509,31 @@ def run_seed() -> None:
             exp_indium_years=int(os.getenv("SEED_CANDIDATE_EXP_INDIUM", "2")),
             exp_overall_years=int(os.getenv("SEED_CANDIDATE_EXP_OVERALL", "4")),
         )
-        counts["users_created"] += int(candidate_created)
+        counts["users_created"] += 1
 
-        skills: list[Skill] = []
-        for skill_payload in SKILL_SEEDS:
-            skill, created = get_or_create_skill(db, skill_payload)
-            skills.append(skill)
-            counts["skills_created"] += int(created)
+        skills = create_skills(db)
+        counts["skills_created"] = len(skills)
 
-        for skill in skills:
-            skill_templates = build_problem_templates_for_skill(skill.name)
-            for level in LEVEL_ORDER:
-                created = get_or_create_problem(db, skill, level, skill_templates[level])
-                counts["problems_created"] += int(created)
+        skills_by_name = {skill.name: skill for skill in skills}
 
-        # Ensure local candidate has baseline unlock records.
-        for skill in skills:
-            counts["progress_created"] += ensure_progress_for_candidate(db, candidate_user, skill)
+        problem_counts = seed_problems_from_datasets(db, skills_by_name, dataset_sources)
+        counts["problems_created"] += problem_counts["problems_created"]
+        counts["problems_skipped_invalid"] += problem_counts["problems_skipped_invalid"]
+        counts["problems_skipped_unknown_skill"] += problem_counts["problems_skipped_unknown_skill"]
+
+        # Fresh DB each run: directly create baseline unlock records.
+        counts["progress_created"] = create_progress_for_candidate(db, candidate_user, skills)
 
         db.commit()
 
         print("Seeding complete.")
+        print(f"- Dataset root: {dataset_root.resolve()}")
+        print(f"- Dataset files discovered: {len(dataset_sources)}")
         print(f"- Users created: {counts['users_created']}")
         print(f"- Skills created: {counts['skills_created']}")
         print(f"- Problems created: {counts['problems_created']}")
+        print(f"- Problems skipped (invalid): {counts['problems_skipped_invalid']}")
+        print(f"- Problems skipped (unknown skill): {counts['problems_skipped_unknown_skill']}")
         print(f"- Progress rows created: {counts['progress_created']}")
         print("Seeded login credentials:")
         print(f"- Admin: {admin_email} / {admin_password}")
@@ -501,4 +547,5 @@ def run_seed() -> None:
 
 
 if __name__ == "__main__":
-    run_seed()
+    args = parse_args()
+    run_seed(args.dataset_root)

@@ -1,0 +1,2859 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_name": "exhaustive_skills_batch_java_dotnet_sql_mongo_pg_selenium",
+  "generated_at_utc": "2026-03-30T18:30:00Z",
+  "skills": [
+
+    {
+      "skill": "Java",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1",
+              "slug": "two-sum",
+              "title": "Two Sum",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+              "solution": "Map<Integer,Integer> map = new HashMap<>();\nfor(int i=0;i<nums.length;i++){\n  int c=target-nums[i];\n  if(map.containsKey(c)) return new int[]{map.get(c),i};\n  map.put(nums[i],i);\n}\nthrow new IllegalArgumentException(\"No solution\");",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/two-sum/"
+            },
+            {
+              "id": "9",
+              "slug": "palindrome-number",
+              "title": "Palindrome Number",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given an integer x, return true if x is a palindrome, and false otherwise.",
+              "solution": "if(x<0) return false;\nint orig=x, rev=0;\nwhile(x>0){ rev=rev*10+x%10; x/=10; }\nreturn orig==rev;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/palindrome-number/"
+            },
+            {
+              "id": "13",
+              "slug": "roman-to-integer",
+              "title": "Roman to Integer",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given a roman numeral string s, convert it to an integer.",
+              "solution": "Map<Character,Integer> v=Map.of('I',1,'V',5,'X',10,'L',50,'C',100,'D',500,'M',1000);\nint total=0,prev=0;\nfor(char c:s.toCharArray()){\n  int cur=v.get(c);\n  total+=cur>prev?cur-2*prev:cur;\n  prev=cur;\n}\nreturn total;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/roman-to-integer/"
+            },
+            {
+              "id": "14",
+              "slug": "longest-common-prefix",
+              "title": "Longest Common Prefix",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Write a function to find the longest common prefix string amongst an array of strings.",
+              "solution": "if(strs.length==0) return \"\";\nfor(int i=0;i<strs[0].length();i++)\n  for(int j=1;j<strs.length;j++)\n    if(i==strs[j].length()||strs[j].charAt(i)!=strs[0].charAt(i))\n      return strs[0].substring(0,i);\nreturn strs[0];",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-common-prefix/"
+            },
+            {
+              "id": "20",
+              "slug": "valid-parentheses",
+              "title": "Valid Parentheses",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given a string s containing just '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+              "solution": "Stack<Character> st=new Stack<>();\nfor(char c:s.toCharArray()){\n  if(c=='('||c=='['||c=='{') st.push(c);\n  else if(st.isEmpty()) return false;\n  else if(c==')'&&st.pop()!='(') return false;\n  else if(c==']'&&st.pop()!='[') return false;\n  else if(c=='}'&&st.pop()!='{') return false;\n}\nreturn st.isEmpty();",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/valid-parentheses/"
+            },
+            {
+              "id": "21",
+              "slug": "merge-two-sorted-lists",
+              "title": "Merge Two Sorted Lists",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Merge two sorted linked lists and return the merged list.",
+              "solution": "ListNode dummy=new ListNode(0),cur=dummy;\nwhile(l1!=null&&l2!=null){\n  if(l1.val<=l2.val){cur.next=l1;l1=l1.next;}\n  else{cur.next=l2;l2=l2.next;}\n  cur=cur.next;\n}\ncur.next=(l1!=null)?l1:l2;\nreturn dummy.next;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/merge-two-sorted-lists/"
+            },
+            {
+              "id": "J-BEG-E-1",
+              "slug": "hello-world-java",
+              "title": "Hello World in Java",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Write a Java program that prints 'Hello, World!' to the console.",
+              "solution": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello, World!\");\n  }\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-stdin-and-stdout-1"
+            },
+            {
+              "id": "J-BEG-E-2",
+              "slug": "java-int-to-string",
+              "title": "Convert Integer to String",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Convert integer 42 to a String and print its length.",
+              "solution": "int n=42;\nString s=Integer.toString(n);\nSystem.out.println(s.length());",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-int-to-string"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "3",
+              "slug": "longest-substring-without-repeating",
+              "title": "Longest Substring Without Repeating Characters",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given a string s, find the length of the longest substring without repeating characters.",
+              "solution": "int l=0,max=0;\nMap<Character,Integer> map=new HashMap<>();\nfor(int r=0;r<s.length();r++){\n  if(map.containsKey(s.charAt(r)))\n    l=Math.max(l,map.get(s.charAt(r))+1);\n  map.put(s.charAt(r),r);\n  max=Math.max(max,r-l+1);\n}\nreturn max;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+            },
+            {
+              "id": "49",
+              "slug": "group-anagrams",
+              "title": "Group Anagrams",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given an array of strings strs, group the anagrams together.",
+              "solution": "Map<String,List<String>> map=new HashMap<>();\nfor(String s:strs){\n  char[] c=s.toCharArray();\n  Arrays.sort(c);\n  String key=new String(c);\n  map.computeIfAbsent(key,k->new ArrayList<>()).add(s);\n}\nreturn new ArrayList<>(map.values());",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/group-anagrams/"
+            },
+            {
+              "id": "J-BEG-M-1",
+              "slug": "java-arraylist-sort",
+              "title": "Sort ArrayList of Custom Objects",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Given a list of Employee objects with name and salary, sort them by salary descending then name ascending.",
+              "solution": "list.sort(Comparator.comparingInt(Employee::getSalary).reversed()\n  .thenComparing(Employee::getName));",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-sort"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "J-BEG-H-1",
+              "slug": "java-regex-email",
+              "title": "Validate Email with Regex",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Write a Java method using regex to validate an email address.",
+              "solution": "public static boolean isValidEmail(String email){\n  String regex=\"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$\";\n  return email.matches(regex);\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-regex"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "206",
+              "slug": "reverse-linked-list",
+              "title": "Reverse Linked List",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Given the head of a singly linked list, reverse the list and return the reversed list.",
+              "solution": "ListNode prev=null,curr=head;\nwhile(curr!=null){\n  ListNode next=curr.next;\n  curr.next=prev;\n  prev=curr;\n  curr=next;\n}\nreturn prev;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/reverse-linked-list/"
+            },
+            {
+              "id": "104",
+              "slug": "maximum-depth-of-binary-tree",
+              "title": "Maximum Depth of Binary Tree",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Given the root of a binary tree, return its maximum depth.",
+              "solution": "public int maxDepth(TreeNode root){\n  if(root==null) return 0;\n  return 1+Math.max(maxDepth(root.left),maxDepth(root.right));\n}",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "102",
+              "slug": "binary-tree-level-order-traversal",
+              "title": "Binary Tree Level Order Traversal",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Given the root of a binary tree, return the level order traversal of its nodes' values.",
+              "solution": "List<List<Integer>> res=new ArrayList<>();\nif(root==null) return res;\nQueue<TreeNode> q=new LinkedList<>();\nq.offer(root);\nwhile(!q.isEmpty()){\n  int size=q.size();\n  List<Integer> level=new ArrayList<>();\n  for(int i=0;i<size;i++){\n    TreeNode node=q.poll();\n    level.add(node.val);\n    if(node.left!=null) q.offer(node.left);\n    if(node.right!=null) q.offer(node.right);\n  }\n  res.add(level);\n}\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+            },
+            {
+              "id": "200",
+              "slug": "number-of-islands",
+              "title": "Number of Islands",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Given an m x n 2D binary grid representing a map of '1's (land) and '0's (water), return the number of islands.",
+              "solution": "int count=0;\nfor(int i=0;i<grid.length;i++)\n  for(int j=0;j<grid[0].length;j++)\n    if(grid[i][j]=='1'){dfs(grid,i,j);count++;}\nreturn count;\nvoid dfs(char[][]g,int i,int j){\n  if(i<0||i>=g.length||j<0||j>=g[0].length||g[i][j]!='1')return;\n  g[i][j]='0';\n  dfs(g,i+1,j);dfs(g,i-1,j);dfs(g,i,j+1);dfs(g,i,j-1);\n}",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/number-of-islands/"
+            },
+            {
+              "id": "J-INT1-M-1",
+              "slug": "java-generics-stack",
+              "title": "Generic Stack Implementation",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Implement a generic Stack<T> class with push, pop, peek, and isEmpty methods.",
+              "solution": "public class Stack<T> {\n  private LinkedList<T> list=new LinkedList<>();\n  public void push(T item){list.addFirst(item);}\n  public T pop(){return list.removeFirst();}\n  public T peek(){return list.getFirst();}\n  public boolean isEmpty(){return list.isEmpty();}\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-stack"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "297",
+              "slug": "serialize-and-deserialize-binary-tree",
+              "title": "Serialize and Deserialize Binary Tree",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Design an algorithm to serialize and deserialize a binary tree.",
+              "solution": "public String serialize(TreeNode root){\n  if(root==null) return \"null,\";\n  return root.val+\",\"+serialize(root.left)+serialize(root.right);\n}\npublic TreeNode deserialize(String data){\n  Queue<String> q=new LinkedList<>(Arrays.asList(data.split(\",\")));\n  return helper(q);\n}\nTreeNode helper(Queue<String> q){\n  String s=q.poll();\n  if(s.equals(\"null\")) return null;\n  TreeNode node=new TreeNode(Integer.parseInt(s));\n  node.left=helper(q);\n  node.right=helper(q);\n  return node;\n}",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "J-INT2-E-1",
+              "slug": "java-optional-usage",
+              "title": "Optional to Avoid NullPointerException",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Given a method that may return null, use Optional to return a default value 'unknown' when null.",
+              "solution": "Optional<String> opt = Optional.ofNullable(getName());\nreturn opt.orElse(\"unknown\");",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-optional"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "J-INT2-M-1",
+              "slug": "java-streams-groupby",
+              "title": "Stream Group By and Count",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Given a list of strings, use Java Streams to group them by length and count occurrences of each length.",
+              "solution": "Map<Integer,Long> result = words.stream()\n  .collect(Collectors.groupingBy(String::length, Collectors.counting()));\nresult.forEach((k,v)->System.out.println(k+\": \"+v));",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-streams"
+            },
+            {
+              "id": "J-INT2-M-2",
+              "slug": "java-executor-service",
+              "title": "Thread Pool with ExecutorService",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Submit 5 Runnable tasks to a fixed thread pool of size 3. Await termination.",
+              "solution": "ExecutorService exec=Executors.newFixedThreadPool(3);\nfor(int i=0;i<5;i++){\n  int id=i;\n  exec.submit(()->System.out.println(\"Task \"+id+\" on \"+Thread.currentThread().getName()));\n}\nexec.shutdown();\nexec.awaitTermination(10,TimeUnit.SECONDS);",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-executor"
+            },
+            {
+              "id": "322",
+              "slug": "coin-change",
+              "title": "Coin Change",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Given coins of different denominations and amount, return fewest coins to make up amount.",
+              "solution": "int[]dp=new int[amount+1];\nArrays.fill(dp,amount+1);\ndp[0]=0;\nfor(int i=1;i<=amount;i++)\n  for(int c:coins)\n    if(c<=i) dp[i]=Math.min(dp[i],dp[i-c]+1);\nreturn dp[amount]>amount?-1:dp[amount];",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/coin-change/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "J-INT2-H-1",
+              "slug": "java-concurrent-hashmap",
+              "title": "Thread-Safe Word Frequency Counter",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Using ConcurrentHashMap and multiple threads, count word frequencies from a large list without data races.",
+              "solution": "ConcurrentHashMap<String,Long> freq=new ConcurrentHashMap<>();\nwords.parallelStream()\n  .forEach(w->freq.merge(w,1L,Long::sum));\nreturn freq;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-concurrency"
+            },
+            {
+              "id": "23",
+              "slug": "merge-k-sorted-lists",
+              "title": "Merge k Sorted Lists",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Merge k sorted linked lists and return it as one sorted list.",
+              "solution": "PriorityQueue<ListNode> pq=new PriorityQueue<>((a,b)->a.val-b.val);\nfor(ListNode l:lists) if(l!=null) pq.offer(l);\nListNode dummy=new ListNode(0),cur=dummy;\nwhile(!pq.isEmpty()){\n  cur.next=pq.poll();\n  cur=cur.next;\n  if(cur.next!=null) pq.offer(cur.next);\n}\nreturn dummy.next;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/merge-k-sorted-lists/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "J-SP1-E-1",
+              "slug": "java-design-pattern-singleton",
+              "title": "Thread-Safe Singleton",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Implement a thread-safe Singleton using double-checked locking.",
+              "solution": "public class Singleton {\n  private static volatile Singleton instance;\n  private Singleton(){}\n  public static Singleton getInstance(){\n    if(instance==null){\n      synchronized(Singleton.class){\n        if(instance==null) instance=new Singleton();\n      }\n    }\n    return instance;\n  }\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-singleton"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "J-SP1-M-1",
+              "slug": "java-lru-cache",
+              "title": "LRU Cache",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Design and implement a data structure for Least Recently Used (LRU) cache with O(1) get and put.",
+              "solution": "class LRUCache extends LinkedHashMap<Integer,Integer>{\n  int cap;\n  public LRUCache(int capacity){\n    super(capacity,0.75f,true);\n    this.cap=capacity;\n  }\n  public int get(int key){ return super.getOrDefault(key,-1); }\n  public void put(int k,int v){ super.put(k,v); }\n  protected boolean removeEldestEntry(Map.Entry e){ return size()>cap; }\n}",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/lru-cache/"
+            },
+            {
+              "id": "J-SP1-M-2",
+              "slug": "java-custom-annotation-validator",
+              "title": "Custom Annotation + Reflection Validator",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Create a @NotNull annotation and a Validator class that uses reflection to check all annotated fields are non-null.",
+              "solution": "@Retention(RetentionPolicy.RUNTIME)\n@Target(ElementType.FIELD)\npublic @interface NotNull {}\n\npublic class Validator {\n  public static void validate(Object obj) throws Exception {\n    for(Field f:obj.getClass().getDeclaredFields()){\n      if(f.isAnnotationPresent(NotNull.class)){\n        f.setAccessible(true);\n        if(f.get(obj)==null)\n          throw new Exception(f.getName()+\" must not be null\");\n      }\n    }\n  }\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/java-annotations"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "1192",
+              "slug": "critical-connections-in-a-network",
+              "title": "Critical Connections in a Network",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Find all critical connections (bridges) in a network using Tarjan's algorithm.",
+              "solution": "List<List<Integer>>adj=new ArrayList<>();\nfor(int i=0;i<n;i++)adj.add(new ArrayList<>());\nfor(int[]c:connections){adj.get(c[0]).add(c[1]);adj.get(c[1]).add(c[0]);}\nList<List<Integer>>res=new ArrayList<>();\nint[]disc=new int[n],low=new int[n],timer={0};\nArrays.fill(disc,-1);\n// DFS Tarjan bridge-finding\nfor(int i=0;i<n;i++) if(disc[i]==-1) dfs(i,-1,disc,low,adj,res,timer);\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/critical-connections-in-a-network/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "J-SP2-E-1",
+              "slug": "java-virtual-threads",
+              "title": "Virtual Threads with Project Loom",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Using Java 21 virtual threads, submit 1000 tasks using Thread.ofVirtual() and await them.",
+              "solution": "try(var executor=Executors.newVirtualThreadPerTaskExecutor()){\n  List<Future<?>> futures=new ArrayList<>();\n  for(int i=0;i<1000;i++){\n    int id=i;\n    futures.add(executor.submit(()->System.out.println(\"Task \"+id)));\n  }\n  for(var f:futures) f.get();\n}",
+              "source": "OpenJDK Docs",
+              "url": "https://openjdk.org/jeps/444"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "J-SP2-M-1",
+              "slug": "java-record-sealed-interface",
+              "title": "Sealed Interface with Records",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Model a payment system using a sealed interface Payment with record types CreditCard and BankTransfer. Use pattern matching switch to process each.",
+              "solution": "sealed interface Payment permits CreditCard, BankTransfer {}\nrecord CreditCard(String number, double amount) implements Payment {}\nrecord BankTransfer(String iban, double amount) implements Payment {}\n\nString process(Payment p) {\n  return switch(p) {\n    case CreditCard c -> \"Card: \"+c.number()+\" $\"+c.amount();\n    case BankTransfer b -> \"IBAN: \"+b.iban()+\" $\"+b.amount();\n  };\n}",
+              "source": "OpenJDK Docs",
+              "url": "https://openjdk.org/jeps/409"
+            },
+            {
+              "id": "1851",
+              "slug": "minimum-interval-to-include-each-query",
+              "title": "Minimum Interval to Include Each Query",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Given intervals and queries, return the size of the smallest interval containing each query.",
+              "solution": "Arrays.sort(intervals,(a,b)->a[0]-b[0]);\nint[][]sorted=new int[queries.length][2];\nfor(int i=0;i<queries.length;i++)sorted[i]=new int[]{queries[i],i};\nArrays.sort(sorted,(a,b)->a[0]-b[0]);\nPriorityQueue<int[]>pq=new PriorityQueue<>((a,b)->a[0]-b[0]);\nint[]res=new int[queries.length];\nArrays.fill(res,-1);\nint j=0;\nfor(int[]q:sorted){\n  while(j<intervals.length&&intervals[j][0]<=q[0])\n    pq.offer(new int[]{intervals[j][1]-intervals[j][0]+1,intervals[j][1]});\n  while(!pq.isEmpty()&&pq.peek()[1]<q[0])pq.poll();\n  if(!pq.isEmpty())res[q[1]]=pq.peek()[0];\n  j++;\n}\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/minimum-interval-to-include-each-query/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "J-SP2-H-1",
+              "slug": "java-jvm-gc-tuning",
+              "title": "JVM GC Tuning for Low Latency",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Configure JVM flags for a low-latency application using ZGC with 4GB heap. Describe each flag's purpose.",
+              "solution": "// JVM Flags:\n// -XX:+UseZGC             → Enable ZGC (low-latency GC)\n// -Xms4g -Xmx4g           → Fixed heap to avoid resizing pauses\n// -XX:+UnlockDiagnosticVMOptions\n// -XX:+PrintGCDetails -Xlog:gc*:gc.log\n// -XX:ZAllocationSpikeTolerance=2\n// ZGC targets <1ms GC pauses, suitable for real-time services",
+              "source": "OpenJDK Docs",
+              "url": "https://openjdk.org/jeps/439"
+            },
+            {
+              "id": "1697",
+              "slug": "checking-existence-of-edge-length-limited-paths",
+              "title": "Checking Existence of Edge Length Limited Paths",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Given a weighted undirected graph and queries, determine for each query if a path exists where all edges are below a given limit.",
+              "solution": "Arrays.sort(edgeList,(a,b)->a[2]-b[2]);\nint n=0;\nfor(int[]q:queries)n=Math.max(n,Math.max(q[0],q[1])+1);\nint[]parent=new int[n];\nfor(int i=0;i<n;i++)parent[i]=i;\nInteger[]idx=new Integer[queries.length];\nfor(int i=0;i<idx.length;i++)idx[i]=i;\nArrays.sort(idx,(a,b)->queries[a][2]-queries[b][2]);\nboolean[]res=new boolean[queries.length];\nint ei=0;\nfor(int qi:idx){\n  while(ei<edgeList.length&&edgeList[ei][2]<queries[qi][2]){\n    int a=find(parent,edgeList[ei][0]),b=find(parent,edgeList[ei][1]);\n    if(a!=b)parent[a]=b;\n    ei++;\n  }\n  res[qi]=find(parent,queries[qi][0])==find(parent,queries[qi][1]);\n}\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/checking-existence-of-edge-length-limited-paths/"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": ".NET, C#",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "CS-BEG-E-1",
+              "slug": "csharp-hello-world",
+              "title": "Hello World in C#",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Write a C# console application that prints 'Hello, World!'.",
+              "solution": "using System;\nclass Program {\n  static void Main() {\n    Console.WriteLine(\"Hello, World!\");\n  }\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-hello-world"
+            },
+            {
+              "id": "CS-BEG-E-2",
+              "slug": "csharp-string-reverse",
+              "title": "Reverse a String in C#",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Write a C# method that reverses a given string.",
+              "solution": "string Reverse(string s) {\n  char[] arr = s.ToCharArray();\n  Array.Reverse(arr);\n  return new string(arr);\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-string"
+            },
+            {
+              "id": "CS-BEG-E-3",
+              "slug": "csharp-fibonacci",
+              "title": "Fibonacci Sequence",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Print the first 10 numbers of the Fibonacci sequence in C#.",
+              "solution": "int a=0,b=1;\nfor(int i=0;i<10;i++){\n  Console.WriteLine(a);\n  int temp=a+b; a=b; b=temp;\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-fibonacci"
+            },
+            {
+              "id": "CS-BEG-E-4",
+              "slug": "csharp-list-linq",
+              "title": "Filter Even Numbers with LINQ",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Given a List<int>, use LINQ to filter only even numbers and return them sorted ascending.",
+              "solution": "var evens = numbers.Where(n => n % 2 == 0).OrderBy(n => n).ToList();",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-linq"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "CS-BEG-M-1",
+              "slug": "csharp-class-inheritance",
+              "title": "Class Inheritance and Polymorphism",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Create an Animal base class with a Speak() method. Derive Dog and Cat classes that override Speak(). Demonstrate polymorphism via a list of Animal.",
+              "solution": "abstract class Animal { public abstract string Speak(); }\nclass Dog : Animal { public override string Speak() => \"Woof\"; }\nclass Cat : Animal { public override string Speak() => \"Meow\"; }\n\nvar animals = new List<Animal> { new Dog(), new Cat() };\nforeach(var a in animals) Console.WriteLine(a.Speak());",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-inheritance"
+            },
+            {
+              "id": "CS-BEG-M-2",
+              "slug": "csharp-exception-handling",
+              "title": "Exception Handling in C#",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Write a method that divides two numbers. Catch DivideByZeroException and return -1. Use finally to log completion.",
+              "solution": "int Divide(int a, int b) {\n  try {\n    return a / b;\n  } catch(DivideByZeroException) {\n    return -1;\n  } finally {\n    Console.WriteLine(\"Division attempt complete.\");\n  }\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-exception"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "CS-BEG-H-1",
+              "slug": "csharp-generic-repository",
+              "title": "Generic Repository Pattern",
+              "difficulty": "Hard",
+              "skill": ".NET, C#",
+              "skill_level": "Beginner",
+              "language": "C#",
+              "content": "Implement a generic IRepository<T> interface with GetById, GetAll, Add, Update, Delete. Implement it with an in-memory Dictionary.",
+              "solution": "public interface IRepository<T> where T : class {\n  T GetById(int id);\n  IEnumerable<T> GetAll();\n  void Add(int id, T entity);\n  void Delete(int id);\n}\npublic class InMemoryRepository<T> : IRepository<T> where T : class {\n  private Dictionary<int,T> _store = new();\n  public T GetById(int id) => _store.TryGetValue(id,out var v)?v:null;\n  public IEnumerable<T> GetAll() => _store.Values;\n  public void Add(int id,T e) => _store[id]=e;\n  public void Delete(int id) => _store.Remove(id);\n}",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/csharp-generics"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "CS-INT1-E-1",
+              "slug": "csharp-async-await-basic",
+              "title": "Async/Await Basic HTTP Call",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_1",
+              "language": "C#",
+              "content": "Write an async method that fetches a URL using HttpClient and returns the response body as string.",
+              "solution": "async Task<string> FetchAsync(string url) {\n  using var client = new HttpClient();\n  return await client.GetStringAsync(url);\n}",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/async"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "CS-INT1-M-1",
+              "slug": "csharp-delegate-events",
+              "title": "Delegates and Events",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_1",
+              "language": "C#",
+              "content": "Create a Button class with a Click event. Subscribe two handlers that print messages when Click fires.",
+              "solution": "public class Button {\n  public event EventHandler Click;\n  public void OnClick() => Click?.Invoke(this, EventArgs.Empty);\n}\nvar btn = new Button();\nbtn.Click += (s,e) => Console.WriteLine(\"Handler 1 called\");\nbtn.Click += (s,e) => Console.WriteLine(\"Handler 2 called\");\nbtn.OnClick();",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/events-overview"
+            },
+            {
+              "id": "CS-INT1-M-2",
+              "slug": "csharp-linq-join-groupby",
+              "title": "LINQ Join and GroupBy",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_1",
+              "language": "C#",
+              "content": "Given Orders and Customers lists, use LINQ to join them and group orders by customer name.",
+              "solution": "var result = orders\n  .Join(customers,\n    o => o.CustomerId,\n    c => c.Id,\n    (o,c) => new { CustomerName=c.Name, o.Total })\n  .GroupBy(x => x.CustomerName)\n  .Select(g => new { Customer=g.Key, TotalSpent=g.Sum(x=>x.Total) });",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/linq"
+            },
+            {
+              "id": "CS-INT1-M-3",
+              "slug": "csharp-dependency-injection",
+              "title": "Dependency Injection with IServiceCollection",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_1",
+              "language": "C#",
+              "content": "Register IEmailService and its EmailService implementation as Scoped in .NET DI. Resolve and use it.",
+              "solution": "var services = new ServiceCollection();\nservices.AddScoped<IEmailService, EmailService>();\nvar provider = services.BuildServiceProvider();\nusing var scope = provider.CreateScope();\nvar email = scope.ServiceProvider.GetRequiredService<IEmailService>();\nemail.Send(\"user@example.com\", \"Hello\");",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "CS-INT1-H-1",
+              "slug": "csharp-custom-middleware",
+              "title": "Custom ASP.NET Core Middleware",
+              "difficulty": "Hard",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_1",
+              "language": "C#",
+              "content": "Write a custom ASP.NET Core middleware that logs request method, path, and response status code. Register it in Program.cs.",
+              "solution": "public class LoggingMiddleware {\n  private readonly RequestDelegate _next;\n  public LoggingMiddleware(RequestDelegate next) => _next = next;\n  public async Task InvokeAsync(HttpContext ctx) {\n    Console.WriteLine($\"{ctx.Request.Method} {ctx.Request.Path}\");\n    await _next(ctx);\n    Console.WriteLine($\"Response: {ctx.Response.StatusCode}\");\n  }\n}\n// In Program.cs:\napp.UseMiddleware<LoggingMiddleware>();",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "CS-INT2-E-1",
+              "slug": "csharp-record-type",
+              "title": "C# Record Types",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_2",
+              "language": "C#",
+              "content": "Define a Person record with Name and Age. Demonstrate immutability and with-expression for copying with changes.",
+              "solution": "record Person(string Name, int Age);\nvar alice = new Person(\"Alice\", 30);\nvar olderAlice = alice with { Age = 31 };\nConsole.WriteLine(alice);       // Person { Name = Alice, Age = 30 }\nConsole.WriteLine(olderAlice);  // Person { Name = Alice, Age = 31 }",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9#record-types"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "CS-INT2-M-1",
+              "slug": "csharp-channel-producer-consumer",
+              "title": "Producer-Consumer with System.Threading.Channels",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_2",
+              "language": "C#",
+              "content": "Implement a producer that writes integers to a bounded Channel<int> of capacity 10, and a consumer that reads and prints them.",
+              "solution": "var ch = Channel.CreateBounded<int>(10);\nvar producer = Task.Run(async () => {\n  for(int i=0;i<20;i++) {\n    await ch.Writer.WriteAsync(i);\n    Console.WriteLine($\"Wrote {i}\");\n  }\n  ch.Writer.Complete();\n});\nvar consumer = Task.Run(async () => {\n  await foreach(var item in ch.Reader.ReadAllAsync())\n    Console.WriteLine($\"Read {item}\");\n});\nawait Task.WhenAll(producer, consumer);",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/core/extensions/channels"
+            },
+            {
+              "id": "CS-INT2-M-2",
+              "slug": "csharp-ef-core-query",
+              "title": "Entity Framework Core — CRUD + Eager Loading",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_2",
+              "language": "C#",
+              "content": "Using EF Core, query all Orders with their related Customer eagerly loaded, filtering orders with Total > 100.",
+              "solution": "var orders = await _context.Orders\n  .Include(o => o.Customer)\n  .Where(o => o.Total > 100)\n  .OrderByDescending(o => o.CreatedAt)\n  .ToListAsync();",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/ef/core/querying/related-data/eager"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "CS-INT2-H-1",
+              "slug": "csharp-source-generator",
+              "title": "Roslyn Source Generator",
+              "difficulty": "Hard",
+              "skill": ".NET, C#",
+              "skill_level": "Intermediate_2",
+              "language": "C#",
+              "content": "Write a Roslyn Source Generator that auto-generates a ToString() override for all classes annotated with [AutoToString].",
+              "solution": "[Generator]\npublic class AutoToStringGenerator : ISourceGenerator {\n  public void Initialize(GeneratorInitializationContext ctx) {}\n  public void Execute(GeneratorExecutionContext ctx) {\n    foreach(var tree in ctx.Compilation.SyntaxTrees) {\n      // Find classes with [AutoToString], generate partial class with ToString()\n      // ... (full implementation uses SemanticModel and SyntaxFactory)\n    }\n  }\n}",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "CS-SP1-E-1",
+              "slug": "csharp-span-memory",
+              "title": "Span<T> for Zero-Allocation Slicing",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_1",
+              "language": "C#",
+              "content": "Use Span<char> to slice a string without heap allocation and compare a substring.",
+              "solution": "string s = \"Hello, World!\";\nReadOnlySpan<char> span = s.AsSpan(7, 5);\nConsole.WriteLine(span.SequenceEqual(\"World\")); // true",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/api/system.span-1"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "CS-SP1-M-1",
+              "slug": "csharp-pipeline-pattern",
+              "title": "Middleware Pipeline Pattern",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_1",
+              "language": "C#",
+              "content": "Build a composable async pipeline for processing a request object through multiple handlers using delegates.",
+              "solution": "public delegate Task RequestDelegate(RequestContext ctx);\n\npublic class Pipeline {\n  private readonly List<Func<RequestDelegate,RequestDelegate>> _middlewares=new();\n  public Pipeline Use(Func<RequestDelegate,RequestDelegate> mw){_middlewares.Add(mw);return this;}\n  public RequestDelegate Build(){\n    RequestDelegate app=ctx=>Task.CompletedTask;\n    for(int i=_middlewares.Count-1;i>=0;i--) app=_middlewares[i](app);\n    return app;\n  }\n}",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write"
+            },
+            {
+              "id": "CS-SP1-M-2",
+              "slug": "csharp-minimal-api-jwt",
+              "title": "Minimal API with JWT Authentication",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_1",
+              "language": "C#",
+              "content": "Configure JWT Bearer authentication in a .NET Minimal API. Protect a /secure endpoint.",
+              "solution": "builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n  .AddJwtBearer(o=>o.TokenValidationParameters=new(){\n    ValidateIssuer=true, ValidIssuer=\"myapp\",\n    ValidateAudience=true, ValidAudience=\"myapi\",\n    ValidateIssuerSigningKey=true,\n    IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(\"supersecretkey12345!\"))\n  });\nbuilder.Services.AddAuthorization();\napp.UseAuthentication(); app.UseAuthorization();\napp.MapGet(\"/secure\", [Authorize] () => \"Secret data\");",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "CS-SP1-H-1",
+              "slug": "csharp-custom-expression-tree",
+              "title": "Build Dynamic Query with Expression Trees",
+              "difficulty": "Hard",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_1",
+              "language": "C#",
+              "content": "Build a dynamic LINQ Where predicate at runtime using Expression Trees for filtering a property by name and value.",
+              "solution": "Expression<Func<T,bool>> BuildPredicate<T>(string propName, object value) {\n  var param = Expression.Parameter(typeof(T), \"x\");\n  var prop = Expression.Property(param, propName);\n  var constant = Expression.Constant(value);\n  var body = Expression.Equal(prop, constant);\n  return Expression.Lambda<Func<T,bool>>(body, param);\n}\n// Usage:\nvar pred = BuildPredicate<Product>(\"Category\", \"Electronics\");\nvar results = products.AsQueryable().Where(pred).ToList();",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/expression-trees"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "CS-SP2-E-1",
+              "slug": "csharp-unsafe-stackalloc",
+              "title": "stackalloc and unsafe Buffers",
+              "difficulty": "Easy",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_2",
+              "language": "C#",
+              "content": "Use stackalloc to allocate a 256-byte buffer on the stack and fill it with a checksum without heap pressure.",
+              "solution": "unsafe {\n  byte* buf = stackalloc byte[256];\n  for(int i=0;i<256;i++) buf[i]=(byte)i;\n  int sum=0;\n  for(int i=0;i<256;i++) sum+=buf[i];\n  Console.WriteLine(sum); // 32640\n}",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/stackalloc"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "CS-SP2-M-1",
+              "slug": "csharp-native-aot",
+              "title": "Native AOT Compilation",
+              "difficulty": "Medium",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_2",
+              "language": "C#",
+              "content": "Configure a .NET 8 project for Native AOT. Describe required csproj changes and limitations.",
+              "solution": "<!-- In .csproj -->\n<PropertyGroup>\n  <PublishAot>true</PublishAot>\n  <Nullable>enable</Nullable>\n</PropertyGroup>\n\n// Limitations:\n// - No runtime code generation (Reflection.Emit)\n// - Limited reflection; use [DynamicallyAccessedMembers] attributes\n// - Publish: dotnet publish -r linux-x64 -c Release",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/core/deploying/native-aot"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "CS-SP2-H-1",
+              "slug": "csharp-actor-model-orleans",
+              "title": "Actor Model with Microsoft Orleans",
+              "difficulty": "Hard",
+              "skill": ".NET, C#",
+              "skill_level": "Specialist_2",
+              "language": "C#",
+              "content": "Define a ICounterGrain interface and CounterGrain implementation in Orleans. Wire up the silo and call the grain.",
+              "solution": "public interface ICounterGrain : IGrainWithIntegerKey {\n  Task<int> Increment();\n  Task<int> GetValue();\n}\npublic class CounterGrain : Grain, ICounterGrain {\n  int _count=0;\n  public Task<int> Increment() => Task.FromResult(++_count);\n  public Task<int> GetValue() => Task.FromResult(_count);\n}\n// Client:\nvar grain = client.GetGrain<ICounterGrain>(0);\nawait grain.Increment();\nConsole.WriteLine(await grain.GetValue()); // 1",
+              "source": "Microsoft Orleans Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/orleans/"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": ".NET, VB.NET",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "VB-BEG-E-1",
+              "slug": "vbnet-hello-world",
+              "title": "Hello World in VB.NET",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Write a VB.NET console application that prints 'Hello, World!'.",
+              "solution": "Module Program\n  Sub Main()\n    Console.WriteLine(\"Hello, World!\")\n  End Sub\nEnd Module",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/vbnet-hello"
+            },
+            {
+              "id": "VB-BEG-E-2",
+              "slug": "vbnet-string-reverse",
+              "title": "Reverse a String in VB.NET",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Write a function in VB.NET that returns the reverse of a given string.",
+              "solution": "Function ReverseString(s As String) As String\n  Dim arr As Char() = s.ToCharArray()\n  Array.Reverse(arr)\n  Return New String(arr)\nEnd Function",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/vbnet-string"
+            },
+            {
+              "id": "VB-BEG-E-3",
+              "slug": "vbnet-fibonacci",
+              "title": "Fibonacci Loop in VB.NET",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Print the first 10 Fibonacci numbers using a loop in VB.NET.",
+              "solution": "Dim a As Integer = 0, b As Integer = 1\nFor i As Integer = 0 To 9\n  Console.WriteLine(a)\n  Dim temp As Integer = a + b\n  a = b\n  b = temp\nNext",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/vbnet-fibonacci"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "VB-BEG-M-1",
+              "slug": "vbnet-class-oop",
+              "title": "OOP: Class with Properties and Method",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Create a VB.NET class Car with properties Make, Model, Year. Add a method Describe() that returns a formatted string.",
+              "solution": "Public Class Car\n  Public Property Make As String\n  Public Property Model As String\n  Public Property Year As Integer\n  Public Function Describe() As String\n    Return $\"{Year} {Make} {Model}\"\n  End Function\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/objects-and-classes/"
+            },
+            {
+              "id": "VB-BEG-M-2",
+              "slug": "vbnet-linq-filter",
+              "title": "LINQ Filter with VB.NET",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Given a List(Of Integer), use LINQ to return all numbers greater than 10, sorted descending.",
+              "solution": "Dim result = From n In numbers\n             Where n > 10\n             Order By n Descending\n             Select n\nFor Each n In result\n  Console.WriteLine(n)\nNext",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/linq/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "VB-BEG-H-1",
+              "slug": "vbnet-interface-implement",
+              "title": "Interface Implementation in VB.NET",
+              "difficulty": "Hard",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Beginner",
+              "language": "VB.NET",
+              "content": "Define an IShape interface with Area() and Perimeter(). Implement it in a Rectangle class.",
+              "solution": "Interface IShape\n  Function Area() As Double\n  Function Perimeter() As Double\nEnd Interface\n\nClass Rectangle\n  Implements IShape\n  Public Property Width As Double\n  Public Property Height As Double\n  Public Function Area() As Double Implements IShape.Area\n    Return Width * Height\n  End Function\n  Public Function Perimeter() As Double Implements IShape.Perimeter\n    Return 2 * (Width + Height)\n  End Function\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/interfaces/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "VB-INT1-E-1",
+              "slug": "vbnet-async-await",
+              "title": "Async/Await in VB.NET",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_1",
+              "language": "VB.NET",
+              "content": "Write an Async Function in VB.NET that fetches a web page using HttpClient and returns its content.",
+              "solution": "Async Function FetchPageAsync(url As String) As Task(Of String)\n  Using client As New HttpClient()\n    Return Await client.GetStringAsync(url)\n  End Using\nEnd Function",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/async/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "VB-INT1-M-1",
+              "slug": "vbnet-generics",
+              "title": "Generic Stack in VB.NET",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_1",
+              "language": "VB.NET",
+              "content": "Implement a generic Stack(Of T) class in VB.NET with Push, Pop, Peek, and IsEmpty.",
+              "solution": "Public Class Stack(Of T)\n  Private _items As New List(Of T)()\n  Public Sub Push(item As T)\n    _items.Add(item)\n  End Sub\n  Public Function Pop() As T\n    Dim last As T = _items(_items.Count - 1)\n    _items.RemoveAt(_items.Count - 1)\n    Return last\n  End Function\n  Public Function Peek() As T\n    Return _items(_items.Count - 1)\n  End Function\n  Public ReadOnly Property IsEmpty As Boolean\n    Get\n      Return _items.Count = 0\n    End Get\n  End Property\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/data-types/generic-types"
+            },
+            {
+              "id": "VB-INT1-M-2",
+              "slug": "vbnet-delegates-events",
+              "title": "Delegates and Events in VB.NET",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_1",
+              "language": "VB.NET",
+              "content": "Create a Timer class in VB.NET that fires a Tick event every second. Subscribe a handler that prints a counter.",
+              "solution": "Public Class SimpleTimer\n  Public Event Tick()\n  Public Sub Start(seconds As Integer)\n    For i As Integer = 1 To seconds\n      System.Threading.Thread.Sleep(1000)\n      RaiseEvent Tick()\n    Next\n  End Sub\nEnd Class\n\nDim t As New SimpleTimer()\nAddHandler t.Tick, Sub() Console.WriteLine(\"Tick!\")\nt.Start(3)",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/events/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "VB-INT1-H-1",
+              "slug": "vbnet-reflection-attributes",
+              "title": "Custom Attributes and Reflection in VB.NET",
+              "difficulty": "Hard",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_1",
+              "language": "VB.NET",
+              "content": "Create a custom <Description(text)> attribute and use reflection to read it from a class's properties.",
+              "solution": "<AttributeUsage(AttributeTargets.Property)>\nPublic Class DescriptionAttribute\n  Inherits Attribute\n  Public Property Text As String\n  Public Sub New(text As String)\n    Me.Text = text\n  End Sub\nEnd Class\n\nFor Each prop In GetType(MyClass).GetProperties()\n  Dim attr = prop.GetCustomAttribute(Of DescriptionAttribute)()\n  If attr IsNot Nothing Then\n    Console.WriteLine($\"{prop.Name}: {attr.Text}\")\n  End If\nNext",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/attributes/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "VB-INT2-E-1",
+              "slug": "vbnet-pattern-matching",
+              "title": "Pattern Matching with Select Case",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_2",
+              "language": "VB.NET",
+              "content": "Use VB.NET Select Case with type patterns to handle Integer, String, and Date inputs differently.",
+              "solution": "Sub ProcessValue(value As Object)\n  Select Case value\n    Case Is < 0\n      Console.WriteLine(\"Negative\")\n    Case 0\n      Console.WriteLine(\"Zero\")\n    Case 1 To 100\n      Console.WriteLine(\"Positive small\")\n    Case Else\n      Console.WriteLine(\"Large or other type\")\n  End Select\nEnd Sub",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/select-case-statement"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "VB-INT2-M-1",
+              "slug": "vbnet-ef-core",
+              "title": "Entity Framework Core with VB.NET",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_2",
+              "language": "VB.NET",
+              "content": "Define a Product entity and AppDbContext in VB.NET using EF Core. Query products with price > 50.",
+              "solution": "Public Class Product\n  Public Property Id As Integer\n  Public Property Name As String\n  Public Property Price As Decimal\nEnd Class\n\nPublic Class AppDbContext\n  Inherits DbContext\n  Public Property Products As DbSet(Of Product)\nEnd Class\n\nDim products = Await _context.Products\n  .Where(Function(p) p.Price > 50)\n  .ToListAsync()",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/ef/core/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "VB-INT2-H-1",
+              "slug": "vbnet-interop-com",
+              "title": "COM Interop with VB.NET",
+              "difficulty": "Hard",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Intermediate_2",
+              "language": "VB.NET",
+              "content": "Use COM Interop in VB.NET to open a Word document, add text, and save it using Microsoft.Office.Interop.Word.",
+              "solution": "Dim wordApp As New Word.Application()\nwordApp.Visible = True\nDim doc As Word.Document = wordApp.Documents.Add()\ndoc.Content.Text = \"Hello from VB.NET!\"\ndoc.SaveAs2(\"C:\\output.docx\")\ndoc.Close()\nwordApp.Quit()\nRuntime.InteropServices.Marshal.ReleaseComObject(wordApp)",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/com-interop/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "VB-SP1-E-1",
+              "slug": "vbnet-xml-literals",
+              "title": "XML Literals in VB.NET",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_1",
+              "language": "VB.NET",
+              "content": "Use VB.NET XML literals to create an XML structure and query it with LINQ to XML.",
+              "solution": "Dim catalog =\n  <Catalog>\n    <Book id=\"1\"><Title>VB.NET Mastery</Title><Price>29.99</Price></Book>\n    <Book id=\"2\"><Title>ASP.NET Core</Title><Price>39.99</Price></Book>\n  </Catalog>\n\nDim cheapBooks = From b In catalog.<Book>\n                 Where CDec(b.<Price>.Value) < 35\n                 Select b.<Title>.Value\nFor Each title In cheapBooks\n  Console.WriteLine(title)\nNext",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/xml/xml-literals-overview"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "VB-SP1-M-1",
+              "slug": "vbnet-winforms-mvp",
+              "title": "WinForms with MVP Pattern",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_1",
+              "language": "VB.NET",
+              "content": "Implement a WinForms login form using MVP pattern. Separate view, presenter, and model concerns.",
+              "solution": "' ILoginView interface\nPublic Interface ILoginView\n  Property Username As String\n  Property Password As String\n  Event LoginButtonClicked As EventHandler\n  Sub ShowError(msg As String)\nEnd Interface\n\n' LoginPresenter\nPublic Class LoginPresenter\n  Private _view As ILoginView\n  Private _model As LoginModel\n  Public Sub New(view As ILoginView, model As LoginModel)\n    _view = view\n    _model = model\n    AddHandler _view.LoginButtonClicked, AddressOf OnLogin\n  End Sub\n  Private Sub OnLogin(s As Object, e As EventArgs)\n    If Not _model.Validate(_view.Username, _view.Password) Then\n      _view.ShowError(\"Invalid credentials\")\n    End If\n  End Sub\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/desktop/winforms/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "VB-SP1-H-1",
+              "slug": "vbnet-roslyn-analyzer",
+              "title": "Roslyn Diagnostic Analyzer for VB.NET",
+              "difficulty": "Hard",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_1",
+              "language": "VB.NET",
+              "content": "Write a Roslyn DiagnosticAnalyzer for VB.NET that warns when a Public Sub has no XML documentation comment.",
+              "solution": "<DiagnosticAnalyzer(LanguageNames.VisualBasic)>\nPublic Class MissingDocAnalyzer\n  Inherits DiagnosticAnalyzer\n  ' Register syntax node action for Sub declarations\n  ' Check if leading trivia contains XmlDocumentationComment\n  ' Report diagnostic if missing\n  ' Full implementation uses RegisterSyntaxNodeAction with\n  ' SyntaxKind.SubStatement\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/tutorials/how-tos/how-to-write-a-csharp-analyzer-and-code-fix"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "VB-SP2-E-1",
+              "slug": "vbnet-interop-pinvoke",
+              "title": "P/Invoke to Call Windows API",
+              "difficulty": "Easy",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_2",
+              "language": "VB.NET",
+              "content": "Use P/Invoke in VB.NET to call the Windows MessageBox function from user32.dll.",
+              "solution": "Imports System.Runtime.InteropServices\n\nModule NativeMethods\n  <DllImport(\"user32.dll\", CharSet:=CharSet.Unicode)>\n  Public Function MessageBox(hWnd As IntPtr, text As String, caption As String, type As UInteger) As Integer\n  End Function\nEnd Module\n\nNativeMethods.MessageBox(IntPtr.Zero, \"Hello!\", \"P/Invoke Demo\", 0)",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "VB-SP2-M-1",
+              "slug": "vbnet-azure-function",
+              "title": "Azure Function in VB.NET",
+              "difficulty": "Medium",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_2",
+              "language": "VB.NET",
+              "content": "Write an Azure Functions HttpTrigger in VB.NET that reads a 'name' query parameter and returns a greeting.",
+              "solution": "Imports Microsoft.Azure.Functions.Worker\nImports Microsoft.Azure.Functions.Worker.Http\n\nPublic Class GreetFunction\n  <Function(\"Greet\")>\n  Public Function Run(<HttpTrigger(AuthorizationLevel.Anonymous, \"get\")> req As HttpRequestData, executionContext As FunctionContext) As HttpResponseData\n    Dim name As String = req.Query(\"name\") ?? \"World\"\n    Dim response = req.CreateResponse()\n    response.WriteString($\"Hello, {name}!\")\n    Return response\n  End Function\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "VB-SP2-H-1",
+              "slug": "vbnet-wpf-mvvm-icommand",
+              "title": "WPF MVVM with ICommand and INotifyPropertyChanged",
+              "difficulty": "Hard",
+              "skill": ".NET, VB.NET",
+              "skill_level": "Specialist_2",
+              "language": "VB.NET",
+              "content": "Build a WPF MVVM ViewModel in VB.NET with a bound property Counter and an IncrementCommand using ICommand.",
+              "solution": "Public Class MainViewModel\n  Implements INotifyPropertyChanged\n  Private _counter As Integer\n  Public Property Counter As Integer\n    Get\n      Return _counter\n    End Get\n    Set(value As Integer)\n      _counter = value\n      RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Counter)))\n    End Set\n  End Property\n  Public Property IncrementCommand As ICommand = New RelayCommand(Sub() Counter += 1)\n  Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged\nEnd Class",
+              "source": "Microsoft Docs",
+              "url": "https://docs.microsoft.com/en-us/dotnet/desktop/wpf/data/data-binding-overview"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": "SQL",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "175",
+              "slug": "combine-two-tables",
+              "title": "Combine Two Tables",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Report firstName, lastName, city, state for each person. NULL if no address.",
+              "solution": "SELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\nLEFT JOIN Address a ON p.PersonId = a.PersonId;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/combine-two-tables/"
+            },
+            {
+              "id": "181",
+              "slug": "employees-earning-more-than-managers",
+              "title": "Employees Earning More Than Their Managers",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Find all employees who earn more than their manager.",
+              "solution": "SELECT e.Name AS Employee\nFROM Employee e\nJOIN Employee m ON e.ManagerId = m.Id\nWHERE e.Salary > m.Salary;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/employees-earning-more-than-their-managers/"
+            },
+            {
+              "id": "182",
+              "slug": "duplicate-emails",
+              "title": "Duplicate Emails",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Find all duplicate email addresses in the Person table.",
+              "solution": "SELECT Email\nFROM Person\nGROUP BY Email\nHAVING COUNT(*) > 1;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/duplicate-emails/"
+            },
+            {
+              "id": "183",
+              "slug": "customers-who-never-order",
+              "title": "Customers Who Never Order",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Find all customers who never placed an order.",
+              "solution": "SELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE o.Id IS NULL;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/customers-who-never-order/"
+            },
+            {
+              "id": "SQL-BEG-E-1",
+              "slug": "sql-select-all",
+              "title": "Select All from Table",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Query all columns for every row in the CITY table.",
+              "solution": "SELECT * FROM CITY;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/select-all-sql"
+            },
+            {
+              "id": "SQL-BEG-E-2",
+              "slug": "sql-where-filter",
+              "title": "Filter Rows with WHERE",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Query all columns for all American cities in CITY with POPULATION > 100000.",
+              "solution": "SELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/revising-the-select-query"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "SQL-BEG-M-1",
+              "slug": "sql-type-of-triangle",
+              "title": "Type of Triangle",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Write a query that classifies each row in TRIANGLES as Equilateral, Isosceles, Scalene, or Not A Triangle.",
+              "solution": "SELECT CASE\n  WHEN A+B<=C OR A+C<=B OR B+C<=A THEN 'Not A Triangle'\n  WHEN A=B AND B=C THEN 'Equilateral'\n  WHEN A=B OR B=C OR A=C THEN 'Isosceles'\n  ELSE 'Scalene'\nEND FROM TRIANGLES;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/what-type-of-triangle"
+            },
+            {
+              "id": "196",
+              "slug": "delete-duplicate-emails",
+              "title": "Delete Duplicate Emails",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Delete all duplicate emails, keeping only the one with the smallest Id.",
+              "solution": "DELETE p1 FROM Person p1\nJOIN Person p2\nWHERE p1.Id > p2.Id AND p1.Email = p2.Email;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/delete-duplicate-emails/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "SQL-BEG-H-1",
+              "slug": "sql-weather-station-5",
+              "title": "Weather Observation Station 5",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Query the two cities with the shortest and longest CITY names. On ties, pick alphabetically first/last.",
+              "solution": "(SELECT CITY, LENGTH(CITY) FROM STATION ORDER BY LENGTH(CITY) ASC, CITY ASC LIMIT 1)\nUNION\n(SELECT CITY, LENGTH(CITY) FROM STATION ORDER BY LENGTH(CITY) DESC, CITY DESC LIMIT 1);",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/weather-observation-station-5"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "197",
+              "slug": "rising-temperature",
+              "title": "Rising Temperature",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Find all dates where the temperature is higher than the previous day.",
+              "solution": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\n  ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/rising-temperature/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "SQL-INT1-M-1",
+              "slug": "sql-rank-salaries",
+              "title": "Rank Employees by Salary with Window Functions",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Rank all employees by salary within their department using DENSE_RANK().",
+              "solution": "SELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/earnings-of-employees"
+            },
+            {
+              "id": "SQL-INT1-M-2",
+              "slug": "sql-running-total",
+              "title": "Cumulative Running Total",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Calculate a running total of sales amounts ordered by date.",
+              "solution": "SELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;",
+              "source": "SQLZoo",
+              "url": "https://sqlzoo.net/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "SQL-INT1-H-1",
+              "slug": "sql-pivot-months",
+              "title": "Pivot Monthly Sales",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Pivot monthly sales data so each month is a column. Use conditional aggregation.",
+              "solution": "SELECT\n  product_id,\n  SUM(CASE WHEN MONTH(sale_date)=1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN MONTH(sale_date)=2 THEN amount ELSE 0 END) AS Feb,\n  SUM(CASE WHEN MONTH(sale_date)=3 THEN amount ELSE 0 END) AS Mar\nFROM Sales\nGROUP BY product_id;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/occupations"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "SQL-INT2-E-1",
+              "slug": "sql-cte-basic",
+              "title": "Basic Common Table Expression (CTE)",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Use a CTE to find all departments with average salary above the company average.",
+              "solution": "WITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees\n  GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal\nFROM dept_avg, company_avg\nWHERE avg_sal > co_avg;",
+              "source": "SQLZoo",
+              "url": "https://sqlzoo.net/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "SQL-INT2-M-1",
+              "slug": "sql-lead-lag",
+              "title": "Month-over-Month Growth with LAG()",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Calculate month-over-month revenue growth percentage using the LAG window function.",
+              "solution": "SELECT month,\n  revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0*(revenue - LAG(revenue) OVER (ORDER BY month)) / LAG(revenue) OVER (ORDER BY month), 2) AS growth_pct\nFROM MonthlyRevenue\nORDER BY month;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/month-over-month-revenue-growth/"
+            },
+            {
+              "id": "SQL-INT2-M-2",
+              "slug": "sql-self-join-hierarchy",
+              "title": "Employee Hierarchy with Self Join",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "List each employee with their manager's name using a self-join.",
+              "solution": "SELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/binary-search-tree-1"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "SQL-INT2-H-1",
+              "slug": "sql-recursive-cte-org",
+              "title": "Recursive CTE for Org Chart",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Use a recursive CTE to walk an org-chart from CEO down, outputting each employee's level depth.",
+              "solution": "WITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth\n  FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth+1\n  FROM Employee e JOIN org o ON e.manager_id=o.id\n)\nSELECT name, depth FROM org ORDER BY depth, name;",
+              "source": "SQLZoo",
+              "url": "https://sqlzoo.net/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "SQL-SP1-E-1",
+              "slug": "sql-materialized-view",
+              "title": "Materialized View Refresh Strategy",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Explain when to use a materialized view vs regular view. Write a CREATE MATERIALIZED VIEW for daily sales summary.",
+              "solution": "CREATE MATERIALIZED VIEW daily_sales_mv AS\nSELECT sale_date, SUM(amount) AS total\nFROM Sales\nGROUP BY sale_date;\n-- Refresh manually: REFRESH MATERIALIZED VIEW daily_sales_mv;\n-- Use when: expensive aggregations queried frequently, data freshness lag acceptable",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "SQL-SP1-M-1",
+              "slug": "sql-window-nth-value",
+              "title": "NTH_VALUE and NTILE Analytics",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Assign quartiles to employees by salary using NTILE(4), and find the 2nd highest salary per department with NTH_VALUE.",
+              "solution": "SELECT name, department_id, salary,\n  NTILE(4) OVER (ORDER BY salary) AS quartile,\n  NTH_VALUE(salary, 2) OVER (\n    PARTITION BY department_id\n    ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS second_highest\nFROM Employee;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/department-top-three-salaries/"
+            },
+            {
+              "id": "1077",
+              "slug": "project-employees-iii",
+              "title": "Project Employees III",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Find the most experienced employee(s) per project.",
+              "solution": "SELECT p.project_id, p.employee_id\nFROM Project p\nJOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years)\n  FROM Project p2 JOIN Employee e2 ON p2.employee_id=e2.employee_id\n  GROUP BY p2.project_id\n);",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/project-employees-iii/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "1097",
+              "slug": "game-play-analysis-v",
+              "title": "Game Play Analysis V — Day-1 Retention",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "For each install date, compute number of installs and Day-1 retention rate.",
+              "solution": "SELECT a1.install_dt,\n  COUNT(DISTINCT a1.player_id) AS installs,\n  ROUND(COUNT(DISTINCT a2.player_id)/COUNT(DISTINCT a1.player_id),2) AS Day1_retention\nFROM (\n  SELECT player_id, MIN(event_date) AS install_dt FROM Activity GROUP BY player_id\n) a1\nLEFT JOIN Activity a2\n  ON a1.player_id=a2.player_id\n  AND DATEDIFF(a2.event_date,a1.install_dt)=1\nGROUP BY a1.install_dt;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/game-play-analysis-v/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "SQL-SP2-E-1",
+              "slug": "sql-index-strategy",
+              "title": "Index Strategy and EXPLAIN ANALYZE",
+              "difficulty": "Easy",
+              "skill": "SQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "Identify a missing index for a slow query filtering on (status, created_at). Write the CREATE INDEX statement and interpret EXPLAIN ANALYZE output.",
+              "solution": "-- Before: Seq Scan on orders (cost=0..50000)\nCREATE INDEX idx_orders_status_created\n  ON orders(status, created_at DESC);\n-- After EXPLAIN ANALYZE:\n-- Index Scan using idx_orders_status_created (cost=0..150 rows=200)\n-- Composite index on (status, created_at) supports range queries on created_at after equality on status",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "SQL-SP2-M-1",
+              "slug": "sql-partitioned-table",
+              "title": "Table Partitioning by Range",
+              "difficulty": "Medium",
+              "skill": "SQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "Create a partitioned sales table partitioned by year range. Create partitions for 2023 and 2024.",
+              "solution": "CREATE TABLE sales (\n  id BIGSERIAL,\n  sale_date DATE NOT NULL,\n  amount NUMERIC(10,2)\n) PARTITION BY RANGE (sale_date);\n\nCREATE TABLE sales_2023 PARTITION OF sales\n  FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');\nCREATE TABLE sales_2024 PARTITION OF sales\n  FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "1645",
+              "slug": "hopper-company-queries-ii",
+              "title": "Hopper Company Queries II",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "For each month, compute the percentage of working drivers who accepted at least one ride.",
+              "solution": "WITH months AS (\n  SELECT generate_series(1,12) AS month\n),\nactive_drivers AS (\n  SELECT d.driver_id,\n    MONTH(d.join_date) AS join_month\n  FROM Drivers d WHERE YEAR(d.join_date)=2020\n)\nSELECT m.month,\n  ROUND(\n    IFNULL(\n      SUM(CASE WHEN r.requested_at IS NOT NULL THEN 1 ELSE 0 END)*100.0\n      / NULLIF(COUNT(DISTINCT ad.driver_id),0)\n    ,0)\n  ,2) AS working_percentage\nFROM months m\nLEFT JOIN active_drivers ad ON ad.join_month <= m.month\nLEFT JOIN AcceptedRides r\n  ON r.driver_id=ad.driver_id AND MONTH(r.requested_at)=m.month\nGROUP BY m.month;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/hopper-company-queries-ii/"
+            },
+            {
+              "id": "1767",
+              "slug": "find-subtasks-not-executed",
+              "title": "Find the Subtasks That Did Not Execute",
+              "difficulty": "Hard",
+              "skill": "SQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "Find subtasks that were not executed using a recursive CTE.",
+              "solution": "WITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id-1 FROM sub WHERE sub_id>1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s\nLEFT JOIN Executed e\n  ON s.task_id=e.task_id AND s.sub_id=e.subtask_id\nWHERE e.subtask_id IS NULL;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/find-the-subtasks-that-did-not-execute/"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": "MongoDB",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "MG-BEG-E-1",
+              "slug": "mongo-insert-one",
+              "title": "insertOne — Insert a Document",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Insert a single user document {name:'Alice', age:30, email:'alice@example.com'} into the 'users' collection.",
+              "solution": "db.users.insertOne({\n  name: 'Alice',\n  age: 30,\n  email: 'alice@example.com'\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-BEG-E-2",
+              "slug": "mongo-find-all",
+              "title": "find() — Retrieve All Documents",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Retrieve all documents from the 'products' collection and print them.",
+              "solution": "db.products.find({}).forEach(doc => printjson(doc));",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-BEG-E-3",
+              "slug": "mongo-find-filter",
+              "title": "find() with Equality Filter",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Find all products where category is 'Electronics'.",
+              "solution": "db.products.find({ category: 'Electronics' });",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-BEG-E-4",
+              "slug": "mongo-delete-one",
+              "title": "deleteOne — Remove a Document",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Delete the first document in 'users' where name is 'Bob'.",
+              "solution": "db.users.deleteOne({ name: 'Bob' });",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "MG-BEG-M-1",
+              "slug": "mongo-update-operator",
+              "title": "updateOne with $set and $inc",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "For user with email 'alice@example.com', set status to 'active' and increment loginCount by 1.",
+              "solution": "db.users.updateOne(\n  { email: 'alice@example.com' },\n  {\n    $set: { status: 'active' },\n    $inc: { loginCount: 1 }\n  }\n);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-BEG-M-2",
+              "slug": "mongo-query-operators",
+              "title": "Query with $gt, $lt, $in",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Find all products with price between 10 and 100, and category in ['Books', 'Toys'].",
+              "solution": "db.products.find({\n  price: { $gt: 10, $lt: 100 },\n  category: { $in: ['Books', 'Toys'] }\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "MG-BEG-H-1",
+              "slug": "mongo-bulk-write",
+              "title": "bulkWrite — Mixed Operations",
+              "difficulty": "Hard",
+              "skill": "MongoDB",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Use bulkWrite to insert one user, update another's email, and delete a third in a single call.",
+              "solution": "db.users.bulkWrite([\n  { insertOne: { document: { name: 'Charlie', age: 25 } } },\n  { updateOne: { filter: { name: 'Alice' }, update: { $set: { email: 'alice@new.com' } } } },\n  { deleteOne: { filter: { name: 'DeleteMe' } } }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "MG-INT1-E-1",
+              "slug": "mongo-projection",
+              "title": "Projection — Include/Exclude Fields",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Find all users, returning only name and email fields, excluding _id.",
+              "solution": "db.users.find({}, { name: 1, email: 1, _id: 0 });",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "MG-INT1-M-1",
+              "slug": "mongo-aggregation-pipeline",
+              "title": "Aggregation Pipeline — Group and Count",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Use the aggregation pipeline to count the number of products per category, sorted by count descending.",
+              "solution": "db.products.aggregate([\n  { $group: { _id: '$category', count: { $sum: 1 } } },\n  { $sort: { count: -1 } },\n  { $project: { category: '$_id', count: 1, _id: 0 } }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-INT1-M-2",
+              "slug": "mongo-lookup-join",
+              "title": "$lookup — Join Two Collections",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Join orders with users using $lookup to embed the user document into each order.",
+              "solution": "db.orders.aggregate([\n  {\n    $lookup: {\n      from: 'users',\n      localField: 'userId',\n      foreignField: '_id',\n      as: 'user'\n    }\n  },\n  { $unwind: '$user' }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "MG-INT1-H-1",
+              "slug": "mongo-text-search",
+              "title": "Full-Text Search with Text Index",
+              "difficulty": "Hard",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Create a text index on the 'description' field of products. Search for documents containing 'wireless bluetooth'.",
+              "solution": "db.products.createIndex({ description: 'text' });\ndb.products.find(\n  { $text: { $search: 'wireless bluetooth' } },\n  { score: { $meta: 'textScore' } }\n).sort({ score: { $meta: 'textScore' } });",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "MG-INT2-E-1",
+              "slug": "mongo-array-operators",
+              "title": "Array Query Operators — $elemMatch",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Find all orders where at least one item has quantity > 5 and price < 20 using $elemMatch.",
+              "solution": "db.orders.find({\n  items: {\n    $elemMatch: { quantity: { $gt: 5 }, price: { $lt: 20 } }\n  }\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "MG-INT2-M-1",
+              "slug": "mongo-aggregation-facet",
+              "title": "$facet — Multi-Pipeline Aggregation",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Use $facet to simultaneously compute total count, average price, and price range buckets for a products collection.",
+              "solution": "db.products.aggregate([\n  {\n    $facet: {\n      totalCount: [{ $count: 'count' }],\n      avgPrice: [{ $group: { _id: null, avg: { $avg: '$price' } } }],\n      priceBuckets: [\n        { $bucket: {\n          groupBy: '$price',\n          boundaries: [0,25,50,100,500],\n          default: 'Other'\n        }}\n      ]\n    }\n  }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-INT2-M-2",
+              "slug": "mongo-transactions",
+              "title": "Multi-Document ACID Transaction",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Transfer 100 credits from account A to account B using a multi-document transaction with commit/abort.",
+              "solution": "const session = client.startSession();\ntry {\n  session.startTransaction();\n  await db.accounts.updateOne(\n    { _id: 'A' }, { $inc: { balance: -100 } }, { session }\n  );\n  await db.accounts.updateOne(\n    { _id: 'B' }, { $inc: { balance: 100 } }, { session }\n  );\n  await session.commitTransaction();\n} catch(err) {\n  await session.abortTransaction();\n  throw err;\n} finally {\n  session.endSession();\n}",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "MG-INT2-H-1",
+              "slug": "mongo-change-streams",
+              "title": "Change Streams — Watch for Inserts",
+              "difficulty": "Hard",
+              "skill": "MongoDB",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Open a change stream on the 'orders' collection that reacts to new inserts and prints the inserted document.",
+              "solution": "const changeStream = db.orders.watch(\n  [{ $match: { operationType: 'insert' } }]\n);\nchangeStream.on('change', next => {\n  console.log('New order:', next.fullDocument);\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "MG-SP1-E-1",
+              "slug": "mongo-atlas-search-autocomplete",
+              "title": "Atlas Search Autocomplete Index",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Create an Atlas Search index with autocomplete on the 'name' field. Write a search query with autocomplete.",
+              "solution": "// Index definition (Atlas UI or API):\n// { mappings: { fields: { name: [{ type: 'autocomplete', tokenization: 'edgeGram', minGrams: 2 }] } } }\n\ndb.products.aggregate([\n  {\n    $search: {\n      index: 'autocomplete_idx',\n      autocomplete: {\n        query: 'wire',\n        path: 'name',\n        fuzzy: { maxEdits: 1 }\n      }\n    }\n  },\n  { $limit: 5 },\n  { $project: { name: 1 } }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "MG-SP1-M-1",
+              "slug": "mongo-schema-validation",
+              "title": "Schema Validation with $jsonSchema",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Create a 'users' collection with JSON Schema validation requiring name (string), email (string), age (int >= 18).",
+              "solution": "db.createCollection('users', {\n  validator: {\n    $jsonSchema: {\n      bsonType: 'object',\n      required: ['name', 'email', 'age'],\n      properties: {\n        name: { bsonType: 'string', description: 'required' },\n        email: {\n          bsonType: 'string',\n          pattern: '^.+@.+\\\\..+$',\n          description: 'required valid email'\n        },\n        age: {\n          bsonType: 'int',\n          minimum: 18,\n          description: 'must be >= 18'\n        }\n      }\n    }\n  },\n  validationAction: 'error'\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            },
+            {
+              "id": "MG-SP1-M-2",
+              "slug": "mongo-time-series",
+              "title": "Time Series Collection",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Create a time series collection for IoT sensor data with timestamp, sensorId metadata, and temperature.",
+              "solution": "db.createCollection('sensor_readings', {\n  timeseries: {\n    timeField: 'timestamp',\n    metaField: 'sensorId',\n    granularity: 'minutes'\n  },\n  expireAfterSeconds: 2592000 // 30 days TTL\n});\n\ndb.sensor_readings.insertOne({\n  timestamp: new Date(),\n  sensorId: 'sensor-001',\n  temperature: 22.5\n});",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "MG-SP1-H-1",
+              "slug": "mongo-aggregation-graphlookup",
+              "title": "$graphLookup — Recursive Graph Traversal",
+              "difficulty": "Hard",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Use $graphLookup to traverse an employee reporting hierarchy and find all reports under a given manager.",
+              "solution": "db.employees.aggregate([\n  { $match: { name: 'CEO' } },\n  {\n    $graphLookup: {\n      from: 'employees',\n      startWith: '$_id',\n      connectFromField: '_id',\n      connectToField: 'managerId',\n      as: 'allReports',\n      maxDepth: 10,\n      depthField: 'level'\n    }\n  }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "MG-SP2-E-1",
+              "slug": "mongo-vector-search",
+              "title": "Atlas Vector Search — Semantic Query",
+              "difficulty": "Easy",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Create a vector search index on a 'plot_embedding' field (1536 dimensions). Run a $vectorSearch query to find top 5 similar movies.",
+              "solution": "// Index definition (Atlas UI):\n// { fields: [{ type: 'vector', path: 'plot_embedding', numDimensions: 1536, similarity: 'cosine' }] }\n\ndb.movies.aggregate([\n  {\n    $vectorSearch: {\n      index: 'vector_idx',\n      path: 'plot_embedding',\n      queryVector: queryEmbedding, // float array from embedding model\n      numCandidates: 100,\n      limit: 5\n    }\n  },\n  { $project: { title: 1, score: { $meta: 'vectorSearchScore' } } }\n]);",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "MG-SP2-M-1",
+              "slug": "mongo-sharding-setup",
+              "title": "Sharding a Collection by Hash Key",
+              "difficulty": "Medium",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Enable sharding on the 'ecommerce' database. Shard the 'orders' collection by hashed userId for even distribution.",
+              "solution": "// Enable sharding on database\nsh.enableSharding('ecommerce');\n\n// Create hashed shard key index\ndb.orders.createIndex({ userId: 'hashed' });\n\n// Shard the collection\nsh.shardCollection('ecommerce.orders', { userId: 'hashed' });\n\n// Verify with:\nsh.status();",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "MG-SP2-H-1",
+              "slug": "mongo-oplog-tailing",
+              "title": "Oplog Tailing for Custom CDC",
+              "difficulty": "Hard",
+              "skill": "MongoDB",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Tail the MongoDB oplog to implement a basic Change Data Capture (CDC) pipeline that streams insert/update operations to a processing queue.",
+              "solution": "const localDb = client.db('local');\nconst oplog = localDb.collection('oplog.rs');\nconst lastTs = new Timestamp(0, Math.floor(Date.now()/1000));\nconst cursor = oplog.find(\n  { ts: { $gt: lastTs }, ns: /^mydb\\./ },\n  { tailable: true, awaitData: true }\n);\nfor await (const op of cursor) {\n  if(op.op === 'i') queue.push({ type: 'insert', doc: op.o });\n  else if(op.op === 'u') queue.push({ type: 'update', query: op.o2, update: op.o });\n}",
+              "source": "MongoDB University",
+              "url": "https://university.mongodb.com/"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": "PostgreSQL",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "PG-BEG-E-1",
+              "slug": "pg-create-table",
+              "title": "Create Table with Constraints",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Create a 'users' table with id (SERIAL PRIMARY KEY), name (VARCHAR NOT NULL), email (UNIQUE), created_at (TIMESTAMPTZ DEFAULT NOW()).",
+              "solution": "CREATE TABLE users (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(255) UNIQUE NOT NULL,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            },
+            {
+              "id": "PG-BEG-E-2",
+              "slug": "pg-insert-returning",
+              "title": "INSERT … RETURNING",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Insert a new user and return the generated id and created_at in a single statement.",
+              "solution": "INSERT INTO users (name, email)\nVALUES ('Alice', 'alice@example.com')\nRETURNING id, created_at;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            },
+            {
+              "id": "PG-BEG-E-3",
+              "slug": "pg-select-ilike",
+              "title": "Case-Insensitive Search with ILIKE",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Find all users whose name starts with 'ali' (case-insensitive).",
+              "solution": "SELECT * FROM users WHERE name ILIKE 'ali%';",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PG-BEG-M-1",
+              "slug": "pg-upsert-on-conflict",
+              "title": "UPSERT with ON CONFLICT DO UPDATE",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Insert a user or update email if the email already exists.",
+              "solution": "INSERT INTO users (name, email)\nVALUES ('Bob', 'bob@example.com')\nON CONFLICT (email)\nDO UPDATE SET name = EXCLUDED.name, updated_at = NOW();",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            },
+            {
+              "id": "PG-BEG-M-2",
+              "slug": "pg-json-operators",
+              "title": "Query JSONB Fields",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "Given a 'products' table with a JSONB 'metadata' column, find all products where metadata->>'brand' = 'Sony'.",
+              "solution": "SELECT * FROM products\nWHERE metadata->>'brand' = 'Sony';",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PG-BEG-H-1",
+              "slug": "pg-array-unnest",
+              "title": "Array Columns and UNNEST",
+              "difficulty": "Hard",
+              "skill": "PostgreSQL",
+              "skill_level": "Beginner",
+              "language": "SQL",
+              "content": "A 'posts' table has a tags TEXT[] column. Find all posts tagged 'postgresql'. Unnest tags to count tag frequency.",
+              "solution": "-- Posts with 'postgresql' tag:\nSELECT * FROM posts WHERE 'postgresql' = ANY(tags);\n\n-- Tag frequency:\nSELECT tag, COUNT(*) AS frequency\nFROM posts, UNNEST(tags) AS tag\nGROUP BY tag\nORDER BY frequency DESC;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "PG-INT1-E-1",
+              "slug": "pg-window-functions",
+              "title": "ROW_NUMBER and RANK Window Functions",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Assign row numbers and dense ranks to employees ordered by salary descending within each department.",
+              "solution": "SELECT name, department_id, salary,\n  ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS row_num,\n  DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dense_rnk\nFROM employees;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PG-INT1-M-1",
+              "slug": "pg-stored-function",
+              "title": "Stored Function with PL/pgSQL",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Write a PL/pgSQL function get_discount(price NUMERIC) that returns 10% discount for price > 100, else 5%.",
+              "solution": "CREATE OR REPLACE FUNCTION get_discount(price NUMERIC)\nRETURNS NUMERIC AS $$\nBEGIN\n  IF price > 100 THEN\n    RETURN price * 0.10;\n  ELSE\n    RETURN price * 0.05;\n  END IF;\nEND;\n$$ LANGUAGE plpgsql;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            },
+            {
+              "id": "PG-INT1-M-2",
+              "slug": "pg-trigger-audit",
+              "title": "Audit Trigger with NEW and OLD",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Create an audit trigger that logs every UPDATE on 'orders' to an 'orders_audit' table with old/new values and timestamp.",
+              "solution": "CREATE TABLE orders_audit (\n  audit_id SERIAL PRIMARY KEY,\n  order_id INT,\n  old_status TEXT,\n  new_status TEXT,\n  changed_at TIMESTAMPTZ DEFAULT NOW()\n);\n\nCREATE OR REPLACE FUNCTION audit_order_changes()\nRETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO orders_audit(order_id, old_status, new_status)\n  VALUES (OLD.id, OLD.status, NEW.status);\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER order_audit_trigger\nAFTER UPDATE ON orders\nFOR EACH ROW EXECUTE FUNCTION audit_order_changes();",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PG-INT1-H-1",
+              "slug": "pg-full-text-search",
+              "title": "Full-Text Search with tsvector and GIN Index",
+              "difficulty": "Hard",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_1",
+              "language": "SQL",
+              "content": "Add a tsvector column to 'articles', populate it, create a GIN index, and search for 'postgres performance'.",
+              "solution": "ALTER TABLE articles ADD COLUMN tsv TSVECTOR\n  GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || body)) STORED;\n\nCREATE INDEX articles_tsv_idx ON articles USING GIN(tsv);\n\nSELECT id, title, ts_rank(tsv, query) AS rank\nFROM articles, to_tsquery('english', 'postgres & performance') query\nWHERE tsv @@ query\nORDER BY rank DESC;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "PG-INT2-E-1",
+              "slug": "pg-cte-recursive",
+              "title": "Recursive CTE — Fibonacci",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Use a recursive CTE to generate the first 10 Fibonacci numbers in PostgreSQL.",
+              "solution": "WITH RECURSIVE fib(a, b) AS (\n  SELECT 0, 1\n  UNION ALL\n  SELECT b, a+b FROM fib WHERE a < 100\n)\nSELECT a AS fibonacci FROM fib LIMIT 10;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PG-INT2-M-1",
+              "slug": "pg-lateral-join",
+              "title": "LATERAL JOIN for Top-N per Group",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Use a LATERAL join to get the top 3 orders by amount for each customer.",
+              "solution": "SELECT c.name, o.id, o.amount\nFROM customers c\nCROSS JOIN LATERAL (\n  SELECT id, amount\n  FROM orders\n  WHERE customer_id = c.id\n  ORDER BY amount DESC\n  LIMIT 3\n) o;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            },
+            {
+              "id": "PG-INT2-M-2",
+              "slug": "pg-partitioned-table",
+              "title": "Partitioned Table by Range",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Create a sales table partitioned by year. Add partitions for 2023 and 2024 with default partition.",
+              "solution": "CREATE TABLE sales (\n  id BIGSERIAL,\n  sale_date DATE NOT NULL,\n  amount NUMERIC(10,2)\n) PARTITION BY RANGE (sale_date);\n\nCREATE TABLE sales_2023 PARTITION OF sales\n  FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');\nCREATE TABLE sales_2024 PARTITION OF sales\n  FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');\nCREATE TABLE sales_default PARTITION OF sales DEFAULT;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PG-INT2-H-1",
+              "slug": "pg-advisory-lock",
+              "title": "Advisory Locks for Distributed Locking",
+              "difficulty": "Hard",
+              "skill": "PostgreSQL",
+              "skill_level": "Intermediate_2",
+              "language": "SQL",
+              "content": "Use pg_try_advisory_lock to implement a non-blocking distributed lock identified by a job ID. Release on completion.",
+              "solution": "-- Try to acquire lock (non-blocking):\nSELECT pg_try_advisory_lock(12345);\n-- Returns true if acquired, false if already held\n\n-- In a function:\nDO $$\nBEGIN\n  IF pg_try_advisory_lock(12345) THEN\n    -- Do protected work here\n    PERFORM process_job(12345);\n    PERFORM pg_advisory_unlock(12345);\n  ELSE\n    RAISE NOTICE 'Job already running';\n  END IF;\nEND;\n$$;",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "PG-SP1-E-1",
+              "slug": "pg-explain-analyze",
+              "title": "EXPLAIN ANALYZE — Read Query Plans",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Use EXPLAIN (ANALYZE, BUFFERS) on a query and describe what a Seq Scan vs Index Scan means, and when to prefer each.",
+              "solution": "EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)\nSELECT * FROM orders WHERE customer_id = 42;\n\n-- Seq Scan: reads all rows — prefer when fetching > ~10% of table\n-- Index Scan: follows B-tree/hash index — prefer for selective queries (few rows)\n-- Bitmap Index Scan: batches index lookups — prefer for moderate selectivity\n-- Buffers: shows shared_hits (cached) vs reads (disk) for tuning",
+              "source": "PGExercises",
+              "url": "https://pgexercises.com/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PG-SP1-M-1",
+              "slug": "pg-logical-replication",
+              "title": "Logical Replication — Publication and Subscription",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Set up logical replication from a primary (publisher) to a replica (subscriber) for the 'orders' table.",
+              "solution": "-- On publisher (primary):\nCREATE PUBLICATION orders_pub FOR TABLE orders;\n\n-- On subscriber (replica):\nCREATE SUBSCRIPTION orders_sub\n  CONNECTION 'host=primary dbname=mydb user=replicator password=secret'\n  PUBLICATION orders_pub;\n\n-- Verify:\nSELECT * FROM pg_stat_subscription;",
+              "source": "PostgreSQL Docs",
+              "url": "https://www.postgresql.org/docs/current/logical-replication.html"
+            },
+            {
+              "id": "PG-SP1-M-2",
+              "slug": "pg-row-level-security",
+              "title": "Row-Level Security (RLS)",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Enable RLS on a 'documents' table. Create a policy that restricts each user to see only their own rows.",
+              "solution": "ALTER TABLE documents ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY user_isolation ON documents\n  USING (owner_id = current_setting('app.current_user_id')::INT);\n\n-- Grant permissions:\nGRANT SELECT, INSERT, UPDATE, DELETE ON documents TO app_user;\n\n-- Set current user in session:\nSET app.current_user_id = '42';",
+              "source": "PostgreSQL Docs",
+              "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PG-SP1-H-1",
+              "slug": "pg-custom-aggregate",
+              "title": "Custom Aggregate Function",
+              "difficulty": "Hard",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_1",
+              "language": "SQL",
+              "content": "Create a custom aggregate function that computes the geometric mean of a set of positive numbers.",
+              "solution": "CREATE OR REPLACE FUNCTION geo_mean_sfunc(state FLOAT8, val FLOAT8)\nRETURNS FLOAT8 AS $$\n  SELECT state + LN(val);\n$$ LANGUAGE SQL;\n\nCREATE OR REPLACE FUNCTION geo_mean_finalfunc(state FLOAT8, n FLOAT8)\nRETURNS FLOAT8 AS $$\n  SELECT EXP(state / n);\n$$ LANGUAGE SQL;\n\nCREATE AGGREGATE geometric_mean(FLOAT8) (\n  SFUNC = geo_mean_sfunc,\n  STYPE = FLOAT8,\n  INITCOND = '0',\n  FINALFUNC = geo_mean_finalfunc\n);",
+              "source": "PostgreSQL Docs",
+              "url": "https://www.postgresql.org/docs/current/xaggr.html"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "PG-SP2-E-1",
+              "slug": "pg-pg-vector-extension",
+              "title": "pgvector — Semantic Similarity Search",
+              "difficulty": "Easy",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "Install pgvector extension. Create a 'documents' table with a vector(1536) embedding column and perform cosine similarity search.",
+              "solution": "CREATE EXTENSION IF NOT EXISTS vector;\n\nCREATE TABLE documents (\n  id SERIAL PRIMARY KEY,\n  content TEXT,\n  embedding vector(1536)\n);\n\nCREATE INDEX ON documents USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);\n\n-- Query:\nSELECT id, content,\n  1 - (embedding <=> '[0.1,0.2,...]'::vector) AS similarity\nFROM documents\nORDER BY embedding <=> '[0.1,0.2,...]'::vector\nLIMIT 5;",
+              "source": "pgvector GitHub",
+              "url": "https://github.com/pgvector/pgvector"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PG-SP2-M-1",
+              "slug": "pg-fdw-postgres",
+              "title": "Foreign Data Wrapper (postgres_fdw)",
+              "difficulty": "Medium",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_2",
+              "language": "SQL",
+              "content": "Use postgres_fdw to create a foreign table mapping to a remote PostgreSQL database's 'orders' table.",
+              "solution": "CREATE EXTENSION IF NOT EXISTS postgres_fdw;\n\nCREATE SERVER remote_server\n  FOREIGN DATA WRAPPER postgres_fdw\n  OPTIONS (host 'remote-db.example.com', port '5432', dbname 'remote_db');\n\nCREATE USER MAPPING FOR current_user\n  SERVER remote_server\n  OPTIONS (user 'remote_user', password 'secret');\n\nCREATE FOREIGN TABLE remote_orders (\n  id BIGINT, customer_id INT, total NUMERIC, created_at TIMESTAMPTZ\n)\nSERVER remote_server\nOPTIONS (schema_name 'public', table_name 'orders');",
+              "source": "PostgreSQL Docs",
+              "url": "https://www.postgresql.org/docs/current/postgres-fdw.html"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PG-SP2-H-1",
+              "slug": "pg-custom-extension",
+              "title": "Write a PostgreSQL C Extension",
+              "difficulty": "Hard",
+              "skill": "PostgreSQL",
+              "skill_level": "Specialist_2",
+              "language": "C",
+              "content": "Write a minimal PostgreSQL C extension that exposes a SQL function 'add_two(int, int) RETURNS int'.",
+              "solution": "// add_two.c\n#include \"postgres.h\"\n#include \"fmgr.h\"\nPG_MODULE_MAGIC;\n\nPG_FUNCTION_INFO_V1(add_two);\nDatum add_two(PG_FUNCTION_ARGS) {\n  int32 a = PG_GETARG_INT32(0);\n  int32 b = PG_GETARG_INT32(1);\n  PG_RETURN_INT32(a + b);\n}\n\n-- add_two.control:\n-- comment = 'Adds two integers'\n-- default_version = '1.0'\n-- relocatable = true\n\n-- add_two--1.0.sql:\nCREATE FUNCTION add_two(integer, integer)\n  RETURNS integer\n  AS '$libdir/add_two', 'add_two'\n  LANGUAGE C STRICT;",
+              "source": "PostgreSQL Docs",
+              "url": "https://www.postgresql.org/docs/current/extend-extensions.html"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": "Java Selenium",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "JS-BEG-E-1",
+              "slug": "java-selenium-driver-setup",
+              "title": "Setup ChromeDriver and Open URL",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Initialize a ChromeDriver using WebDriverManager, navigate to https://example.com, and quit the driver.",
+              "solution": "WebDriverManager.chromedriver().setup();\nWebDriver driver = new ChromeDriver();\ndriver.get(\"https://example.com\");\nSystem.out.println(driver.getTitle());\ndriver.quit();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/"
+            },
+            {
+              "id": "JS-BEG-E-2",
+              "slug": "java-selenium-find-element",
+              "title": "Find Element and Click",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Find a button by its id 'submit-btn' and click it.",
+              "solution": "WebElement btn = driver.findElement(By.id(\"submit-btn\"));\nbtn.click();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/finders/"
+            },
+            {
+              "id": "JS-BEG-E-3",
+              "slug": "java-selenium-send-keys",
+              "title": "Type into an Input Field",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Find an input field with name 'username', clear it, and type 'testuser'.",
+              "solution": "WebElement input = driver.findElement(By.name(\"username\"));\ninput.clear();\ninput.sendKeys(\"testuser\");",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/interactions/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "JS-BEG-M-1",
+              "slug": "java-selenium-explicit-wait",
+              "title": "Explicit Wait with ExpectedConditions",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Wait up to 10 seconds for a button with id 'load-more' to be clickable, then click it.",
+              "solution": "WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));\nWebElement btn = wait.until(\n  ExpectedConditions.elementToBeClickable(By.id(\"load-more\"))\n);\nbtn.click();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/waits/"
+            },
+            {
+              "id": "JS-BEG-M-2",
+              "slug": "java-selenium-assert-text",
+              "title": "Assert Page Title and Element Text",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Navigate to a page, assert the title contains 'Dashboard', and assert a heading h1 text equals 'Welcome'.",
+              "solution": "driver.get(\"https://myapp.com/dashboard\");\nassert driver.getTitle().contains(\"Dashboard\") : \"Title mismatch\";\nWebElement h1 = driver.findElement(By.tagName(\"h1\"));\nassert h1.getText().equals(\"Welcome\") : \"Heading mismatch\";",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/information/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "JS-BEG-H-1",
+              "slug": "java-selenium-page-object-model",
+              "title": "Page Object Model (POM) Pattern",
+              "difficulty": "Hard",
+              "skill": "Java Selenium",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "content": "Implement a LoginPage class using POM with @FindBy annotations and PageFactory. Include login() method.",
+              "solution": "public class LoginPage {\n  @FindBy(id=\"username\") private WebElement usernameField;\n  @FindBy(id=\"password\") private WebElement passwordField;\n  @FindBy(id=\"login-btn\") private WebElement loginBtn;\n\n  public LoginPage(WebDriver driver) {\n    PageFactory.initElements(driver, this);\n  }\n  public void login(String user, String pass) {\n    usernameField.clear();\n    usernameField.sendKeys(user);\n    passwordField.sendKeys(pass);\n    loginBtn.click();\n  }\n}",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "JS-INT1-E-1",
+              "slug": "java-selenium-screenshot",
+              "title": "Take Screenshot on Test Failure",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Take a screenshot and save it to 'screenshots/failure.png'.",
+              "solution": "File src = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);\nFileUtils.copyFile(src, new File(\"screenshots/failure.png\"));",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/browser/windows/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "JS-INT1-M-1",
+              "slug": "java-selenium-dropdown-select",
+              "title": "Select Dropdown with Select Class",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Select 'Canada' from a <select> dropdown with id 'country'.",
+              "solution": "Select select = new Select(driver.findElement(By.id(\"country\")));\nselect.selectByVisibleText(\"Canada\");",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/support_features/select_lists/"
+            },
+            {
+              "id": "JS-INT1-M-2",
+              "slug": "java-selenium-switch-window",
+              "title": "Switch to New Tab/Window",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "After clicking a link that opens a new tab, switch to it and print its URL, then switch back.",
+              "solution": "String original = driver.getWindowHandle();\ndriver.findElement(By.id(\"open-tab\")).click();\nfor(String handle : driver.getWindowHandles())\n  if(!handle.equals(original)) driver.switchTo().window(handle);\nSystem.out.println(driver.getCurrentUrl());\ndriver.close();\ndriver.switchTo().window(original);",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/browser/windows/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "JS-INT1-H-1",
+              "slug": "java-selenium-testng-datadriven",
+              "title": "Data-Driven Tests with TestNG @DataProvider",
+              "difficulty": "Hard",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "content": "Create a TestNG test that uses @DataProvider to run a login test with multiple credential pairs.",
+              "solution": "@DataProvider(name=\"credentials\")\npublic Object[][] credentialData(){\n  return new Object[][]{\n    {\"admin\",\"admin123\",true},\n    {\"user\",\"wrongpass\",false},\n    {\"guest\",\"guest\",false}\n  };\n}\n@Test(dataProvider=\"credentials\")\npublic void testLogin(String user,String pass,boolean expected){\n  new LoginPage(driver).login(user,pass);\n  boolean loggedIn=driver.getCurrentUrl().contains(\"/dashboard\");\n  Assert.assertEquals(loggedIn,expected);\n}",
+              "source": "TestNG Docs",
+              "url": "https://testng.org/doc/documentation-main.html"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "JS-INT2-E-1",
+              "slug": "java-selenium-js-executor",
+              "title": "JavaScriptExecutor — Scroll and Click Hidden",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Use JavaScriptExecutor to scroll to the bottom of the page and click a hidden button by id 'hidden-btn'.",
+              "solution": "JavascriptExecutor js = (JavascriptExecutor) driver;\njs.executeScript(\"window.scrollTo(0, document.body.scrollHeight);\");\nWebElement btn = driver.findElement(By.id(\"hidden-btn\"));\njs.executeScript(\"arguments[0].click();\", btn);",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/bidi/cdp/javascript/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "JS-INT2-M-1",
+              "slug": "java-selenium-action-chains",
+              "title": "ActionChains — Hover and Context Menu",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Hover over a menu item, wait for a submenu to appear, then right-click a file element.",
+              "solution": "Actions actions = new Actions(driver);\nWebElement menu = driver.findElement(By.id(\"nav-menu\"));\nactions.moveToElement(menu).perform();\nnew WebDriverWait(driver,Duration.ofSeconds(5))\n  .until(ExpectedConditions.visibilityOfElementLocated(By.id(\"submenu\")));\nWebElement file = driver.findElement(By.id(\"file-item\"));\nactions.contextClick(file).perform();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/actions_api/"
+            },
+            {
+              "id": "JS-INT2-M-2",
+              "slug": "java-selenium-file-upload",
+              "title": "File Upload via sendKeys",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Upload a file 'test.pdf' to an <input type='file'> element with id 'upload'.",
+              "solution": "WebElement fileInput = driver.findElement(By.id(\"upload\"));\nString filePath = new File(\"src/test/resources/test.pdf\").getAbsolutePath();\nfileInput.sendKeys(filePath);",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/interactions/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "JS-INT2-H-1",
+              "slug": "java-selenium-iframe-handling",
+              "title": "Switch to iFrame and Back",
+              "difficulty": "Hard",
+              "skill": "Java Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "content": "Switch to an iFrame by id 'payment-frame', interact with an input inside it, then switch back to default content.",
+              "solution": "driver.switchTo().frame(\"payment-frame\");\ndriver.findElement(By.id(\"card-number\")).sendKeys(\"4111111111111111\");\ndriver.switchTo().defaultContent();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/browser/frames/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "JS-SP1-E-1",
+              "slug": "java-selenium-remote-grid",
+              "title": "Remote WebDriver with Selenium Grid",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Connect to a Selenium Grid 4 at http://grid:4444 using RemoteWebDriver with ChromeOptions.",
+              "solution": "ChromeOptions options = new ChromeOptions();\nURL gridUrl = new URL(\"http://grid:4444\");\nWebDriver driver = new RemoteWebDriver(gridUrl, options);\ndriver.get(\"https://example.com\");\ndriver.quit();",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/grid/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "JS-SP1-M-1",
+              "slug": "java-selenium-cdp-network",
+              "title": "Chrome DevTools Protocol — Block URLs",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Use CDP via Selenium 4 to block all image requests during a test run.",
+              "solution": "ChromeDriver driver = new ChromeDriver();\nDevTools devTools = driver.getDevTools();\ndevTools.createSession();\ndevTools.send(Network.enable(Optional.empty(),Optional.empty(),Optional.empty()));\ndevTools.send(Network.setBlockedURLs(ImmutableList.of(\"*.png\",\"*.jpg\",\"*.gif\",\"*.webp\")));\ndriver.get(\"https://example.com\");",
+              "source": "Selenium 4 Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/bidi/cdp/"
+            },
+            {
+              "id": "JS-SP1-M-2",
+              "slug": "java-selenium-parallel-testng",
+              "title": "Parallel Test Execution with TestNG",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Configure TestNG to run tests in parallel across 4 threads. Each thread gets its own WebDriver via ThreadLocal.",
+              "solution": "// testng.xml:\n// <suite name=\"Suite\" parallel=\"methods\" thread-count=\"4\">\n\npublic class BaseTest {\n  private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();\n\n  @BeforeMethod\n  public void setup(){\n    driver.set(new ChromeDriver());\n  }\n  public static WebDriver getDriver(){ return driver.get(); }\n  @AfterMethod\n  public void tearDown(){\n    getDriver().quit();\n    driver.remove();\n  }\n}",
+              "source": "TestNG Docs",
+              "url": "https://testng.org/doc/documentation-main.html#parallel-tests-classes-and-methods"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "JS-SP1-H-1",
+              "slug": "java-selenium-bdd-cucumber",
+              "title": "BDD with Cucumber and Selenium",
+              "difficulty": "Hard",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "content": "Write a Cucumber feature file for a login scenario. Implement step definitions using Selenium POM.",
+              "solution": "# login.feature\nFeature: User Login\n  Scenario: Valid login redirects to dashboard\n    Given I am on the login page\n    When I enter username \"admin\" and password \"admin123\"\n    Then I should be redirected to the dashboard\n\n// StepDefinitions.java\n@Given(\"I am on the login page\")\npublic void iAmOnLoginPage(){\n  driver.get(\"https://myapp.com/login\");\n}\n@When(\"I enter username {string} and password {string}\")\npublic void iEnterCredentials(String user,String pass){\n  new LoginPage(driver).login(user,pass);\n}\n@Then(\"I should be redirected to the dashboard\")\npublic void verifyRedirect(){\n  Assert.assertTrue(driver.getCurrentUrl().contains(\"/dashboard\"));\n}",
+              "source": "Cucumber Docs",
+              "url": "https://cucumber.io/docs/cucumber/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "JS-SP2-E-1",
+              "slug": "java-selenium-allure-report",
+              "title": "Allure Report Integration with TestNG",
+              "difficulty": "Easy",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Add @Epic, @Feature, @Story Allure annotations to a TestNG test. Attach a screenshot on failure.",
+              "solution": "@Epic(\"Authentication\")\n@Feature(\"Login\")\npublic class LoginTest extends BaseTest {\n\n  @Test\n  @Story(\"Valid login\")\n  @Severity(SeverityLevel.CRITICAL)\n  public void testValidLogin(){\n    try {\n      new LoginPage(getDriver()).login(\"admin\",\"admin123\");\n      Assert.assertTrue(getDriver().getCurrentUrl().contains(\"/dashboard\"));\n    } catch(AssertionError e){\n      Allure.addAttachment(\"Screenshot\",\n        new ByteArrayInputStream(((TakesScreenshot)getDriver()).getScreenshotAs(OutputType.BYTES)));\n      throw e;\n    }\n  }\n}",
+              "source": "Allure Docs",
+              "url": "https://docs.qameta.io/allure/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "JS-SP2-M-1",
+              "slug": "java-selenium-visual-regression",
+              "title": "Visual Regression with Ashot",
+              "difficulty": "Medium",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "content": "Use AShot library to capture a full-page screenshot and compare it to a baseline with a 1% pixel diff tolerance.",
+              "solution": "Screenshot baseline = new AShot()\n  .shootingStrategy(ShootingStrategies.viewportPasting(100))\n  .takeScreenshot(driver);\nImageIO.write(baseline.getImage(),\"PNG\",new File(\"baseline.png\"));\n\n// In comparison:\nScreenshot actual = new AShot()\n  .shootingStrategy(ShootingStrategies.viewportPasting(100))\n  .takeScreenshot(driver);\nImageDiff diff = new ImageDiffer().makeDiff(baseline, actual);\nAssert.assertTrue(diff.getDiffSize() < baseline.getImage().getWidth() * baseline.getImage().getHeight() * 0.01);",
+              "source": "AShot GitHub",
+              "url": "https://github.com/pazone/ashot"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "JS-SP2-H-1",
+              "slug": "java-selenium-github-actions-ci",
+              "title": "Selenium Tests in GitHub Actions CI",
+              "difficulty": "Hard",
+              "skill": "Java Selenium",
+              "skill_level": "Specialist_2",
+              "language": "YAML",
+              "content": "Write a GitHub Actions workflow that runs a Maven Selenium TestNG suite headlessly and uploads the Allure report as an artifact.",
+              "solution": "# .github/workflows/selenium.yml\nname: Selenium Tests\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: actions/setup-java@v3\n        with:\n          java-version: '17'\n          distribution: 'temurin'\n      - name: Install Chrome\n        run: |\n          sudo apt-get update\n          sudo apt-get install -y google-chrome-stable\n      - name: Run Tests\n        run: mvn test -Dheadless=true\n      - uses: actions/upload-artifact@v3\n        if: always()\n        with:\n          name: allure-results\n          path: target/allure-results",
+              "source": "GitHub Actions Docs",
+              "url": "https://docs.github.com/en/actions"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "skill": "Python Selenium",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "PS-BEG-E-1",
+              "slug": "python-selenium-driver-setup",
+              "title": "Setup ChromeDriver and Open URL",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Initialize a Chrome WebDriver using webdriver-manager, navigate to https://example.com, print the title, and quit.",
+              "solution": "from selenium import webdriver\nfrom selenium.webdriver.chrome.service import Service\nfrom webdriver_manager.chrome import ChromeDriverManager\n\ndriver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))\ndriver.get('https://example.com')\nprint(driver.title)\ndriver.quit()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/"
+            },
+            {
+              "id": "PS-BEG-E-2",
+              "slug": "python-selenium-find-click",
+              "title": "Find Element by ID and Click",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Find a button by id 'submit-btn' and click it.",
+              "solution": "from selenium.webdriver.common.by import By\nbtn = driver.find_element(By.ID, 'submit-btn')\nbtn.click()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/finders/"
+            },
+            {
+              "id": "PS-BEG-E-3",
+              "slug": "python-selenium-send-keys",
+              "title": "Type into Input Field",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Find an input by name 'username', clear it, type 'testuser'.",
+              "solution": "from selenium.webdriver.common.by import By\ninput_el = driver.find_element(By.NAME, 'username')\ninput_el.clear()\ninput_el.send_keys('testuser')",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/interactions/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PS-BEG-M-1",
+              "slug": "python-selenium-explicit-wait",
+              "title": "Explicit Wait with WebDriverWait",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Wait up to 10 seconds for a button 'load-more' to be clickable, then click it.",
+              "solution": "from selenium.webdriver.support.ui import WebDriverWait\nfrom selenium.webdriver.support import expected_conditions as EC\nfrom selenium.webdriver.common.by import By\n\nwait = WebDriverWait(driver, 10)\nbtn = wait.until(EC.element_to_be_clickable((By.ID, 'load-more')))\nbtn.click()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/waits/"
+            },
+            {
+              "id": "PS-BEG-M-2",
+              "slug": "python-selenium-page-object-model",
+              "title": "Page Object Model in Python",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Create a LoginPage class encapsulating username, password fields and login button. Add a login() method.",
+              "solution": "from selenium.webdriver.common.by import By\n\nclass LoginPage:\n  def __init__(self, driver):\n    self.driver = driver\n  def login(self, username, password):\n    self.driver.find_element(By.ID, 'username').send_keys(username)\n    self.driver.find_element(By.ID, 'password').send_keys(password)\n    self.driver.find_element(By.ID, 'login-btn').click()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PS-BEG-H-1",
+              "slug": "python-selenium-pytest-fixture",
+              "title": "Pytest Fixture for WebDriver",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "content": "Write a pytest fixture that initializes a headless ChromeDriver, yields it to the test, and quits after.",
+              "solution": "import pytest\nfrom selenium import webdriver\nfrom selenium.webdriver.chrome.options import Options\n\n@pytest.fixture\ndef driver():\n  opts = Options()\n  opts.add_argument('--headless')\n  opts.add_argument('--no-sandbox')\n  opts.add_argument('--disable-dev-shm-usage')\n  d = webdriver.Chrome(options=opts)\n  yield d\n  d.quit()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/test_practices/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "PS-INT1-E-1",
+              "slug": "python-selenium-select-dropdown",
+              "title": "Select from Dropdown",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Python",
+              "content": "Select 'Canada' from a <select> dropdown with id 'country'.",
+              "solution": "from selenium.webdriver.support.ui import Select\nfrom selenium.webdriver.common.by import By\nselect = Select(driver.find_element(By.ID, 'country'))\nselect.select_by_visible_text('Canada')",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/support_features/select_lists/"
+            },
+            {
+              "id": "PS-INT1-E-2",
+              "slug": "python-selenium-wait-url-change",
+              "title": "Wait for URL Change",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Python",
+              "content": "After clicking submit, wait up to 10s for URL to change.",
+              "solution": "current = driver.current_url\ndriver.find_element(By.ID, 'submit').click()\nWebDriverWait(driver, 10).until(EC.url_changes(current))",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/waits/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PS-INT1-M-1",
+              "slug": "python-selenium-switch-window",
+              "title": "Switch to New Browser Tab",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Python",
+              "content": "Click a link that opens a new tab, switch to it, print its URL, then close and return to original.",
+              "solution": "original = driver.current_window_handle\ndriver.find_element(By.ID, 'open-tab').click()\nfor handle in driver.window_handles:\n  if handle != original:\n    driver.switch_to.window(handle)\nprint(driver.current_url)\ndriver.close()\ndriver.switch_to.window(original)",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/browser/windows/"
+            },
+            {
+              "id": "PS-INT1-M-2",
+              "slug": "python-selenium-radio-button",
+              "title": "Iterate and Select Radio Buttons",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Python",
+              "content": "Find all radio buttons name='size'. Print their values. Select the one with value 'medium'.",
+              "solution": "radios = driver.find_elements(By.CSS_SELECTOR, \"input[name='size']\")\nfor r in radios:\n  print(r.get_attribute('value'))\nnext(r for r in radios if r.get_attribute('value') == 'medium').click()",
+              "source": "Selenium Practice",
+              "url": "https://www.selenium.dev/documentation/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PS-INT1-H-1",
+              "slug": "python-selenium-alert-handling",
+              "title": "Handle JavaScript Alerts and Prompts",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_1",
+              "language": "Python",
+              "content": "Trigger a JS alert, accept it. Trigger a JS prompt, type 'hello', and confirm. Trigger a confirmation dialog and dismiss it.",
+              "solution": "# Alert\ndriver.execute_script(\"alert('Test alert')\")\ndriver.switch_to.alert.accept()\n\n# Prompt\ndriver.execute_script(\"prompt('Enter something:','')\")\nalert = driver.switch_to.alert\nalert.send_keys('hello')\nalert.accept()\n\n# Confirmation\ndriver.execute_script(\"confirm('Are you sure?')\")\ndriver.switch_to.alert.dismiss()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/interactions/alerts/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "PS-INT2-E-1",
+              "slug": "python-selenium-drag-drop",
+              "title": "Drag and Drop with ActionChains",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Python",
+              "content": "Drag element id='source' and drop on element id='target'.",
+              "solution": "from selenium.webdriver.common.action_chains import ActionChains\nsource = driver.find_element(By.ID, 'source')\ntarget = driver.find_element(By.ID, 'target')\nActionChains(driver).drag_and_drop(source, target).perform()",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/actions_api/mouse/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PS-INT2-M-1",
+              "slug": "python-selenium-js-executor",
+              "title": "Click Hidden Button via JavaScript",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Python",
+              "content": "Click a display:none button using execute_script.",
+              "solution": "btn = driver.find_element(By.ID, 'hidden-btn')\ndriver.execute_script('arguments[0].click();', btn)",
+              "source": "Selenium Practice",
+              "url": "https://www.selenium.dev/documentation/"
+            },
+            {
+              "id": "PS-INT2-M-2",
+              "slug": "python-selenium-file-upload",
+              "title": "File Upload via sendKeys",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Python",
+              "content": "Upload test_file.pdf to an input[type=file] element with id 'upload'.",
+              "solution": "import os\nfile_path = os.path.abspath('test_file.pdf')\ndriver.find_element(By.ID, 'upload').send_keys(file_path)",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/interactions/"
+            },
+            {
+              "id": "PS-INT2-M-3",
+              "slug": "python-selenium-screenshot-on-failure",
+              "title": "Screenshot on Failure with pytest",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Python",
+              "content": "Write an autouse pytest fixture that captures a screenshot when a test fails.",
+              "solution": "@pytest.fixture(autouse=True)\ndef screenshot(driver, request):\n  yield\n  if request.node.rep_call.failed:\n    driver.save_screenshot(f'screenshots/{request.node.name}.png')",
+              "source": "Selenium Practice",
+              "url": "https://www.selenium.dev/documentation/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PS-INT2-H-1",
+              "slug": "python-selenium-wait-staleness",
+              "title": "Wait for Staleness and Re-find Element",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Intermediate_2",
+              "language": "Python",
+              "content": "Click reload button. Wait for old element to go stale, then re-find it.",
+              "solution": "old = driver.find_element(By.ID, 'result')\ndriver.find_element(By.ID, 'reload-btn').click()\nWebDriverWait(driver, 10).until(EC.staleness_of(old))\nnew_el = driver.find_element(By.ID, 'result')",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/waits/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "PS-SP1-E-1",
+              "slug": "python-selenium-remote-grid",
+              "title": "Remote WebDriver with Selenium Grid",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "content": "Connect to a Selenium Grid 4 at http://grid:4444 using webdriver.Remote with ChromeOptions.",
+              "solution": "from selenium.webdriver import Remote\nfrom selenium.webdriver.chrome.options import Options\n\ndriver = Remote(\n  command_executor='http://grid:4444',\n  options=Options()\n)\ndriver.get('https://example.com')\ndriver.quit()",
+              "source": "Selenium Grid Docs",
+              "url": "https://www.selenium.dev/documentation/grid/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PS-SP1-M-1",
+              "slug": "python-selenium-cdp-block-images",
+              "title": "CDP — Block Image Requests",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "content": "Use Chrome DevTools Protocol (CDP) to block all image URL patterns during a test.",
+              "solution": "driver.execute_cdp_cmd('Network.enable', {})\ndriver.execute_cdp_cmd('Network.setBlockedURLs', {\n  'urls': ['*.png', '*.jpg', '*.gif', '*.webp']\n})\ndriver.get('https://example.com')\ndriver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': []})",
+              "source": "Selenium 4 Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/bidi/cdp/"
+            },
+            {
+              "id": "PS-SP1-M-2",
+              "slug": "python-selenium-parallel-pytest-xdist",
+              "title": "Parallel Tests with pytest-xdist",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "content": "Run pytest suite in parallel across 4 workers. Each worker gets its own driver.",
+              "solution": "# conftest.py\n@pytest.fixture(scope='function')\ndef driver():\n  d = webdriver.Chrome()\n  yield d\n  d.quit()\n\n# Run: pytest -n 4 tests/",
+              "source": "pytest-xdist Docs",
+              "url": "https://pytest-xdist.readthedocs.io/"
+            },
+            {
+              "id": "PS-SP1-M-3",
+              "slug": "python-selenium-capture-console-logs",
+              "title": "Capture Browser Console Errors",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "content": "After loading a page, retrieve all SEVERE browser console logs.",
+              "solution": "from selenium.webdriver.chrome.options import Options\nopts = Options()\nopts.set_capability('goog:loggingPrefs', {'browser': 'ALL'})\ndriver = webdriver.Chrome(options=opts)\ndriver.get('https://example.com')\nerrors = [e for e in driver.get_log('browser') if e['level'] == 'SEVERE']\nprint(errors)",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PS-SP1-H-1",
+              "slug": "python-selenium-fluent-wait-lambda",
+              "title": "Custom FluentWait with Lambda",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "content": "Poll every 500ms for 20s until a table has more than 10 rows.",
+              "solution": "WebDriverWait(driver, 20, poll_frequency=0.5).until(\n  lambda d: len(d.find_elements(By.CSS_SELECTOR, '#data-table tr')) > 10\n)",
+              "source": "Selenium Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/waits/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "PS-SP2-E-1",
+              "slug": "python-selenium-relative-locators",
+              "title": "Selenium 4 Relative Locators",
+              "difficulty": "Easy",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "content": "Find the input directly above the Submit button using Selenium 4 relative locators.",
+              "solution": "from selenium.webdriver.support.relative_locator import locate_with\n\nsubmit = driver.find_element(By.XPATH, '//button[text()=\"Submit\"]')\ninp = driver.find_element(locate_with(By.TAG_NAME, 'input').above(submit))\ninp.send_keys('test')",
+              "source": "Selenium 4 Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/elements/locators/#relative-locators"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PS-SP2-M-1",
+              "slug": "python-selenium-cdp-device-emulation",
+              "title": "CDP Device Emulation — iPhone 12",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "content": "Use CDP to emulate iPhone 12 (390x844, deviceScaleFactor=3, mobile=True).",
+              "solution": "driver.execute_cdp_cmd('Emulation.setDeviceMetricsOverride', {\n  'width': 390,\n  'height': 844,\n  'deviceScaleFactor': 3,\n  'mobile': True\n})",
+              "source": "Selenium 4 Docs",
+              "url": "https://www.selenium.dev/documentation/webdriver/bidi/cdp/"
+            },
+            {
+              "id": "PS-SP2-M-2",
+              "slug": "python-selenium-visual-regression-pillow",
+              "title": "Visual Regression with Pillow",
+              "difficulty": "Medium",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "content": "Capture a screenshot of element id='header'. Compare pixel-by-pixel with a baseline. Assert similarity > 99%.",
+              "solution": "from PIL import Image, ImageChops\nimport io\n\nel = driver.find_element(By.ID, 'header')\ncurr = Image.open(io.BytesIO(el.screenshot_as_png))\nbaseline = Image.open('baseline.png')\ndiff = ImageChops.difference(curr, baseline)\nchanged = sum(1 for p in diff.getdata() if p != (0,0,0,0))\nassert (1 - changed / (curr.width * curr.height)) * 100 > 99",
+              "source": "Selenium Practice",
+              "url": "https://www.selenium.dev/documentation/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PS-SP2-H-1",
+              "slug": "python-selenium-github-actions",
+              "title": "GitHub Actions CI with Headless Selenium",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "YAML",
+              "content": "Write a GitHub Actions workflow that installs dependencies, runs headless pytest, and uploads the HTML report.",
+              "solution": "# .github/workflows/test.yml\nname: Tests\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: actions/setup-python@v4\n        with:\n          python-version: '3.11'\n      - run: pip install -r requirements.txt\n      - run: pytest --html=report.html --self-contained-html\n      - uses: actions/upload-artifact@v3\n        if: always()\n        with:\n          name: report\n          path: report.html",
+              "source": "GitHub Actions Docs",
+              "url": "https://docs.github.com/en/actions"
+            },
+            {
+              "id": "PS-SP2-H-2",
+              "slug": "python-selenium-mock-api-pytest-httpserver",
+              "title": "Mock API with pytest-httpserver",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "content": "Use pytest-httpserver to mock /api/users endpoint. Run Selenium against a page that fetches from it.",
+              "solution": "from pytest_httpserver import HTTPServer\n\n@pytest.fixture\ndef mock_api(httpserver):\n  httpserver.expect_request('/api/users').respond_with_json([{'id':1,'name':'Alice'}])\n  return httpserver.url_for('/api/users')\n\ndef test_users(driver, mock_api):\n  driver.get(f'http://localhost:3000?api={mock_api}')\n  assert 'Alice' in driver.find_element(By.ID, 'user-list').text",
+              "source": "pytest-httpserver Docs",
+              "url": "https://pytest-httpserver.readthedocs.io/"
+            },
+            {
+              "id": "PS-SP2-H-3",
+              "slug": "python-selenium-allure-report",
+              "title": "Allure Report Integration with pytest",
+              "difficulty": "Hard",
+              "skill": "Python Selenium",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "content": "Add @allure.feature, @allure.story, allure.step to a pytest login test. Generate Allure report.",
+              "solution": "import allure\n\n@allure.feature('Authentication')\n@allure.story('Login')\ndef test_login(driver):\n  with allure.step('Enter credentials'):\n    driver.find_element(By.ID, 'username').send_keys('admin')\n    driver.find_element(By.ID, 'password').send_keys('pass')\n  with allure.step('Submit'):\n    driver.find_element(By.ID, 'submit').click()\n\n# Run: pytest --alluredir=results && allure serve results",
+              "source": "Allure Docs",
+              "url": "https://docs.qameta.io/allure-report/"
+            }
+          ]
+        }
+      }
+    }
+
+  ]
+}

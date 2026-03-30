@@ -10,6 +10,7 @@
     "start:frontend": "cd frontend && npm run dev",
     "start:backend": "cd backend && venv\\Scripts\\uvicorn main:app --reload",
     "start": "start cmd /k \"npm run start:backend\" && npm run start:frontend",
-    "seed": "cd backend && venv\\Scripts\\python scripts\\seed.py"
+    "seed": "cd backend && venv\\Scripts\\python scripts\\seed.py",
+    "seed:new": "cd backend && venv\\Scripts\\python scripts\\seed_new.py"
   }
 }

@@ -45,6 +45,21 @@ LEVEL_ORDER = [
 ]
 
 
+def resolve_template_code(starter_code: object) -> str | None:
+    if isinstance(starter_code, dict):
+        for key in ("python", "default", "javascript", "java"):
+            value = starter_code.get(key)
+            if isinstance(value, str) and value.strip():
+                return value
+        for value in starter_code.values():
+            if isinstance(value, str) and value.strip():
+                return value
+        return None
+    if isinstance(starter_code, str) and starter_code.strip():
+        return starter_code
+    return None
+
+
 def get_max_attempts() -> int:
     try:
         return int(os.getenv("MAX_ATTEMPTS_PER_LEVEL", "5"))
@@ -253,6 +268,9 @@ def start_session(
         problem=SessionProblemPayload(
             title=selected_problem.title,
             description=selected_problem.description,
+            templateCode=resolve_template_code(selected_problem.starter_code),
+            starter_code=selected_problem.starter_code,
+            tags=[str(tag) for tag in (selected_problem.tags or [])],
             sample_test_cases=selected_problem.sample_test_cases,
             time_limit_minutes=selected_problem.time_limit_minutes,
         ),
@@ -290,6 +308,9 @@ def get_session(
         problem=SessionProblemPayload(
             title=problem.title,
             description=problem.description,
+            templateCode=resolve_template_code(problem.starter_code),
+            starter_code=problem.starter_code,
+            tags=[str(tag) for tag in (problem.tags or [])],
             sample_test_cases=problem.sample_test_cases,
             time_limit_minutes=problem.time_limit_minutes,
         ),

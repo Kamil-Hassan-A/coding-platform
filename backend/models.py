@@ -109,7 +109,12 @@ class Skill(Base):
 
 class Problem(Base):
     __tablename__ = "problems"
-    __table_args__ = (Index("ix_problems_skill_level", "skill_id", "level"),)
+    __table_args__ = (
+        Index("ix_problems_skill_level", "skill_id", "level"),
+        Index("ix_problems_external_task", "external_task_id"),
+        Index("ix_problems_source_dataset", "source_dataset"),
+        Index("ix_problems_source_name", "source_name"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     skill_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("skills.id", ondelete="CASCADE"), nullable=False)
@@ -119,7 +124,14 @@ class Problem(Base):
     sample_test_cases: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     hidden_test_cases: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     time_limit_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=45)
+    tags: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    starter_code: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     difficulty_label: Mapped[str | None] = mapped_column(String(50))
+    external_task_id: Mapped[str | None] = mapped_column(String(255))
+    source_name: Mapped[str | None] = mapped_column(String(100))
+    source_url: Mapped[str | None] = mapped_column(String(1000))
+    source_dataset: Mapped[str | None] = mapped_column(String(100))
+    solution_text: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     skill: Mapped[Skill] = relationship(back_populates="problems")
