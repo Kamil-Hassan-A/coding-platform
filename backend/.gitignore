@@ -1,4 +1,5 @@
 infra/venv
+infra/cdk.out
 # Keep only the infra directory tracked under /backend.
 # This ignores all immediate subdirectories in /backend except /backend/infra.
 
@@ -8,6 +9,7 @@ infra/venv
 !routes/
 !scripts/
 *.db
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
