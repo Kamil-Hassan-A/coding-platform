@@ -1,11 +1,62 @@
 import { useState } from "react";
-import type { SessionSubmitResponse, TestCaseResult } from "../types/assessment";
+import type {
+  SessionRunResponse,
+  SessionSubmitResponse,
+  TestCaseResult,
+} from "../types/assessment";
 
 interface Props {
-  result: SessionSubmitResponse;
+  submissionResult: SessionSubmitResponse | null;
+  runResult: SessionRunResponse | null;
 }
 
-export default function TestCases({ result }: Props) {
+export default function TestCases({ submissionResult, runResult }: Props) {
+  if (!submissionResult && runResult) {
+    const runCases = runResult.cases ?? [];
+    const passedCases = runCases.filter((tc) => tc.passed).length;
+    const allPassed = runCases.length > 0 && passedCases === runCases.length;
+
+    return (
+      <div className="p-6 font-['Segoe_UI',sans-serif]">
+        <div
+          className={`mb-5 rounded-lg border px-4 py-3 text-sm font-semibold ${
+            allPassed
+              ? "border-green-200 bg-green-50 text-green-700"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          {allPassed ? "✓ Code compiled and ran successfully" : "✗ Some test cases failed"}
+        </div>
+
+        <div className='mb-6 flex items-center justify-between border-b border-[#eee] pb-4'>
+          <div className='flex gap-6'>
+            <div>
+              <div className='text-[11px] font-bold tracking-[0.5px] text-[#999]'>SAMPLE TEST CASES</div>
+              <div className='text-[24px] font-extrabold text-[#111]'>
+                {passedCases} / {runCases.length}
+              </div>
+            </div>
+          </div>
+          <div className='text-right'>
+            <div className='text-[11px] font-bold text-[#999]'>TIME TAKEN</div>
+            <div className='text-[14px] font-semibold text-[#555]'>{runResult.time_taken_ms}ms</div>
+          </div>
+        </div>
+
+        <div className='flex flex-col gap-3'>
+          {runCases.map((tc, i) => (
+            <TestCaseRow key={i} index={i} tc={tc} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!submissionResult) {
+    return null;
+  }
+
+  const result = submissionResult;
   return (
     <div className="p-6 font-['Segoe_UI',sans-serif]">
       <div className='mb-6 flex items-center justify-between border-b border-[#eee] pb-4'>

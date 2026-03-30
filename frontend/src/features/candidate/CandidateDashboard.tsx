@@ -137,7 +137,7 @@ export default function CandidateDashboard() {
             session_id: data.session_id, 
             problem: data.problem, 
             skill_name: activeConfirmed.skill, 
-            allowed_languages: activeConfirmed.allowedLanguages 
+            allowed_languages: data.allowed_languages ?? activeConfirmed.allowedLanguages 
           },
         });
       },
@@ -344,6 +344,7 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
                     }}
                     className="flex items-center rounded-xl px-5 py-4 transition-all"
                     style={{
+                      /* dynamic — intentionally inline */
                       border: isSelected
                         ? `2px solid ${meta.color}`
                         : "1px solid #e2e8f0",
@@ -366,6 +367,7 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
                       <div
                         className="mr-4 h-5 w-5 rounded-full bg-white transition-all"
                         style={{
+                          /* dynamic — intentionally inline */
                           border: isSelected
                             ? `6px solid ${meta.color}`
                             : "2px solid #cbd5e1",
@@ -378,6 +380,7 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
                         <h3
                           className="m-0 text-[15px] font-bold"
                           style={{
+                            /* dynamic — intentionally inline */
                             color: lvl.unlocked ? meta.color : "#64748b",
                           }}
                         >

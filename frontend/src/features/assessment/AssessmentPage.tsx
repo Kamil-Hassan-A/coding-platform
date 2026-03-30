@@ -1,32 +1,52 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGetSession, useSubmitSession } from "./hooks/useAssessment";
+import { useGetSession, useRunCode, useSubmitSession } from "./hooks/useAssessment";
 import { useEditor } from "./hooks/useEditor";
 import Toolbar from "./components/Toolbar";
 import ProblemPanel from "./components/ProblemPanel";
 import Editor from "./components/Editor";
 import TestCases from "./components/TestCases";
-import type { SessionSubmitResponse, SessionProblemPayload } from "./types/assessment";
-import type { AllowedLanguage } from "../../features/candidate/types/candidate";
+import type {
+  SessionSubmitResponse,
+  SessionRunResponse,
+  SessionProblemPayload,
+  LanguageOption,
+} from "./types/assessment";
 
 const SESSION_ID_STORAGE_KEY = "assessment_session_id";
 const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
+const DEFAULT_LANGUAGES = ["python", "javascript", "java", "cpp"] as const;
+const DEFAULT_LANGUAGE_META: Record<
+  (typeof DEFAULT_LANGUAGES)[number],
+  { id: number; label: string; monaco: string }
+> = {
+  python: { id: 71, label: "Python", monaco: "python" },
+  javascript: { id: 63, label: "JavaScript", monaco: "javascript" },
+  java: { id: 62, label: "Java", monaco: "java" },
+  cpp: { id: 54, label: "C++", monaco: "cpp" },
+};
+const DEFAULT_LANGUAGE_OPTIONS: LanguageOption[] = [
+  ...DEFAULT_LANGUAGES.map((lang) => ({
+    id: DEFAULT_LANGUAGE_META[lang].id,
+    name: DEFAULT_LANGUAGE_META[lang].label,
+    monaco: DEFAULT_LANGUAGE_META[lang].monaco,
+  })),
+];
 
 type InitialAssessmentState = {
   session_id: string;
   problem: SessionProblemPayload;
   skill_name?: string;
-  allowed_languages?: AllowedLanguage[];
+  allowed_languages: LanguageOption[];
 };
 
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [language, setLanguage] = useState("python");
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
-  const [storedAllowedLanguages, setStoredAllowedLanguages] = useState<AllowedLanguage[]>([]);
+  const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
   const [isSessionResolved, setIsSessionResolved] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
@@ -39,7 +59,7 @@ export default function AssessmentPage() {
           SESSION_LANGUAGES_STORAGE_KEY,
           JSON.stringify(initialState.allowed_languages),
         );
-        setStoredAllowedLanguages(initialState.allowed_languages);
+        setAllowedLanguages(initialState.allowed_languages);
       }
     } else {
       const savedId = sessionStorage.getItem(SESSION_ID_STORAGE_KEY);
@@ -48,12 +68,12 @@ export default function AssessmentPage() {
       const savedLanguages = sessionStorage.getItem(SESSION_LANGUAGES_STORAGE_KEY);
       if (savedLanguages) {
         try {
-          const parsed = JSON.parse(savedLanguages) as AllowedLanguage[];
+          const parsed = JSON.parse(savedLanguages) as LanguageOption[];
           if (Array.isArray(parsed)) {
-            setStoredAllowedLanguages(parsed);
+            setAllowedLanguages(parsed);
           }
         } catch {
-          setStoredAllowedLanguages([]);
+          setAllowedLanguages([]);
         }
       }
     }
@@ -65,50 +85,80 @@ export default function AssessmentPage() {
     !initialState ? sessionId : null,
   );
 
-  useEffect(() => {
-    if (recoveredSession?.last_draft_lang !== null && recoveredSession?.last_draft_lang !== undefined) {
-      setLanguage(recoveredSession.last_draft_lang);
-    }
-  }, [recoveredSession]);
-
   const activeProblem = initialProblem || recoveredSession?.problem;
   const draftCode = recoveredSession?.last_draft_code;
 
-  const allowedLanguages =
-    initialState?.allowed_languages?.length
-      ? initialState.allowed_languages
-      : recoveredSession?.allowed_languages?.length
-        ? recoveredSession.allowed_languages
-        : storedAllowedLanguages;
+  useEffect(() => {
+    if (recoveredSession?.allowed_languages?.length) {
+      setAllowedLanguages(recoveredSession.allowed_languages);
+      sessionStorage.setItem(
+        SESSION_LANGUAGES_STORAGE_KEY,
+        JSON.stringify(recoveredSession.allowed_languages),
+      );
+    }
+  }, [recoveredSession]);
 
-  // Infer default language if creating a new draft
-  const getSmartDefaultLanguage = (): string => {
-    if (allowedLanguages.length > 0) return allowedLanguages[0].id.toString();
-    return recoveredSession?.last_draft_lang ?? "71";
-  };
+  const resolvedAllowedLanguages =
+    allowedLanguages.length > 0 ? allowedLanguages : DEFAULT_LANGUAGE_OPTIONS;
 
   // 3. Editor & Language State
   const { code, setCode } = useEditor(
     initialState?.problem?.templateCode ?? draftCode ?? "",
   );
-  const [languageId, setLanguageId] = useState(getSmartDefaultLanguage());
-  const activeLanguage = allowedLanguages.find(l => l.id.toString() === languageId) || allowedLanguages[0];
+  const [language, setLanguage] = useState(initialState?.allowed_languages?.[0]?.monaco ?? "python");
+
+  useEffect(() => {
+    if (recoveredSession?.last_draft_lang) {
+      setLanguage(recoveredSession.last_draft_lang);
+    }
+  }, [recoveredSession]);
+
+  useEffect(() => {
+    if (!resolvedAllowedLanguages.some((lang) => lang.monaco === language)) {
+      setLanguage(resolvedAllowedLanguages[0].monaco);
+    }
+  }, [resolvedAllowedLanguages, language]);
+
+  const activeLanguage = resolvedAllowedLanguages.find((l) => l.monaco === language) || resolvedAllowedLanguages[0];
   const [submissionResult, setSubmissionResult] = useState<SessionSubmitResponse | null>(null);
+  const [runResult, setRunResult] = useState<SessionRunResponse | null>(null);
 
   // 4. Submission Logic
-  const { mutate: submit, isPending: isSubmitting } = useSubmitSession();
+  const { mutate: submit, mutateAsync: submitAsync, isPending: isSubmitting } = useSubmitSession();
+  const { mutate: run, isPending: isRunning } = useRunCode();
+
+  const handleRun = () => {
+    if (!sessionId) return;
+    if (!language) {
+      setSubmissionError("No language selected. Please pick a language before running.");
+      return;
+    }
+
+    setSubmissionError(null);
+    run(
+      { sessionId, code, language },
+      {
+        onSuccess: (data) => {
+          setRunResult(data);
+        },
+        onError: () => {
+          setSubmissionError("Run failed. Please try again.");
+        },
+      }
+    );
+  };
 
   const handleSubmit = () => {
     if (!sessionId) return;
 
-    if (!languageId) {
+    if (!language) {
       setSubmissionError("No language selected. Please pick a language before submitting.");
       return;
     }
 
     setSubmissionError(null);
     submit(
-      { session_id: sessionId, payload: { code, language: languageId } },
+      { session_id: sessionId, payload: { code, language } },
       {
         onSuccess: (data) => {
           setSubmissionResult(data);
@@ -122,16 +172,63 @@ export default function AssessmentPage() {
     );
   };
 
+  const handleEndTest = async () => {
+    if (!sessionId) return;
+
+    if (!language) {
+      setSubmissionError("No language selected. Please pick a language before ending the test.");
+      return;
+    }
+
+    setSubmissionError(null);
+    try {
+      await submitAsync({ session_id: sessionId, payload: { code, language } });
+      navigate("/candidate/thankyou");
+    } catch (error: any) {
+      console.log("End test submission error:", error);
+      const status = error?.response?.status;
+      if (status === 409) {
+        navigate("/candidate/thankyou");
+      } else {
+        setSubmissionError("Failed to end test. Please try again.");
+      }
+    }
+  };
+
+  const handleTimeExpired = () => {
+    if (!sessionId) return;
+
+    if (!language) {
+      setSubmissionError("No language selected. Please pick a language before submitting.");
+      return;
+    }
+
+    setSubmissionError(null);
+    submit(
+      { session_id: sessionId, payload: { code, language } },
+      {
+        onSuccess: () => {
+          navigate("/candidate/thankyou");
+        },
+        onError: (error: any) => {
+          const status = error?.response?.status;
+          if (status === 409) {
+            navigate("/candidate/thankyou");
+          } else {
+            setSubmissionError("Failed to end test. Please try again.");
+          }
+        },
+      }
+    );
+  };
+
   if (isSessionResolved && !sessionId && !isRecovering) {
     return (
       <div className="flex h-screen flex-col items-center justify-center bg-admin-bg font-['Segoe_UI',sans-serif]">
         <h2 className='mb-5 text-admin-text'>No active session found.</h2>
         <button 
           onClick={() => navigate("/candidate/dashboard")}
-          style={{
-            background: "#E8620A", color: "#fff", border: "none",
-            borderRadius: "8px", padding: "12px 32px", fontWeight: 700, cursor: "pointer"
-          }}
+          className="bg-admin-orange text-white border-0 rounded-lg py-3 px-8 font-bold cursor-pointer"
         >
           Go back to Dashboard
         </button>
@@ -153,11 +250,16 @@ export default function AssessmentPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-admin-bg font-['Segoe_UI',sans-serif]">
       <Toolbar 
+        onEndTest={handleEndTest}
+        onTimeExpired={handleTimeExpired}
+        onRun={handleRun}
         onSubmit={handleSubmit}
+        isRunning={isRunning}
         isSubmitting={isSubmitting}
-        languageId={languageId}
-        onLanguageChange={setLanguageId}
+        language={language}
+        onLanguageChange={setLanguage}
         timeLimit={activeProblem.time_limit_minutes}
+        allowedLanguages={resolvedAllowedLanguages}
         secondsRemaining={recoveredSession?.seconds_remaining}
       />
 
@@ -179,9 +281,9 @@ export default function AssessmentPage() {
             <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "python"} />
           </div>
           
-          {submissionResult && (
+          {(submissionResult || runResult) && (
             <div className='h-2/5 overflow-y-auto border-t-2 border-admin-orange bg-white'>
-              <TestCases result={submissionResult} />
+              <TestCases submissionResult={submissionResult} runResult={runResult} />
             </div>
           )}
         </div>

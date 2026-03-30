@@ -269,7 +269,10 @@ export default function AdminDashboard() {
                           <div className='h-[7px] flex-1 overflow-hidden rounded-full bg-gray-100'>
                             <div
                               className={`h-full rounded-full transition-[width] duration-500 ${pct >= 60 ? "bg-admin-green" : "bg-admin-red"}`}
-                              style={{ width: `${pct}%` }}
+                              style={{
+                                /* dynamic — intentionally inline */
+                                width: `${pct}%`
+                              }}
                             />
                           </div>
                           <div className={`w-[38px] shrink-0 text-right text-[12px] font-bold ${pct >= 60 ? "text-admin-green" : "text-admin-red"}`}>
@@ -388,7 +391,10 @@ export default function AdminDashboard() {
                               <div className='h-[5px] w-[52px] overflow-hidden rounded-full bg-gray-100'>
                                 <div
                                   className={`h-full rounded-full ${c.score >= 60 ? "bg-admin-green" : "bg-admin-red"}`}
-                                  style={{ width: `${c.score}%` }}
+                                  style={{
+                                    /* dynamic — intentionally inline */
+                                    width: `${c.score}%`
+                                  }}
                                 />
                               </div>
                               <span className='text-[13px] font-bold text-admin-text'>{c.score}</span>

@@ -11,9 +11,9 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Segoe UI, sans-serif", background: "#f5f6fa" }}>
-          <h2 style={{ color: "#111", marginBottom: 12 }}>Something went wrong.</h2>
-          <button onClick={() => window.location.href = "/login"} style={{ background: "#E8620A", color: "#fff", border: "none", borderRadius: 8, padding: "12px 28px", fontWeight: 700, cursor: "pointer", fontSize: 14 }}>
+        <div className="h-screen flex flex-col items-center justify-center bg-[#f5f6fa]">
+          <h2 className="text-[#111] mb-3">Something went wrong.</h2>
+          <button onClick={() => window.location.href = "/login"} className="bg-admin-orange text-white border-0 rounded-lg py-3 px-7 font-bold cursor-pointer text-sm">
             Return to Login
           </button>
         </div>

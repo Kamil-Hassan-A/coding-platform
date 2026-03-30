@@ -1,10 +1,14 @@
-import type { AllowedLanguage } from "../../candidate/types/candidate";
-
 export interface Problem {
   id: string;
   title: string;
   description: string;
   templateCode: string;
+}
+
+export interface LanguageOption {
+  id: number;
+  name: string;
+  monaco: string;
 }
 
 export interface AssessmentState {
@@ -38,6 +42,7 @@ export interface SessionProblemPayload {
 export interface SessionStartResponse {
   session_id: string;
   problem: SessionProblemPayload;
+  allowed_languages?: LanguageOption[];
 }
 
 export interface StartSessionPayload {
@@ -61,6 +66,11 @@ export interface SessionSubmitResponse {
   cases: TestCaseResult[];
 }
 
+export interface SessionRunResponse {
+  cases: TestCaseResult[];
+  time_taken_ms: number;
+}
+
 export interface SubmissionResultsResponse {
   submission_id: string;
   status: string;
@@ -80,6 +90,7 @@ export interface ActiveSession {
   expires_at: string;
   seconds_remaining: number;
   problem: SessionProblemPayload;
+  allowed_languages?: LanguageOption[];
   last_draft_code: string | null;
   last_draft_lang: string | null;
 }

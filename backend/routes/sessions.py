@@ -17,6 +17,7 @@ from models import (
     Level,
     Problem,
     SessionStatus,
+    Skill,
     Submission,
     SubmissionStatus,
     User,
@@ -28,6 +29,8 @@ from schemas import (
     SessionDraftRequest,
     SessionDraftResponse,
     SessionProblemPayload,
+    SessionRunRequest,
+    SessionRunResponse,
     SessionStartRequest,
     SessionStartResponse,
     SessionSubmitRequest,
@@ -78,9 +81,6 @@ def score_submission(
     language: str,
     forced_status: SubmissionStatus | None = None,
 ) -> Submission:
-    if session_obj.submission is not None:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
-
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
@@ -107,22 +107,35 @@ def score_submission(
     started_at = session_obj.started_at.astimezone(timezone.utc) if session_obj.started_at.tzinfo else session_obj.started_at.replace(tzinfo=timezone.utc)
     time_taken_seconds = max(0, int((current_time - started_at).total_seconds()))
 
-    submission = Submission(
-        session_id=session_obj.id,
-        user_id=session_obj.user_id,
-        problem_id=session_obj.problem_id,
-        skill_id=session_obj.skill_id,
-        level=session_obj.level,
-        code=code,
-        language=language,
-        status=submission_status,
-        score=score,
-        passed_tests=passed_tests,
-        total_tests=total_tests,
-        time_taken_seconds=time_taken_seconds,
-        judge_result={"cases": execution_result.get("cases", [])},
-    )
-    db.add(submission)
+    submission = db.scalar(select(Submission).where(Submission.session_id == session_obj.id))
+    if submission is None:
+        submission = Submission(
+            session_id=session_obj.id,
+            user_id=session_obj.user_id,
+            problem_id=session_obj.problem_id,
+            skill_id=session_obj.skill_id,
+            level=session_obj.level,
+            code=code,
+            language=language,
+            status=submission_status,
+            score=score,
+            passed_tests=passed_tests,
+            total_tests=total_tests,
+            time_taken_seconds=time_taken_seconds,
+            judge_result={"cases": execution_result.get("cases", [])},
+            submitted_at=current_time,
+        )
+        db.add(submission)
+    else:
+        submission.code = code
+        submission.language = language
+        submission.status = submission_status
+        submission.score = score
+        submission.passed_tests = passed_tests
+        submission.total_tests = total_tests
+        submission.time_taken_seconds = time_taken_seconds
+        submission.judge_result = {"cases": execution_result.get("cases", [])}
+        submission.submitted_at = current_time
 
     session_obj.status = (
         SessionStatus.SUBMITTED
@@ -151,8 +164,9 @@ def score_submission(
             db.add(progress)
         else:
             progress.unlocked = True
-            progress.cleared = True
-            progress.cleared_at = current_time
+            if not progress.cleared:
+                progress.cleared = True
+                progress.cleared_at = current_time
 
         next_level = get_next_level(session_obj.level)
         if next_level is not None:
@@ -184,6 +198,10 @@ def start_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionStartResponse:
+    skill = db.scalar(select(Skill).where(Skill.id == payload.skill_id))
+    if skill is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+
     progress = db.scalar(
         select(UserSkillProgress).where(
             UserSkillProgress.user_id == current_user.id,
@@ -250,6 +268,7 @@ def start_session(
         expires_at=session_obj.expires_at,
         attempt_number=session_obj.attempt_number,
         attempts_remaining=attempts_remaining,
+        allowed_languages=skill.allowed_languages,
         problem=SessionProblemPayload(
             title=selected_problem.title,
             description=selected_problem.description,
@@ -270,6 +289,7 @@ def get_session(
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
+    db.refresh(session_obj, ["skill"])
 
     current_time = datetime.now(timezone.utc)
     expires_at = session_obj.expires_at.astimezone(timezone.utc) if session_obj.expires_at.tzinfo else session_obj.expires_at.replace(tzinfo=timezone.utc)
@@ -287,6 +307,7 @@ def get_session(
         status=session_obj.status,
         expires_at=expires_at,
         seconds_remaining=seconds_remaining,
+        allowed_languages=session_obj.skill.allowed_languages,
         problem=SessionProblemPayload(
             title=problem.title,
             description=problem.description,
@@ -310,8 +331,8 @@ def save_draft(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    if session_obj.status != SessionStatus.ACTIVE:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not active")
+    if session_obj.status in (SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is closed")
 
     session_obj.last_draft_code = payload.code
     session_obj.last_draft_lang = payload.language
@@ -319,6 +340,42 @@ def save_draft(
     db.commit()
 
     return SessionDraftResponse(saved_at=session_obj.draft_saved_at)
+
+
+@router.post("/sessions/{session_id}/run", response_model=SessionRunResponse)
+def run_session_code(
+    session_id: UUID,
+    payload: SessionRunRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_candidate),
+) -> SessionRunResponse:
+    session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
+    if session_obj is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    ensure_session_owner(session_obj, current_user)
+
+    if session_obj.status in (SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is closed")
+
+    problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
+    if problem is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+
+    try:
+        execution_result = judge0_service.execute(
+            code=payload.code,
+            language=payload.language,
+            test_inputs=problem.sample_test_cases or [],
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    except (requests.RequestException, TimeoutError, RuntimeError) as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Judge0 execution failed: {str(exc)}") from exc
+
+    return SessionRunResponse(
+        cases=execution_result.get("cases", []),
+        time_taken_ms=int(execution_result.get("time_taken", 0)),
+    )
 
 
 @router.post("/sessions/{session_id}/submit", response_model=SessionSubmitResponse)
@@ -333,7 +390,7 @@ def submit_session(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    if session_obj.status in (SessionStatus.SUBMITTED, SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
+    if session_obj.status in (SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already closed")
 
     current_time = datetime.now(timezone.utc)
@@ -362,6 +419,8 @@ def submit_session(
             code=payload.code,
             language=payload.language,
         )
+        session_obj.status = SessionStatus.SUBMITTED
+        session_obj.submitted_at = current_time
         db.commit()
         db.refresh(submission)
     except SQLAlchemyError as exc:

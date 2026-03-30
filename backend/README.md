@@ -88,6 +88,14 @@ Seed local test data (users, skills, problems, and progress):
 python scripts/seed.py
 ```
 
+If you pull backend model/schema changes and hit a local database schema error,
+reset and reseed local data with:
+
+```powershell
+python scripts/seed.py
+python scripts/seed_dataset.py
+```
+
 Health check:
 
 ```powershell

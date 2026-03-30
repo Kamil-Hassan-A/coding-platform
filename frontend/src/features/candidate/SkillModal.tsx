@@ -130,13 +130,18 @@ export default function SkillModal({ skills, levels, onClose, onConfirm }: Skill
                       onClick={() => setSelectedLevel(level.id)}
                       className='flex cursor-pointer items-center gap-3.5 rounded-[10px] border-2 px-[18px] py-3.5 transition-all'
                       style={{
+                        /* dynamic — intentionally inline */
                         borderColor: isSelected ? level.color : "#eee",
                         background: isSelected ? `${level.color}10` : "#fafafa",
                       }}
                     >
                       <div
                         className='h-[14px] w-[14px] shrink-0 rounded-full border-[3px] transition-colors'
-                        style={{ borderColor: level.color, background: isSelected ? level.color : "transparent" }}
+                        style={{
+                          /* dynamic — intentionally inline */
+                          borderColor: level.color,
+                          background: isSelected ? level.color : "transparent"
+                        }}
                       />
                       <div>
                         <div className='text-[14px] font-bold text-[#222]'>{level.label}</div>

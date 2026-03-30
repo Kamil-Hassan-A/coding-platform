@@ -23,7 +23,7 @@ class Judge0Service:
         "rust": 73,
     }
 
-    def __init__(self, base_url: str | None = None, timeout_seconds: int = 25) -> None:
+    def __init__(self, base_url: str | None = None, timeout_seconds: int = 40) -> None:
         self.base_url = (base_url or os.getenv("JUDGE0_BASE_URL", "https://ce.judge0.com")).rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.api_key = os.getenv("JUDGE0_API_KEY")
@@ -65,6 +65,7 @@ class Judge0Service:
         return response.json()
 
     def _execute_one(self, code: str, language_id: int, stdin: str, expected_output: str | None) -> dict[str, Any]:
+        stdin = stdin.replace("\\n", "\n").replace("\\t", "\t")
         payload: dict[str, Any] = {
             "source_code": code,
             "language_id": language_id,
@@ -73,8 +74,18 @@ class Judge0Service:
         if expected_output is not None:
             payload["expected_output"] = expected_output
 
+        token: str | None = None
+
         try:
             result = self._post_submission(payload, wait=True)
+            # Check if already in terminal status
+            status_id = result.get("status", {}).get("id")
+            if status_id in self.TERMINAL_STATUSES:
+                return result
+            # Not terminal, extract token for polling
+            token = result.get("token")
+            if not token:
+                raise RuntimeError("Judge0 did not return a token for async submission")
         except requests.HTTPError as exc:
             response = exc.response
             error_text = response.text.lower() if response is not None else ""
@@ -83,17 +94,23 @@ class Judge0Service:
                 token = token_response.get("token")
                 if not token:
                     raise RuntimeError("Judge0 did not return a token for async submission") from exc
+            else:
+                raise
+        except requests.Timeout as exc:
+            token_response = self._post_submission(payload, wait=False)
+            token = token_response.get("token")
+            if not token:
+                raise RuntimeError("Judge0 did not return a token for async submission") from exc
 
-                last_result: dict[str, Any] = {"token": token}
-                for _ in range(20):
-                    polled = self._get_submission(token)
-                    status_id = (polled.get("status") or {}).get("id")
-                    last_result = polled
-                    if status_id in self.TERMINAL_STATUSES:
-                        return polled
-                    time.sleep(0.5)
-                raise TimeoutError("Timed out waiting for Judge0 submission result")
-            raise
+        # Async polling loop - reached by non-terminal wait=True or Timeout paths
+        if token:
+            for _ in range(20):
+                polled = self._get_submission(token)
+                status_id = (polled.get("status") or {}).get("id")
+                if status_id in self.TERMINAL_STATUSES:
+                    return polled
+                time.sleep(0.5)
+            raise TimeoutError("Timed out waiting for Judge0 submission result")
 
         return result
 

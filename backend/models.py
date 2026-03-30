@@ -109,7 +109,10 @@ class Skill(Base):
 
 class Problem(Base):
     __tablename__ = "problems"
-    __table_args__ = (Index("ix_problems_skill_level", "skill_id", "level"),)
+    __table_args__ = (
+        Index("ix_problems_skill_level", "skill_id", "level"),
+        UniqueConstraint("skill_id", "level", "slug", name="uq_problem_skill_level_slug"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     skill_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("skills.id", ondelete="CASCADE"), nullable=False)
@@ -120,6 +123,9 @@ class Problem(Base):
     hidden_test_cases: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     time_limit_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=45)
     difficulty_label: Mapped[str | None] = mapped_column(String(50))
+    slug: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    solution: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     skill: Mapped[Skill] = relationship(back_populates="problems")

@@ -49,8 +49,7 @@ const Login = () => {
 
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat p-6"
-      style={{ backgroundImage: "url('/assets/login-bg.png')" }}
+      className="relative flex min-h-screen items-center justify-center bg-[url('/assets/login-bg.png')] bg-cover bg-center bg-no-repeat p-6"
     >
       {/* Dark overlay to make background crisp and card readable */}
       <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-sm" />
