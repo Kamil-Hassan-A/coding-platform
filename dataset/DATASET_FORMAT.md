@@ -67,6 +67,10 @@ Use these exact keys:
 - `skill` (string)
 - `skill_level` (one of 5 levels)
 - `language` (string)
+- `tags` (array of strings)
+- `starter_code` (object, recommended keys: `default`, `python`, `javascript`, `java`, etc.)
+- `sample_test_cases` (array of `{ "input": string, "output": string }`)
+- `hidden_test_cases` (array of `{ "input": string, "output": string }`, optional)
 - `content` (string)
 - `solution` (string)
 - `source` (string)
@@ -93,23 +97,45 @@ Use these exact keys:
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
+              "tags": ["arrays", "hashmap", "beginner"],
+              "starter_code": {
+                "default": "public class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{}; } }",
+                "java": "public class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{}; } }"
+              },
+              "sample_test_cases": [
+                { "input": "[2,7,11,15]\n9", "output": "[0,1]" }
+              ],
+              "hidden_test_cases": [
+                { "input": "[3,2,4]\n6", "output": "[1,2]" }
+              ],
               "content": "Given an array of integers...",
               "solution": "Map<Integer, Integer> map = new HashMap<>(); ...",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/two-sum/"
             },
             {
-              "id": "1",
-              "slug": "two-sum",
-              "title": "Two Sum",
+              "id": "9",
+              "slug": "palindrome-number",
+              "title": "Palindrome Number",
               "difficulty": "Easy",
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "content": "Given an array of integers...",
-              "solution": "Map<Integer, Integer> map = new HashMap<>(); ...",
+              "tags": ["math", "strings", "beginner"],
+              "starter_code": {
+                "default": "public class Solution { public boolean isPalindrome(int x) { return false; } }",
+                "java": "public class Solution { public boolean isPalindrome(int x) { return false; } }"
+              },
+              "sample_test_cases": [
+                { "input": "121", "output": "true" }
+              ],
+              "hidden_test_cases": [
+                { "input": "10", "output": "false" }
+              ],
+              "content": "Given an integer x, return true if x is a palindrome...",
+              "solution": "Reverse half of the number and compare...",
               "source": "LeetCode",
-              "url": "https://leetcode.com/problems/two-sum/"
+              "url": "https://leetcode.com/problems/palindrome-number/"
             }
           ],
           "Medium": [
@@ -121,6 +147,17 @@ Use these exact keys:
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
+              "tags": ["sliding-window", "hashset", "strings"],
+              "starter_code": {
+                "default": "public class Solution { public int lengthOfLongestSubstring(String s) { return 0; } }",
+                "java": "public class Solution { public int lengthOfLongestSubstring(String s) { return 0; } }"
+              },
+              "sample_test_cases": [
+                { "input": "abcabcbb", "output": "3" }
+              ],
+              "hidden_test_cases": [
+                { "input": "bbbbb", "output": "1" }
+              ],
               "content": "Given a string s...",
               "solution": "int l = 0, r = 0; Set<Character> set = new HashSet<>(); ...",
               "source": "LeetCode",
@@ -164,6 +201,17 @@ Use these exact keys:
               "skill": "SQL",
               "skill_level": "Beginner",
               "language": "SQL",
+              "tags": ["joins", "select", "beginner"],
+              "starter_code": {
+                "default": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person p LEFT JOIN Address a ON p.personId = a.personId;",
+                "sql": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person p LEFT JOIN Address a ON p.personId = a.personId;"
+              },
+              "sample_test_cases": [
+                { "input": "Person + Address tables as provided", "output": "Expected joined rows" }
+              ],
+              "hidden_test_cases": [
+                { "input": "Person row without Address", "output": "NULL city/state" }
+              ],
               "content": "Write a query to report...",
               "solution": "SELECT p.FirstName, p.LastName, a.City, a.State ...",
               "source": "LeetCode",
