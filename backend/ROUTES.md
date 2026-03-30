@@ -20,6 +20,8 @@ This document describes the routes that are currently mounted by the FastAPI app
   - `GET /judge0/language`
   - `GET /judge0/docs`
   - `POST /auth/login`
+- Shared-secret proxy routes (no JWT, but require proxy token header):
+  - `GET|POST|PUT|PATCH|DELETE /proxy/judge0/{path}`
 - Candidate-only routes:
   - `GET /skills`
   - `GET /user/progress`
@@ -164,6 +166,44 @@ Response:
   "common_useful_endpoints": ["/languages", "/statuses", "/submissions", "/config_info", "/system_info"]
 }
 ```
+
+### GET|POST|PUT|PATCH|DELETE /proxy/judge0/{path}
+
+Shared-secret protected generic proxy to internal Judge0 for external integrations.
+
+Auth headers (one required):
+
+- `X-Proxy-Token: <JUDGE0_PROXY_TOKEN>`
+- `X-API-Key: <JUDGE0_PROXY_TOKEN>`
+
+Path policy:
+
+- Allowed prefixes are controlled by `JUDGE0_PROXY_ALLOWED_PREFIXES`.
+- Default allowed prefixes: `submissions`, `languages`, `statuses`, `config_info`, `system_info`.
+
+Examples:
+
+```bash
+# Create submission via backend proxy
+curl -X POST "$API_URL/proxy/judge0/submissions?base64_encoded=false&wait=true" \
+  -H "X-Proxy-Token: <shared-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"source_code":"print(1)","language_id":71}'
+```
+
+```bash
+# Poll submission token via backend proxy
+curl -X GET "$API_URL/proxy/judge0/submissions/<token>?base64_encoded=false" \
+  -H "X-Proxy-Token: <shared-token>"
+```
+
+Error cases:
+
+- `401` invalid or missing proxy token
+- `403` proxy path not allowed by policy
+- `503` proxy token not configured on backend
+- `502` upstream Judge0 unreachable
+- `504` upstream request timeout
 
 ## Auth
 
