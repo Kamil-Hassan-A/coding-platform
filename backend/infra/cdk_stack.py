@@ -249,6 +249,41 @@ class CodingPlatformStack(Stack):
             security_groups=[judge0_tasks_sg],
         )
 
+        vpc.add_interface_endpoint(
+            "SecretsManagerEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
+        vpc.add_interface_endpoint(
+            "CloudWatchLogsEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
+        vpc.add_interface_endpoint(
+            "EcsEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.ECS,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
+        vpc.add_interface_endpoint(
+            "EcsAgentEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.ECS_AGENT,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
+        vpc.add_interface_endpoint(
+            "EcsTelemetryEndpoint",
+            service=ec2.InterfaceVpcEndpointAwsService.ECS_TELEMETRY,
+            subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS),
+            security_groups=[judge0_tasks_sg],
+        )
+
         judge0_efs_sg = ec2.SecurityGroup(
             self,
             "Judge0EfsSG",
