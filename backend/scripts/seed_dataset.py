@@ -130,7 +130,7 @@ DATASET_PROBLEMS = {
             "time_limit_minutes": 45,
         },
     },
-    "Java Springboot": {
+    "Java Spring Boot": {
         Level.BEGINNER: {
             "title": "Java Spring Boot - REST Endpoint Formatter",
             "description": "Read HTTP method and path. Print @{Method}Mapping(\"{path}\") where Method is title case.",

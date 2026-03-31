@@ -137,7 +137,7 @@ export default function CandidateDashboard() {
             session_id: data.session_id, 
             problem: data.problem, 
             skill_name: activeConfirmed.skill, 
-            allowed_languages: data.allowed_languages ?? activeConfirmed.allowedLanguages 
+            allowed_languages: data.allowed_languages ?? [] 
           },
         });
       },

@@ -68,6 +68,9 @@ class SessionStartRequest(BaseModel):
 class SessionProblemPayload(BaseModel):
     title: str
     description: str
+    templateCode: str | None = None
+    starter_code: dict[str, Any] | None = None
+    tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[Any]
     time_limit_minutes: int
 
@@ -78,7 +81,6 @@ class SessionStartResponse(BaseModel):
     expires_at: datetime
     attempt_number: int
     attempts_remaining: int
-    allowed_languages: list[LanguageResponse]
     problem: SessionProblemPayload
 
 
@@ -87,7 +89,6 @@ class SessionDetailResponse(BaseModel):
     status: SessionStatus
     expires_at: datetime
     seconds_remaining: int
-    allowed_languages: list[LanguageResponse]
     problem: SessionProblemPayload
     last_draft_code: str | None
     last_draft_lang: str | None
@@ -100,11 +101,6 @@ class SessionDraftRequest(BaseModel):
 
 class SessionDraftResponse(BaseModel):
     saved_at: datetime
-
-
-class SessionRunRequest(BaseModel):
-    code: str
-    language: str = Field(min_length=1)
 
 
 class SessionSubmitRequest(BaseModel):
@@ -135,11 +131,6 @@ class SessionSubmitResponse(BaseModel):
     total_tests: int
     time_taken_seconds: int
     cases: list[TestCaseResult]
-
-
-class SessionRunResponse(BaseModel):
-    cases: list[TestCaseResult]
-    time_taken_ms: int
 
 
 class SubmissionResultsResponse(BaseModel):
