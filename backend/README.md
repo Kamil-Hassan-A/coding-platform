@@ -68,6 +68,97 @@ $API_URL = aws cloudformation describe-stacks `
   --output text
 ```
 
+Judge0 proxy note:
+
+- `JUDGE0_PROXY_TOKEN` and `JUDGE0_PROXY_ALLOWED_PREFIXES` are now set by CDK on the Lambda function.
+- CDK also creates a Secrets Manager secret (`coding-platform/judge0/proxy-token`) and outputs `Judge0ProxyTokenSecretArn`.
+
+## Using Judge0 proxy routes after deploy
+
+From PowerShell, fetch the API URL and proxy token:
+
+```powershell
+$STACK = "CodingPlatformStack"
+
+$API_URL = aws cloudformation describe-stacks `
+  --stack-name $STACK `
+  --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" `
+  --output text
+
+$PROXY_SECRET_ARN = aws cloudformation describe-stacks `
+  --stack-name $STACK `
+  --query "Stacks[0].Outputs[?OutputKey=='Judge0ProxyTokenSecretArn'].OutputValue" `
+  --output text
+
+$PROXY_TOKEN = aws secretsmanager get-secret-value `
+  --secret-id $PROXY_SECRET_ARN `
+  --query SecretString `
+  --output text | ConvertFrom-Json | Select-Object -ExpandProperty token
+```
+
+Call an allowed Judge0 route through backend proxy:
+
+```powershell
+curl "$API_URL/proxy/judge0/languages" `
+  -H "X-Proxy-Token: $PROXY_TOKEN"
+```
+
+Create a submission via proxy:
+
+```powershell
+curl -X POST "$API_URL/proxy/judge0/submissions?base64_encoded=false&wait=true" `
+  -H "X-Proxy-Token: $PROXY_TOKEN" `
+  -H "Content-Type: application/json" `
+  -d '{"source_code":"print(1)","language_id":71}'
+```
+
+Poll submission status via proxy (replace `<token>`):
+
+```powershell
+curl "$API_URL/proxy/judge0/submissions/<token>?base64_encoded=false" `
+  -H "X-Proxy-Token: $PROXY_TOKEN"
+```
+
+Notes:
+
+- You can use either `X-Proxy-Token` or `X-API-Key` header.
+- Allowed prefixes default to `submissions,languages,statuses,config_info,system_info`.
+- If needed, edit the prefixes in CDK and redeploy.
+
+### Optional helper script
+
+Use `scripts/judge0_proxy_helper.ps1` to fetch stack outputs + proxy token and call proxy routes in one step.
+
+From `backend`:
+
+```powershell
+# Default test: GET /proxy/judge0/languages
+./scripts/judge0_proxy_helper.ps1
+
+# Create submission
+./scripts/judge0_proxy_helper.ps1 `
+  -Method POST `
+  -ProxyPath submissions `
+  -Query "base64_encoded=false&wait=true" `
+  -Body '{"source_code":"print(1)","language_id":71}'
+
+# Poll submission token
+./scripts/judge0_proxy_helper.ps1 `
+  -Method GET `
+  -ProxyPath "submissions/<token>" `
+  -Query "base64_encoded=false"
+```
+
+### Swagger UI (after deploy)
+
+1. Open `$API_URL/docs` in browser.
+2. Under tag `system`, open route `GET|POST|PUT|PATCH|DELETE /proxy/judge0/{proxy_path}`.
+3. Click **Try it out**.
+4. Set `proxy_path` (for example `languages` or `submissions`).
+5. Set header `x_proxy_token` (or `x_api_key`) with your token.
+6. For POST, add JSON request body and query params as needed.
+7. Click **Execute** to call internal Judge0 through your backend proxy.
+
 ## Local app execution (optional)
 
 If you want to run FastAPI locally (without API Gateway/Lambda):

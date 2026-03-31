@@ -99,6 +99,29 @@ class CodingPlatformStack(Stack):
             ),
         )
 
+        judge0_proxy_token_secret = secretsmanager.Secret(
+            self,
+            "Judge0ProxyTokenSecret",
+            secret_name="coding-platform/judge0/proxy-token",
+            generate_secret_string=secretsmanager.SecretStringGenerator(
+                secret_string_template='{"key":"judge0-proxy"}',
+                generate_string_key="token",
+                exclude_punctuation=True,
+                include_space=False,
+                password_length=40,
+            ),
+        )
+
+        judge0_proxy_allowed_prefixes = ",".join(
+            [
+                "submissions",
+                "languages",
+                "statuses",
+                "config_info",
+                "system_info",
+            ]
+        )
+
         # -----------------------------------------------------------
         # RDS PostgreSQL — db.t4g.micro in private subnets
         # -----------------------------------------------------------
@@ -155,6 +178,8 @@ class CodingPlatformStack(Stack):
                 "DB_HOST": db_instance.db_instance_endpoint_address,
                 "DB_PORT": db_instance.db_instance_endpoint_port,
                 "DB_NAME": "codingplatform",
+                "JUDGE0_PROXY_TOKEN": judge0_proxy_token_secret.secret_value_from_json("token").to_string(),
+                "JUDGE0_PROXY_ALLOWED_PREFIXES": judge0_proxy_allowed_prefixes,
             },
         )
 
@@ -163,6 +188,7 @@ class CodingPlatformStack(Stack):
         # -----------------------------------------------------------
         # Read the database secret
         db_secret.grant_read(backend_lambda)
+        judge0_proxy_token_secret.grant_read(backend_lambda)
 
         # Allow rds-db:connect for IAM authentication (optional)
         backend_lambda.add_to_role_policy(
@@ -631,6 +657,13 @@ class CodingPlatformStack(Stack):
             "DbSecretArn",
             value=db_secret.secret_arn,
             description="ARN of the database credentials secret",
+        )
+
+        CfnOutput(
+            self,
+            "Judge0ProxyTokenSecretArn",
+            value=judge0_proxy_token_secret.secret_arn,
+            description="ARN of the Judge0 proxy token secret",
         )
 
         CfnOutput(
