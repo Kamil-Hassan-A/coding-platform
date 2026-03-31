@@ -1,21 +1,31 @@
 import { useState, useEffect, useRef } from "react";
-import type { AllowedLanguage } from "../../candidate/types/candidate";
+import type { LanguageOption } from "../types/assessment";
 
 interface Props {
+  onEndTest: () => void;
+  onTimeExpired: () => void;
+  onRun: () => void;
   onSubmit: () => void;
+  isRunning: boolean;
   isSubmitting: boolean;
-  languageId: string;
-  onLanguageChange: (langId: string) => void;
+  language: string;
+  onLanguageChange: (language: string) => void;
   timeLimit?: number; // in minutes
+  allowedLanguages?: LanguageOption[];
   secondsRemaining?: number;
 }
 
 export default function Toolbar({
+  onEndTest,
+  onTimeExpired,
+  onRun,
   onSubmit,
+  isRunning,
   isSubmitting,
-  languageId,
+  language,
   onLanguageChange,
   timeLimit,
+  allowedLanguages,
   secondsRemaining
 }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
@@ -23,14 +33,18 @@ export default function Toolbar({
   );
 
   const onSubmitRef = useRef(onSubmit);
+  const onTimeExpiredRef = useRef(onTimeExpired);
   useEffect(() => {
     onSubmitRef.current = onSubmit;
+  });
+  useEffect(() => {
+    onTimeExpiredRef.current = onTimeExpired;
   });
 
   useEffect(() => {
     if (timeLeft === null) return;
     if (timeLeft <= 0) {
-      onSubmitRef.current();
+      onTimeExpiredRef.current();
       return;
     }
 
@@ -71,33 +85,49 @@ export default function Toolbar({
         )}
 
         <div className='flex items-center gap-3'>
-          {allowedLanguages.length > 0 ? (
-            <select
-              value={languageId}
-              onChange={(e) => onLanguageChange(e.target.value)}
-              className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
-            >
-              {allowedLanguages.map((lang) => (
-                <option key={lang.id} value={lang.id.toString()}>{lang.name}</option>
-              ))}
-            </select>
-          ) : (
-            <div className='rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-semibold text-rose-700'>
-              No languages available
-            </div>
-          )}
+          <button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to end the test? This cannot be undone.")) {
+                onEndTest();
+              }
+            }}
+            className='rounded-lg border-none bg-red-500 px-5 py-[9px] text-[13px] font-semibold text-white transition-colors hover:bg-red-600'
+          >
+            End Test
+          </button>
+
+          <select
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value)}
+            className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
+          >
+            {(allowedLanguages && allowedLanguages.length > 0
+              ? allowedLanguages
+              : [
+                  { id: 71, name: "Python 3", monaco: "python" },
+                  { id: 63, name: "JavaScript", monaco: "javascript" },
+                  { id: 62, name: "Java", monaco: "java" },
+                  { id: 54, name: "C++", monaco: "cpp" },
+                ]
+            ).map((lang) => (
+              <option key={lang.id} value={lang.monaco}>
+                {lang.name}
+              </option>
+            ))}
+          </select>
 
           <button
-            disabled
-            className='cursor-not-allowed rounded-lg border border-slate-200 bg-slate-50 px-5 py-[9px] text-[13px] font-semibold text-slate-400'
+            onClick={onRun}
+            disabled={isRunning}
+            className={`rounded-lg border px-5 py-[9px] text-[13px] font-semibold transition-all ${isRunning ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : "cursor-pointer border-slate-300 bg-white text-slate-700 hover:border-admin-orange hover:text-admin-orange"}`}
           >
-            Run Code
+            {isRunning ? "Running..." : "Run Code"}
           </button>
 
           <button
             onClick={onSubmit}
             disabled={isSubmitting}
-            className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white shadow-lg shadow-admin-orange/20 transition-all ${isSubmitting ? 'cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none' : 'cursor-pointer bg-admin-orange hover:-translate-y-0.5 hover:shadow-admin-orange/40'}`}
+            className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white transition-all ${isSubmitting ? "cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none" : "cursor-pointer bg-admin-orange shadow-lg shadow-admin-orange/20 hover:-translate-y-0.5 hover:shadow-admin-orange/40"}`}
           >
             {isSubmitting ? "Submitting..." : "Submit Solution"}
           </button>

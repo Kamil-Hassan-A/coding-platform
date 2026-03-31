@@ -1,6 +1,7 @@
 import axiosInstance from "../../../api/axiosInstance";
 import type {
   ActiveSession,
+  SessionRunResponse,
   StartSessionPayload,
   SessionStartResponse,
   SessionSubmitResponse,
@@ -27,6 +28,18 @@ export const submitSession = async (
   const response = await axiosInstance.post<SessionSubmitResponse>(
     `/sessions/${session_id}/submit`,
     payload
+  );
+  return response.data;
+};
+
+export const runCode = async (
+  sessionId: string,
+  code: string,
+  language: string
+): Promise<SessionRunResponse> => {
+  const response = await axiosInstance.post<SessionRunResponse>(
+    `/sessions/${sessionId}/run`,
+    { code, language }
   );
   return response.data;
 };

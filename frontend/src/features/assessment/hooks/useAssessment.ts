@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   startSession,
+  runCode,
   submitSession,
   getSession,
   getSubmissionResults,
@@ -22,6 +23,22 @@ export const useSubmitSession = () => {
       session_id: string;
       payload: SubmitSessionPayload;
     }) => submitSession(session_id, payload),
+    retry: false,
+  });
+};
+
+export const useRunCode = () => {
+  return useMutation({
+    mutationFn: ({
+      sessionId,
+      code,
+      language,
+    }: {
+      sessionId: string;
+      code: string;
+      language: string;
+    }) => runCode(sessionId, code, language),
+    retry: false,
   });
 };
 

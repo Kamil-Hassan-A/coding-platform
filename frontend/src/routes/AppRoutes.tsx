@@ -1,12 +1,13 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import ErrorBoundary from "../components/layout/ErrorBoundary";
+import ErrorBoundary from "../components/ErrorBoundary";
 import ProtectedRoute from "../features/auth/ProtectedRoute";
 
 const Login = lazy(() => import("../features/auth/Login"));
 const AdminDashboard = lazy(() => import("../features/admin/AdminDashboard"));
 const CandidateDashboard = lazy(() => import("../features/candidate/CandidateDashboard"));
+const ThankYouPage = lazy(() => import("../features/candidate/ThankYouPage"));
 const AssessmentPage = lazy(() => import("../features/assessment/AssessmentPage"));
 const PastScores = lazy(() => import("../features/assessment/PastScores"));
 
@@ -29,6 +30,7 @@ const AppRoutes = () => {
           <Route element={<ProtectedRoute allowedRoles={["candidate"]} />}>
             <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
             <Route path="/candidate/assessment" element={<AssessmentPage />} />
+            <Route path="/candidate/thankyou" element={<ThankYouPage />} />
             <Route path="/candidate/scores" element={<PastScores />} />
           </Route>
 

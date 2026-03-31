@@ -446,10 +446,15 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_DATASET_ROOT,
         help="Root dataset directory to auto-discover Python dataset files.",
     )
+    parser.add_argument(
+        "--skip-problems",
+        action="store_true",
+        help="Skip dataset discovery and problem seeding (only users/skills/progress).",
+    )
     return parser.parse_args()
 
 
-def run_seed(dataset_root: Path) -> None:
+def run_seed(dataset_root: Path, skip_problems: bool = False) -> None:
     admin_email = os.getenv("SEED_ADMIN_EMAIL", "admin@example.com")
     admin_password = os.getenv("SEED_ADMIN_PASSWORD", "AdminPass123!")
     admin_name = os.getenv("SEED_ADMIN_NAME", "Local Admin")
@@ -459,7 +464,9 @@ def run_seed(dataset_root: Path) -> None:
     candidate_name = os.getenv("SEED_CANDIDATE_NAME", "Local Candidate")
 
     session_local = get_session_local()
-    dataset_sources = discover_dataset_sources(dataset_root)
+    dataset_sources: list[dict[str, Any]] = []
+    if not skip_problems:
+        dataset_sources = discover_dataset_sources(dataset_root)
 
     # Always start from a clean database for deterministic local seed data.
     reset_db_session = session_local()
@@ -516,10 +523,11 @@ def run_seed(dataset_root: Path) -> None:
 
         skills_by_name = {skill.name: skill for skill in skills}
 
-        problem_counts = seed_problems_from_datasets(db, skills_by_name, dataset_sources)
-        counts["problems_created"] += problem_counts["problems_created"]
-        counts["problems_skipped_invalid"] += problem_counts["problems_skipped_invalid"]
-        counts["problems_skipped_unknown_skill"] += problem_counts["problems_skipped_unknown_skill"]
+        if not skip_problems:
+            problem_counts = seed_problems_from_datasets(db, skills_by_name, dataset_sources)
+            counts["problems_created"] += problem_counts["problems_created"]
+            counts["problems_skipped_invalid"] += problem_counts["problems_skipped_invalid"]
+            counts["problems_skipped_unknown_skill"] += problem_counts["problems_skipped_unknown_skill"]
 
         # Fresh DB each run: directly create baseline unlock records.
         counts["progress_created"] = create_progress_for_candidate(db, candidate_user, skills)
@@ -548,4 +556,4 @@ def run_seed(dataset_root: Path) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
-    run_seed(args.dataset_root)
+    run_seed(args.dataset_root, args.skip_problems)
