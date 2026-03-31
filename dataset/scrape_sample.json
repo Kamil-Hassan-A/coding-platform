@@ -4,6 +4,586 @@
   "generated_at_utc": "2026-03-30T18:30:00Z",
   "skills": [
     {
+      "skill": "Agile",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1000",
+              "slug": "basic-agile-task",
+              "title": "Basic Agile Task",
+              "difficulty": "Easy",
+              "skill": "Agile",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "agile",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Agile. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "HTML, CSS, JS",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1001",
+              "slug": "basic-html-css-js-task",
+              "title": "Basic HTML, CSS, JS Task",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "html,-css,-js",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "{\n  \"html\": \"<h1>Hello World</h1>\",\n  \"css\": \"h1 { color: red; }\",\n  \"js\": \"console.log('test');\"\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for HTML, CSS, JS. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "React JS",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1002",
+              "slug": "basic-react-js-task",
+              "title": "Basic React JS Task",
+              "difficulty": "Easy",
+              "skill": "React JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "react-js",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "export default function App() { return <div>Hello App</div>; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for React JS. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "React JS with Redux",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1003",
+              "slug": "basic-react-js-with-redux-task",
+              "title": "Basic React JS with Redux Task",
+              "difficulty": "Easy",
+              "skill": "React JS with Redux",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "react-js-with-redux",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "export default function App() { return <div>Hello App</div>; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for React JS with Redux. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "TypeScript",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1004",
+              "slug": "basic-typescript-task",
+              "title": "Basic TypeScript Task",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "typescript",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for TypeScript. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "Next JS",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1005",
+              "slug": "basic-next-js-task",
+              "title": "Basic Next JS Task",
+              "difficulty": "Easy",
+              "skill": "Next JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "next-js",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Next JS. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "Angular",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1006",
+              "slug": "basic-angular-task",
+              "title": "Basic Angular Task",
+              "difficulty": "Easy",
+              "skill": "Angular",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": [
+                "angular",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Angular. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "Python with Flask",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1007",
+              "slug": "basic-python-with-flask-task",
+              "title": "Basic Python with Flask Task",
+              "difficulty": "Easy",
+              "skill": "Python with Flask",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "python-with-flask",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Python with Flask. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "Python with Django",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1008",
+              "slug": "basic-python-with-django-task",
+              "title": "Basic Python with Django Task",
+              "difficulty": "Easy",
+              "skill": "Python with Django",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "python-with-django",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Python with Django. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
+      "skill": "Python for Data Science",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1009",
+              "slug": "basic-python-for-data-science-task",
+              "title": "Basic Python for Data Science Task",
+              "difficulty": "Easy",
+              "skill": "Python for Data Science",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "python-for-data-science",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Python for Data Science. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
       "skill": "Java",
       "levels": {
         "Beginner": {
@@ -1414,6 +1994,64 @@
               ]
             }
           ]
+        }
+      }
+    },
+    {
+      "skill": "Java Spring Boot",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1010",
+              "slug": "basic-java-spring-boot-task",
+              "title": "Basic Java Spring Boot Task",
+              "difficulty": "Easy",
+              "skill": "Java Spring Boot",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "java-spring-boot",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "class Solution { public void run() {} }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Java Spring Boot. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
         }
       }
     },
