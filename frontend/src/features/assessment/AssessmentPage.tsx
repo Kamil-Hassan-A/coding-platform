@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useGetSession, useRunCode, useSubmitSession } from "./hooks/useAssessment";
 import { useEditor } from "./hooks/useEditor";
 import Toolbar from "./components/Toolbar";
 import ProblemPanel from "./components/ProblemPanel";
 import Editor from "./components/Editor";
+import CodePlayground from "./components/CodePlayground";
 import TestCases from "./components/TestCases";
 import type {
   SessionSubmitResponse,
@@ -15,6 +16,7 @@ import type {
 
 const SESSION_ID_STORAGE_KEY = "assessment_session_id";
 const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
+const SESSION_SKILL_NAME_STORAGE_KEY = "assessment_skill_name";
 const DEFAULT_LANGUAGES = ["python", "javascript", "java", "cpp"] as const;
 const DEFAULT_LANGUAGE_META: Record<
   (typeof DEFAULT_LANGUAGES)[number],
@@ -47,6 +49,7 @@ export default function AssessmentPage() {
   const initialState = location.state as InitialAssessmentState | null;
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
   const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
+  const [skillName, setSkillName] = useState<string | null>(initialState?.skill_name || null);
   const [isSessionResolved, setIsSessionResolved] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
@@ -54,6 +57,10 @@ export default function AssessmentPage() {
   useEffect(() => {
     if (initialState?.session_id) {
       sessionStorage.setItem(SESSION_ID_STORAGE_KEY, initialState.session_id);
+      if (initialState.skill_name) {
+        sessionStorage.setItem(SESSION_SKILL_NAME_STORAGE_KEY, initialState.skill_name);
+        setSkillName(initialState.skill_name);
+      }
       if (initialState.allowed_languages?.length) {
         sessionStorage.setItem(
           SESSION_LANGUAGES_STORAGE_KEY,
@@ -64,6 +71,9 @@ export default function AssessmentPage() {
     } else {
       const savedId = sessionStorage.getItem(SESSION_ID_STORAGE_KEY);
       if (savedId) setSessionId(savedId);
+
+      const savedSkill = sessionStorage.getItem(SESSION_SKILL_NAME_STORAGE_KEY);
+      if (savedSkill) setSkillName(savedSkill);
 
       const savedLanguages = sessionStorage.getItem(SESSION_LANGUAGES_STORAGE_KEY);
       if (savedLanguages) {
@@ -101,10 +111,25 @@ export default function AssessmentPage() {
   const resolvedAllowedLanguages =
     allowedLanguages.length > 0 ? allowedLanguages : DEFAULT_LANGUAGE_OPTIONS;
 
+  const defaultCode = useMemo(() => {
+    if (skillName === "HTML, CSS, JS") {
+      if (draftCode && draftCode.trim().startsWith("{")) return draftCode;
+      
+      const prob = initialState?.problem || recoveredSession?.problem;
+      if (prob?.starter_code) {
+        return JSON.stringify({
+          html: prob.starter_code.html || "",
+          css: prob.starter_code.css || "",
+          js: prob.starter_code.javascript || prob.starter_code.js || ""
+        });
+      }
+      return JSON.stringify({ html: "", css: "", js: "" });
+    }
+    return initialState?.problem?.templateCode ?? draftCode ?? "";
+  }, [skillName, draftCode, initialState?.problem, recoveredSession?.problem]);
+
   // 3. Editor & Language State
-  const { code, setCode } = useEditor(
-    initialState?.problem?.templateCode ?? draftCode ?? "",
-  );
+  const { code, setCode } = useEditor(defaultCode);
   const [language, setLanguage] = useState(initialState?.allowed_languages?.[0]?.monaco ?? "python");
 
   useEffect(() => {
@@ -164,6 +189,7 @@ export default function AssessmentPage() {
           setSubmissionResult(data);
           sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
           sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
+          sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
         },
         onError: () => {
           setSubmissionError("Submission failed. Please try again.");
@@ -278,10 +304,14 @@ export default function AssessmentPage() {
         {/* Right Panel - 60% */}
         <div className='flex w-3/5 flex-col bg-[#1e1e1e]'>
           <div className='flex-1 overflow-hidden'>
-            <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "python"} />
+            {skillName === "HTML, CSS, JS" ? (
+              <CodePlayground code={code} onChange={setCode} />
+            ) : (
+              <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "python"} />
+            )}
           </div>
           
-          {(submissionResult || runResult) && (
+          {(submissionResult || runResult) && skillName !== "HTML, CSS, JS" && (
             <div className='h-2/5 overflow-y-auto border-t-2 border-admin-orange bg-white'>
               <TestCases submissionResult={submissionResult} runResult={runResult} />
             </div>

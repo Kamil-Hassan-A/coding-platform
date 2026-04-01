@@ -35,6 +35,7 @@ export interface SessionProblemPayload {
   title: string;
   description: string;
   templateCode?: string;
+  starter_code?: Record<string, any>;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
 }

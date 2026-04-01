@@ -13,6 +13,7 @@ interface Props {
   timeLimit?: number; // in minutes
   allowedLanguages?: LanguageOption[];
   secondsRemaining?: number;
+  hideRunCode?: boolean;
 }
 
 export default function Toolbar({
@@ -26,7 +27,8 @@ export default function Toolbar({
   onLanguageChange,
   timeLimit,
   allowedLanguages,
-  secondsRemaining
+  secondsRemaining,
+  hideRunCode,
 }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
     secondsRemaining !== undefined ? secondsRemaining : (timeLimit ? timeLimit * 60 : null)
@@ -116,13 +118,15 @@ export default function Toolbar({
             ))}
           </select>
 
-          <button
-            onClick={onRun}
-            disabled={isRunning}
-            className={`rounded-lg border px-5 py-[9px] text-[13px] font-semibold transition-all ${isRunning ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : "cursor-pointer border-slate-300 bg-white text-slate-700 hover:border-admin-orange hover:text-admin-orange"}`}
-          >
-            {isRunning ? "Running..." : "Run Code"}
-          </button>
+          {!hideRunCode && (
+            <button
+              onClick={onRun}
+              disabled={isRunning}
+              className={`rounded-lg border px-5 py-[9px] text-[13px] font-semibold transition-all ${isRunning ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : "cursor-pointer border-slate-300 bg-white text-slate-700 hover:border-admin-orange hover:text-admin-orange"}`}
+            >
+              {isRunning ? "Running..." : "Run Code"}
+            </button>
+          )}
 
           <button
             onClick={onSubmit}
