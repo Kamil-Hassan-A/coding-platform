@@ -1,0 +1,2399 @@
+{
+  "schema_version": "1.1.0",
+  "dataset_name": "exhaustive_skills_batch_html_css_js",
+  "generated_at_utc": "2026-03-31T06:00:00Z",
+  "skills": [
+    {
+      "skill": "HTML, CSS, JS",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "H-B-E-1",
+              "slug": "html-basic-page-structure",
+              "title": "Basic HTML Page Structure",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create a valid HTML5 page with a DOCTYPE declaration, html, head (with charset UTF-8 and a title 'My Page'), and body containing an h1 'Hello World'.",
+              "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n</body>\n</html>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started",
+              "tags": [
+                "html5",
+                "doctype",
+                "structure",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<!-- Write your HTML page here -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Render page",
+                  "output": "Page title is 'My Page' and body shows 'Hello World' in h1"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Check charset",
+                  "output": "meta charset=UTF-8 present in head"
+                },
+                {
+                  "input": "Check lang attribute",
+                  "output": "html[lang='en'] present"
+                }
+              ]
+            },
+            {
+              "id": "H-B-E-2",
+              "slug": "html-ordered-unordered-list",
+              "title": "Ordered and Unordered Lists",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create an unordered list of 3 fruits (Apple, Banana, Cherry) and an ordered list of 3 steps (Mix, Bake, Serve).",
+              "solution": "<ul>\n  <li>Apple</li>\n  <li>Banana</li>\n  <li>Cherry</li>\n</ul>\n<ol>\n  <li>Mix</li>\n  <li>Bake</li>\n  <li>Serve</li>\n</ol>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul",
+              "tags": [
+                "ul",
+                "ol",
+                "li",
+                "lists",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<!-- Create ul and ol here -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Check ul",
+                  "output": "ul contains 3 li: Apple, Banana, Cherry"
+                },
+                {
+                  "input": "Check ol",
+                  "output": "ol contains 3 li: Mix, Bake, Serve"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Nesting check",
+                  "output": "No accidental nesting between ul and ol"
+                }
+              ]
+            },
+            {
+              "id": "H-B-E-3",
+              "slug": "html-anchor-tag",
+              "title": "Hyperlink with Target Blank",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create an anchor tag that links to 'https://example.com', displays text 'Visit Example', opens in a new tab, and includes rel='noopener noreferrer'.",
+              "solution": "<a href=\"https://example.com\" target=\"_blank\" rel=\"noopener noreferrer\">Visit Example</a>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a",
+              "tags": [
+                "anchor",
+                "href",
+                "target",
+                "rel",
+                "security",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<a href=\"\"><!-- configure me --></a>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Click link",
+                  "output": "Opens https://example.com in new tab"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Check rel",
+                  "output": "rel='noopener noreferrer' present"
+                },
+                {
+                  "input": "Check text content",
+                  "output": "Link text is 'Visit Example'"
+                }
+              ]
+            },
+            {
+              "id": "H-B-E-4",
+              "slug": "html-image-tag",
+              "title": "Image with Alt Text",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Add an img element with src='cat.jpg', alt='A cute cat', width=300, and height=200.",
+              "solution": "<img src=\"cat.jpg\" alt=\"A cute cat\" width=\"300\" height=\"200\">",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img",
+              "tags": [
+                "img",
+                "alt",
+                "accessibility",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<!-- Add img tag here -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect element",
+                  "output": "img with src=cat.jpg, alt='A cute cat', width=300, height=200"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "No alt attribute",
+                  "output": "Test fails - alt is required for accessibility"
+                }
+              ]
+            },
+            {
+              "id": "C-B-E-1",
+              "slug": "css-box-model",
+              "title": "Box Model Styling",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Style a div.box with: width=200px, height=100px, padding=20px, border=2px solid #333, margin=10px auto, background-color=#f0f0f0, and box-sizing=border-box.",
+              "solution": ".box {\n  width: 200px;\n  height: 100px;\n  padding: 20px;\n  border: 2px solid #333;\n  margin: 10px auto;\n  background-color: #f0f0f0;\n  box-sizing: border-box;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model",
+              "tags": [
+                "box-model",
+                "padding",
+                "border",
+                "margin",
+                "box-sizing",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": ".box {\n  /* Add box model properties */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Computed styles on .box",
+                  "output": "width=200px, padding=20px, margin=10px auto, box-sizing=border-box"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Content-box vs border-box",
+                  "output": "With border-box, total width stays 200px including padding and border"
+                }
+              ]
+            },
+            {
+              "id": "C-B-E-2",
+              "slug": "css-text-styling",
+              "title": "Text and Font Styling",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Style h1 with: font-family=Georgia serif, font-size=2rem, color=#1a1a1a, text-align=center, letter-spacing=2px, text-transform=uppercase, text-shadow=1px 1px 2px rgba(0,0,0,0.3).",
+              "solution": "h1 {\n  font-family: Georgia, serif;\n  font-size: 2rem;\n  color: #1a1a1a;\n  text-align: center;\n  letter-spacing: 2px;\n  text-transform: uppercase;\n  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Text",
+              "tags": [
+                "typography",
+                "font",
+                "text-shadow",
+                "letter-spacing",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": "h1 {\n  /* Style the heading */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect h1 styles",
+                  "output": "All 7 properties applied correctly"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "rem unit",
+                  "output": "font-size is relative to root element, not px"
+                }
+              ]
+            },
+            {
+              "id": "C-B-E-3",
+              "slug": "css-selectors-specificity",
+              "title": "CSS Selectors and Specificity",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Write CSS so: all p tags are gray, p.highlight is blue, and p#special is red. Demonstrate specificity order (element < class < id).",
+              "solution": "p {\n  color: gray;\n}\np.highlight {\n  color: blue;\n}\np#special {\n  color: red;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity",
+              "tags": [
+                "specificity",
+                "selectors",
+                "class",
+                "id",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": "/* Element selector */\np { }\n/* Class selector */\n/* ID selector */"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "<p>Text</p>",
+                  "output": "gray"
+                },
+                {
+                  "input": "<p class='highlight'>Text</p>",
+                  "output": "blue"
+                },
+                {
+                  "input": "<p id='special'>Text</p>",
+                  "output": "red"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "<p id='special' class='highlight'>Text</p>",
+                  "output": "red \u2014 id beats class"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-E-1",
+              "slug": "js-fizzbuzz",
+              "title": "FizzBuzz",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a function fizzBuzz(n) that returns an array from 1 to n. Multiples of 3 \u2192 'Fizz', multiples of 5 \u2192 'Buzz', multiples of both \u2192 'FizzBuzz', else the number.",
+              "solution": "function fizzBuzz(n) {\n  const result = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) result.push('FizzBuzz');\n    else if (i % 3 === 0) result.push('Fizz');\n    else if (i % 5 === 0) result.push('Buzz');\n    else result.push(i);\n  }\n  return result;\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+              "tags": [
+                "loops",
+                "modulo",
+                "conditionals",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function fizzBuzz(n) {\n  // Your code here\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "fizzBuzz(15)",
+                  "output": "[1,2,'Fizz',4,'Buzz','Fizz',7,8,'Fizz','Buzz',11,'Fizz',13,14,'FizzBuzz']"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "fizzBuzz(1)",
+                  "output": "[1]"
+                },
+                {
+                  "input": "fizzBuzz(0)",
+                  "output": "[]"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-E-2",
+              "slug": "js-reverse-string",
+              "title": "Reverse a String",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a function reverseString(str) that reverses a given string without using .reverse() directly on the string.",
+              "solution": "function reverseString(str) {\n  return str.split('').reverse().join('');\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse",
+              "tags": [
+                "string",
+                "array",
+                "split",
+                "join",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function reverseString(str) {\n  // Your code here\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "reverseString('hello')",
+                  "output": "'olleh'"
+                },
+                {
+                  "input": "reverseString('abcde')",
+                  "output": "'edcba'"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "reverseString('')",
+                  "output": "''"
+                },
+                {
+                  "input": "reverseString('a')",
+                  "output": "'a'"
+                },
+                {
+                  "input": "reverseString('racecar')",
+                  "output": "'racecar'"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-E-3",
+              "slug": "js-sum-array",
+              "title": "Sum of Array",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a function sumArray(arr) that returns the sum of all numbers in the array using reduce.",
+              "solution": "function sumArray(arr) {\n  return arr.reduce((acc, num) => acc + num, 0);\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce",
+              "tags": [
+                "array",
+                "reduce",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function sumArray(arr) {\n  // Use reduce\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "sumArray([1, 2, 3, 4, 5])",
+                  "output": "15"
+                },
+                {
+                  "input": "sumArray([10, -5, 3])",
+                  "output": "8"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "sumArray([])",
+                  "output": "0"
+                },
+                {
+                  "input": "sumArray([0, 0, 0])",
+                  "output": "0"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-E-4",
+              "slug": "js-is-palindrome",
+              "title": "Palindrome Check",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a function isPalindrome(str) that returns true if str (lowercased, alphanumeric only) is a palindrome.",
+              "solution": "function isPalindrome(str) {\n  const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, '');\n  return cleaned === cleaned.split('').reverse().join('');\n}",
+              "source": "LeetCode #125",
+              "url": "https://leetcode.com/problems/valid-palindrome/",
+              "tags": [
+                "string",
+                "regex",
+                "palindrome",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function isPalindrome(str) {\n  // Your code here\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "isPalindrome('racecar')",
+                  "output": "true"
+                },
+                {
+                  "input": "isPalindrome('A man, a plan, a canal: Panama')",
+                  "output": "true"
+                },
+                {
+                  "input": "isPalindrome('hello')",
+                  "output": "false"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "isPalindrome('')",
+                  "output": "true"
+                },
+                {
+                  "input": "isPalindrome('0P')",
+                  "output": "false"
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "H-B-M-1",
+              "slug": "html-contact-form",
+              "title": "Contact Form",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Build a contact form with: a text input for Name (required, placeholder 'Your Name'), an email input for Email (required), a textarea for Message (rows=5), and a submit button labeled 'Send'.",
+              "solution": "<form>\n  <label for=\"name\">Name:</label>\n  <input type=\"text\" id=\"name\" name=\"name\" placeholder=\"Your Name\" required>\n\n  <label for=\"email\">Email:</label>\n  <input type=\"email\" id=\"email\" name=\"email\" required>\n\n  <label for=\"message\">Message:</label>\n  <textarea id=\"message\" name=\"message\" rows=\"5\"></textarea>\n\n  <button type=\"submit\">Send</button>\n</form>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn/Forms",
+              "tags": [
+                "form",
+                "input",
+                "textarea",
+                "label",
+                "validation",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<form>\n  <!-- Add inputs here -->\n</form>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Submit empty form",
+                  "output": "Browser shows validation error on Name and Email"
+                },
+                {
+                  "input": "Fill all fields and submit",
+                  "output": "Form submits successfully"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Enter invalid email",
+                  "output": "Browser shows email validation error"
+                },
+                {
+                  "input": "Check label for attribute",
+                  "output": "Each label for matches its input id"
+                }
+              ]
+            },
+            {
+              "id": "H-B-M-2",
+              "slug": "html-table-basic",
+              "title": "Basic HTML Table",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create a 3-column table (Name, Age, City) with thead and tbody. Include 3 rows: Alice/30/New York, Bob/25/London, Carol/28/Tokyo.",
+              "solution": "<table>\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Age</th>\n      <th>City</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>Alice</td><td>30</td><td>New York</td></tr>\n    <tr><td>Bob</td><td>25</td><td>London</td></tr>\n    <tr><td>Carol</td><td>28</td><td>Tokyo</td></tr>\n  </tbody>\n</table>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table",
+              "tags": [
+                "table",
+                "thead",
+                "tbody",
+                "th",
+                "td",
+                "html-basics"
+              ],
+              "starter_code": {
+                "html": "<table>\n  <!-- Add thead and tbody here -->\n</table>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect table",
+                  "output": "3 header cells: Name, Age, City; 3 data rows"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Check thead usage",
+                  "output": "thead and tbody elements present"
+                },
+                {
+                  "input": "Check th vs td",
+                  "output": "Header row uses th, data rows use td"
+                }
+              ]
+            },
+            {
+              "id": "H-B-M-3",
+              "slug": "html-semantic-article",
+              "title": "Semantic Article Layout",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create a semantic page layout using header, nav (with 3 links: Home, About, Contact), main with an article (h2 heading + p paragraph), aside with a short note, and footer with copyright text.",
+              "solution": "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"UTF-8\"><title>Article</title></head>\n<body>\n  <header><h1>My Site</h1></header>\n  <nav>\n    <a href=\"#\">Home</a>\n    <a href=\"#\">About</a>\n    <a href=\"#\">Contact</a>\n  </nav>\n  <main>\n    <article>\n      <h2>Article Title</h2>\n      <p>Article content goes here.</p>\n    </article>\n    <aside><p>Related note</p></aside>\n  </main>\n  <footer><p>&copy; 2026 My Site</p></footer>\n</body>\n</html>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element",
+              "tags": [
+                "semantic-html",
+                "header",
+                "nav",
+                "main",
+                "article",
+                "aside",
+                "footer"
+              ],
+              "starter_code": {
+                "html": "<!-- Use semantic elements: header, nav, main, article, aside, footer -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Check semantics",
+                  "output": "All required semantic elements present"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Accessibility tree",
+                  "output": "Landmark roles correctly assigned by browser"
+                }
+              ]
+            },
+            {
+              "id": "C-B-M-1",
+              "slug": "css-flexbox-navbar",
+              "title": "Flexbox Navigation Bar",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Style a nav with flexbox: logo on the left, links on the right (justify-content=space-between), vertically centered (align-items=center), height=60px, background=#333, links white with no underline and 16px gap between them.",
+              "solution": "nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 60px;\n  background: #333;\n  padding: 0 24px;\n}\n.nav-links {\n  display: flex;\n  gap: 16px;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n.nav-links a {\n  color: white;\n  text-decoration: none;\n}",
+              "source": "CSS-Tricks Flexbox Guide",
+              "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+              "tags": [
+                "flexbox",
+                "navbar",
+                "justify-content",
+                "align-items",
+                "gap",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": "nav {\n  /* Flexbox nav here */\n}\n.nav-links {\n  /* Links layout */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Computed nav layout",
+                  "output": "display=flex, justify-content=space-between, align-items=center, height=60px"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Overflow on small screen",
+                  "output": "Links wrap or overflow cleanly"
+                }
+              ]
+            },
+            {
+              "id": "C-B-M-2",
+              "slug": "css-pseudo-classes",
+              "title": "Pseudo-classes and Hover Effects",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Style button with: background=#4CAF50, white text, padding 10px 24px, border-radius=4px, no border. On :hover change background to #45a049 and cursor to pointer. On :active scale down to 0.97. On :focus add a 3px outline.",
+              "solution": "button {\n  background: #4CAF50;\n  color: white;\n  padding: 10px 24px;\n  border-radius: 4px;\n  border: none;\n  cursor: pointer;\n  transition: all 0.15s ease;\n}\nbutton:hover {\n  background: #45a049;\n}\nbutton:active {\n  transform: scale(0.97);\n}\nbutton:focus {\n  outline: 3px solid #007BFF;\n  outline-offset: 2px;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes",
+              "tags": [
+                "pseudo-classes",
+                "hover",
+                "active",
+                "focus",
+                "transition",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": "button { }\nbutton:hover { }\nbutton:active { }\nbutton:focus { }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Hover over button",
+                  "output": "Background changes to #45a049"
+                },
+                {
+                  "input": "Click button",
+                  "output": "Scales to 0.97"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Focus via keyboard (Tab)",
+                  "output": "3px outline visible for accessibility"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-M-1",
+              "slug": "js-flatten-array",
+              "title": "Flatten Nested Array",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a function flattenArray(arr) that recursively flattens a deeply nested array without using Array.flat().",
+              "solution": "function flattenArray(arr) {\n  return arr.reduce((flat, item) =>\n    Array.isArray(item) ? flat.concat(flattenArray(item)) : flat.concat(item)\n  , []);\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat",
+              "tags": [
+                "array",
+                "recursion",
+                "reduce",
+                "flatten",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function flattenArray(arr) {\n  // Flatten without Array.flat()\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "flattenArray([1,[2,[3,[4]]],5])",
+                  "output": "[1,2,3,4,5]"
+                },
+                {
+                  "input": "flattenArray([[1,2],[3,[4,5]]])",
+                  "output": "[1,2,3,4,5]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "flattenArray([])",
+                  "output": "[]"
+                },
+                {
+                  "input": "flattenArray([1,2,3])",
+                  "output": "[1,2,3]"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-M-2",
+              "slug": "js-count-occurrences",
+              "title": "Count Character Occurrences",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write charCount(str) that returns an object with each unique character (lowercased, letters only) as a key and its count as the value.",
+              "solution": "function charCount(str) {\n  return str.toLowerCase().split('').reduce((acc, ch) => {\n    if (/[a-z]/.test(ch)) acc[ch] = (acc[ch] || 0) + 1;\n    return acc;\n  }, {});\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+              "tags": [
+                "string",
+                "object",
+                "reduce",
+                "frequency-map",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function charCount(str) {\n  // Return frequency object\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "charCount('Hello')",
+                  "output": "{ h:1, e:1, l:2, o:1 }"
+                },
+                {
+                  "input": "charCount('aAbB')",
+                  "output": "{ a:2, b:2 }"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "charCount('hello world')",
+                  "output": "Space ignored, o counts in hello and world"
+                },
+                {
+                  "input": "charCount('')",
+                  "output": "{}"
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "H-B-H-1",
+              "slug": "html-accessible-form",
+              "title": "Fully Accessible Form with ARIA",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Build a login form that is fully accessible: use fieldset/legend, associate every input with a label via for/id, add aria-required='true', aria-describedby for error hints, and a visible focus indicator class.",
+              "solution": "<form>\n  <fieldset>\n    <legend>Login</legend>\n\n    <label for=\"username\">Username</label>\n    <input type=\"text\" id=\"username\" name=\"username\"\n           aria-required=\"true\" aria-describedby=\"username-hint\">\n    <span id=\"username-hint\" role=\"alert\"></span>\n\n    <label for=\"pwd\">Password</label>\n    <input type=\"password\" id=\"pwd\" name=\"pwd\"\n           aria-required=\"true\" aria-describedby=\"pwd-hint\">\n    <span id=\"pwd-hint\" role=\"alert\"></span>\n\n    <button type=\"submit\">Log in</button>\n  </fieldset>\n</form>",
+              "source": "WAI-ARIA Authoring Practices",
+              "url": "https://www.w3.org/WAI/ARIA/apg/patterns/",
+              "tags": [
+                "accessibility",
+                "aria",
+                "fieldset",
+                "legend",
+                "aria-describedby",
+                "a11y"
+              ],
+              "starter_code": {
+                "html": "<form>\n  <fieldset>\n    <legend>Login</legend>\n    <!-- Add accessible inputs here -->\n  </fieldset>\n</form>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Screen reader test",
+                  "output": "All inputs announced with labels and hints"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "aria-required check",
+                  "output": "Both inputs have aria-required='true'"
+                },
+                {
+                  "input": "fieldset/legend check",
+                  "output": "Form wrapped in fieldset with legend 'Login'"
+                }
+              ]
+            },
+            {
+              "id": "H-B-H-2",
+              "slug": "html-data-table-accessibility",
+              "title": "Accessible Data Table with scope",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "HTML",
+              "content": "Create a data table of monthly sales (3 months x 3 products). Use caption, scope='col' on column headers, scope='row' on row headers, and a tfoot with totals.",
+              "solution": "<table>\n  <caption>Monthly Sales 2026</caption>\n  <thead>\n    <tr>\n      <th scope=\"col\">Product</th>\n      <th scope=\"col\">Jan</th>\n      <th scope=\"col\">Feb</th>\n      <th scope=\"col\">Mar</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th scope=\"row\">Widget A</th>\n      <td>100</td><td>120</td><td>110</td>\n    </tr>\n    <tr>\n      <th scope=\"row\">Widget B</th>\n      <td>200</td><td>180</td><td>220</td>\n    </tr>\n    <tr>\n      <th scope=\"row\">Widget C</th>\n      <td>150</td><td>160</td><td>170</td>\n    </tr>\n  </tbody>\n  <tfoot>\n    <tr>\n      <th scope=\"row\">Total</th>\n      <td>450</td><td>460</td><td>500</td>\n    </tr>\n  </tfoot>\n</table>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table",
+              "tags": [
+                "table",
+                "caption",
+                "scope",
+                "tfoot",
+                "accessibility",
+                "a11y"
+              ],
+              "starter_code": {
+                "html": "<table>\n  <caption>Monthly Sales 2026</caption>\n  <!-- Add thead, tbody, tfoot with scope attributes -->\n</table>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Check caption",
+                  "output": "caption 'Monthly Sales 2026' is first child of table"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "scope on col headers",
+                  "output": "All thead th have scope='col'"
+                },
+                {
+                  "input": "scope on row headers",
+                  "output": "First td in each body row is th with scope='row'"
+                }
+              ]
+            },
+            {
+              "id": "C-B-H-1",
+              "slug": "css-position-layering",
+              "title": "Positioning and z-index Layering",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "CSS",
+              "content": "Given a .container with relative positioning, position a .badge absolutely at top-right corner (top:-8px, right:-8px), and ensure a .tooltip is fixed to the viewport bottom-center. Use z-index to layer tooltip > badge > container.",
+              "solution": ".container {\n  position: relative;\n  z-index: 1;\n}\n.badge {\n  position: absolute;\n  top: -8px;\n  right: -8px;\n  z-index: 2;\n}\n.tooltip {\n  position: fixed;\n  bottom: 16px;\n  left: 50%;\n  transform: translateX(-50%);\n  z-index: 1000;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/position",
+              "tags": [
+                "position",
+                "absolute",
+                "fixed",
+                "z-index",
+                "stacking-context",
+                "css-basics"
+              ],
+              "starter_code": {
+                "css": ".container { }\n.badge { }\n.tooltip { }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Badge position",
+                  "output": "Positioned at top-right of container"
+                },
+                {
+                  "input": "Tooltip position",
+                  "output": "Fixed at viewport bottom center"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Scroll page",
+                  "output": "Tooltip stays fixed; container and badge scroll with page"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-B-H-1",
+              "slug": "js-deep-clone",
+              "title": "Deep Clone an Object",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "content": "Write a deepClone(obj) function that deeply clones a plain object or array (no circular refs, no functions) without using JSON.parse/JSON.stringify.",
+              "solution": "function deepClone(obj) {\n  if (obj === null || typeof obj !== 'object') return obj;\n  if (Array.isArray(obj)) return obj.map(deepClone);\n  return Object.fromEntries(\n    Object.entries(obj).map(([k, v]) => [k, deepClone(v)])\n  );\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+              "tags": [
+                "recursion",
+                "objects",
+                "arrays",
+                "cloning",
+                "js-basics"
+              ],
+              "starter_code": {
+                "javascript": "function deepClone(obj) {\n  // Deep clone without JSON tricks\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "deepClone({a:{b:1}})",
+                  "output": "New object {a:{b:1}}, mutations to clone don't affect original"
+                },
+                {
+                  "input": "deepClone([1,[2,3]])",
+                  "output": "[1,[2,3]] as new array"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "deepClone(null)",
+                  "output": "null"
+                },
+                {
+                  "input": "deepClone(42)",
+                  "output": "42"
+                },
+                {
+                  "input": "Mutate nested clone",
+                  "output": "Original object unchanged"
+                }
+              ]
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "H-I-E-1",
+              "slug": "html-meta-tags-seo",
+              "title": "SEO Meta Tags",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Add SEO meta tags to a page head: description (max 160 chars), keywords, author, viewport for mobile, og:title, og:description, og:image (Open Graph).",
+              "solution": "<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"A great website about web development.\">\n  <meta name=\"keywords\" content=\"html, css, javascript, web dev\">\n  <meta name=\"author\" content=\"Jane Doe\">\n  <meta property=\"og:title\" content=\"Web Dev Site\">\n  <meta property=\"og:description\" content=\"A great website about web development.\">\n  <meta property=\"og:image\" content=\"https://example.com/og-image.jpg\">\n  <title>Web Dev Site</title>\n</head>",
+              "source": "MDN Web Docs / Open Graph Protocol",
+              "url": "https://ogp.me/",
+              "tags": [
+                "meta",
+                "seo",
+                "open-graph",
+                "viewport",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<head>\n  <meta charset=\"UTF-8\">\n  <!-- Add SEO and OG meta tags here -->\n  <title>Web Dev Site</title>\n</head>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Social media preview",
+                  "output": "og:title, og:description, og:image present"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Mobile check",
+                  "output": "viewport meta present with width=device-width"
+                },
+                {
+                  "input": "Description length",
+                  "output": "meta description <= 160 characters"
+                }
+              ]
+            },
+            {
+              "id": "H-I-E-2",
+              "slug": "html-figure-figcaption",
+              "title": "Figure with Caption",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Use figure and figcaption to wrap an image (src='chart.png', alt='Sales chart') with caption text 'Q1 2026 Sales Performance'.",
+              "solution": "<figure>\n  <img src=\"chart.png\" alt=\"Sales chart\">\n  <figcaption>Q1 2026 Sales Performance</figcaption>\n</figure>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figure",
+              "tags": [
+                "figure",
+                "figcaption",
+                "semantic-html",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<!-- Wrap image in figure with figcaption -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect DOM",
+                  "output": "figure > img + figcaption structure"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Caption text",
+                  "output": "figcaption text is 'Q1 2026 Sales Performance'"
+                }
+              ]
+            },
+            {
+              "id": "C-I-E-1",
+              "slug": "css-variables-theming",
+              "title": "CSS Custom Properties Theming",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Define CSS variables on :root for --primary=#3B82F6, --secondary=#10B981, --text=#111827, --bg=#FFFFFF. Apply them to a .card with background var(--bg), color var(--text), and border 1px solid var(--primary).",
+              "solution": ":root {\n  --primary: #3B82F6;\n  --secondary: #10B981;\n  --text: #111827;\n  --bg: #FFFFFF;\n}\n\n.card {\n  background: var(--bg);\n  color: var(--text);\n  border: 1px solid var(--primary);\n  padding: 24px;\n  border-radius: 8px;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties",
+              "tags": [
+                "css-variables",
+                "custom-properties",
+                "theming",
+                ":root",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": ":root {\n  /* Define variables here */\n}\n.card {\n  /* Use variables here */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Change --primary to red",
+                  "output": ".card border immediately updates to red"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "var() fallback syntax",
+                  "output": "var(--undefined, fallback) returns fallback value"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-E-1",
+              "slug": "js-closure-counter",
+              "title": "Closure Counter Factory",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Write makeCounter(start=0) that returns an object with increment(), decrement(), and reset() methods using closure to maintain private state.",
+              "solution": "function makeCounter(start = 0) {\n  let count = start;\n  return {\n    increment() { return ++count; },\n    decrement() { return --count; },\n    reset()     { count = start; return count; },\n    value()     { return count; }\n  };\n}",
+              "source": "Classic JS Patterns",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures",
+              "tags": [
+                "closure",
+                "factory",
+                "state",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "function makeCounter(start = 0) {\n  // Implement with closure\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "const c = makeCounter(5); c.increment(); c.increment();",
+                  "output": "c.value() === 7"
+                },
+                {
+                  "input": "c.decrement()",
+                  "output": "c.value() === 6"
+                },
+                {
+                  "input": "c.reset()",
+                  "output": "c.value() === 5"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Two independent counters",
+                  "output": "Each has independent state"
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "H-I-M-1",
+              "slug": "html-details-summary",
+              "title": "Accordion with details/summary",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Build an FAQ section using 3 details/summary pairs. The first details should have the open attribute by default. Each summary is a question; each details body is the answer.",
+              "solution": "<section>\n  <h2>FAQ</h2>\n\n  <details open>\n    <summary>What is HTML?</summary>\n    <p>HTML stands for HyperText Markup Language.</p>\n  </details>\n\n  <details>\n    <summary>What is CSS?</summary>\n    <p>CSS stands for Cascading Style Sheets.</p>\n  </details>\n\n  <details>\n    <summary>What is JavaScript?</summary>\n    <p>JavaScript is a scripting language for the web.</p>\n  </details>\n</section>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details",
+              "tags": [
+                "details",
+                "summary",
+                "accordion",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<section>\n  <h2>FAQ</h2>\n  <!-- Add 3 details/summary pairs -->\n</section>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Page load",
+                  "output": "First FAQ item is open, others collapsed"
+                },
+                {
+                  "input": "Click second summary",
+                  "output": "Second answer panel expands"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Check open attribute",
+                  "output": "Only first details has open attribute by default"
+                }
+              ]
+            },
+            {
+              "id": "H-I-M-2",
+              "slug": "html-progress-meter",
+              "title": "Progress and Meter Elements",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Create a progress bar showing 70/100 completion, and a meter showing disk usage of 7GB out of 10GB (low=2, high=8, optimum=2).",
+              "solution": "<label for=\"upload\">Upload progress:</label>\n<progress id=\"upload\" value=\"70\" max=\"100\">70%</progress>\n\n<label for=\"disk\">Disk usage:</label>\n<meter id=\"disk\" value=\"7\" min=\"0\" max=\"10\" low=\"2\" high=\"8\" optimum=\"2\">\n  7 out of 10 GB\n</meter>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress",
+              "tags": [
+                "progress",
+                "meter",
+                "html-intermediate",
+                "forms"
+              ],
+              "starter_code": {
+                "html": "<!-- Add progress and meter elements with correct attributes -->"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect progress",
+                  "output": "value=70, max=100"
+                },
+                {
+                  "input": "Inspect meter",
+                  "output": "value=7, max=10, low=2, high=8, optimum=2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Fallback text",
+                  "output": "Both elements have fallback text content"
+                }
+              ]
+            },
+            {
+              "id": "H-I-M-3",
+              "slug": "html-datalist-autocomplete",
+              "title": "Input with Datalist Autocomplete",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Create a text input for 'Country' linked via list attribute to a datalist with 5 options: USA, UK, India, Australia, Canada.",
+              "solution": "<label for=\"country\">Country:</label>\n<input type=\"text\" id=\"country\" name=\"country\" list=\"countries\" placeholder=\"Type a country\">\n<datalist id=\"countries\">\n  <option value=\"USA\">\n  <option value=\"UK\">\n  <option value=\"India\">\n  <option value=\"Australia\">\n  <option value=\"Canada\">\n</datalist>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist",
+              "tags": [
+                "datalist",
+                "autocomplete",
+                "input",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<label for=\"country\">Country:</label>\n<input type=\"text\" id=\"country\" list=\"countries\">\n<datalist id=\"countries\">\n  <!-- Add 5 option elements -->\n</datalist>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Type 'U' in input",
+                  "output": "Autocomplete shows USA, UK"
+                },
+                {
+                  "input": "Type 'In'",
+                  "output": "Autocomplete shows India"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "input list attribute",
+                  "output": "list='countries' matches datalist id='countries'"
+                }
+              ]
+            },
+            {
+              "id": "C-I-M-1",
+              "slug": "css-grid-layout",
+              "title": "CSS Grid Dashboard Layout",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Create a CSS grid layout with: header spanning all columns, sidebar 250px wide, main content taking remaining space, footer spanning all columns. Use grid-template-areas and grid-template-columns.",
+              "solution": ".layout {\n  display: grid;\n  grid-template-columns: 250px 1fr;\n  grid-template-rows: 60px 1fr 50px;\n  grid-template-areas:\n    'header header'\n    'sidebar main'\n    'footer footer';\n  min-height: 100vh;\n}\nheader  { grid-area: header; }\n.sidebar { grid-area: sidebar; }\nmain    { grid-area: main; }\nfooter  { grid-area: footer; }",
+              "source": "CSS-Tricks Grid Guide",
+              "url": "https://css-tricks.com/snippets/css/complete-guide-grid/",
+              "tags": [
+                "css-grid",
+                "grid-template-areas",
+                "grid-template-columns",
+                "layout",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": ".layout {\n  display: grid;\n  /* Define columns, rows, and areas */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Header span",
+                  "output": "header spans both columns"
+                },
+                {
+                  "input": "Sidebar width",
+                  "output": "sidebar column is 250px"
+                },
+                {
+                  "input": "Footer span",
+                  "output": "footer spans both columns"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Resize main area",
+                  "output": "main uses 1fr and grows with viewport"
+                }
+              ]
+            },
+            {
+              "id": "C-I-M-2",
+              "slug": "css-responsive-breakpoints",
+              "title": "Responsive Breakpoints with Media Queries",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Make .card-grid: 4 columns on desktop (>1024px), 2 columns on tablet (640-1024px), 1 column on mobile (<640px). Use CSS Grid and min-width media queries.",
+              "solution": ".card-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n@media (min-width: 640px) {\n  .card-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n@media (min-width: 1024px) {\n  .card-grid {\n    grid-template-columns: repeat(4, 1fr);\n  }\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries",
+              "tags": [
+                "responsive",
+                "media-queries",
+                "css-grid",
+                "breakpoints",
+                "mobile-first",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": ".card-grid {\n  display: grid;\n  /* Mobile-first, then add breakpoints */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Viewport 320px",
+                  "output": "1 column"
+                },
+                {
+                  "input": "Viewport 768px",
+                  "output": "2 columns"
+                },
+                {
+                  "input": "Viewport 1200px",
+                  "output": "4 columns"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Mobile-first check",
+                  "output": "Base rule is 1-column (no max-width queries)"
+                }
+              ]
+            },
+            {
+              "id": "C-I-M-3",
+              "slug": "css-keyframe-animation",
+              "title": "Keyframe Animation",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Animate a .loader div as a spinning circle: 40px, border 4px solid #eee, border-top 4px solid #3B82F6, border-radius=50%, animation spins 1s linear infinite.",
+              "solution": ".loader {\n  width: 40px;\n  height: 40px;\n  border: 4px solid #eee;\n  border-top: 4px solid #3B82F6;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n}\n\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes",
+              "tags": [
+                "keyframes",
+                "animation",
+                "transform",
+                "rotate",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": ".loader {\n  /* Style and animate */\n}\n@keyframes spin {\n  /* Define rotation */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Inspect .loader",
+                  "output": "Circular border with blue top segment spinning continuously"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "prefers-reduced-motion check",
+                  "output": "Animation should respect @media (prefers-reduced-motion: reduce)"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-M-1",
+              "slug": "js-debounce",
+              "title": "Implement debounce()",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Implement debounce(fn, delay) that delays invoking fn until after delay ms have elapsed since the last call. Return the debounced function.",
+              "solution": "function debounce(fn, delay) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}",
+              "source": "Lodash Docs / Classic Interview",
+              "url": "https://lodash.com/docs/4.17.15#debounce",
+              "tags": [
+                "debounce",
+                "closure",
+                "setTimeout",
+                "performance",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "function debounce(fn, delay) {\n  // Your implementation\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Call debounced fn 3 times in 100ms (delay=200)",
+                  "output": "fn called only once, 200ms after last call"
+                },
+                {
+                  "input": "Call once then wait > delay",
+                  "output": "fn called exactly once"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Context (this) preservation",
+                  "output": "fn called with correct this context"
+                },
+                {
+                  "input": "Arguments passed correctly",
+                  "output": "Last call's arguments forwarded to fn"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-M-2",
+              "slug": "js-throttle",
+              "title": "Implement throttle()",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Implement throttle(fn, limit) that ensures fn is called at most once per limit ms, calling immediately on first invocation.",
+              "solution": "function throttle(fn, limit) {\n  let inThrottle;\n  return function (...args) {\n    if (!inThrottle) {\n      fn.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => { inThrottle = false; }, limit);\n    }\n  };\n}",
+              "source": "Classic Interview",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/API/setTimeout",
+              "tags": [
+                "throttle",
+                "performance",
+                "closure",
+                "setTimeout",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "function throttle(fn, limit) {\n  // Your implementation\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Call throttled fn 10 times in 500ms (limit=200)",
+                  "output": "fn called at most 3 times"
+                },
+                {
+                  "input": "First call",
+                  "output": "fn called immediately"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "After limit ms, call again",
+                  "output": "fn fires again (throttle resets)"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-M-3",
+              "slug": "js-promise-chain",
+              "title": "Promise Chaining",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Write fetchUserPosts(userId) that: fetches user from /users/:id, then fetches posts from /posts?userId=:id, returns array of post titles. Use fetch() and Promise chaining (no async/await).",
+              "solution": "function fetchUserPosts(userId) {\n  return fetch(`/users/${userId}`)\n    .then(res => res.json())\n    .then(user => fetch(`/posts?userId=${user.id}`))\n    .then(res => res.json())\n    .then(posts => posts.map(p => p.title))\n    .catch(err => { throw new Error(`Failed: ${err.message}`); });\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises",
+              "tags": [
+                "promise",
+                "fetch",
+                "chaining",
+                ".then",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "function fetchUserPosts(userId) {\n  return fetch(`/users/${userId}`)\n    // Chain .then() calls here\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "fetchUserPosts(1) with mocked /users/1 and /posts?userId=1",
+                  "output": "Array of post title strings"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Network error on /users/:id",
+                  "output": "Rejection propagated with error message"
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "H-I-H-1",
+              "slug": "html-picture-responsive",
+              "title": "Responsive Images with picture",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Use the picture element to serve: 'hero-mobile.webp' for screens up to 600px, 'hero-tablet.webp' for up to 1024px, and fallback 'hero.jpg' for all others. Use srcset on the fallback img for 1x/2x density.",
+              "solution": "<picture>\n  <source media=\"(max-width: 600px)\" srcset=\"hero-mobile.webp\" type=\"image/webp\">\n  <source media=\"(max-width: 1024px)\" srcset=\"hero-tablet.webp\" type=\"image/webp\">\n  <img src=\"hero.jpg\"\n       srcset=\"hero.jpg 1x, hero@2x.jpg 2x\"\n       alt=\"Hero image\"\n       width=\"1200\" height=\"600\">\n</picture>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture",
+              "tags": [
+                "picture",
+                "source",
+                "srcset",
+                "responsive-images",
+                "webp",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<picture>\n  <!-- Add source elements and img fallback -->\n</picture>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Viewport 400px",
+                  "output": "hero-mobile.webp is loaded"
+                },
+                {
+                  "input": "Viewport 800px",
+                  "output": "hero-tablet.webp is loaded"
+                },
+                {
+                  "input": "Viewport 1200px",
+                  "output": "hero.jpg is loaded"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "WebP unsupported browser",
+                  "output": "Falls back to img src hero.jpg"
+                }
+              ]
+            },
+            {
+              "id": "H-I-H-2",
+              "slug": "html-template-slot",
+              "title": "HTML template Element Usage",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "HTML",
+              "content": "Define a template#card-template with a div.card containing an h3 and p. Use JavaScript to clone it 3 times, fill in data, and append to div#cards.",
+              "solution": "<template id=\"card-template\">\n  <div class=\"card\">\n    <h3 class=\"card-title\"></h3>\n    <p class=\"card-body\"></p>\n  </div>\n</template>\n<div id=\"cards\"></div>\n\n<script>\n  const tpl = document.getElementById('card-template');\n  const items = [\n    {title:'Card 1', body:'First card content'},\n    {title:'Card 2', body:'Second card content'},\n    {title:'Card 3', body:'Third card content'}\n  ];\n  items.forEach(item => {\n    const clone = tpl.content.cloneNode(true);\n    clone.querySelector('.card-title').textContent = item.title;\n    clone.querySelector('.card-body').textContent = item.body;\n    document.getElementById('cards').appendChild(clone);\n  });\n</script>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template",
+              "tags": [
+                "template",
+                "cloneNode",
+                "dom",
+                "html-intermediate"
+              ],
+              "starter_code": {
+                "html": "<template id=\"card-template\">\n  <div class=\"card\">\n    <h3 class=\"card-title\"></h3>\n    <p class=\"card-body\"></p>\n  </div>\n</template>\n<div id=\"cards\"></div>\n<script>\n  // Clone template 3 times and fill in data\n</script>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Check DOM after script",
+                  "output": "#cards contains 3 .card children with titles and bodies"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Template not rendered before clone",
+                  "output": "template content not visible until appended"
+                }
+              ]
+            },
+            {
+              "id": "C-I-H-1",
+              "slug": "css-dark-mode",
+              "title": "Dark Mode with prefers-color-scheme",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Implement automatic dark/light theming using CSS variables and prefers-color-scheme media query. Light: bg=#fff, text=#111; Dark: bg=#1a1a2e, text=#e0e0e0. Also support manual toggle via data-theme attribute on body.",
+              "solution": ":root {\n  --bg: #ffffff;\n  --text: #111111;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #1a1a2e;\n    --text: #e0e0e0;\n  }\n}\n\n[data-theme='dark'] {\n  --bg: #1a1a2e;\n  --text: #e0e0e0;\n}\n\n[data-theme='light'] {\n  --bg: #ffffff;\n  --text: #111111;\n}\n\nbody {\n  background: var(--bg);\n  color: var(--text);\n  transition: background 0.3s ease, color 0.3s ease;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme",
+              "tags": [
+                "dark-mode",
+                "prefers-color-scheme",
+                "css-variables",
+                "theming",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": ":root { }\n@media (prefers-color-scheme: dark) { }\n[data-theme='dark'] { }\nbody { }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "OS set to dark",
+                  "output": "Page uses dark variables automatically"
+                },
+                {
+                  "input": "document.body.dataset.theme = 'light'",
+                  "output": "Overrides to light even in dark mode"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Transition check",
+                  "output": "Background and text color transition smoothly on toggle"
+                }
+              ]
+            },
+            {
+              "id": "C-I-H-2",
+              "slug": "css-clamp-fluid-typography",
+              "title": "Fluid Typography with clamp()",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "CSS",
+              "content": "Use CSS clamp() to create fluid font sizes: body text clamps between 14px and 18px, h1 clamps between 24px and 48px. Scale should respond fluidly between 320px and 1280px viewport widths using viewport units.",
+              "solution": "body {\n  font-size: clamp(14px, 1vw + 12px, 18px);\n}\n\nh1 {\n  font-size: clamp(24px, 3vw + 16px, 48px);\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/clamp",
+              "tags": [
+                "clamp",
+                "fluid-typography",
+                "vw",
+                "responsive",
+                "css-intermediate"
+              ],
+              "starter_code": {
+                "css": "body {\n  font-size: clamp(/* min */, /* preferred */, /* max */);\n}\nh1 {\n  font-size: clamp(/* min */, /* preferred */, /* max */);\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Viewport 320px",
+                  "output": "body font-size >= 14px, h1 >= 24px"
+                },
+                {
+                  "input": "Viewport 1280px",
+                  "output": "body font-size <= 18px, h1 <= 48px"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Middle viewport 800px",
+                  "output": "Font scales fluidly between min and max"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-H-1",
+              "slug": "js-event-emitter",
+              "title": "Build an EventEmitter",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Implement an EventEmitter class with on(event, listener), off(event, listener), emit(event, ...args), and once(event, listener) methods.",
+              "solution": "class EventEmitter {\n  constructor() {\n    this._events = {};\n  }\n  on(event, listener) {\n    (this._events[event] ||= []).push(listener);\n    return this;\n  }\n  off(event, listener) {\n    if (this._events[event])\n      this._events[event] = this._events[event].filter(l => l !== listener);\n    return this;\n  }\n  emit(event, ...args) {\n    (this._events[event] || []).forEach(l => l(...args));\n    return this;\n  }\n  once(event, listener) {\n    const wrapper = (...args) => { listener(...args); this.off(event, wrapper); };\n    return this.on(event, wrapper);\n  }\n}",
+              "source": "Node.js EventEmitter Pattern",
+              "url": "https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick",
+              "tags": [
+                "event-emitter",
+                "observer-pattern",
+                "class",
+                "once",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "class EventEmitter {\n  constructor() { this._events = {}; }\n  on(event, listener) { }\n  off(event, listener) { }\n  emit(event, ...args) { }\n  once(event, listener) { }\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "ee.on('data', fn); ee.emit('data', 42)",
+                  "output": "fn called with 42"
+                },
+                {
+                  "input": "ee.once('connect', fn); emit twice",
+                  "output": "fn called only once"
+                },
+                {
+                  "input": "ee.off('data', fn); ee.emit('data', 1)",
+                  "output": "fn not called"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Multiple listeners on same event",
+                  "output": "All called in registration order"
+                },
+                {
+                  "input": "emit unknown event",
+                  "output": "No error thrown"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-I-H-2",
+              "slug": "js-lru-cache",
+              "title": "LRU Cache Implementation",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_1",
+              "language": "JavaScript",
+              "content": "Implement an LRUCache class with get(key) and put(key, value) methods in O(1) time using a Map. Evict least recently used when capacity is exceeded.",
+              "solution": "class LRUCache {\n  constructor(capacity) {\n    this.cap = capacity;\n    this.map = new Map();\n  }\n  get(key) {\n    if (!this.map.has(key)) return -1;\n    const val = this.map.get(key);\n    this.map.delete(key);\n    this.map.set(key, val);\n    return val;\n  }\n  put(key, value) {\n    this.map.delete(key);\n    this.map.set(key, value);\n    if (this.map.size > this.cap)\n      this.map.delete(this.map.keys().next().value);\n  }\n}",
+              "source": "LeetCode #146",
+              "url": "https://leetcode.com/problems/lru-cache/",
+              "tags": [
+                "lru-cache",
+                "map",
+                "linked-list",
+                "design",
+                "js-intermediate"
+              ],
+              "starter_code": {
+                "javascript": "class LRUCache {\n  constructor(capacity) { }\n  get(key) { }\n  put(key, value) { }\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "capacity=2; put(1,1); put(2,2); get(1); put(3,3); get(2)",
+                  "output": "get(1)=1, get(2)=-1 (evicted)"
+                },
+                {
+                  "input": "put(4,4); get(1)",
+                  "output": "-1 (1 evicted after 3 put)"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "get on non-existing key",
+                  "output": "-1"
+                },
+                {
+                  "input": "Overwrite existing key",
+                  "output": "Value updated, moved to most-recent"
+                }
+              ]
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [
+            {
+              "id": "J-JS-SP1-M-1",
+              "slug": "js-virtual-dom-diff",
+              "title": "Simple Virtual DOM Diffing",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Implement a diff(oldVNode, newVNode) function that compares two virtual DOM nodes (plain objects with tag, props, children) and returns a patch object describing changes (REPLACE, UPDATE_PROPS, REORDER).",
+              "solution": "function diff(oldNode, newNode) {\n  if (!oldNode) return { type: 'CREATE', newNode };\n  if (!newNode) return { type: 'REMOVE' };\n  if (oldNode.tag !== newNode.tag) return { type: 'REPLACE', newNode };\n  const propPatches = {};\n  const allKeys = new Set([...Object.keys(oldNode.props||{}), ...Object.keys(newNode.props||{})]);\n  allKeys.forEach(key => {\n    if (oldNode.props?.[key] !== newNode.props?.[key])\n      propPatches[key] = newNode.props?.[key];\n  });\n  const childPatches = [];\n  const maxLen = Math.max((oldNode.children||[]).length, (newNode.children||[]).length);\n  for (let i = 0; i < maxLen; i++)\n    childPatches.push(diff(oldNode.children?.[i], newNode.children?.[i]));\n  return { type: 'UPDATE', propPatches, childPatches };\n}",
+              "source": "Custom / React Internals",
+              "url": "https://reactjs.org/docs/reconciliation.html",
+              "tags": [
+                "virtual-dom",
+                "diffing",
+                "reconciliation",
+                "tree",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "function diff(oldNode, newNode) {\n  // Return patch object\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Same tag, different props",
+                  "output": "{ type: 'UPDATE', propPatches: {class: 'new'}, childPatches:[] }"
+                },
+                {
+                  "input": "Different tag",
+                  "output": "{ type: 'REPLACE', newNode }"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Nested children diff",
+                  "output": "childPatches array with recursive diffs"
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "J-JS-SP1-H-1",
+              "slug": "js-web-worker-image",
+              "title": "Image Processing with Web Workers",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Write main.js that posts ImageData to a Web Worker. The worker (worker.js) converts it to grayscale by averaging RGB channels and posts back. Main applies the result to a canvas.",
+              "solution": "// main.js\nconst canvas = document.getElementById('canvas');\nconst ctx = canvas.getContext('2d');\nconst img = ctx.getImageData(0, 0, canvas.width, canvas.height);\nconst worker = new Worker('worker.js');\nworker.postMessage({ imageData: img }, [img.data.buffer]);\nworker.onmessage = e => ctx.putImageData(e.data.imageData, 0, 0);\n\n// worker.js\nself.onmessage = function (e) {\n  const img = e.data.imageData;\n  const d = img.data;\n  for (let i = 0; i < d.length; i += 4) {\n    const gray = (d[i] + d[i+1] + d[i+2]) / 3;\n    d[i] = d[i+1] = d[i+2] = gray;\n  }\n  self.postMessage({ imageData: img }, [d.buffer]);\n};",
+              "source": "MDN Web Docs - Web Workers",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API",
+              "tags": [
+                "web-worker",
+                "ImageData",
+                "canvas",
+                "transferable",
+                "grayscale",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "// main.js\nconst worker = new Worker('worker.js');\n// Post ImageData to worker\n\n// worker.js\nself.onmessage = function(e) {\n  // Process and post back\n};"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Color image on canvas",
+                  "output": "Grayscale image rendered after worker processes it"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Transferable check",
+                  "output": "ImageData buffer transferred (not copied) for performance"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-SP1-H-2",
+              "slug": "js-wasm-integration",
+              "title": "WebAssembly Module Integration",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Intermediate_2",
+              "language": "JavaScript",
+              "content": "Use WebAssembly.instantiateStreaming to load a .wasm module exporting an add(a,b) function. Call it from JS and display the result. Handle errors if wasm fails to load.",
+              "solution": "async function loadWasm() {\n  try {\n    const { instance } = await WebAssembly.instantiateStreaming(\n      fetch('math.wasm')\n    );\n    const result = instance.exports.add(10, 32);\n    console.log('10 + 32 =', result); // 42\n    document.getElementById('result').textContent = result;\n  } catch (err) {\n    console.error('WASM load failed:', err);\n  }\n}\nloadWasm();",
+              "source": "MDN Web Docs - WebAssembly",
+              "url": "https://developer.mozilla.org/en-US/docs/WebAssembly",
+              "tags": [
+                "webassembly",
+                "wasm",
+                "instantiateStreaming",
+                "interop",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "async function loadWasm() {\n  const { instance } = await WebAssembly.instantiateStreaming(\n    fetch('math.wasm')\n  );\n  // Call instance.exports.add and display result\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "add(10, 32) from WASM module",
+                  "output": "42"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "WASM fetch fails (404)",
+                  "output": "Error handled, meaningful message logged"
+                }
+              ]
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "H-A-E-1",
+              "slug": "html-custom-data-attributes",
+              "title": "Custom Data Attributes",
+              "difficulty": "Easy",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "HTML",
+              "content": "Create a product card with data-product-id, data-price, and data-category attributes. Access them in JavaScript via dataset.",
+              "solution": "<div class=\"product-card\"\n     data-product-id=\"42\"\n     data-price=\"29.99\"\n     data-category=\"electronics\">\n  <h2>Wireless Earbuds</h2>\n</div>\n\n<script>\n  const card = document.querySelector('.product-card');\n  console.log(card.dataset.productId);   // '42'\n  console.log(card.dataset.price);       // '29.99'\n  console.log(card.dataset.category);    // 'electronics'\n</script>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes",
+              "tags": [
+                "data-attributes",
+                "dataset",
+                "html-advanced",
+                "dom"
+              ],
+              "starter_code": {
+                "html": "<div class=\"product-card\"\n     data-product-id=\"\"\n     data-price=\"\"\n     data-category=\"\">\n  <h2>Wireless Earbuds</h2>\n</div>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "card.dataset.productId",
+                  "output": "'42'"
+                },
+                {
+                  "input": "card.dataset.price",
+                  "output": "'29.99'"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "dataset camelCase access",
+                  "output": "data-product-id maps to dataset.productId correctly"
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "H-A-M-1",
+              "slug": "html-canvas-basic",
+              "title": "Canvas Basic Drawing",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "HTML",
+              "content": "Create a 400x300 canvas. Draw: a blue filled rectangle (50,50,200,100), a red stroked circle at (250,150) r=50, and 'Hello Canvas' text in 24px Arial at (120,200).",
+              "solution": "<canvas id=\"myCanvas\" width=\"400\" height=\"300\"></canvas>\n<script>\n  const ctx = document.getElementById('myCanvas').getContext('2d');\n  // Blue rectangle\n  ctx.fillStyle = 'blue';\n  ctx.fillRect(50, 50, 200, 100);\n  // Red circle\n  ctx.strokeStyle = 'red';\n  ctx.lineWidth = 3;\n  ctx.beginPath();\n  ctx.arc(250, 150, 50, 0, Math.PI * 2);\n  ctx.stroke();\n  // Text\n  ctx.fillStyle = 'black';\n  ctx.font = '24px Arial';\n  ctx.fillText('Hello Canvas', 120, 200);\n</script>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial",
+              "tags": [
+                "canvas",
+                "2d-context",
+                "fillRect",
+                "arc",
+                "fillText",
+                "html-advanced"
+              ],
+              "starter_code": {
+                "html": "<canvas id=\"myCanvas\" width=\"400\" height=\"300\"></canvas>\n<script>\n  const ctx = document.getElementById('myCanvas').getContext('2d');\n  // Draw here\n</script>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Render canvas",
+                  "output": "Blue rectangle at (50,50), red circle at (250,150), text at (120,200)"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "getContext returns null",
+                  "output": "Error handled gracefully"
+                }
+              ]
+            },
+            {
+              "id": "H-A-M-2",
+              "slug": "html-dialog-element",
+              "title": "Native dialog Element Modal",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "HTML",
+              "content": "Build a native modal using the dialog element. A 'Open Modal' button calls showModal(). The dialog has a heading, paragraph, and 'Close' button that calls close(). Style backdrop via ::backdrop.",
+              "solution": "<button id=\"open\">Open Modal</button>\n<dialog id=\"modal\">\n  <h2>Alert</h2>\n  <p>This is a native dialog modal.</p>\n  <button id=\"close\">Close</button>\n</dialog>\n<script>\n  document.getElementById('open').addEventListener('click', () => {\n    document.getElementById('modal').showModal();\n  });\n  document.getElementById('close').addEventListener('click', () => {\n    document.getElementById('modal').close();\n  });\n</script>\n<style>\n  dialog::backdrop { background: rgba(0,0,0,0.5); }\n</style>",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog",
+              "tags": [
+                "dialog",
+                "showModal",
+                "modal",
+                "::backdrop",
+                "html-advanced"
+              ],
+              "starter_code": {
+                "html": "<button id=\"open\">Open Modal</button>\n<dialog id=\"modal\">\n  <!-- Add content and close button -->\n</dialog>\n<script>\n  // Wire up open and close\n</script>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Click Open Modal",
+                  "output": "dialog renders as modal, backdrop visible"
+                },
+                {
+                  "input": "Click Close",
+                  "output": "dialog closes"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Press Escape key",
+                  "output": "dialog closes (native behavior)"
+                },
+                {
+                  "input": "::backdrop present",
+                  "output": "Background dims when modal is open"
+                }
+              ]
+            },
+            {
+              "id": "C-A-M-1",
+              "slug": "css-scroll-animations",
+              "title": "Scroll-Driven Animations",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "CSS",
+              "content": "Use CSS scroll-driven animations (animation-timeline: scroll()) to animate a progress bar width from 0% to 100% as the page is scrolled from top to bottom.",
+              "solution": "#progress-bar {\n  position: fixed;\n  top: 0;\n  left: 0;\n  height: 4px;\n  background: #3B82F6;\n  width: 100%;\n  transform-origin: left;\n  animation: progress-grow linear;\n  animation-timeline: scroll();\n}\n\n@keyframes progress-grow {\n  from { transform: scaleX(0); }\n  to   { transform: scaleX(1); }\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline",
+              "tags": [
+                "scroll-driven-animation",
+                "animation-timeline",
+                "scroll()",
+                "css-advanced"
+              ],
+              "starter_code": {
+                "css": "#progress-bar {\n  position: fixed;\n  top: 0; left: 0;\n  height: 4px;\n  background: #3B82F6;\n  /* Add scroll-driven animation */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Scroll to top",
+                  "output": "Progress bar width = 0%"
+                },
+                {
+                  "input": "Scroll to bottom",
+                  "output": "Progress bar width = 100%"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Browser support check",
+                  "output": "animation-timeline requires Chrome 115+ / Safari 18+"
+                }
+              ]
+            },
+            {
+              "id": "C-A-M-2",
+              "slug": "css-container-queries",
+              "title": "Container Queries",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "CSS",
+              "content": "Use @container queries to make .product-card switch from row layout (when container >= 400px) to column layout (when container < 400px). Define the container with container-type: inline-size.",
+              "solution": ".card-wrapper {\n  container-type: inline-size;\n  container-name: card;\n}\n\n.product-card {\n  display: flex;\n  flex-direction: column;\n  gap: 12px;\n}\n\n@container card (min-width: 400px) {\n  .product-card {\n    flex-direction: row;\n    align-items: center;\n  }\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries",
+              "tags": [
+                "container-queries",
+                "@container",
+                "container-type",
+                "css-advanced",
+                "responsive"
+              ],
+              "starter_code": {
+                "css": ".card-wrapper {\n  /* Define container */\n}\n.product-card {\n  display: flex;\n  /* Default column layout */\n}\n@container card (min-width: 400px) {\n  /* Switch to row */\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Container width 300px",
+                  "output": "Product card in column layout"
+                },
+                {
+                  "input": "Container width 500px",
+                  "output": "Product card in row layout"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Viewport unchanged, container resized",
+                  "output": "Layout switches based on container, not viewport"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-A-M-1",
+              "slug": "js-async-await-parallel",
+              "title": "Parallel Async Operations",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Write fetchAll(urls) using async/await and Promise.all to fetch multiple URLs in parallel. Return array of JSON responses. If any request fails, return null for that URL without rejecting the whole batch.",
+              "solution": "async function fetchAll(urls) {\n  const fetches = urls.map(url =>\n    fetch(url)\n      .then(r => r.json())\n      .catch(() => null)\n  );\n  return Promise.all(fetches);\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all",
+              "tags": [
+                "async-await",
+                "Promise.all",
+                "parallel",
+                "error-handling",
+                "js-advanced"
+              ],
+              "starter_code": {
+                "javascript": "async function fetchAll(urls) {\n  // Fetch all in parallel, null on failure\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "3 valid URLs",
+                  "output": "Array of 3 JSON objects"
+                },
+                {
+                  "input": "1 valid URL + 1 failing URL",
+                  "output": "[data, null]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "fetchAll([])",
+                  "output": "[]"
+                },
+                {
+                  "input": "All fail",
+                  "output": "[null, null, null]"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-A-M-2",
+              "slug": "js-proxy-validation",
+              "title": "Object Validation with Proxy",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Use Proxy to create a validated user object where: name must be a non-empty string, age must be a number 0-120. Throw TypeError on invalid set. Log all get operations.",
+              "solution": "function createUser(target = {}) {\n  return new Proxy(target, {\n    set(obj, prop, value) {\n      if (prop === 'name') {\n        if (typeof value !== 'string' || !value.trim())\n          throw new TypeError('name must be a non-empty string');\n      }\n      if (prop === 'age') {\n        if (typeof value !== 'number' || value < 0 || value > 120)\n          throw new TypeError('age must be a number 0-120');\n      }\n      obj[prop] = value;\n      return true;\n    },\n    get(obj, prop) {\n      console.log(`Getting ${prop}`);\n      return obj[prop];\n    }\n  });\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+              "tags": [
+                "proxy",
+                "reflect",
+                "validation",
+                "meta-programming",
+                "js-advanced"
+              ],
+              "starter_code": {
+                "javascript": "function createUser(target = {}) {\n  return new Proxy(target, {\n    set(obj, prop, value) { },\n    get(obj, prop) { }\n  });\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "user.name = 'Alice'",
+                  "output": "Set succeeds"
+                },
+                {
+                  "input": "user.age = 150",
+                  "output": "TypeError: age must be a number 0-120"
+                },
+                {
+                  "input": "user.name = ''",
+                  "output": "TypeError: name must be non-empty"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "user.name = 123",
+                  "output": "TypeError: name must be a string"
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "H-A-H-1",
+              "slug": "html-web-components",
+              "title": "Custom Element with Shadow DOM",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "HTML",
+              "content": "Define a custom element <user-card> with shadow DOM. It takes name and role attributes and renders them styled in an isolated shadow root. Register it with customElements.define.",
+              "solution": "<user-card name=\"Alice\" role=\"Engineer\"></user-card>\n\n<script>\n  class UserCard extends HTMLElement {\n    constructor() {\n      super();\n      const shadow = this.attachShadow({ mode: 'open' });\n      const wrapper = document.createElement('div');\n      wrapper.innerHTML = `\n        <style>\n          .card { border:1px solid #ccc; padding:16px; border-radius:8px; }\n          .name { font-weight:bold; font-size:1.2em; }\n          .role { color:#666; }\n        </style>\n        <div class=\"card\">\n          <div class=\"name\">${this.getAttribute('name')}</div>\n          <div class=\"role\">${this.getAttribute('role')}</div>\n        </div>\n      `;\n      shadow.appendChild(wrapper);\n    }\n  }\n  customElements.define('user-card', UserCard);\n</script>",
+              "source": "MDN Web Docs - Web Components",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/Web_Components",
+              "tags": [
+                "web-components",
+                "custom-elements",
+                "shadow-dom",
+                "html-advanced"
+              ],
+              "starter_code": {
+                "html": "<user-card name=\"Alice\" role=\"Engineer\"></user-card>\n<script>\n  class UserCard extends HTMLElement {\n    constructor() {\n      super();\n      // Attach shadow DOM and render\n    }\n  }\n  customElements.define('user-card', UserCard);\n</script>"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Render <user-card name='Alice' role='Engineer'>",
+                  "output": "Shows Alice / Engineer in styled card"
+                },
+                {
+                  "input": "Inspect shadow root",
+                  "output": "mode='open', isolated styles present"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "External CSS leak test",
+                  "output": "Global styles do not affect shadow DOM internals"
+                }
+              ]
+            },
+            {
+              "id": "C-A-H-1",
+              "slug": "css-has-selector",
+              "title": "Relational :has() Selector",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "CSS",
+              "content": "Use :has() to: highlight .form-group that contains an input:invalid, style a .card differently when it :has(img), and change nav style when it :has(> .active-link).",
+              "solution": "/* Highlight form group with invalid input */\n.form-group:has(input:invalid) {\n  background: #fff5f5;\n  border-left: 3px solid red;\n}\n\n/* Card with image gets different layout */\n.card:has(img) {\n  display: grid;\n  grid-template-columns: 120px 1fr;\n}\n\n/* Nav with active link gets underline indicator */\nnav:has(> .active-link) {\n  border-bottom: 2px solid #3B82F6;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:has",
+              "tags": [
+                ":has",
+                "relational-selector",
+                "css-advanced",
+                "form-validation"
+              ],
+              "starter_code": {
+                "css": "/* :has() examples */\n.form-group:has(input:invalid) { }\n.card:has(img) { }\nnav:has(> .active-link) { }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Input invalid inside .form-group",
+                  "output": ".form-group gets red border and pink bg"
+                },
+                {
+                  "input": ".card with child img",
+                  "output": "Card switches to 2-column grid"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": ":has() browser support",
+                  "output": "Requires Chrome 105+, Safari 15.4+, Firefox 121+"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-A-H-1",
+              "slug": "js-generator-infinite-sequence",
+              "title": "Infinite Sequence with Generators",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Write a generator function* fibonacci() that yields the Fibonacci sequence infinitely. Then write take(gen, n) that collects n values from any generator.",
+              "solution": "function* fibonacci() {\n  let [a, b] = [0, 1];\n  while (true) {\n    yield a;\n    [a, b] = [b, a + b];\n  }\n}\n\nfunction take(gen, n) {\n  const result = [];\n  for (const val of gen) {\n    result.push(val);\n    if (result.length === n) break;\n  }\n  return result;\n}",
+              "source": "MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*",
+              "tags": [
+                "generators",
+                "iterator",
+                "fibonacci",
+                "infinite-sequence",
+                "js-advanced"
+              ],
+              "starter_code": {
+                "javascript": "function* fibonacci() {\n  // yield infinite fib sequence\n}\n\nfunction take(gen, n) {\n  // collect n values\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "take(fibonacci(), 8)",
+                  "output": "[0,1,1,2,3,5,8,13]"
+                },
+                {
+                  "input": "take(fibonacci(), 1)",
+                  "output": "[0]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "take(fibonacci(), 0)",
+                  "output": "[]"
+                },
+                {
+                  "input": "take(fibonacci(), 15)[14]",
+                  "output": "377"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-A-H-2",
+              "slug": "js-observable-pattern",
+              "title": "Observable / Reactive Stream",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_1",
+              "language": "JavaScript",
+              "content": "Implement a minimal Observable class with subscribe(observer), and operators map(fn) and filter(fn) returning new Observables. Observer has next, error, complete callbacks.",
+              "solution": "class Observable {\n  constructor(subscribeFn) {\n    this._subscribeFn = subscribeFn;\n  }\n  subscribe(observer) {\n    this._subscribeFn(observer);\n  }\n  map(fn) {\n    return new Observable(observer =>\n      this.subscribe({\n        next: v => observer.next(fn(v)),\n        error: e => observer.error(e),\n        complete: () => observer.complete()\n      })\n    );\n  }\n  filter(fn) {\n    return new Observable(observer =>\n      this.subscribe({\n        next: v => fn(v) && observer.next(v),\n        error: e => observer.error(e),\n        complete: () => observer.complete()\n      })\n    );\n  }\n}",
+              "source": "RxJS Concepts",
+              "url": "https://rxjs.dev/guide/observable",
+              "tags": [
+                "observable",
+                "reactive",
+                "map",
+                "filter",
+                "stream",
+                "js-advanced"
+              ],
+              "starter_code": {
+                "javascript": "class Observable {\n  constructor(subscribeFn) { this._subscribeFn = subscribeFn; }\n  subscribe(observer) { }\n  map(fn) { }\n  filter(fn) { }\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Observable of [1,2,3,4,5] \u2192 filter(x=>x%2===0) \u2192 map(x=>x*10)",
+                  "output": "next called with 20, 40"
+                },
+                {
+                  "input": "complete callback",
+                  "output": "called after all values emitted"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "error in subscribeFn",
+                  "output": "observer.error called with error"
+                }
+              ]
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [
+            {
+              "id": "J-JS-SP2-M-1",
+              "slug": "js-custom-scheduler",
+              "title": "Microtask/Macrotask Scheduler",
+              "difficulty": "Medium",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Implement a scheduler with schedule(task, priority) where 'high' uses queueMicrotask, 'normal' uses setTimeout(0), and 'idle' uses requestIdleCallback. Tasks are functions.",
+              "solution": "function schedule(task, priority = 'normal') {\n  switch (priority) {\n    case 'high':\n      queueMicrotask(task);\n      break;\n    case 'idle':\n      if ('requestIdleCallback' in window)\n        requestIdleCallback(task);\n      else\n        setTimeout(task, 0);\n      break;\n    case 'normal':\n    default:\n      setTimeout(task, 0);\n  }\n}",
+              "source": "MDN Web Docs - Event Loop",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/API/queueMicrotask",
+              "tags": [
+                "scheduler",
+                "microtask",
+                "macrotask",
+                "queueMicrotask",
+                "requestIdleCallback",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "function schedule(task, priority = 'normal') {\n  // Route to appropriate queue\n}"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "schedule(() => console.log('hi'), 'high')",
+                  "output": "Runs before setTimeout tasks (microtask queue)"
+                },
+                {
+                  "input": "schedule(() => console.log('idle'), 'idle')",
+                  "output": "Runs when browser is idle"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "requestIdleCallback unavailable",
+                  "output": "Falls back to setTimeout(task, 0)"
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "J-JS-SP2-H-1",
+              "slug": "js-shared-array-buffer-atomics",
+              "title": "SharedArrayBuffer with Atomics",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Use SharedArrayBuffer and Atomics to implement a thread-safe counter shared between main thread and a Web Worker. Main initializes to 0; worker increments it 1000 times atomically; main reads final value.",
+              "solution": "// main.js\nconst sab = new SharedArrayBuffer(4);\nconst counter = new Int32Array(sab);\nAtomics.store(counter, 0, 0);\n\nconst worker = new Worker('counter-worker.js');\nworker.postMessage({ sab });\nworker.onmessage = () => {\n  console.log('Final count:', Atomics.load(counter, 0)); // 1000\n};\n\n// counter-worker.js\nself.onmessage = function (e) {\n  const counter = new Int32Array(e.data.sab);\n  for (let i = 0; i < 1000; i++)\n    Atomics.add(counter, 0, 1);\n  self.postMessage('done');\n};",
+              "source": "MDN Web Docs - SharedArrayBuffer",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer",
+              "tags": [
+                "SharedArrayBuffer",
+                "Atomics",
+                "web-worker",
+                "concurrency",
+                "thread-safe",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "// main.js\nconst sab = new SharedArrayBuffer(4);\nconst counter = new Int32Array(sab);\n// init, send to worker, read final value\n\n// counter-worker.js\nself.onmessage = function(e) {\n  // Increment atomically 1000 times\n};"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Worker increments 1000 times",
+                  "output": "Atomics.load(counter, 0) === 1000"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "COOP/COEP headers missing",
+                  "output": "SharedArrayBuffer throws SecurityError"
+                },
+                {
+                  "input": "Race without Atomics",
+                  "output": "Final count may be < 1000 (data race)"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-SP2-H-2",
+              "slug": "js-service-worker-cache",
+              "title": "Service Worker with Cache Strategy",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Write a Service Worker (sw.js) that: on install, pre-caches ['/', '/app.js', '/style.css']; on activate, deletes old caches; on fetch, applies cache-first strategy for static assets, network-first for API calls.",
+              "solution": "// sw.js\nconst CACHE = 'app-v1';\nconst STATIC = ['/', '/app.js', '/style.css'];\n\nself.addEventListener('install', e => {\n  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));\n  self.skipWaiting();\n});\n\nself.addEventListener('activate', e => {\n  e.waitUntil(\n    caches.keys().then(keys =>\n      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))\n    )\n  );\n  self.clients.claim();\n});\n\nself.addEventListener('fetch', e => {\n  const url = new URL(e.request.url);\n  if (url.pathname.startsWith('/api/')) {\n    // Network-first\n    e.respondWith(\n      fetch(e.request)\n        .then(r => { const c = r.clone(); caches.open(CACHE).then(cache => cache.put(e.request, c)); return r; })\n        .catch(() => caches.match(e.request))\n    );\n  } else {\n    // Cache-first\n    e.respondWith(\n      caches.match(e.request).then(r => r || fetch(e.request))\n    );\n  }\n});",
+              "source": "Google Workbox / MDN Web Docs",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API",
+              "tags": [
+                "service-worker",
+                "cache-api",
+                "cache-first",
+                "network-first",
+                "pwa",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "// sw.js\nconst CACHE = 'app-v1';\nself.addEventListener('install', e => { /* pre-cache static assets */ });\nself.addEventListener('activate', e => { /* delete old caches */ });\nself.addEventListener('fetch', e => { /* cache-first vs network-first */ });"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Request /app.js offline",
+                  "output": "Served from cache"
+                },
+                {
+                  "input": "Request /api/data online",
+                  "output": "Fetched from network, response cached"
+                },
+                {
+                  "input": "Request /api/data offline",
+                  "output": "Served from cache fallback"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Activate after new SW version",
+                  "output": "Old cache 'app-v0' deleted"
+                },
+                {
+                  "input": "skipWaiting + clients.claim",
+                  "output": "New SW takes control immediately"
+                }
+              ]
+            },
+            {
+              "id": "J-JS-SP2-H-3",
+              "slug": "js-import-map-dynamic",
+              "title": "Dynamic Imports with Import Maps",
+              "difficulty": "Hard",
+              "skill": "HTML, CSS, JS",
+              "skill_level": "Specialist_2",
+              "language": "JavaScript",
+              "content": "Define an import map in HTML that maps 'lodash' to the CDN. Then write a JS module that dynamically imports 'lodash/chunk' using import() only when a button is clicked (code-splitting pattern).",
+              "solution": "<!-- index.html -->\n<script type=\"importmap\">\n{\n  \"imports\": {\n    \"lodash\": \"https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/lodash.js\",\n    \"lodash/\": \"https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/\"\n  }\n}\n</script>\n\n<!-- app.mjs -->\ndocument.getElementById('run').addEventListener('click', async () => {\n  const { default: chunk } = await import('lodash/chunk.js');\n  console.log(chunk([1,2,3,4,5,6], 2)); // [[1,2],[3,4],[5,6]]\n});",
+              "source": "MDN Web Docs - Import Maps",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap",
+              "tags": [
+                "import-map",
+                "dynamic-import",
+                "code-splitting",
+                "esm",
+                "lodash",
+                "js-specialist"
+              ],
+              "starter_code": {
+                "javascript": "// HTML: add importmap for lodash\n// JS: dynamically import lodash/chunk on button click"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Click button",
+                  "output": "lodash/chunk loaded lazily, chunk([1..6], 2) logged"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "Before button click",
+                  "output": "lodash not loaded in network tab"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
