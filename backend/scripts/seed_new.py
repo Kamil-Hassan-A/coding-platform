@@ -1,4 +1,3 @@
-import argparse
 import hashlib
 import json
 import os
@@ -59,7 +58,8 @@ LANGUAGE_ALIASES = {
     "postgresql": "sql",
 }
 
-DEFAULT_JSON_FILE = BACKEND_DIR.parent / "dataset" / "scrape_sample.json"
+# Seed directly from the sample scrape payload kept beside this script.
+DEFAULT_JSON_FILE = CURRENT_FILE.parent / "scrape_sample.json"
 
 
 def to_str(value: Any) -> str:
@@ -174,15 +174,12 @@ def infer_allowed_languages(levels: Any) -> list[dict[str, Any]]:
     return inferred
 
 
-def validate_payload(payload: dict[str, Any], strict_canonical: bool) -> list[str]:
+def validate_payload(payload: dict[str, Any]) -> list[str]:
     errors: list[str] = []
 
     skills = payload.get("skills")
     if not isinstance(skills, list):
         return ["Top-level 'skills' must be an array."]
-
-    if strict_canonical and len(skills) != 19:
-        errors.append(f"Expected exactly 19 skills, found {len(skills)}.")
 
     for skill_index, skill_obj in enumerate(skills, start=1):
         if not isinstance(skill_obj, dict):
@@ -195,27 +192,13 @@ def validate_payload(payload: dict[str, Any], strict_canonical: bool) -> list[st
             errors.append(f"Skill '{skill_name}' must include a 'levels' object.")
             continue
 
-        if strict_canonical:
-            missing_levels = [k for k in CANONICAL_LEVEL_KEYS if k not in levels]
-            if missing_levels:
-                errors.append(
-                    f"Skill '{skill_name}' is missing level keys: {', '.join(missing_levels)}."
-                )
-
         for level_key, level_payload in levels.items():
             if not isinstance(level_payload, dict):
                 errors.append(f"Skill '{skill_name}' level '{level_key}' must be an object.")
                 continue
 
-            if strict_canonical and level_key not in CANONICAL_LEVEL_KEYS:
-                errors.append(f"Skill '{skill_name}' has unknown level key '{level_key}'.")
-
             for difficulty in CANONICAL_DIFFICULTIES:
                 if difficulty not in level_payload:
-                    if strict_canonical:
-                        errors.append(
-                            f"Skill '{skill_name}' level '{level_key}' missing '{difficulty}' bucket."
-                        )
                     continue
                 if not isinstance(level_payload[difficulty], list):
                     errors.append(
@@ -399,25 +382,7 @@ def seed_problems_from_payload(
     return counts
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Reset DB and seed from nested scrape JSON format (skills -> levels -> Easy/Medium/Hard)."
-    )
-    parser.add_argument(
-        "--input-json",
-        type=Path,
-        default=DEFAULT_JSON_FILE,
-        help="Path to scrape JSON file that follows dataset/SCRAPE_FORMAT.md.",
-    )
-    parser.add_argument(
-        "--strict-canonical",
-        action="store_true",
-        help="Enforce strict 19-skill, 5-level, 3-bucket validation before seeding.",
-    )
-    return parser.parse_args()
-
-
-def run_seed(input_json: Path, strict_canonical: bool) -> None:
+def run_seed(input_json: Path) -> None:
     if not input_json.exists():
         raise FileNotFoundError(f"Input JSON file not found: {input_json}")
 
@@ -425,7 +390,7 @@ def run_seed(input_json: Path, strict_canonical: bool) -> None:
     if not isinstance(raw_payload, dict):
         raise ValueError("Input JSON must be a top-level object.")
 
-    validation_errors = validate_payload(raw_payload, strict_canonical=strict_canonical)
+    validation_errors = validate_payload(raw_payload)
     if validation_errors:
         joined = "\n- " + "\n- ".join(validation_errors)
         raise ValueError(f"Input JSON validation failed:{joined}")
@@ -538,5 +503,4 @@ def run_seed(input_json: Path, strict_canonical: bool) -> None:
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    run_seed(args.input_json, strict_canonical=args.strict_canonical)
+    run_seed(DEFAULT_JSON_FILE)
