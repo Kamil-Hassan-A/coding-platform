@@ -112,6 +112,19 @@ class CodingPlatformStack(Stack):
             ),
         )
 
+        jwt_secret = secretsmanager.Secret(
+            self,
+            "JwtSecret",
+            secret_name="coding-platform/jwt-secret",
+            generate_secret_string=secretsmanager.SecretStringGenerator(
+                secret_string_template='{"key":"jwt-secret"}',
+                generate_string_key="token",
+                exclude_punctuation=True,
+                include_space=False,
+                password_length=64,
+            ),
+        )
+
         # -----------------------------------------------------------
         # RDS PostgreSQL — db.t4g.micro in private subnets
         # -----------------------------------------------------------
@@ -169,6 +182,10 @@ class CodingPlatformStack(Stack):
                 "DB_PORT": db_instance.db_instance_endpoint_port,
                 "DB_NAME": "codingplatform",
                 "JUDGE0_PROXY_TOKEN": judge0_proxy_token_secret.secret_value_from_json("token").to_string(),
+                "JWT_SECRET_KEY": jwt_secret.secret_value_from_json("token").to_string(),
+                "JWT_EXPIRE_HOURS": "8",
+                "SCORE_PASS_THRESHOLD": "70",
+                "MAX_ATTEMPTS_PER_LEVEL": "5",
             },
         )
 
@@ -178,6 +195,7 @@ class CodingPlatformStack(Stack):
         # Read the database secret
         db_secret.grant_read(backend_lambda)
         judge0_proxy_token_secret.grant_read(backend_lambda)
+        jwt_secret.grant_read(backend_lambda)
 
         # Allow rds-db:connect for IAM authentication (optional)
         backend_lambda.add_to_role_policy(

@@ -144,7 +144,7 @@ def judge0_smoke_test() -> JSONResponse:
         result = judge0_service.execute(
             code='print("ok")',
             language_id=71,
-            test_inputs=[{"input": "", "expected_output": "ok"}],
+            test_inputs=[{"input": "", "output": "ok"}],
         )
     except (requests.RequestException, TimeoutError, RuntimeError, ValueError) as exc:
         return JSONResponse(
