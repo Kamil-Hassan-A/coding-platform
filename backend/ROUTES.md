@@ -181,7 +181,7 @@ Use CloudFormation output `Judge0ProxyTokenSecretArn` to fetch it.
 
 Path policy:
 
-- Allowed prefixes are controlled by `JUDGE0_PROXY_ALLOWED_PREFIXES`.
+- Allowed prefixes are controlled in backend code (`routes/system.py`).
 - Default allowed prefixes: `submissions`, `languages`, `statuses`, `config_info`, `system_info`.
 
 Examples:

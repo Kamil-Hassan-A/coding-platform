@@ -112,16 +112,6 @@ class CodingPlatformStack(Stack):
             ),
         )
 
-        judge0_proxy_allowed_prefixes = ",".join(
-            [
-                "submissions",
-                "languages",
-                "statuses",
-                "config_info",
-                "system_info",
-            ]
-        )
-
         # -----------------------------------------------------------
         # RDS PostgreSQL — db.t4g.micro in private subnets
         # -----------------------------------------------------------
@@ -179,7 +169,6 @@ class CodingPlatformStack(Stack):
                 "DB_PORT": db_instance.db_instance_endpoint_port,
                 "DB_NAME": "codingplatform",
                 "JUDGE0_PROXY_TOKEN": judge0_proxy_token_secret.secret_value_from_json("token").to_string(),
-                "JUDGE0_PROXY_ALLOWED_PREFIXES": judge0_proxy_allowed_prefixes,
             },
         )
 

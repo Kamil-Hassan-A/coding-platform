@@ -70,7 +70,7 @@ $API_URL = aws cloudformation describe-stacks `
 
 Judge0 proxy note:
 
-- `JUDGE0_PROXY_TOKEN` and `JUDGE0_PROXY_ALLOWED_PREFIXES` are now set by CDK on the Lambda function.
+- `JUDGE0_PROXY_TOKEN` is set by CDK on the Lambda function.
 - CDK also creates a Secrets Manager secret (`coding-platform/judge0/proxy-token`) and outputs `Judge0ProxyTokenSecretArn`.
 
 ## Using Judge0 proxy routes after deploy

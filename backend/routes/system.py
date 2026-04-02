@@ -32,10 +32,6 @@ def _get_proxy_token() -> str:
 
 
 def _get_allowed_proxy_prefixes() -> tuple[str, ...]:
-    configured = os.getenv("JUDGE0_PROXY_ALLOWED_PREFIXES", "")
-    if configured.strip():
-        values = [item.strip().strip("/") for item in configured.split(",") if item.strip()]
-        return tuple(values)
     return (
         "submissions",
         "languages",

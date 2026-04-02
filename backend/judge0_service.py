@@ -13,13 +13,9 @@ class Judge0Service:
     def __init__(self, base_url: str | None = None, timeout_seconds: int = 25) -> None:
         self.base_url = (base_url or os.getenv("JUDGE0_BASE_URL", "https://ce.judge0.com")).rstrip("/")
         self.timeout_seconds = timeout_seconds
-        self.api_key = os.getenv("JUDGE0_API_KEY")
 
     def _headers(self) -> dict[str, str]:
-        headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["X-Auth-Token"] = self.api_key
-        return headers
+        return {"Content-Type": "application/json"}
 
     def _post_submission(self, payload: dict[str, Any], wait: bool) -> dict[str, Any]:
         wait_flag = "true" if wait else "false"
