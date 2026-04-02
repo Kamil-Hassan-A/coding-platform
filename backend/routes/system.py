@@ -25,6 +25,32 @@ _HOP_BY_HOP_HEADERS = {
     "content-length",
 }
 _PROXY_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+_SMOKE_LANGUAGE_CASES = [
+    {
+        "name": "python",
+        "language_id": 71,
+        "code": 'print("ok")',
+        "expected_output": "ok",
+    },
+    {
+        "name": "java",
+        "language_id": 62,
+        "code": 'public class Main { public static void main(String[] args) { System.out.println("ok"); } }',
+        "expected_output": "ok",
+    },
+    {
+        "name": "js",
+        "language_id": 63,
+        "code": 'console.log("ok")',
+        "expected_output": "ok",
+    },
+    {
+        "name": "typescript",
+        "language_id": 74,
+        "code": 'console.log("ok")',
+        "expected_output": "ok",
+    },
+]
 
 
 def _get_proxy_token() -> str:
@@ -138,35 +164,53 @@ def judge0_health() -> JSONResponse:
 
 @router.get("/health/judge0/smoke")
 def judge0_smoke_test() -> JSONResponse:
-    """End-to-end Judge0 execution check with a tiny Python submission."""
+    """End-to-end Judge0 execution check using multiple tiny language submissions."""
     started = time.perf_counter()
-    try:
-        result = judge0_service.execute(
-            code='print("ok")',
-            language_id=71,
-            test_inputs=[{"input": "", "expected_output": "ok"}],
-        )
-    except (requests.RequestException, TimeoutError, RuntimeError, ValueError) as exc:
-        return JSONResponse(
-            status_code=503,
-            content={
-                "status": "down",
-                "judge0_execution": False,
-                "judge0_base_url": judge0_service.base_url,
-                "error": str(exc),
-            },
-        )
+    language_results: list[dict[str, object]] = []
+
+    for smoke_case in _SMOKE_LANGUAGE_CASES:
+        try:
+            result = judge0_service.execute(
+                code=str(smoke_case["code"]),
+                language_id=int(smoke_case["language_id"]),
+                test_inputs=[{"input": "", "output": str(smoke_case["expected_output"])}],
+            )
+            language_results.append(
+                {
+                    "language": smoke_case["name"],
+                    "language_id": smoke_case["language_id"],
+                    "passed": bool(result.get("passed", False)),
+                    "passed_tests": int(result.get("passed_tests", 0)),
+                    "total_tests": int(result.get("total_tests", 0)),
+                }
+            )
+        except (requests.RequestException, TimeoutError, RuntimeError, ValueError) as exc:
+            language_results.append(
+                {
+                    "language": smoke_case["name"],
+                    "language_id": smoke_case["language_id"],
+                    "passed": False,
+                    "passed_tests": 0,
+                    "total_tests": 1,
+                    "error": str(exc),
+                }
+            )
 
     latency_ms = int((time.perf_counter() - started) * 1000)
+    total_passed = sum(int(item["passed_tests"]) for item in language_results)
+    total_tests = sum(int(item["total_tests"]) for item in language_results)
+    overall_passed = all(bool(item["passed"]) for item in language_results) and bool(language_results)
+
     return JSONResponse(
-        status_code=200,
+        status_code=200 if overall_passed else 503,
         content={
-            "status": "ok",
-            "judge0_execution": bool(result.get("passed", False)),
+            "status": "ok" if overall_passed else "down",
+            "judge0_execution": overall_passed,
             "judge0_base_url": judge0_service.base_url,
             "latency_ms": latency_ms,
-            "passed_tests": int(result.get("passed_tests", 0)),
-            "total_tests": int(result.get("total_tests", 0)),
+            "passed_tests": total_passed,
+            "total_tests": total_tests,
+            "language_results": language_results,
         },
     )
 
