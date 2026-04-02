@@ -67,7 +67,7 @@ def _get_allowed_proxy_prefixes() -> tuple[str, ...]:
     )
 
 
-def _require_proxy_token(x_proxy_token: str | None, x_api_key: str | None) -> None:
+def _require_proxy_token(x_proxy_token: str | None) -> None:
     expected = _get_proxy_token()
     if not expected:
         raise HTTPException(
@@ -75,11 +75,18 @@ def _require_proxy_token(x_proxy_token: str | None, x_api_key: str | None) -> No
             detail="Judge0 proxy token is not configured",
         )
 
-    provided = (x_proxy_token or x_api_key or "").strip()
+    provided = (x_proxy_token or "").strip()
     if not provided or not hmac.compare_digest(provided, expected):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid proxy token",
+            detail={
+                "error": "Invalid proxy token",
+                "auth_header": "X-Proxy-Token",
+                "provided_present": bool(provided),
+                "provided_length": len(provided),
+                "expected_configured": bool(expected),
+                "expected_length": len(expected),
+            },
         )
 
 
@@ -109,7 +116,7 @@ def _build_proxy_headers(incoming_headers: dict[str, str]) -> dict[str, str]:
         lower = key.lower()
         if lower in _HOP_BY_HOP_HEADERS:
             continue
-        if lower in {"authorization", "x-auth-token", "x-proxy-token", "x-api-key"}:
+        if lower in {"authorization", "x-proxy-token"}:
             continue
         if lower in {"content-type", "accept"}:
             outbound[key] = value
@@ -306,10 +313,9 @@ async def judge0_proxy(
     proxy_path: str,
     request: Request,
     x_proxy_token: str | None = Header(default=None),
-    x_api_key: str | None = Header(default=None),
 ) -> Response:
     """Shared-secret protected proxy from this API to internal Judge0."""
-    _require_proxy_token(x_proxy_token=x_proxy_token, x_api_key=x_api_key)
+    _require_proxy_token(x_proxy_token=x_proxy_token)
     cleaned_path = _validate_proxy_path(proxy_path)
 
     raw_body = await request.body()

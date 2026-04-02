@@ -14,7 +14,7 @@ from schemas import (
     AdminCredentialsResponse,
     AdminStatsResponse,
 )
-from scripts.seed import run_seed
+from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -28,7 +28,7 @@ def seed_database(
         raise HTTPException(status_code=401, detail="Invalid API key")
 
     try:
-        run_seed()
+        run_seed(DEFAULT_JSON_FILE)
         return {"message": "Database seeded successfully"}
     except HTTPException:
         raise
