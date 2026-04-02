@@ -1,6 +1,7 @@
 import os
 import random
 from datetime import datetime, timedelta, timezone
+from typing import Any
 from uuid import UUID
 
 import requests
@@ -17,6 +18,7 @@ from models import (
     Level,
     Problem,
     SessionStatus,
+    Skill,
     Submission,
     SubmissionStatus,
     User,
@@ -28,6 +30,8 @@ from schemas import (
     SessionDraftRequest,
     SessionDraftResponse,
     SessionProblemPayload,
+    SessionRunRequest,
+    SessionRunResponse,
     SessionStartRequest,
     SessionStartResponse,
     SessionSubmitRequest,
@@ -86,6 +90,32 @@ def ensure_session_owner(session_obj: AssessmentSession, current_user: User) -> 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Session does not belong to current user")
 
 
+def resolve_language_from_skill(language: str, allowed_languages: list[Any]) -> tuple[str, int]:
+    requested = (language or "").strip().lower()
+    if not requested:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Language is required")
+
+    for item in allowed_languages or []:
+        if not isinstance(item, dict):
+            continue
+        lang_id = item.get("id")
+        monaco = str(item.get("monaco") or "").strip().lower()
+        name = str(item.get("name") or "").strip().lower()
+        if lang_id is None:
+            continue
+
+        if requested == monaco or requested == name or requested == str(lang_id).strip().lower():
+            try:
+                return (monaco or requested), int(lang_id)
+            except (TypeError, ValueError):
+                continue
+
+    raise HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail="Selected language is not allowed for this skill",
+    )
+
+
 def score_submission(
     db: Session,
     session_obj: AssessmentSession,
@@ -99,18 +129,23 @@ def score_submission(
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+    skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
+    if skill is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+
+    resolved_monaco, resolved_language_id = resolve_language_from_skill(language, skill.allowed_languages or [])
 
     try:
         # Bypass judge0 for non-standard execution environments (HTML/CSS/JS requires AI)
-        if language in ("html_css_js", "html", "css", "javascript_web"):
+        if resolved_monaco in ("html_css_js", "html", "css", "javascript_web"):
             execution_result = {
                 "score": 100,
                 "passed_tests": len(problem.hidden_test_cases or []),
                 "total_tests": len(problem.hidden_test_cases or []),
                 "cases": [
                     {
-                        "stdin": case.get("input", ""),
-                        "expected_output": case.get("output", ""),
+                        "stdin": str(case.get("input", "")),
+                        "expected_output": str(case.get("output", "")),
                         "stdout": "Pending AI feedback",
                         "passed": True,
                     }
@@ -120,7 +155,7 @@ def score_submission(
         else:
             execution_result = judge0_service.execute(
                 code=code,
-                language=language,
+                language_id=resolved_language_id,
                 test_inputs=problem.hidden_test_cases or [],
             )
     except ValueError as exc:
@@ -146,7 +181,7 @@ def score_submission(
         skill_id=session_obj.skill_id,
         level=session_obj.level,
         code=code,
-        language=language,
+        language=resolved_monaco,
         status=submission_status,
         score=score,
         passed_tests=passed_tests,
@@ -216,6 +251,10 @@ def start_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionStartResponse:
+    skill = db.scalar(select(Skill).where(Skill.id == payload.skill_id))
+    if skill is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+
     progress = db.scalar(
         select(UserSkillProgress).where(
             UserSkillProgress.user_id == current_user.id,
@@ -291,6 +330,7 @@ def start_session(
             sample_test_cases=selected_problem.sample_test_cases,
             time_limit_minutes=selected_problem.time_limit_minutes,
         ),
+        allowed_languages=skill.allowed_languages or [],
     )
 
 
@@ -316,6 +356,9 @@ def get_session(
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+    skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
+    if skill is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
 
     return SessionDetailResponse(
         session_id=session_obj.id,
@@ -331,6 +374,7 @@ def get_session(
             sample_test_cases=problem.sample_test_cases,
             time_limit_minutes=problem.time_limit_minutes,
         ),
+        allowed_languages=skill.allowed_languages or [],
         last_draft_code=session_obj.last_draft_code,
         last_draft_lang=session_obj.last_draft_lang,
     )
@@ -416,4 +460,82 @@ def submit_session(
         total_tests=submission.total_tests,
         time_taken_seconds=submission.time_taken_seconds,
         cases=cases,
+    )
+
+
+@router.post("/sessions/{session_id}/run", response_model=SessionRunResponse)
+def run_session_code(
+    session_id: UUID,
+    payload: SessionRunRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_candidate),
+) -> SessionRunResponse:
+    session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
+    if session_obj is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    ensure_session_owner(session_obj, current_user)
+
+    if session_obj.status != SessionStatus.ACTIVE:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not active")
+
+    current_time = datetime.now(timezone.utc)
+    expires_at = (
+        session_obj.expires_at.astimezone(timezone.utc)
+        if session_obj.expires_at.tzinfo
+        else session_obj.expires_at.replace(tzinfo=timezone.utc)
+    )
+    if expires_at <= current_time:
+        session_obj.status = SessionStatus.TIMED_OUT
+        db.commit()
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="Session expired")
+
+    problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
+    if problem is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
+    skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
+    if skill is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+
+    resolved_monaco, resolved_language_id = resolve_language_from_skill(
+        payload.language,
+        skill.allowed_languages or [],
+    )
+
+    try:
+        # Run endpoint validates candidate code against sample cases only.
+        if resolved_monaco in ("html_css_js", "html", "css", "javascript_web"):
+            cases = [
+                {
+                    "stdin": str(case.get("input", "")),
+                    "expected_output": str(case.get("output", "")),
+                    "stdout": "Pending AI feedback",
+                    "stderr": None,
+                    "compile_output": None,
+                    "message": None,
+                    "status": {"id": 3, "description": "Accepted"},
+                    "time": "0",
+                    "memory": None,
+                    "passed": True,
+                }
+                for case in (problem.sample_test_cases or [])
+                if isinstance(case, dict)
+            ]
+            execution_result = {
+                "cases": cases,
+                "time_taken": 0,
+            }
+        else:
+            execution_result = judge0_service.execute(
+                code=payload.code,
+                language_id=resolved_language_id,
+                test_inputs=problem.sample_test_cases or [],
+            )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    except (requests.RequestException, TimeoutError, RuntimeError) as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Judge0 execution failed: {str(exc)}") from exc
+
+    return SessionRunResponse(
+        cases=execution_result.get("cases", []),
+        time_taken_ms=int(execution_result.get("time_taken", 0)),
     )

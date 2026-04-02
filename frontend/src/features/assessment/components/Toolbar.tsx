@@ -101,17 +101,15 @@ export default function Toolbar({
           <select
             value={language}
             onChange={(e) => onLanguageChange(e.target.value)}
+            disabled={!allowedLanguages || allowedLanguages.length === 0}
             className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
           >
-            {(allowedLanguages && allowedLanguages.length > 0
-              ? allowedLanguages
-              : [
-                  { id: 71, name: "Python 3", monaco: "python" },
-                  { id: 63, name: "JavaScript", monaco: "javascript" },
-                  { id: 62, name: "Java", monaco: "java" },
-                  { id: 54, name: "C++", monaco: "cpp" },
-                ]
-            ).map((lang) => (
+            {(!allowedLanguages || allowedLanguages.length === 0) && (
+              <option value="" disabled>
+                No languages configured
+              </option>
+            )}
+            {(allowedLanguages ?? []).map((lang) => (
               <option key={lang.id} value={lang.monaco}>
                 {lang.name}
               </option>

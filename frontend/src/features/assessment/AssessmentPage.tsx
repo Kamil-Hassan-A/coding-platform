@@ -17,29 +17,12 @@ import type {
 const SESSION_ID_STORAGE_KEY = "assessment_session_id";
 const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
 const SESSION_SKILL_NAME_STORAGE_KEY = "assessment_skill_name";
-const DEFAULT_LANGUAGES = ["python", "javascript", "java", "cpp"] as const;
-const DEFAULT_LANGUAGE_META: Record<
-  (typeof DEFAULT_LANGUAGES)[number],
-  { id: number; label: string; monaco: string }
-> = {
-  python: { id: 71, label: "Python", monaco: "python" },
-  javascript: { id: 63, label: "JavaScript", monaco: "javascript" },
-  java: { id: 62, label: "Java", monaco: "java" },
-  cpp: { id: 54, label: "C++", monaco: "cpp" },
-};
-const DEFAULT_LANGUAGE_OPTIONS: LanguageOption[] = [
-  ...DEFAULT_LANGUAGES.map((lang) => ({
-    id: DEFAULT_LANGUAGE_META[lang].id,
-    name: DEFAULT_LANGUAGE_META[lang].label,
-    monaco: DEFAULT_LANGUAGE_META[lang].monaco,
-  })),
-];
 
 type InitialAssessmentState = {
   session_id: string;
   problem: SessionProblemPayload;
   skill_name?: string;
-  allowed_languages: LanguageOption[];
+  allowed_languages?: LanguageOption[];
 };
 
 export default function AssessmentPage() {
@@ -108,8 +91,7 @@ export default function AssessmentPage() {
     }
   }, [recoveredSession]);
 
-  const resolvedAllowedLanguages =
-    allowedLanguages.length > 0 ? allowedLanguages : DEFAULT_LANGUAGE_OPTIONS;
+  const resolvedAllowedLanguages = allowedLanguages;
 
   const defaultCode = useMemo(() => {
     if (skillName === "HTML, CSS, JS") {
@@ -130,7 +112,7 @@ export default function AssessmentPage() {
 
   // 3. Editor & Language State
   const { code, setCode } = useEditor(defaultCode);
-  const [language, setLanguage] = useState(initialState?.allowed_languages?.[0]?.monaco ?? "python");
+  const [language, setLanguage] = useState(initialState?.allowed_languages?.[0]?.monaco ?? "");
 
   useEffect(() => {
     if (recoveredSession?.last_draft_lang) {
@@ -139,12 +121,12 @@ export default function AssessmentPage() {
   }, [recoveredSession]);
 
   useEffect(() => {
-    if (!resolvedAllowedLanguages.some((lang) => lang.monaco === language)) {
+    if (resolvedAllowedLanguages.length > 0 && !resolvedAllowedLanguages.some((lang) => lang.monaco === language)) {
       setLanguage(resolvedAllowedLanguages[0].monaco);
     }
   }, [resolvedAllowedLanguages, language]);
 
-  const activeLanguage = resolvedAllowedLanguages.find((l) => l.monaco === language) || resolvedAllowedLanguages[0];
+  const activeLanguage = resolvedAllowedLanguages.find((l) => l.monaco === language);
   const [submissionResult, setSubmissionResult] = useState<SessionSubmitResponse | null>(null);
   const [runResult, setRunResult] = useState<SessionRunResponse | null>(null);
 
@@ -307,7 +289,7 @@ export default function AssessmentPage() {
             {skillName === "HTML, CSS, JS" ? (
               <CodePlayground code={code} onChange={setCode} />
             ) : (
-              <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "python"} />
+              <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "plaintext"} />
             )}
           </div>
           

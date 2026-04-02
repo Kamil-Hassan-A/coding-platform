@@ -9,19 +9,6 @@ class Judge0Service:
     """Simple Judge0 CE client for code execution against multiple test inputs."""
 
     TERMINAL_STATUSES = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
-    DEFAULT_LANGUAGE_MAP = {
-        "python": 71,
-        "python3": 71,
-        "javascript": 63,
-        "js": 63,
-        "typescript": 74,
-        "java": 62,
-        "c": 50,
-        "cpp": 54,
-        "c++": 54,
-        "go": 60,
-        "rust": 73,
-    }
 
     def __init__(self, base_url: str | None = None, timeout_seconds: int = 25) -> None:
         self.base_url = (base_url or os.getenv("JUDGE0_BASE_URL", "https://ce.judge0.com")).rstrip("/")
@@ -33,14 +20,6 @@ class Judge0Service:
         if self.api_key:
             headers["X-Auth-Token"] = self.api_key
         return headers
-
-    def _resolve_language_id(self, language: str) -> int:
-        cleaned = language.strip().lower()
-        if cleaned.isdigit():
-            return int(cleaned)
-        if cleaned in self.DEFAULT_LANGUAGE_MAP:
-            return self.DEFAULT_LANGUAGE_MAP[cleaned]
-        raise ValueError(f"Unsupported language: {language}")
 
     def _post_submission(self, payload: dict[str, Any], wait: bool) -> dict[str, Any]:
         wait_flag = "true" if wait else "false"
@@ -97,17 +76,17 @@ class Judge0Service:
 
         return result
 
-    def execute(self, code: str, language: str, test_inputs: list[Any]) -> dict[str, Any]:
-        language_id = self._resolve_language_id(language)
+    def execute(self, code: str, language_id: int, test_inputs: list[Any]) -> dict[str, Any]:
+        if not isinstance(language_id, int) or language_id <= 0:
+            raise ValueError(f"Invalid Judge0 language id: {language_id}")
 
-        normalized_cases = test_inputs if test_inputs else [{"input": "", "expected_output": None}]
+        normalized_cases = test_inputs if test_inputs else [{"input": "", "output": ""}]
         case_results: list[dict[str, Any]] = []
 
         for case in normalized_cases:
             if isinstance(case, dict):
-                stdin = str(case.get("input", case.get("stdin", "")))
-                expected_output_value = case.get("expected_output", case.get("output", case.get("expected")))
-                expected_output = None if expected_output_value is None else str(expected_output_value)
+                stdin = str(case.get("input", ""))
+                expected_output = str(case.get("output", ""))
             else:
                 stdin = str(case)
                 expected_output = None

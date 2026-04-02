@@ -17,8 +17,8 @@ export interface AssessmentState {
 }
 
 export interface SampleTestCase {
-  stdin: string;
-  expected_output: string;
+  input: string;
+  output: string;
 }
 
 export interface TestCaseResult {

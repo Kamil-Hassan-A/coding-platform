@@ -5,6 +5,8 @@ interface Props {
 }
 
 export default function ProblemPanel({ problem }: Props) {
+  const sampleCases = problem.sample_test_cases ?? [];
+
   return (
     <div className='flex h-full flex-1 flex-col overflow-y-auto bg-white'>
       <div className='p-8'>
@@ -25,26 +27,26 @@ export default function ProblemPanel({ problem }: Props) {
           </h3>
 
           <div className='flex flex-col gap-4'>
-            {(problem.sample_test_cases ?? []).map((tc, i) => (
+            {sampleCases.map((tc, i) => (
               <div key={i} className='rounded-xl border border-[#eef0f2] bg-[#f8f9fa] p-5'>
                 <div className='flex gap-6'>
                   <div className='flex-1'>
                     <div className='mb-2 text-[11px] font-bold text-[#aaa]'>INPUT</div>
                     <pre className='m-0 rounded-md border border-[#eee] bg-white p-2.5 font-mono text-[13px] text-[#333]'>
-                      {tc.stdin || " (empty) "}
+                      {tc.input || " (empty) "}
                     </pre>
                   </div>
                   <div className='flex-1'>
                     <div className='mb-2 text-[11px] font-bold text-[#aaa]'>EXPECTED OUTPUT</div>
                     <pre className='m-0 rounded-md border border-[#eee] bg-white p-2.5 font-mono text-[13px] text-[#333]'>
-                      {tc.expected_output || "(empty)"}
+                      {tc.output || "(empty)"}
                     </pre>
                   </div>
                 </div>
               </div>
             ))}
 
-            {(problem.sample_test_cases ?? []).length === 0 && (
+            {sampleCases.length === 0 && (
               <div className='rounded-lg border border-dashed border-[#ddd] bg-[#fafafa] p-4 text-sm text-[#777]'>
                 No sample test cases available.
               </div>
