@@ -50,6 +50,8 @@ Use these exact keys:
 ### Skill object
 
 - `skill` (string, one of the 19 canonical skills)
+- `allowed_languages` (array of language descriptors accepted for this skill)
+  - Each item shape: `{ "id": number, "name": string, "monaco": string }`
 - `levels` (object with exactly 5 level keys)
 
 ### Level object
@@ -86,6 +88,13 @@ Use these exact keys:
   "skills": [
     {
       "skill": "Java",
+      "allowed_languages": [
+        {
+          "id": 62,
+          "name": "Java (OpenJDK 13.0.1)",
+          "monaco": "java"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [

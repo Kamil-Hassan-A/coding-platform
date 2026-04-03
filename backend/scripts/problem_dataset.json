@@ -49,1103 +49,28 @@
           "Easy": [],
           "Medium": [],
           "Hard": []
-        },
-        "Specialist_1": {
-          "Easy": [
-            {
-              "id": "PY-SP1-E-1",
-              "slug": "audit-log-redactor",
-              "title": "Audit Log Redactor",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "audit",
-                "security",
-                "redaction",
-                "specialist_1",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(record, sensitive_fields):\n    # return redacted copy preserving keys\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"record\":{\"user\":\"alice\",\"email\":\"a@x.com\",\"token\":\"abc123\"},\"sensitive_fields\":[\"email\",\"token\"]}",
-                  "output": "{\"user\":\"alice\",\"email\":\"***\",\"token\":\"***\"}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"record\":{\"a\":1,\"password\":\"secret\"},\"sensitive_fields\":[\"password\"]}",
-                  "output": "{\"a\":1,\"password\":\"***\"}"
-                }
-              ],
-              "content": "Mask sensitive fields in an audit log record while preserving the original structure and non-sensitive values.",
-              "solution": "def solution(record, sensitive_fields):\n    out = {}\n    redacted = set(sensitive_fields)\n    for k, v in record.items():\n        out[k] = '***' if k in redacted else v\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            },
-            {
-              "id": "PY-SP1-E-2",
-              "slug": "pii-mask-validator",
-              "title": "PII Mask Validator",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "pii",
-                "validation",
-                "privacy",
-                "specialist_1",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(masked_record, pii_fields):\n    # return true if all pii fields are masked as ***\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"masked_record\":{\"name\":\"Alice\",\"ssn\":\"***\",\"email\":\"***\"},\"pii_fields\":[\"ssn\",\"email\"]}",
-                  "output": "true"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"masked_record\":{\"ssn\":\"123-45-6789\"},\"pii_fields\":[\"ssn\"]}",
-                  "output": "false"
-                }
-              ],
-              "content": "Validate that required PII fields are fully masked using the exact token ***.",
-              "solution": "def solution(masked_record, pii_fields):\n    for field in pii_fields:\n        if masked_record.get(field) != '***':\n            return 'false'\n    return 'true'",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict.get"
-            },
-            {
-              "id": "PY-SP1-E-3",
-              "slug": "service-health-rollup",
-              "title": "Service Health Rollup",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "observability",
-                "health-checks",
-                "specialist_1",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(component_statuses):\n    # statuses: list[str] of pass|warn|fail\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "pass warn pass",
-                  "output": "degraded"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "pass pass pass",
-                  "output": "healthy"
-                }
-              ],
-              "content": "Roll component health checks into service status: unhealthy if any fail, degraded if no fail but any warn, otherwise healthy.",
-              "solution": "def solution(component_statuses):\n    has_warn = False\n    for s in component_statuses:\n        if s == 'fail':\n            return 'unhealthy'\n        if s == 'warn':\n            has_warn = True\n    return 'degraded' if has_warn else 'healthy'",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/reference/compound_stmts.html#if"
-            },
-            {
-              "id": "PY-SP1-E-4",
-              "slug": "deploy-checklist-gate",
-              "title": "Deploy Checklist Gate",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "release",
-                "checklist",
-                "devops",
-                "specialist_1",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(checks):\n    # checks: dict[str,bool]\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"tests_passed\":true,\"approvals_complete\":true,\"rollback_plan\":true}",
-                  "output": "ready"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"tests_passed\":true,\"approvals_complete\":false,\"rollback_plan\":true}",
-                  "output": "blocked"
-                }
-              ],
-              "content": "Evaluate deployment readiness from checklist booleans. Return ready only if all checks are true.",
-              "solution": "def solution(checks):\n    for v in checks.values():\n        if not v:\n            return 'blocked'\n    return 'ready'",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#all"
-            },
-            {
-              "id": "PY-SP1-E-5",
-              "slug": "runbook-step-timer",
-              "title": "Runbook Step Timer",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "runbook",
-                "incident-response",
-                "timing",
-                "specialist_1",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(events):\n    # events: list[dict] with step, start_ts, end_ts\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"step\":\"triage\",\"start_ts\":10,\"end_ts\":25},{\"step\":\"mitigation\",\"start_ts\":25,\"end_ts\":40}]",
-                  "output": "{\"triage\":15,\"mitigation\":15}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"step\":\"triage\",\"start_ts\":10,\"end_ts\":10}]",
-                  "output": "{\"triage\":0}"
-                }
-              ],
-              "content": "Compute total duration spent per runbook step from timestamped step intervals.",
-              "solution": "def solution(events):\n    totals = {}\n    for e in events:\n        step = e['step']\n        dur = e['end_ts'] - e['start_ts']\n        totals[step] = totals.get(step, 0) + max(0, dur)\n    return totals",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            }
-          ],
-          "Medium": [
-            {
-              "id": "PY-SP1-M-1",
-              "slug": "supply-chain-risk-score",
-              "title": "Supply Chain Risk Score",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "supply-chain",
-                "risk",
-                "scoring",
-                "specialist_1",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(suppliers):\n    # each supplier has delay_rate, defect_rate, geo_risk in [0,1]\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"id\":\"s1\",\"delay_rate\":0.6,\"defect_rate\":0.2,\"geo_risk\":0.7},{\"id\":\"s2\",\"delay_rate\":0.1,\"defect_rate\":0.1,\"geo_risk\":0.2}]",
-                  "output": "{\"s1\":0.51,\"s2\":0.12}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"id\":\"x\",\"delay_rate\":0,\"defect_rate\":0,\"geo_risk\":0}]",
-                  "output": "{\"x\":0.0}"
-                }
-              ],
-              "content": "Compute composite supplier risk score using 0.5*delay_rate + 0.3*defect_rate + 0.2*geo_risk, rounded to 2 decimals.",
-              "solution": "def solution(suppliers):\n    out = {}\n    for s in suppliers:\n        score = 0.5 * s.get('delay_rate', 0) + 0.3 * s.get('defect_rate', 0) + 0.2 * s.get('geo_risk', 0)\n        out[s['id']] = round(score, 2)\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#round"
-            },
-            {
-              "id": "PY-SP1-M-2",
-              "slug": "cloud-cost-allocation",
-              "title": "Cloud Cost Allocation",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "finops",
-                "cloud-cost",
-                "allocation",
-                "specialist_1",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(total_shared_cost, usage_weights):\n    # usage_weights: dict[team] -> float\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"total_shared_cost\":1000,\"usage_weights\":{\"teamA\":3,\"teamB\":1}}",
-                  "output": "{\"teamA\":750.0,\"teamB\":250.0}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"total_shared_cost\":500,\"usage_weights\":{\"a\":0,\"b\":0}}",
-                  "output": "{\"a\":0.0,\"b\":0.0}"
-                }
-              ],
-              "content": "Allocate shared cloud cost to teams proportionally by usage weight. Return per-team cost rounded to 2 decimals.",
-              "solution": "def solution(total_shared_cost, usage_weights):\n    total_weight = sum(usage_weights.values())\n    out = {}\n    if total_weight <= 0:\n        for team in usage_weights:\n            out[team] = 0.0\n        return out\n    for team, w in usage_weights.items():\n        out[team] = round(total_shared_cost * (w / total_weight), 2)\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#sum"
-            },
-            {
-              "id": "PY-SP1-M-3",
-              "slug": "partner-feed-quality-index",
-              "title": "Partner Feed Quality Index",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "data-quality",
-                "partner-integrations",
-                "scoring",
-                "specialist_1",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(feeds):\n    # feed has freshness_score, completeness_score, error_rate in [0,1]\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"partner\":\"p1\",\"freshness_score\":0.9,\"completeness_score\":0.8,\"error_rate\":0.1}]",
-                  "output": "{\"p1\":0.85}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"partner\":\"p2\",\"freshness_score\":0.4,\"completeness_score\":0.5,\"error_rate\":0.4}]",
-                  "output": "{\"p2\":0.43}"
-                }
-              ],
-              "content": "Compute feed quality index = 0.4*freshness + 0.4*completeness + 0.2*(1-error_rate), rounded to 2 decimals.",
-              "solution": "def solution(feeds):\n    out = {}\n    for f in feeds:\n        score = 0.4 * f.get('freshness_score', 0) + 0.4 * f.get('completeness_score', 0) + 0.2 * (1 - f.get('error_rate', 0))\n        out[f['partner']] = round(score, 2)\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/reference/expressions.html"
-            },
-            {
-              "id": "PY-SP1-M-4",
-              "slug": "ab-guardrail-monitor",
-              "title": "A/B Guardrail Monitor",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "experimentation",
-                "ab-testing",
-                "guardrails",
-                "specialist_1",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(control_metrics, variant_metrics, thresholds):\n    # thresholds: max allowed negative deltas per metric\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"control\":{\"latency\":120,\"crash_rate\":0.01},\"variant\":{\"latency\":130,\"crash_rate\":0.012},\"thresholds\":{\"latency\":5,\"crash_rate\":0.001}}",
-                  "output": "{\"status\":\"regression\",\"breached\":[\"latency\",\"crash_rate\"]}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"control\":{\"latency\":100},\"variant\":{\"latency\":102},\"thresholds\":{\"latency\":5}}",
-                  "output": "{\"status\":\"ok\",\"breached\":[]}"
-                }
-              ],
-              "content": "Detect guardrail regressions where variant metric exceeds control by more than allowed threshold.",
-              "solution": "def solution(control_metrics, variant_metrics, thresholds):\n    breached = []\n    for metric, th in thresholds.items():\n        c = control_metrics.get(metric, 0)\n        v = variant_metrics.get(metric, 0)\n        if (v - c) > th:\n            breached.append(metric)\n    breached.sort()\n    return {'status': 'regression' if breached else 'ok', 'breached': breached}",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            },
-            {
-              "id": "PY-SP1-M-5",
-              "slug": "postmortem-theme-extractor",
-              "title": "Postmortem Theme Extractor",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "postmortem",
-                "incident-management",
-                "text-processing",
-                "specialist_1",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(notes, theme_keywords):\n    # map each note to first matching theme; else 'other'\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"notes\":[\"db timeout on primary\",\"bad deploy changed config\"],\"theme_keywords\":{\"database\":[\"db\",\"query\"],\"deployment\":[\"deploy\",\"rollback\"]}}",
-                  "output": "{\"database\":1,\"deployment\":1,\"other\":0}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"notes\":[\"unknown root cause\"],\"theme_keywords\":{\"network\":[\"dns\"]}}",
-                  "output": "{\"network\":0,\"other\":1}"
-                }
-              ],
-              "content": "Bucket incident postmortem notes into recurring failure themes based on keyword matching.",
-              "solution": "def solution(notes, theme_keywords):\n    counts = {k: 0 for k in theme_keywords}\n    counts['other'] = 0\n    for note in notes:\n        text = note.lower()\n        matched = False\n        for theme, words in theme_keywords.items():\n            if any(w.lower() in text for w in words):\n                counts[theme] += 1\n                matched = True\n                break\n        if not matched:\n            counts['other'] += 1\n    return counts",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#str.lower"
-            }
-          ],
-          "Hard": [
-            {
-              "id": "PY-SP1-H-1",
-              "slug": "zero-trust-access-anomalies",
-              "title": "Zero-Trust Access Anomalies",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "zero-trust",
-                "security",
-                "anomaly-detection",
-                "specialist_1",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(access_events):\n    # event has user, device, location, trusted_devices, usual_locations\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"user\":\"u1\",\"device\":\"d9\",\"location\":\"BR\",\"trusted_devices\":[\"d1\"],\"usual_locations\":[\"US\"]}]",
-                  "output": "[\"u1\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"user\":\"u2\",\"device\":\"d1\",\"location\":\"US\",\"trusted_devices\":[\"d1\"],\"usual_locations\":[\"US\"]}]",
-                  "output": "[]"
-                }
-              ],
-              "content": "Detect abnormal zero-trust access where both device and location are outside known trusted patterns.",
-              "solution": "def solution(access_events):\n    out = []\n    for e in access_events:\n        device_unknown = e.get('device') not in set(e.get('trusted_devices', []))\n        location_unknown = e.get('location') not in set(e.get('usual_locations', []))\n        if device_unknown and location_unknown:\n            out.append(e.get('user'))\n    return sorted([u for u in out if u is not None])",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP1-H-2",
-              "slug": "secret-rotation-breach-detector",
-              "title": "Secret Rotation Breach Detector",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "secrets-management",
-                "compliance",
-                "security-operations",
-                "specialist_1",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(credentials, max_age_days, today_day):\n    # credential has id,last_rotated_day\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"credentials\":[{\"id\":\"k1\",\"last_rotated_day\":1},{\"id\":\"k2\",\"last_rotated_day\":20}],\"max_age_days\":30,\"today_day\":60}",
-                  "output": "[\"k1\",\"k2\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"credentials\":[{\"id\":\"x\",\"last_rotated_day\":50}],\"max_age_days\":30,\"today_day\":60}",
-                  "output": "[]"
-                }
-              ],
-              "content": "Flag credentials whose age exceeds the allowed rotation policy window.",
-              "solution": "def solution(credentials, max_age_days, today_day):\n    out = []\n    for c in credentials:\n        age = today_day - c.get('last_rotated_day', today_day)\n        if age > max_age_days:\n            out.append(c.get('id'))\n    return sorted([x for x in out if x is not None])",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#sorted"
-            },
-            {
-              "id": "PY-SP1-H-3",
-              "slug": "critical-path-latency-regression",
-              "title": "Critical Path Latency Regression",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "latency",
-                "performance",
-                "critical-path",
-                "specialist_1",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(baseline, current, critical_paths, threshold_ms):\n    # baseline/current: dict[path] -> p95 latency\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"baseline\":{\"/checkout\":200,\"/search\":80},\"current\":{\"/checkout\":240,\"/search\":200},\"critical_paths\":[\"/checkout\"],\"threshold_ms\":20}",
-                  "output": "[\"/checkout\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"baseline\":{\"/pay\":100},\"current\":{\"/pay\":115},\"critical_paths\":[\"/pay\"],\"threshold_ms\":20}",
-                  "output": "[]"
-                }
-              ],
-              "content": "Detect latency regressions only on business-critical request paths.",
-              "solution": "def solution(baseline, current, critical_paths, threshold_ms):\n    bad = []\n    for p in critical_paths:\n        b = baseline.get(p)\n        c = current.get(p)\n        if b is None or c is None:\n            continue\n        if (c - b) > threshold_ms:\n            bad.append(p)\n    return sorted(bad)",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            },
-            {
-              "id": "PY-SP1-H-4",
-              "slug": "multi-cluster-drift-detector",
-              "title": "Multi-Cluster Drift Detector",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "kubernetes",
-                "configuration",
-                "drift-detection",
-                "specialist_1",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(cluster_configs):\n    # cluster_configs: dict[cluster] -> dict[key] -> value\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"c1\":{\"replicas\":3,\"image\":\"v1\"},\"c2\":{\"replicas\":3,\"image\":\"v2\"}}",
-                  "output": "{\"image\":[\"c1\",\"c2\"]}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"a\":{\"x\":1},\"b\":{\"x\":1}}",
-                  "output": "{}"
-                }
-              ],
-              "content": "Identify config keys whose values differ across clusters, and list clusters involved per drifting key.",
-              "solution": "def solution(cluster_configs):\n    all_keys = set()\n    for cfg in cluster_configs.values():\n        all_keys.update(cfg.keys())\n\n    drift = {}\n    for key in sorted(all_keys):\n        values = {}\n        for cluster, cfg in cluster_configs.items():\n            values[cluster] = cfg.get(key)\n        uniq = {repr(v) for v in values.values()}\n        if len(uniq) > 1:\n            drift[key] = sorted(values.keys())\n    return drift",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP1-H-5",
-              "slug": "compliance-window-violations",
-              "title": "Compliance Window Violations",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_1",
-              "language": "Python",
-              "tags": [
-                "python",
-                "compliance",
-                "policy-enforcement",
-                "time-windows",
-                "specialist_1",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(operations, allowed_windows):\n    # operation has id, day, minute_of_day; windows: dict[day] -> list[(start,end)] inclusive\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"operations\":[{\"id\":\"op1\",\"day\":\"Mon\",\"minute_of_day\":700},{\"id\":\"op2\",\"day\":\"Mon\",\"minute_of_day\":1300}],\"allowed_windows\":{\"Mon\":[[600,720]]}}",
-                  "output": "[\"op2\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"operations\":[{\"id\":\"x\",\"day\":\"Tue\",\"minute_of_day\":300}],\"allowed_windows\":{\"Tue\":[[0,400]]}}",
-                  "output": "[]"
-                }
-              ],
-              "content": "Detect operations executed outside allowed compliance windows by day and minute-of-day.",
-              "solution": "def solution(operations, allowed_windows):\n    out = []\n    for op in operations:\n        day = op.get('day')\n        minute = op.get('minute_of_day')\n        ok = False\n        for start, end in allowed_windows.get(day, []):\n            if start <= minute <= end:\n                ok = True\n                break\n        if not ok:\n            out.append(op.get('id'))\n    return sorted([x for x in out if x is not None])",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/reference/compound_stmts.html#for"
-            }
-          ]
-        },
-        "Specialist_2": {
-          "Easy": [
-            {
-              "id": "PY-SP2-E-1",
-              "slug": "global-capacity-headroom",
-              "title": "Global Capacity Headroom",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "capacity-planning",
-                "operations",
-                "specialist_2",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(capacity_rows):\n    # row: region,service,total_capacity,used_capacity\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"region\":\"us-east\",\"service\":\"search\",\"total_capacity\":100,\"used_capacity\":70}]",
-                  "output": "[{\"region\":\"us-east\",\"service\":\"search\",\"headroom\":30}]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"region\":\"eu-west\",\"service\":\"api\",\"total_capacity\":50,\"used_capacity\":60}]",
-                  "output": "[{\"region\":\"eu-west\",\"service\":\"api\",\"headroom\":0}]"
-                }
-              ],
-              "content": "Compute remaining headroom per region and service as max(total_capacity - used_capacity, 0).",
-              "solution": "def solution(capacity_rows):\n    out = []\n    for r in capacity_rows:\n        headroom = r.get('total_capacity', 0) - r.get('used_capacity', 0)\n        out.append({\n            'region': r.get('region'),\n            'service': r.get('service'),\n            'headroom': headroom if headroom > 0 else 0\n        })\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/reference/expressions.html"
-            },
-            {
-              "id": "PY-SP2-E-2",
-              "slug": "cost-anomaly-triage",
-              "title": "Cost Anomaly Triage",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "finops",
-                "cost-anomaly",
-                "classification",
-                "specialist_2",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(events):\n    # event: service,delta_pct,reason_hint\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"service\":\"compute\",\"delta_pct\":120,\"reason_hint\":\"new deployment\"}]",
-                  "output": "[{\"service\":\"compute\",\"category\":\"release_spike\"}]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"service\":\"storage\",\"delta_pct\":10,\"reason_hint\":\"none\"}]",
-                  "output": "[{\"service\":\"storage\",\"category\":\"normal_variation\"}]"
-                }
-              ],
-              "content": "Classify cost spikes into categories: release_spike, traffic_spike, pricing_change, or normal_variation.",
-              "solution": "def solution(events):\n    out = []\n    for e in events:\n        hint = str(e.get('reason_hint', '')).lower()\n        delta = e.get('delta_pct', 0)\n        if 'deploy' in hint or 'release' in hint:\n            c = 'release_spike'\n        elif 'traffic' in hint or 'campaign' in hint:\n            c = 'traffic_spike'\n        elif 'price' in hint or 'sku' in hint:\n            c = 'pricing_change'\n        elif delta >= 30:\n            c = 'traffic_spike'\n        else:\n            c = 'normal_variation'\n        out.append({'service': e.get('service'), 'category': c})\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#str.lower"
-            },
-            {
-              "id": "PY-SP2-E-3",
-              "slug": "executive-kpi-snapshot",
-              "title": "Executive KPI Snapshot",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "kpi",
-                "leadership-reporting",
-                "specialist_2",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(actuals, targets):\n    # return summary list of kpi,status\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"actuals\":{\"revenue\":110,\"uptime\":99.8},\"targets\":{\"revenue\":100,\"uptime\":99.9}}",
-                  "output": "[{\"kpi\":\"revenue\",\"status\":\"green\"},{\"kpi\":\"uptime\",\"status\":\"yellow\"}]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"actuals\":{\"nps\":20},\"targets\":{\"nps\":50}}",
-                  "output": "[{\"kpi\":\"nps\",\"status\":\"red\"}]"
-                }
-              ],
-              "content": "Produce concise KPI statuses: green if actual >= target, yellow if within 95% of target, else red.",
-              "solution": "def solution(actuals, targets):\n    out = []\n    for k in sorted(targets):\n        t = targets[k]\n        a = actuals.get(k, 0)\n        if a >= t:\n            s = 'green'\n        elif t != 0 and a >= 0.95 * t:\n            s = 'yellow'\n        else:\n            s = 'red'\n        out.append({'kpi': k, 'status': s})\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#sorted"
-            },
-            {
-              "id": "PY-SP2-E-4",
-              "slug": "data-contract-change-audit",
-              "title": "Data Contract Change Audit",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "data-contract",
-                "schema-evolution",
-                "specialist_2",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(old_schema, new_schema):\n    # schemas: dict[field] -> type\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"old\":{\"id\":\"int\",\"name\":\"str\"},\"new\":{\"id\":\"int\",\"name\":\"str\",\"email\":\"str\"}}",
-                  "output": "{\"breaking\":[],\"non_breaking\":[\"field_added:email\"]}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"old\":{\"id\":\"int\",\"name\":\"str\"},\"new\":{\"id\":\"str\"}}",
-                  "output": "{\"breaking\":[\"field_removed:name\",\"type_changed:id\"],\"non_breaking\":[]}"
-                }
-              ],
-              "content": "Detect breaking changes (field removals/type changes) and non-breaking changes (field additions) between schema versions.",
-              "solution": "def solution(old_schema, new_schema):\n    breaking = []\n    non_breaking = []\n    old_keys = set(old_schema)\n    new_keys = set(new_schema)\n\n    for f in sorted(old_keys - new_keys):\n        breaking.append(f'field_removed:{f}')\n    for f in sorted(new_keys - old_keys):\n        non_breaking.append(f'field_added:{f}')\n    for f in sorted(old_keys & new_keys):\n        if old_schema[f] != new_schema[f]:\n            breaking.append(f'type_changed:{f}')\n\n    return {'breaking': breaking, 'non_breaking': non_breaking}",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP2-E-5",
-              "slug": "fleet-maintenance-queue-prioritizer",
-              "title": "Fleet Maintenance Queue Prioritizer",
-              "difficulty": "Easy",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "prioritization",
-                "fleet-ops",
-                "risk-management",
-                "specialist_2",
-                "easy"
-              ],
-              "starter_code": {
-                "default": "def solution(tasks):\n    # task has id,risk_score,urgency_score\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"id\":\"t1\",\"risk_score\":0.9,\"urgency_score\":0.5},{\"id\":\"t2\",\"risk_score\":0.7,\"urgency_score\":0.9}]",
-                  "output": "[\"t2\",\"t1\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"id\":\"a\",\"risk_score\":0.5,\"urgency_score\":0.5}]",
-                  "output": "[\"a\"]"
-                }
-              ],
-              "content": "Rank maintenance tasks by weighted priority = 0.6*risk_score + 0.4*urgency_score.",
-              "solution": "def solution(tasks):\n    ranked = sorted(tasks, key=lambda t: (-(0.6 * t.get('risk_score', 0) + 0.4 * t.get('urgency_score', 0)), t.get('id', '')))\n    return [t.get('id') for t in ranked]",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#sorted"
-            }
-          ],
-          "Medium": [
-            {
-              "id": "PY-SP2-M-1",
-              "slug": "marketplace-fraud-signal-fusion",
-              "title": "Marketplace Fraud Signal Fusion",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "fraud-detection",
-                "marketplace",
-                "risk-scoring",
-                "specialist_2",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(signals):\n    # signal row has user,chargeback_ratio,velocity_score,device_risk\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"user\":\"u1\",\"chargeback_ratio\":0.2,\"velocity_score\":0.9,\"device_risk\":0.8}]",
-                  "output": "{\"u1\":\"high\"}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"user\":\"u2\",\"chargeback_ratio\":0.0,\"velocity_score\":0.1,\"device_risk\":0.1}]",
-                  "output": "{\"u2\":\"low\"}"
-                }
-              ],
-              "content": "Fuse weak fraud indicators into risk tiers using weighted score: 0.5*velocity + 0.3*device + 0.2*chargeback.",
-              "solution": "def solution(signals):\n    out = {}\n    for s in signals:\n        score = 0.5 * s.get('velocity_score', 0) + 0.3 * s.get('device_risk', 0) + 0.2 * s.get('chargeback_ratio', 0)\n        if score >= 0.7:\n            tier = 'high'\n        elif score >= 0.4:\n            tier = 'medium'\n        else:\n            tier = 'low'\n        out[s.get('user')] = tier\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/reference/expressions.html"
-            },
-            {
-              "id": "PY-SP2-M-2",
-              "slug": "revenue-leakage-auditor",
-              "title": "Revenue Leakage Auditor",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "billing",
-                "revenue-assurance",
-                "audit",
-                "specialist_2",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(usage_records, invoice_records, price_map):\n    # find unbilled usage and amount mismatches\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"usage\":[{\"acct\":\"a1\",\"sku\":\"s1\",\"units\":10}],\"invoices\":[{\"acct\":\"a1\",\"sku\":\"s1\",\"amount\":90}],\"price_map\":{\"s1\":10}}",
-                  "output": "{\"unbilled\":[],\"mismatch\":[\"a1:s1\"]}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"usage\":[{\"acct\":\"a2\",\"sku\":\"s2\",\"units\":3}],\"invoices\":[],\"price_map\":{\"s2\":5}}",
-                  "output": "{\"unbilled\":[\"a2:s2\"],\"mismatch\":[]}"
-                }
-              ],
-              "content": "Detect revenue leakage by comparing expected billed amounts from usage against invoices.",
-              "solution": "def solution(usage_records, invoice_records, price_map):\n    expected = {}\n    for u in usage_records:\n        key = f\"{u.get('acct')}:{u.get('sku')}\"\n        expected[key] = expected.get(key, 0) + u.get('units', 0) * price_map.get(u.get('sku'), 0)\n\n    actual = {}\n    for inv in invoice_records:\n        key = f\"{inv.get('acct')}:{inv.get('sku')}\"\n        actual[key] = actual.get(key, 0) + inv.get('amount', 0)\n\n    unbilled = []\n    mismatch = []\n    for key, exp_amt in expected.items():\n        if key not in actual:\n            unbilled.append(key)\n        elif actual[key] != exp_amt:\n            mismatch.append(key)\n\n    return {'unbilled': sorted(unbilled), 'mismatch': sorted(mismatch)}",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            },
-            {
-              "id": "PY-SP2-M-3",
-              "slug": "localization-coverage-tracker",
-              "title": "Localization Coverage Tracker",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "localization",
-                "i18n",
-                "coverage",
-                "specialist_2",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(required_features, locale_translations):\n    # locale_translations: dict[locale] -> set/list translated feature keys\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"required\":[\"home\",\"checkout\",\"profile\"],\"translations\":{\"en\":[\"home\",\"checkout\",\"profile\"],\"fr\":[\"home\",\"profile\"]}}",
-                  "output": "{\"en\":1.0,\"fr\":0.666667}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"required\":[\"a\",\"b\"],\"translations\":{\"es\":[]}}",
-                  "output": "{\"es\":0.0}"
-                }
-              ],
-              "content": "Report translation coverage ratio by locale for required feature keys.",
-              "solution": "def solution(required_features, locale_translations):\n    req = set(required_features)\n    n = len(req)\n    out = {}\n    for locale, translated in locale_translations.items():\n        have = set(translated)\n        ratio = (len(req & have) / n) if n else 1.0\n        out[locale] = round(ratio, 6)\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP2-M-4",
-              "slug": "migration-cutover-readiness",
-              "title": "Migration Cutover Readiness",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "migration",
-                "readiness",
-                "go-no-go",
-                "specialist_2",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(checkpoints, weights, min_score):\n    # checkpoints: dict[name]->bool\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"checkpoints\":{\"data_backfill\":true,\"rollback_tested\":true,\"perf_validated\":false},\"weights\":{\"data_backfill\":0.4,\"rollback_tested\":0.4,\"perf_validated\":0.2},\"min_score\":0.8}",
-                  "output": "{\"score\":0.8,\"decision\":\"go\"}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"checkpoints\":{\"a\":true,\"b\":false},\"weights\":{\"a\":0.5,\"b\":0.5},\"min_score\":0.8}",
-                  "output": "{\"score\":0.5,\"decision\":\"no_go\"}"
-                }
-              ],
-              "content": "Compute weighted cutover readiness score and return go/no_go decision.",
-              "solution": "def solution(checkpoints, weights, min_score):\n    score = 0.0\n    for name, w in weights.items():\n        if checkpoints.get(name, False):\n            score += w\n    score = round(score, 6)\n    return {'score': score, 'decision': 'go' if score >= min_score else 'no_go'}",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#round"
-            },
-            {
-              "id": "PY-SP2-M-5",
-              "slug": "resilience-drill-scorecard",
-              "title": "Resilience Drill Scorecard",
-              "difficulty": "Medium",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "resilience",
-                "chaos-engineering",
-                "scorecard",
-                "specialist_2",
-                "medium"
-              ],
-              "starter_code": {
-                "default": "def solution(results):\n    # row: region,objective,passed,max_points\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"region\":\"us\",\"objective\":\"failover\",\"passed\":true,\"max_points\":40},{\"region\":\"us\",\"objective\":\"rollback\",\"passed\":false,\"max_points\":60}]",
-                  "output": "{\"us\":40}"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"region\":\"eu\",\"objective\":\"backup\",\"passed\":true,\"max_points\":20}]",
-                  "output": "{\"eu\":20}"
-                }
-              ],
-              "content": "Score resilience drills by summing points of passed objectives per region.",
-              "solution": "def solution(results):\n    totals = {}\n    for r in results:\n        region = r.get('region')\n        if region not in totals:\n            totals[region] = 0\n        if r.get('passed'):\n            totals[region] += r.get('max_points', 0)\n    return totals",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
-            }
-          ],
-          "Hard": [
-            {
-              "id": "PY-SP2-H-1",
-              "slug": "enterprise-slo-breach-forecast",
-              "title": "Enterprise SLO Breach Forecast",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "slo",
-                "forecasting",
-                "reliability",
-                "specialist_2",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(error_rates, latency_p95, err_budget, lat_threshold):\n    # return breach probability in [0,1]\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"error_rates\":[0.01,0.02,0.03],\"latency_p95\":[180,220,240],\"err_budget\":0.02,\"lat_threshold\":200}",
-                  "output": "0.833333"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"error_rates\":[0.001,0.001],\"latency_p95\":[100,120],\"err_budget\":0.01,\"lat_threshold\":200}",
-                  "output": "0.0"
-                }
-              ],
-              "content": "Forecast breach probability from recent windows as fraction of windows that violate error budget or latency threshold.",
-              "solution": "def solution(error_rates, latency_p95, err_budget, lat_threshold):\n    n = min(len(error_rates), len(latency_p95))\n    if n == 0:\n        return 0.0\n    breaches = 0\n    for i in range(n):\n        if error_rates[i] > err_budget or latency_p95[i] > lat_threshold:\n            breaches += 1\n    return round(breaches / n, 6)",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#len"
-            },
-            {
-              "id": "PY-SP2-H-2",
-              "slug": "cross-domain-identity-conflict-resolver",
-              "title": "Cross-Domain Identity Conflict Resolver",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "identity",
-                "federation",
-                "entity-resolution",
-                "specialist_2",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(accounts):\n    # account has domain,external_id,email_hash,phone_hash\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"domain\":\"a\",\"external_id\":\"1\",\"email_hash\":\"h1\",\"phone_hash\":\"p1\"},{\"domain\":\"b\",\"external_id\":\"9\",\"email_hash\":\"h1\",\"phone_hash\":\"p2\"}]",
-                  "output": "[{\"identity\":\"h1\",\"domains\":[\"a\",\"b\"],\"conflict\":true}]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"domain\":\"x\",\"external_id\":\"1\",\"email_hash\":\"hx\",\"phone_hash\":\"px\"}]",
-                  "output": "[]"
-                }
-              ],
-              "content": "Detect identity collisions when the same normalized identity signal appears across multiple domains.",
-              "solution": "def solution(accounts):\n    buckets = {}\n    for a in accounts:\n        identity = a.get('email_hash') or a.get('phone_hash')\n        if not identity:\n            continue\n        if identity not in buckets:\n            buckets[identity] = set()\n        buckets[identity].add(a.get('domain'))\n\n    out = []\n    for identity, domains in buckets.items():\n        if len(domains) > 1:\n            out.append({'identity': identity, 'domains': sorted(domains), 'conflict': True})\n    out.sort(key=lambda x: x['identity'])\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP2-H-3",
-              "slug": "supply-demand-shock-detector",
-              "title": "Supply-Demand Shock Detector",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "demand-forecasting",
-                "supply-chain",
-                "anomaly-detection",
-                "specialist_2",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(series, threshold_ratio):\n    # row: ts,demand,supply\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"ts\":1,\"demand\":100,\"supply\":90},{\"ts\":2,\"demand\":200,\"supply\":100}]",
-                  "output": "[2]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"ts\":1,\"demand\":50,\"supply\":50}]",
-                  "output": "[]"
-                }
-              ],
-              "content": "Detect timestamps where abs(demand-supply)/max(supply,1) exceeds threshold_ratio.",
-              "solution": "def solution(series, threshold_ratio):\n    out = []\n    for r in series:\n        demand = r.get('demand', 0)\n        supply = r.get('supply', 0)\n        ratio = abs(demand - supply) / max(supply, 1)\n        if ratio > threshold_ratio:\n            out.append(r.get('ts'))\n    return [x for x in out if x is not None]",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#abs"
-            },
-            {
-              "id": "PY-SP2-H-4",
-              "slug": "multi-layer-ddos-pattern-correlator",
-              "title": "Multi-Layer DDoS Pattern Correlator",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "ddos",
-                "security",
-                "correlation",
-                "specialist_2",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(edge_signals, app_signals, req_threshold, err_threshold):\n    # signals keyed by minute bucket\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "{\"edge\":{\"10:00\":5000,\"10:01\":2000},\"app\":{\"10:00\":0.2,\"10:01\":0.01},\"req_threshold\":3000,\"err_threshold\":0.1}",
-                  "output": "[\"10:00\"]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "{\"edge\":{\"11:00\":1000},\"app\":{\"11:00\":0.2},\"req_threshold\":3000,\"err_threshold\":0.1}",
-                  "output": "[]"
-                }
-              ],
-              "content": "Correlate edge request flood and application error surge in the same time bucket to flag probable DDoS attack windows.",
-              "solution": "def solution(edge_signals, app_signals, req_threshold, err_threshold):\n    out = []\n    buckets = set(edge_signals) & set(app_signals)\n    for b in sorted(buckets):\n        if edge_signals[b] > req_threshold and app_signals[b] > err_threshold:\n            out.append(b)\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/stdtypes.html#set"
-            },
-            {
-              "id": "PY-SP2-H-5",
-              "slug": "global-outage-correlation-engine",
-              "title": "Global Outage Correlation Engine",
-              "difficulty": "Hard",
-              "skill": "Python",
-              "skill_level": "Specialist_2",
-              "language": "Python",
-              "tags": [
-                "python",
-                "incident-management",
-                "outage-correlation",
-                "root-cause-analysis",
-                "specialist_2",
-                "hard"
-              ],
-              "starter_code": {
-                "default": "def solution(incidents, overlap_minutes):\n    # incident: provider,region,start,end\n    pass"
-              },
-              "sample_test_cases": [
-                {
-                  "input": "[{\"provider\":\"p1\",\"region\":\"us\",\"start\":10,\"end\":40},{\"provider\":\"p2\",\"region\":\"us\",\"start\":20,\"end\":50}]",
-                  "output": "[{\"providers\":[\"p1\",\"p2\"],\"region\":\"us\",\"overlap\":20}]"
-                }
-              ],
-              "hidden_test_cases": [
-                {
-                  "input": "[{\"provider\":\"a\",\"region\":\"eu\",\"start\":0,\"end\":5},{\"provider\":\"b\",\"region\":\"eu\",\"start\":6,\"end\":9}]",
-                  "output": "[]"
-                }
-              ],
-              "content": "Correlate outages across providers in the same region and report overlaps above threshold to infer shared root cause.",
-              "solution": "def solution(incidents, overlap_minutes):\n    out = []\n    n = len(incidents)\n    for i in range(n):\n        for j in range(i + 1, n):\n            a = incidents[i]\n            b = incidents[j]\n            if a.get('region') != b.get('region'):\n                continue\n            if a.get('provider') == b.get('provider'):\n                continue\n            start = max(a.get('start', 0), b.get('start', 0))\n            end = min(a.get('end', 0), b.get('end', 0))\n            overlap = end - start\n            if overlap >= overlap_minutes:\n                out.append({\n                    'providers': sorted([a.get('provider'), b.get('provider')]),\n                    'region': a.get('region'),\n                    'overlap': overlap\n                })\n    out.sort(key=lambda x: (x['region'], x['providers'][0], x['providers'][1]))\n    return out",
-              "source": "Real World",
-              "url": "https://docs.python.org/3/library/functions.html#max"
-            }
-          ]
         }
       }
     },
     {
       "skill": "HTML, CSS, JS",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 97,
+          "name": "JavaScript (Node.js 20.17.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 102,
+          "name": "JavaScript (Node.js 22.08.0)",
+          "monaco": "javascript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1204,6 +129,23 @@
     },
     {
       "skill": "React JS",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 97,
+          "name": "JavaScript (Node.js 20.17.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 102,
+          "name": "JavaScript (Node.js 22.08.0)",
+          "monaco": "javascript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1262,6 +204,23 @@
     },
     {
       "skill": "React JS with Redux",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 97,
+          "name": "JavaScript (Node.js 20.17.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 102,
+          "name": "JavaScript (Node.js 22.08.0)",
+          "monaco": "javascript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1320,6 +279,18 @@
     },
     {
       "skill": "TypeScript",
+      "allowed_languages": [
+        {
+          "id": 94,
+          "name": "TypeScript (5.0.3)",
+          "monaco": "typescript"
+        },
+        {
+          "id": 101,
+          "name": "TypeScript (5.6.2)",
+          "monaco": "typescript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1378,6 +349,33 @@
     },
     {
       "skill": "Next JS",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 97,
+          "name": "JavaScript (Node.js 20.17.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 102,
+          "name": "JavaScript (Node.js 22.08.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 94,
+          "name": "TypeScript (5.0.3)",
+          "monaco": "typescript"
+        },
+        {
+          "id": 101,
+          "name": "TypeScript (5.6.2)",
+          "monaco": "typescript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1436,6 +434,33 @@
     },
     {
       "skill": "Angular",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 97,
+          "name": "JavaScript (Node.js 20.17.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 102,
+          "name": "JavaScript (Node.js 22.08.0)",
+          "monaco": "javascript"
+        },
+        {
+          "id": 94,
+          "name": "TypeScript (5.0.3)",
+          "monaco": "typescript"
+        },
+        {
+          "id": 101,
+          "name": "TypeScript (5.6.2)",
+          "monaco": "typescript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -1494,6 +519,33 @@
     },
     {
       "skill": "Python",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -3275,19 +2327,1128 @@
           ]
         },
         "Specialist_1": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "PY-SP1-E-1",
+              "slug": "audit-log-redactor",
+              "title": "Audit Log Redactor",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "audit",
+                "security",
+                "redaction",
+                "specialist_1",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(record, sensitive_fields):\n    # return redacted copy preserving keys\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"record\":{\"user\":\"alice\",\"email\":\"a@x.com\",\"token\":\"abc123\"},\"sensitive_fields\":[\"email\",\"token\"]}",
+                  "output": "{\"user\":\"alice\",\"email\":\"***\",\"token\":\"***\"}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"record\":{\"a\":1,\"password\":\"secret\"},\"sensitive_fields\":[\"password\"]}",
+                  "output": "{\"a\":1,\"password\":\"***\"}"
+                }
+              ],
+              "content": "Mask sensitive fields in an audit log record while preserving the original structure and non-sensitive values.",
+              "solution": "def solution(record, sensitive_fields):\n    out = {}\n    redacted = set(sensitive_fields)\n    for k, v in record.items():\n        out[k] = '***' if k in redacted else v\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            },
+            {
+              "id": "PY-SP1-E-2",
+              "slug": "pii-mask-validator",
+              "title": "PII Mask Validator",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "pii",
+                "validation",
+                "privacy",
+                "specialist_1",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(masked_record, pii_fields):\n    # return true if all pii fields are masked as ***\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"masked_record\":{\"name\":\"Alice\",\"ssn\":\"***\",\"email\":\"***\"},\"pii_fields\":[\"ssn\",\"email\"]}",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"masked_record\":{\"ssn\":\"123-45-6789\"},\"pii_fields\":[\"ssn\"]}",
+                  "output": "false"
+                }
+              ],
+              "content": "Validate that required PII fields are fully masked using the exact token ***.",
+              "solution": "def solution(masked_record, pii_fields):\n    for field in pii_fields:\n        if masked_record.get(field) != '***':\n            return 'false'\n    return 'true'",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict.get"
+            },
+            {
+              "id": "PY-SP1-E-3",
+              "slug": "service-health-rollup",
+              "title": "Service Health Rollup",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "observability",
+                "health-checks",
+                "specialist_1",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(component_statuses):\n    # statuses: list[str] of pass|warn|fail\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "pass warn pass",
+                  "output": "degraded"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "pass pass pass",
+                  "output": "healthy"
+                }
+              ],
+              "content": "Roll component health checks into service status: unhealthy if any fail, degraded if no fail but any warn, otherwise healthy.",
+              "solution": "def solution(component_statuses):\n    has_warn = False\n    for s in component_statuses:\n        if s == 'fail':\n            return 'unhealthy'\n        if s == 'warn':\n            has_warn = True\n    return 'degraded' if has_warn else 'healthy'",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/reference/compound_stmts.html#if"
+            },
+            {
+              "id": "PY-SP1-E-4",
+              "slug": "deploy-checklist-gate",
+              "title": "Deploy Checklist Gate",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "release",
+                "checklist",
+                "devops",
+                "specialist_1",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(checks):\n    # checks: dict[str,bool]\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"tests_passed\":true,\"approvals_complete\":true,\"rollback_plan\":true}",
+                  "output": "ready"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"tests_passed\":true,\"approvals_complete\":false,\"rollback_plan\":true}",
+                  "output": "blocked"
+                }
+              ],
+              "content": "Evaluate deployment readiness from checklist booleans. Return ready only if all checks are true.",
+              "solution": "def solution(checks):\n    for v in checks.values():\n        if not v:\n            return 'blocked'\n    return 'ready'",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#all"
+            },
+            {
+              "id": "PY-SP1-E-5",
+              "slug": "runbook-step-timer",
+              "title": "Runbook Step Timer",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "runbook",
+                "incident-response",
+                "timing",
+                "specialist_1",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(events):\n    # events: list[dict] with step, start_ts, end_ts\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"step\":\"triage\",\"start_ts\":10,\"end_ts\":25},{\"step\":\"mitigation\",\"start_ts\":25,\"end_ts\":40}]",
+                  "output": "{\"triage\":15,\"mitigation\":15}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"step\":\"triage\",\"start_ts\":10,\"end_ts\":10}]",
+                  "output": "{\"triage\":0}"
+                }
+              ],
+              "content": "Compute total duration spent per runbook step from timestamped step intervals.",
+              "solution": "def solution(events):\n    totals = {}\n    for e in events:\n        step = e['step']\n        dur = e['end_ts'] - e['start_ts']\n        totals[step] = totals.get(step, 0) + max(0, dur)\n    return totals",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PY-SP1-M-1",
+              "slug": "supply-chain-risk-score",
+              "title": "Supply Chain Risk Score",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "supply-chain",
+                "risk",
+                "scoring",
+                "specialist_1",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(suppliers):\n    # each supplier has delay_rate, defect_rate, geo_risk in [0,1]\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"id\":\"s1\",\"delay_rate\":0.6,\"defect_rate\":0.2,\"geo_risk\":0.7},{\"id\":\"s2\",\"delay_rate\":0.1,\"defect_rate\":0.1,\"geo_risk\":0.2}]",
+                  "output": "{\"s1\":0.51,\"s2\":0.12}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"id\":\"x\",\"delay_rate\":0,\"defect_rate\":0,\"geo_risk\":0}]",
+                  "output": "{\"x\":0.0}"
+                }
+              ],
+              "content": "Compute composite supplier risk score using 0.5*delay_rate + 0.3*defect_rate + 0.2*geo_risk, rounded to 2 decimals.",
+              "solution": "def solution(suppliers):\n    out = {}\n    for s in suppliers:\n        score = 0.5 * s.get('delay_rate', 0) + 0.3 * s.get('defect_rate', 0) + 0.2 * s.get('geo_risk', 0)\n        out[s['id']] = round(score, 2)\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#round"
+            },
+            {
+              "id": "PY-SP1-M-2",
+              "slug": "cloud-cost-allocation",
+              "title": "Cloud Cost Allocation",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "finops",
+                "cloud-cost",
+                "allocation",
+                "specialist_1",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(total_shared_cost, usage_weights):\n    # usage_weights: dict[team] -> float\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"total_shared_cost\":1000,\"usage_weights\":{\"teamA\":3,\"teamB\":1}}",
+                  "output": "{\"teamA\":750.0,\"teamB\":250.0}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"total_shared_cost\":500,\"usage_weights\":{\"a\":0,\"b\":0}}",
+                  "output": "{\"a\":0.0,\"b\":0.0}"
+                }
+              ],
+              "content": "Allocate shared cloud cost to teams proportionally by usage weight. Return per-team cost rounded to 2 decimals.",
+              "solution": "def solution(total_shared_cost, usage_weights):\n    total_weight = sum(usage_weights.values())\n    out = {}\n    if total_weight <= 0:\n        for team in usage_weights:\n            out[team] = 0.0\n        return out\n    for team, w in usage_weights.items():\n        out[team] = round(total_shared_cost * (w / total_weight), 2)\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#sum"
+            },
+            {
+              "id": "PY-SP1-M-3",
+              "slug": "partner-feed-quality-index",
+              "title": "Partner Feed Quality Index",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "data-quality",
+                "partner-integrations",
+                "scoring",
+                "specialist_1",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(feeds):\n    # feed has freshness_score, completeness_score, error_rate in [0,1]\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"partner\":\"p1\",\"freshness_score\":0.9,\"completeness_score\":0.8,\"error_rate\":0.1}]",
+                  "output": "{\"p1\":0.85}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"partner\":\"p2\",\"freshness_score\":0.4,\"completeness_score\":0.5,\"error_rate\":0.4}]",
+                  "output": "{\"p2\":0.43}"
+                }
+              ],
+              "content": "Compute feed quality index = 0.4*freshness + 0.4*completeness + 0.2*(1-error_rate), rounded to 2 decimals.",
+              "solution": "def solution(feeds):\n    out = {}\n    for f in feeds:\n        score = 0.4 * f.get('freshness_score', 0) + 0.4 * f.get('completeness_score', 0) + 0.2 * (1 - f.get('error_rate', 0))\n        out[f['partner']] = round(score, 2)\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/reference/expressions.html"
+            },
+            {
+              "id": "PY-SP1-M-4",
+              "slug": "ab-guardrail-monitor",
+              "title": "A/B Guardrail Monitor",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "experimentation",
+                "ab-testing",
+                "guardrails",
+                "specialist_1",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(control_metrics, variant_metrics, thresholds):\n    # thresholds: max allowed negative deltas per metric\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"control\":{\"latency\":120,\"crash_rate\":0.01},\"variant\":{\"latency\":130,\"crash_rate\":0.012},\"thresholds\":{\"latency\":5,\"crash_rate\":0.001}}",
+                  "output": "{\"status\":\"regression\",\"breached\":[\"latency\",\"crash_rate\"]}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"control\":{\"latency\":100},\"variant\":{\"latency\":102},\"thresholds\":{\"latency\":5}}",
+                  "output": "{\"status\":\"ok\",\"breached\":[]}"
+                }
+              ],
+              "content": "Detect guardrail regressions where variant metric exceeds control by more than allowed threshold.",
+              "solution": "def solution(control_metrics, variant_metrics, thresholds):\n    breached = []\n    for metric, th in thresholds.items():\n        c = control_metrics.get(metric, 0)\n        v = variant_metrics.get(metric, 0)\n        if (v - c) > th:\n            breached.append(metric)\n    breached.sort()\n    return {'status': 'regression' if breached else 'ok', 'breached': breached}",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            },
+            {
+              "id": "PY-SP1-M-5",
+              "slug": "postmortem-theme-extractor",
+              "title": "Postmortem Theme Extractor",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "postmortem",
+                "incident-management",
+                "text-processing",
+                "specialist_1",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(notes, theme_keywords):\n    # map each note to first matching theme; else 'other'\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"notes\":[\"db timeout on primary\",\"bad deploy changed config\"],\"theme_keywords\":{\"database\":[\"db\",\"query\"],\"deployment\":[\"deploy\",\"rollback\"]}}",
+                  "output": "{\"database\":1,\"deployment\":1,\"other\":0}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"notes\":[\"unknown root cause\"],\"theme_keywords\":{\"network\":[\"dns\"]}}",
+                  "output": "{\"network\":0,\"other\":1}"
+                }
+              ],
+              "content": "Bucket incident postmortem notes into recurring failure themes based on keyword matching.",
+              "solution": "def solution(notes, theme_keywords):\n    counts = {k: 0 for k in theme_keywords}\n    counts['other'] = 0\n    for note in notes:\n        text = note.lower()\n        matched = False\n        for theme, words in theme_keywords.items():\n            if any(w.lower() in text for w in words):\n                counts[theme] += 1\n                matched = True\n                break\n        if not matched:\n            counts['other'] += 1\n    return counts",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#str.lower"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PY-SP1-H-1",
+              "slug": "zero-trust-access-anomalies",
+              "title": "Zero-Trust Access Anomalies",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "zero-trust",
+                "security",
+                "anomaly-detection",
+                "specialist_1",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(access_events):\n    # event has user, device, location, trusted_devices, usual_locations\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"user\":\"u1\",\"device\":\"d9\",\"location\":\"BR\",\"trusted_devices\":[\"d1\"],\"usual_locations\":[\"US\"]}]",
+                  "output": "[\"u1\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"user\":\"u2\",\"device\":\"d1\",\"location\":\"US\",\"trusted_devices\":[\"d1\"],\"usual_locations\":[\"US\"]}]",
+                  "output": "[]"
+                }
+              ],
+              "content": "Detect abnormal zero-trust access where both device and location are outside known trusted patterns.",
+              "solution": "def solution(access_events):\n    out = []\n    for e in access_events:\n        device_unknown = e.get('device') not in set(e.get('trusted_devices', []))\n        location_unknown = e.get('location') not in set(e.get('usual_locations', []))\n        if device_unknown and location_unknown:\n            out.append(e.get('user'))\n    return sorted([u for u in out if u is not None])",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP1-H-2",
+              "slug": "secret-rotation-breach-detector",
+              "title": "Secret Rotation Breach Detector",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "secrets-management",
+                "compliance",
+                "security-operations",
+                "specialist_1",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(credentials, max_age_days, today_day):\n    # credential has id,last_rotated_day\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"credentials\":[{\"id\":\"k1\",\"last_rotated_day\":1},{\"id\":\"k2\",\"last_rotated_day\":20}],\"max_age_days\":30,\"today_day\":60}",
+                  "output": "[\"k1\",\"k2\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"credentials\":[{\"id\":\"x\",\"last_rotated_day\":50}],\"max_age_days\":30,\"today_day\":60}",
+                  "output": "[]"
+                }
+              ],
+              "content": "Flag credentials whose age exceeds the allowed rotation policy window.",
+              "solution": "def solution(credentials, max_age_days, today_day):\n    out = []\n    for c in credentials:\n        age = today_day - c.get('last_rotated_day', today_day)\n        if age > max_age_days:\n            out.append(c.get('id'))\n    return sorted([x for x in out if x is not None])",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#sorted"
+            },
+            {
+              "id": "PY-SP1-H-3",
+              "slug": "critical-path-latency-regression",
+              "title": "Critical Path Latency Regression",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "latency",
+                "performance",
+                "critical-path",
+                "specialist_1",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(baseline, current, critical_paths, threshold_ms):\n    # baseline/current: dict[path] -> p95 latency\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"baseline\":{\"/checkout\":200,\"/search\":80},\"current\":{\"/checkout\":240,\"/search\":200},\"critical_paths\":[\"/checkout\"],\"threshold_ms\":20}",
+                  "output": "[\"/checkout\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"baseline\":{\"/pay\":100},\"current\":{\"/pay\":115},\"critical_paths\":[\"/pay\"],\"threshold_ms\":20}",
+                  "output": "[]"
+                }
+              ],
+              "content": "Detect latency regressions only on business-critical request paths.",
+              "solution": "def solution(baseline, current, critical_paths, threshold_ms):\n    bad = []\n    for p in critical_paths:\n        b = baseline.get(p)\n        c = current.get(p)\n        if b is None or c is None:\n            continue\n        if (c - b) > threshold_ms:\n            bad.append(p)\n    return sorted(bad)",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            },
+            {
+              "id": "PY-SP1-H-4",
+              "slug": "multi-cluster-drift-detector",
+              "title": "Multi-Cluster Drift Detector",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "kubernetes",
+                "configuration",
+                "drift-detection",
+                "specialist_1",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(cluster_configs):\n    # cluster_configs: dict[cluster] -> dict[key] -> value\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"c1\":{\"replicas\":3,\"image\":\"v1\"},\"c2\":{\"replicas\":3,\"image\":\"v2\"}}",
+                  "output": "{\"image\":[\"c1\",\"c2\"]}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"a\":{\"x\":1},\"b\":{\"x\":1}}",
+                  "output": "{}"
+                }
+              ],
+              "content": "Identify config keys whose values differ across clusters, and list clusters involved per drifting key.",
+              "solution": "def solution(cluster_configs):\n    all_keys = set()\n    for cfg in cluster_configs.values():\n        all_keys.update(cfg.keys())\n\n    drift = {}\n    for key in sorted(all_keys):\n        values = {}\n        for cluster, cfg in cluster_configs.items():\n            values[cluster] = cfg.get(key)\n        uniq = {repr(v) for v in values.values()}\n        if len(uniq) > 1:\n            drift[key] = sorted(values.keys())\n    return drift",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP1-H-5",
+              "slug": "compliance-window-violations",
+              "title": "Compliance Window Violations",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_1",
+              "language": "Python",
+              "tags": [
+                "python",
+                "compliance",
+                "policy-enforcement",
+                "time-windows",
+                "specialist_1",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(operations, allowed_windows):\n    # operation has id, day, minute_of_day; windows: dict[day] -> list[(start,end)] inclusive\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"operations\":[{\"id\":\"op1\",\"day\":\"Mon\",\"minute_of_day\":700},{\"id\":\"op2\",\"day\":\"Mon\",\"minute_of_day\":1300}],\"allowed_windows\":{\"Mon\":[[600,720]]}}",
+                  "output": "[\"op2\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"operations\":[{\"id\":\"x\",\"day\":\"Tue\",\"minute_of_day\":300}],\"allowed_windows\":{\"Tue\":[[0,400]]}}",
+                  "output": "[]"
+                }
+              ],
+              "content": "Detect operations executed outside allowed compliance windows by day and minute-of-day.",
+              "solution": "def solution(operations, allowed_windows):\n    out = []\n    for op in operations:\n        day = op.get('day')\n        minute = op.get('minute_of_day')\n        ok = False\n        for start, end in allowed_windows.get(day, []):\n            if start <= minute <= end:\n                ok = True\n                break\n        if not ok:\n            out.append(op.get('id'))\n    return sorted([x for x in out if x is not None])",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/reference/compound_stmts.html#for"
+            }
+          ]
         },
         "Specialist_2": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "PY-SP2-E-1",
+              "slug": "global-capacity-headroom",
+              "title": "Global Capacity Headroom",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "capacity-planning",
+                "operations",
+                "specialist_2",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(capacity_rows):\n    # row: region,service,total_capacity,used_capacity\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"region\":\"us-east\",\"service\":\"search\",\"total_capacity\":100,\"used_capacity\":70}]",
+                  "output": "[{\"region\":\"us-east\",\"service\":\"search\",\"headroom\":30}]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"region\":\"eu-west\",\"service\":\"api\",\"total_capacity\":50,\"used_capacity\":60}]",
+                  "output": "[{\"region\":\"eu-west\",\"service\":\"api\",\"headroom\":0}]"
+                }
+              ],
+              "content": "Compute remaining headroom per region and service as max(total_capacity - used_capacity, 0).",
+              "solution": "def solution(capacity_rows):\n    out = []\n    for r in capacity_rows:\n        headroom = r.get('total_capacity', 0) - r.get('used_capacity', 0)\n        out.append({\n            'region': r.get('region'),\n            'service': r.get('service'),\n            'headroom': headroom if headroom > 0 else 0\n        })\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/reference/expressions.html"
+            },
+            {
+              "id": "PY-SP2-E-2",
+              "slug": "cost-anomaly-triage",
+              "title": "Cost Anomaly Triage",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "finops",
+                "cost-anomaly",
+                "classification",
+                "specialist_2",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(events):\n    # event: service,delta_pct,reason_hint\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"service\":\"compute\",\"delta_pct\":120,\"reason_hint\":\"new deployment\"}]",
+                  "output": "[{\"service\":\"compute\",\"category\":\"release_spike\"}]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"service\":\"storage\",\"delta_pct\":10,\"reason_hint\":\"none\"}]",
+                  "output": "[{\"service\":\"storage\",\"category\":\"normal_variation\"}]"
+                }
+              ],
+              "content": "Classify cost spikes into categories: release_spike, traffic_spike, pricing_change, or normal_variation.",
+              "solution": "def solution(events):\n    out = []\n    for e in events:\n        hint = str(e.get('reason_hint', '')).lower()\n        delta = e.get('delta_pct', 0)\n        if 'deploy' in hint or 'release' in hint:\n            c = 'release_spike'\n        elif 'traffic' in hint or 'campaign' in hint:\n            c = 'traffic_spike'\n        elif 'price' in hint or 'sku' in hint:\n            c = 'pricing_change'\n        elif delta >= 30:\n            c = 'traffic_spike'\n        else:\n            c = 'normal_variation'\n        out.append({'service': e.get('service'), 'category': c})\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#str.lower"
+            },
+            {
+              "id": "PY-SP2-E-3",
+              "slug": "executive-kpi-snapshot",
+              "title": "Executive KPI Snapshot",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "kpi",
+                "leadership-reporting",
+                "specialist_2",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(actuals, targets):\n    # return summary list of kpi,status\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"actuals\":{\"revenue\":110,\"uptime\":99.8},\"targets\":{\"revenue\":100,\"uptime\":99.9}}",
+                  "output": "[{\"kpi\":\"revenue\",\"status\":\"green\"},{\"kpi\":\"uptime\",\"status\":\"yellow\"}]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"actuals\":{\"nps\":20},\"targets\":{\"nps\":50}}",
+                  "output": "[{\"kpi\":\"nps\",\"status\":\"red\"}]"
+                }
+              ],
+              "content": "Produce concise KPI statuses: green if actual >= target, yellow if within 95% of target, else red.",
+              "solution": "def solution(actuals, targets):\n    out = []\n    for k in sorted(targets):\n        t = targets[k]\n        a = actuals.get(k, 0)\n        if a >= t:\n            s = 'green'\n        elif t != 0 and a >= 0.95 * t:\n            s = 'yellow'\n        else:\n            s = 'red'\n        out.append({'kpi': k, 'status': s})\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#sorted"
+            },
+            {
+              "id": "PY-SP2-E-4",
+              "slug": "data-contract-change-audit",
+              "title": "Data Contract Change Audit",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "data-contract",
+                "schema-evolution",
+                "specialist_2",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(old_schema, new_schema):\n    # schemas: dict[field] -> type\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"old\":{\"id\":\"int\",\"name\":\"str\"},\"new\":{\"id\":\"int\",\"name\":\"str\",\"email\":\"str\"}}",
+                  "output": "{\"breaking\":[],\"non_breaking\":[\"field_added:email\"]}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"old\":{\"id\":\"int\",\"name\":\"str\"},\"new\":{\"id\":\"str\"}}",
+                  "output": "{\"breaking\":[\"field_removed:name\",\"type_changed:id\"],\"non_breaking\":[]}"
+                }
+              ],
+              "content": "Detect breaking changes (field removals/type changes) and non-breaking changes (field additions) between schema versions.",
+              "solution": "def solution(old_schema, new_schema):\n    breaking = []\n    non_breaking = []\n    old_keys = set(old_schema)\n    new_keys = set(new_schema)\n\n    for f in sorted(old_keys - new_keys):\n        breaking.append(f'field_removed:{f}')\n    for f in sorted(new_keys - old_keys):\n        non_breaking.append(f'field_added:{f}')\n    for f in sorted(old_keys & new_keys):\n        if old_schema[f] != new_schema[f]:\n            breaking.append(f'type_changed:{f}')\n\n    return {'breaking': breaking, 'non_breaking': non_breaking}",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP2-E-5",
+              "slug": "fleet-maintenance-queue-prioritizer",
+              "title": "Fleet Maintenance Queue Prioritizer",
+              "difficulty": "Easy",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "prioritization",
+                "fleet-ops",
+                "risk-management",
+                "specialist_2",
+                "easy"
+              ],
+              "starter_code": {
+                "default": "def solution(tasks):\n    # task has id,risk_score,urgency_score\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"id\":\"t1\",\"risk_score\":0.9,\"urgency_score\":0.5},{\"id\":\"t2\",\"risk_score\":0.7,\"urgency_score\":0.9}]",
+                  "output": "[\"t2\",\"t1\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"id\":\"a\",\"risk_score\":0.5,\"urgency_score\":0.5}]",
+                  "output": "[\"a\"]"
+                }
+              ],
+              "content": "Rank maintenance tasks by weighted priority = 0.6*risk_score + 0.4*urgency_score.",
+              "solution": "def solution(tasks):\n    ranked = sorted(tasks, key=lambda t: (-(0.6 * t.get('risk_score', 0) + 0.4 * t.get('urgency_score', 0)), t.get('id', '')))\n    return [t.get('id') for t in ranked]",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#sorted"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "PY-SP2-M-1",
+              "slug": "marketplace-fraud-signal-fusion",
+              "title": "Marketplace Fraud Signal Fusion",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "fraud-detection",
+                "marketplace",
+                "risk-scoring",
+                "specialist_2",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(signals):\n    # signal row has user,chargeback_ratio,velocity_score,device_risk\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"user\":\"u1\",\"chargeback_ratio\":0.2,\"velocity_score\":0.9,\"device_risk\":0.8}]",
+                  "output": "{\"u1\":\"high\"}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"user\":\"u2\",\"chargeback_ratio\":0.0,\"velocity_score\":0.1,\"device_risk\":0.1}]",
+                  "output": "{\"u2\":\"low\"}"
+                }
+              ],
+              "content": "Fuse weak fraud indicators into risk tiers using weighted score: 0.5*velocity + 0.3*device + 0.2*chargeback.",
+              "solution": "def solution(signals):\n    out = {}\n    for s in signals:\n        score = 0.5 * s.get('velocity_score', 0) + 0.3 * s.get('device_risk', 0) + 0.2 * s.get('chargeback_ratio', 0)\n        if score >= 0.7:\n            tier = 'high'\n        elif score >= 0.4:\n            tier = 'medium'\n        else:\n            tier = 'low'\n        out[s.get('user')] = tier\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/reference/expressions.html"
+            },
+            {
+              "id": "PY-SP2-M-2",
+              "slug": "revenue-leakage-auditor",
+              "title": "Revenue Leakage Auditor",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "billing",
+                "revenue-assurance",
+                "audit",
+                "specialist_2",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(usage_records, invoice_records, price_map):\n    # find unbilled usage and amount mismatches\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"usage\":[{\"acct\":\"a1\",\"sku\":\"s1\",\"units\":10}],\"invoices\":[{\"acct\":\"a1\",\"sku\":\"s1\",\"amount\":90}],\"price_map\":{\"s1\":10}}",
+                  "output": "{\"unbilled\":[],\"mismatch\":[\"a1:s1\"]}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"usage\":[{\"acct\":\"a2\",\"sku\":\"s2\",\"units\":3}],\"invoices\":[],\"price_map\":{\"s2\":5}}",
+                  "output": "{\"unbilled\":[\"a2:s2\"],\"mismatch\":[]}"
+                }
+              ],
+              "content": "Detect revenue leakage by comparing expected billed amounts from usage against invoices.",
+              "solution": "def solution(usage_records, invoice_records, price_map):\n    expected = {}\n    for u in usage_records:\n        key = f\"{u.get('acct')}:{u.get('sku')}\"\n        expected[key] = expected.get(key, 0) + u.get('units', 0) * price_map.get(u.get('sku'), 0)\n\n    actual = {}\n    for inv in invoice_records:\n        key = f\"{inv.get('acct')}:{inv.get('sku')}\"\n        actual[key] = actual.get(key, 0) + inv.get('amount', 0)\n\n    unbilled = []\n    mismatch = []\n    for key, exp_amt in expected.items():\n        if key not in actual:\n            unbilled.append(key)\n        elif actual[key] != exp_amt:\n            mismatch.append(key)\n\n    return {'unbilled': sorted(unbilled), 'mismatch': sorted(mismatch)}",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            },
+            {
+              "id": "PY-SP2-M-3",
+              "slug": "localization-coverage-tracker",
+              "title": "Localization Coverage Tracker",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "localization",
+                "i18n",
+                "coverage",
+                "specialist_2",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(required_features, locale_translations):\n    # locale_translations: dict[locale] -> set/list translated feature keys\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"required\":[\"home\",\"checkout\",\"profile\"],\"translations\":{\"en\":[\"home\",\"checkout\",\"profile\"],\"fr\":[\"home\",\"profile\"]}}",
+                  "output": "{\"en\":1.0,\"fr\":0.666667}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"required\":[\"a\",\"b\"],\"translations\":{\"es\":[]}}",
+                  "output": "{\"es\":0.0}"
+                }
+              ],
+              "content": "Report translation coverage ratio by locale for required feature keys.",
+              "solution": "def solution(required_features, locale_translations):\n    req = set(required_features)\n    n = len(req)\n    out = {}\n    for locale, translated in locale_translations.items():\n        have = set(translated)\n        ratio = (len(req & have) / n) if n else 1.0\n        out[locale] = round(ratio, 6)\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP2-M-4",
+              "slug": "migration-cutover-readiness",
+              "title": "Migration Cutover Readiness",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "migration",
+                "readiness",
+                "go-no-go",
+                "specialist_2",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(checkpoints, weights, min_score):\n    # checkpoints: dict[name]->bool\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"checkpoints\":{\"data_backfill\":true,\"rollback_tested\":true,\"perf_validated\":false},\"weights\":{\"data_backfill\":0.4,\"rollback_tested\":0.4,\"perf_validated\":0.2},\"min_score\":0.8}",
+                  "output": "{\"score\":0.8,\"decision\":\"go\"}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"checkpoints\":{\"a\":true,\"b\":false},\"weights\":{\"a\":0.5,\"b\":0.5},\"min_score\":0.8}",
+                  "output": "{\"score\":0.5,\"decision\":\"no_go\"}"
+                }
+              ],
+              "content": "Compute weighted cutover readiness score and return go/no_go decision.",
+              "solution": "def solution(checkpoints, weights, min_score):\n    score = 0.0\n    for name, w in weights.items():\n        if checkpoints.get(name, False):\n            score += w\n    score = round(score, 6)\n    return {'score': score, 'decision': 'go' if score >= min_score else 'no_go'}",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#round"
+            },
+            {
+              "id": "PY-SP2-M-5",
+              "slug": "resilience-drill-scorecard",
+              "title": "Resilience Drill Scorecard",
+              "difficulty": "Medium",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "resilience",
+                "chaos-engineering",
+                "scorecard",
+                "specialist_2",
+                "medium"
+              ],
+              "starter_code": {
+                "default": "def solution(results):\n    # row: region,objective,passed,max_points\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"region\":\"us\",\"objective\":\"failover\",\"passed\":true,\"max_points\":40},{\"region\":\"us\",\"objective\":\"rollback\",\"passed\":false,\"max_points\":60}]",
+                  "output": "{\"us\":40}"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"region\":\"eu\",\"objective\":\"backup\",\"passed\":true,\"max_points\":20}]",
+                  "output": "{\"eu\":20}"
+                }
+              ],
+              "content": "Score resilience drills by summing points of passed objectives per region.",
+              "solution": "def solution(results):\n    totals = {}\n    for r in results:\n        region = r.get('region')\n        if region not in totals:\n            totals[region] = 0\n        if r.get('passed'):\n            totals[region] += r.get('max_points', 0)\n    return totals",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#dict"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "PY-SP2-H-1",
+              "slug": "enterprise-slo-breach-forecast",
+              "title": "Enterprise SLO Breach Forecast",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "slo",
+                "forecasting",
+                "reliability",
+                "specialist_2",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(error_rates, latency_p95, err_budget, lat_threshold):\n    # return breach probability in [0,1]\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"error_rates\":[0.01,0.02,0.03],\"latency_p95\":[180,220,240],\"err_budget\":0.02,\"lat_threshold\":200}",
+                  "output": "0.833333"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"error_rates\":[0.001,0.001],\"latency_p95\":[100,120],\"err_budget\":0.01,\"lat_threshold\":200}",
+                  "output": "0.0"
+                }
+              ],
+              "content": "Forecast breach probability from recent windows as fraction of windows that violate error budget or latency threshold.",
+              "solution": "def solution(error_rates, latency_p95, err_budget, lat_threshold):\n    n = min(len(error_rates), len(latency_p95))\n    if n == 0:\n        return 0.0\n    breaches = 0\n    for i in range(n):\n        if error_rates[i] > err_budget or latency_p95[i] > lat_threshold:\n            breaches += 1\n    return round(breaches / n, 6)",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#len"
+            },
+            {
+              "id": "PY-SP2-H-2",
+              "slug": "cross-domain-identity-conflict-resolver",
+              "title": "Cross-Domain Identity Conflict Resolver",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "identity",
+                "federation",
+                "entity-resolution",
+                "specialist_2",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(accounts):\n    # account has domain,external_id,email_hash,phone_hash\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"domain\":\"a\",\"external_id\":\"1\",\"email_hash\":\"h1\",\"phone_hash\":\"p1\"},{\"domain\":\"b\",\"external_id\":\"9\",\"email_hash\":\"h1\",\"phone_hash\":\"p2\"}]",
+                  "output": "[{\"identity\":\"h1\",\"domains\":[\"a\",\"b\"],\"conflict\":true}]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"domain\":\"x\",\"external_id\":\"1\",\"email_hash\":\"hx\",\"phone_hash\":\"px\"}]",
+                  "output": "[]"
+                }
+              ],
+              "content": "Detect identity collisions when the same normalized identity signal appears across multiple domains.",
+              "solution": "def solution(accounts):\n    buckets = {}\n    for a in accounts:\n        identity = a.get('email_hash') or a.get('phone_hash')\n        if not identity:\n            continue\n        if identity not in buckets:\n            buckets[identity] = set()\n        buckets[identity].add(a.get('domain'))\n\n    out = []\n    for identity, domains in buckets.items():\n        if len(domains) > 1:\n            out.append({'identity': identity, 'domains': sorted(domains), 'conflict': True})\n    out.sort(key=lambda x: x['identity'])\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP2-H-3",
+              "slug": "supply-demand-shock-detector",
+              "title": "Supply-Demand Shock Detector",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "demand-forecasting",
+                "supply-chain",
+                "anomaly-detection",
+                "specialist_2",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(series, threshold_ratio):\n    # row: ts,demand,supply\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"ts\":1,\"demand\":100,\"supply\":90},{\"ts\":2,\"demand\":200,\"supply\":100}]",
+                  "output": "[2]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"ts\":1,\"demand\":50,\"supply\":50}]",
+                  "output": "[]"
+                }
+              ],
+              "content": "Detect timestamps where abs(demand-supply)/max(supply,1) exceeds threshold_ratio.",
+              "solution": "def solution(series, threshold_ratio):\n    out = []\n    for r in series:\n        demand = r.get('demand', 0)\n        supply = r.get('supply', 0)\n        ratio = abs(demand - supply) / max(supply, 1)\n        if ratio > threshold_ratio:\n            out.append(r.get('ts'))\n    return [x for x in out if x is not None]",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#abs"
+            },
+            {
+              "id": "PY-SP2-H-4",
+              "slug": "multi-layer-ddos-pattern-correlator",
+              "title": "Multi-Layer DDoS Pattern Correlator",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "ddos",
+                "security",
+                "correlation",
+                "specialist_2",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(edge_signals, app_signals, req_threshold, err_threshold):\n    # signals keyed by minute bucket\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "{\"edge\":{\"10:00\":5000,\"10:01\":2000},\"app\":{\"10:00\":0.2,\"10:01\":0.01},\"req_threshold\":3000,\"err_threshold\":0.1}",
+                  "output": "[\"10:00\"]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "{\"edge\":{\"11:00\":1000},\"app\":{\"11:00\":0.2},\"req_threshold\":3000,\"err_threshold\":0.1}",
+                  "output": "[]"
+                }
+              ],
+              "content": "Correlate edge request flood and application error surge in the same time bucket to flag probable DDoS attack windows.",
+              "solution": "def solution(edge_signals, app_signals, req_threshold, err_threshold):\n    out = []\n    buckets = set(edge_signals) & set(app_signals)\n    for b in sorted(buckets):\n        if edge_signals[b] > req_threshold and app_signals[b] > err_threshold:\n            out.append(b)\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/stdtypes.html#set"
+            },
+            {
+              "id": "PY-SP2-H-5",
+              "slug": "global-outage-correlation-engine",
+              "title": "Global Outage Correlation Engine",
+              "difficulty": "Hard",
+              "skill": "Python",
+              "skill_level": "Specialist_2",
+              "language": "Python",
+              "tags": [
+                "python",
+                "incident-management",
+                "outage-correlation",
+                "root-cause-analysis",
+                "specialist_2",
+                "hard"
+              ],
+              "starter_code": {
+                "default": "def solution(incidents, overlap_minutes):\n    # incident: provider,region,start,end\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "[{\"provider\":\"p1\",\"region\":\"us\",\"start\":10,\"end\":40},{\"provider\":\"p2\",\"region\":\"us\",\"start\":20,\"end\":50}]",
+                  "output": "[{\"providers\":[\"p1\",\"p2\"],\"region\":\"us\",\"overlap\":20}]"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "[{\"provider\":\"a\",\"region\":\"eu\",\"start\":0,\"end\":5},{\"provider\":\"b\",\"region\":\"eu\",\"start\":6,\"end\":9}]",
+                  "output": "[]"
+                }
+              ],
+              "content": "Correlate outages across providers in the same region and report overlaps above threshold to infer shared root cause.",
+              "solution": "def solution(incidents, overlap_minutes):\n    out = []\n    n = len(incidents)\n    for i in range(n):\n        for j in range(i + 1, n):\n            a = incidents[i]\n            b = incidents[j]\n            if a.get('region') != b.get('region'):\n                continue\n            if a.get('provider') == b.get('provider'):\n                continue\n            start = max(a.get('start', 0), b.get('start', 0))\n            end = min(a.get('end', 0), b.get('end', 0))\n            overlap = end - start\n            if overlap >= overlap_minutes:\n                out.append({\n                    'providers': sorted([a.get('provider'), b.get('provider')]),\n                    'region': a.get('region'),\n                    'overlap': overlap\n                })\n    out.sort(key=lambda x: (x['region'], x['providers'][0], x['providers'][1]))\n    return out",
+              "source": "Real World",
+              "url": "https://docs.python.org/3/library/functions.html#max"
+            }
+          ]
         }
       }
     },
     {
       "skill": "Python with Flask",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -3346,6 +3507,33 @@
     },
     {
       "skill": "Python with Django",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -3404,6 +3592,33 @@
     },
     {
       "skill": "Python for Data Science",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -3462,6 +3677,23 @@
     },
     {
       "skill": "Java",
+      "allowed_languages": [
+        {
+          "id": 62,
+          "name": "Java (OpenJDK 13.0.1)",
+          "monaco": "java"
+        },
+        {
+          "id": 91,
+          "name": "Java (JDK 17.0.6)",
+          "monaco": "java"
+        },
+        {
+          "id": 96,
+          "name": "JavaFX (JDK 17.0.6, OpenJFX 22.0.2)",
+          "monaco": "java"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -5066,6 +5298,23 @@
     },
     {
       "skill": "Java Spring Boot",
+      "allowed_languages": [
+        {
+          "id": 62,
+          "name": "Java (OpenJDK 13.0.1)",
+          "monaco": "java"
+        },
+        {
+          "id": 91,
+          "name": "Java (JDK 17.0.6)",
+          "monaco": "java"
+        },
+        {
+          "id": 96,
+          "name": "JavaFX (JDK 17.0.6, OpenJFX 22.0.2)",
+          "monaco": "java"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -5124,6 +5373,18 @@
     },
     {
       "skill": ".NET, C#",
+      "allowed_languages": [
+        {
+          "id": 51,
+          "name": "C# (Mono 6.6.0.161)",
+          "monaco": "csharp"
+        },
+        {
+          "id": 84,
+          "name": "Visual Basic.Net (vbnc 0.0.0.5943)",
+          "monaco": "vb"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -6004,6 +6265,18 @@
     },
     {
       "skill": ".NET, VB.NET",
+      "allowed_languages": [
+        {
+          "id": 51,
+          "name": "C# (Mono 6.6.0.161)",
+          "monaco": "csharp"
+        },
+        {
+          "id": 84,
+          "name": "Visual Basic.Net (vbnc 0.0.0.5943)",
+          "monaco": "vb"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -6732,6 +7005,13 @@
     },
     {
       "skill": "SQL",
+      "allowed_languages": [
+        {
+          "id": 82,
+          "name": "SQL (SQLite 3.27.2)",
+          "monaco": "sql"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -7651,6 +7931,13 @@
     },
     {
       "skill": "MongoDB",
+      "allowed_languages": [
+        {
+          "id": 93,
+          "name": "JavaScript (Node.js 18.15.0)",
+          "monaco": "javascript"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -8468,6 +8755,13 @@
     },
     {
       "skill": "PostgreSQL",
+      "allowed_languages": [
+        {
+          "id": 82,
+          "name": "SQL (SQLite 3.27.2)",
+          "monaco": "sql"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -9271,6 +9565,23 @@
     },
     {
       "skill": "Java Selenium",
+      "allowed_languages": [
+        {
+          "id": 62,
+          "name": "Java (OpenJDK 13.0.1)",
+          "monaco": "java"
+        },
+        {
+          "id": 91,
+          "name": "Java (JDK 17.0.6)",
+          "monaco": "java"
+        },
+        {
+          "id": 96,
+          "name": "JavaFX (JDK 17.0.6, OpenJFX 22.0.2)",
+          "monaco": "java"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [
@@ -10060,6 +10371,33 @@
     },
     {
       "skill": "Python Selenium",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
       "levels": {
         "Beginner": {
           "Easy": [

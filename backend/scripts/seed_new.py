@@ -35,16 +35,6 @@ CANONICAL_LEVEL_KEYS = {
 
 CANONICAL_DIFFICULTIES = ["Easy", "Medium", "Hard"]
 
-LANGS = {
-    "python": {"id": 71, "name": "Python (3.8.1)", "monaco": "python"},
-    "javascript": {"id": 63, "name": "JavaScript (Node.js 12.14.0)", "monaco": "javascript"},
-    "typescript": {"id": 74, "name": "TypeScript (3.7.4)", "monaco": "typescript"},
-    "java": {"id": 62, "name": "Java (OpenJDK 13.0.1)", "monaco": "java"},
-    "cpp": {"id": 54, "name": "C++ (GCC 9.2.0)", "monaco": "cpp"},
-    "csharp": {"id": 51, "name": "C# (Mono 6.6.0.161)", "monaco": "csharp"},
-    "sql": {"id": 82, "name": "SQL (SQLite 3.27.2)", "monaco": "sql"},
-}
-
 LANGUAGE_ALIASES = {
     "js": "javascript",
     "node": "javascript",
@@ -83,8 +73,10 @@ def normalize_test_cases(raw_cases: Any) -> list[dict[str, str]]:
     for case in raw_cases:
         if not isinstance(case, dict):
             continue
-        input_value = to_str(case.get("input", case.get("stdin", "")))
-        output_value = to_str(case.get("output", case.get("expected_output", case.get("expected", ""))))
+        if "input" not in case or "output" not in case:
+            continue
+        input_value = to_str(case.get("input", ""))
+        output_value = to_str(case.get("output", ""))
         cases.append({"input": input_value, "output": output_value})
     return cases
 
@@ -142,36 +134,8 @@ def stable_external_task_id(
     return f"scrape:{digest}"
 
 
-def infer_allowed_languages(levels: Any) -> list[dict[str, Any]]:
-    inferred: list[dict[str, Any]] = []
-    seen_ids: set[int] = set()
-
-    if not isinstance(levels, dict):
-        return inferred
-
-    for level_payload in levels.values():
-        if not isinstance(level_payload, dict):
-            continue
-        for difficulty in CANONICAL_DIFFICULTIES:
-            entries = level_payload.get(difficulty)
-            if not isinstance(entries, list):
-                continue
-            for question in entries:
-                if not isinstance(question, dict):
-                    continue
-                language_key = normalize_language_key(to_str(question.get("language")))
-                lang_payload = LANGS.get(language_key)
-                if not lang_payload:
-                    continue
-                lang_id = int(lang_payload["id"])
-                if lang_id in seen_ids:
-                    continue
-                seen_ids.add(lang_id)
-                inferred.append(lang_payload)
-
-    if not inferred:
-        inferred.append(LANGS["python"])
-    return inferred
+def resolve_allowed_languages(skill_obj: dict[str, Any]) -> list[dict[str, Any]]:
+    return skill_obj.get("allowed_languages", [])
 
 
 def validate_payload(payload: dict[str, Any]) -> list[str]:
@@ -247,7 +211,7 @@ def create_skills_from_payload(db, skills_payload: list[dict[str, Any]]) -> list
             name=skill_name,
             description=to_str(skill_obj.get("description")) or "Imported from scrape JSON",
             icon_url=to_str(skill_obj.get("icon_url")) or None,
-            allowed_languages=infer_allowed_languages(skill_obj.get("levels")),
+            allowed_languages=resolve_allowed_languages(skill_obj),
         )
         db.add(skill)
         skills.append(skill)
