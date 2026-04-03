@@ -105,6 +105,7 @@ function TestCaseRow({ index, tc }: { index: number; tc: TestCaseResult }) {
       : tc.passed
         ? "Accepted"
         : "Wrong Answer";
+  const actualOutput = tc.stdout ?? (!tc.passed ? tc.stderr ?? tc.compile_output ?? tc.message ?? statusDescription : null);
 
   return (
     <div className='overflow-hidden rounded-[10px] border border-[#eee]'>
@@ -144,7 +145,7 @@ function TestCaseRow({ index, tc }: { index: number; tc: TestCaseResult }) {
                     : "border-red-200 bg-red-50 text-red-900"
                 }`}
               >
-                {tc.stdout || "(empty)"}
+                {actualOutput || "(empty)"}
               </pre>
             </div>
             {tc.stderr && (

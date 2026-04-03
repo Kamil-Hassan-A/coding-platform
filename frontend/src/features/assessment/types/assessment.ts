@@ -26,6 +26,7 @@ export interface TestCaseResult {
   expected_output: string | null;
   stdout: string | null;
   stderr: string | null;
+  compile_output?: string | null;
   message: string | null;
   status: { description?: string } & Record<string, unknown>;
   passed: boolean;
