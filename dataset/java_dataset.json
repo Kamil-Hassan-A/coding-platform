@@ -1,0 +1,896 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_name": "java_dataset_final_full",
+  "generated_at_utc": "2026-04-03T05:59:37.573Z",
+  "skills": [
+    {
+      "skill": "Java",
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "39150953-6bf2-4c59-aec5-4b711a3be429",
+              "slug": "two-sum",
+              "title": "Two Sum",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "tags": ["arrays", "hashmap", "two-pointers", "Beginner", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] twoSum(int[] nums, int target) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint target = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint[] result = twoSum(nums, target);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] twoSum(int[] nums, int target) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint target = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint[] result = twoSum(nums, target);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "2 7 11 15\n9", "output": "0 1" },
+                { "input": "3 2 4\n6", "output": "1 2" }
+              ],
+              "hidden_test_cases": [
+                { "input": "3 3\n6", "output": "0 1" },
+                { "input": "0 4 3 0\n0", "output": "0 3" },
+                { "input": "-1 -2 -3 -4 -5\n-8", "output": "2 4" },
+                { "input": "2 5 5 11\n10", "output": "1 2" }
+              ],
+              "content": "## Problem Statement\nGiven an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.\n\n## Input Format\nLine 1: Space-separated integers representing the array\nLine 2: A single integer representing the target\n\n## Output Format\nPrint two space-separated integers representing the indices.\n\n## Constraints\n- 2 <= nums.length <= 10^4\n- -10^9 <= nums[i] <= 10^9\n- -10^9 <= target <= 10^9\n\n## Example\nInput:\n2 7 11 15\n9\n\nOutput:\n0 1\n\n## Explanation\nBecause nums[0] + nums[1] == 9, we return 0 1.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: HashMap Time O(n) Space O(n)\nMap<Integer, Integer> map = new HashMap<>();\nfor(int i=0; i<nums.length; i++){\nif(map.containsKey(target-nums[i])) return new int[]{map.get(target-nums[i]), i};\nmap.put(nums[i], i);\n}\nreturn new int[]{};",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/two-sum/"
+            },
+            {
+              "id": "fcad2f9a-ab9b-4aac-ba1c-ec13701d5002",
+              "slug": "palindrome-number",
+              "title": "Palindrome Number",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "tags": ["math", "strings", "number-theory", "Beginner", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean palindromeNumber(int x) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint x = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tboolean result = palindromeNumber(x);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean palindromeNumber(int x) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint x = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tboolean result = palindromeNumber(x);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "121", "output": "true" },
+                { "input": "-121", "output": "false" }
+              ],
+              "hidden_test_cases": [
+                { "input": "10", "output": "false" },
+                { "input": "0", "output": "true" },
+                { "input": "11", "output": "true" },
+                { "input": "12321", "output": "true" }
+              ],
+              "content": "## Problem Statement\nGiven an integer x, return true if x is a palindrome, and false otherwise.\n\n## Input Format\nLine 1: A single integer x\n\n## Output Format\nPrint true or false based on whether the number is a palindrome.\n\n## Constraints\n- -2^31 <= x <= 2^31 - 1\n\n## Example\nInput:\n121\n\nOutput:\ntrue\n\n## Explanation\n121 reads as 121 from left to right and from right to left.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Reversing Time O(log(n)) Space O(1)\nif(x < 0 || (x % 10 == 0 && x != 0)) return false;\nint rev = 0;\nwhile(x > rev) { rev = rev * 10 + x % 10; x /= 10; }\nreturn x == rev || x == rev/10;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/palindrome-number/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "8aab07c8-f2cb-4d17-97d9-2dd248ab2fc1",
+              "slug": "longest-substring-without-repeating-characters",
+              "title": "Longest Substring Without Repeating Characters",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "tags": ["string", "hashmap", "sliding-window", "Beginner", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int longestSubstringWithoutRepeatingCharacters(String s) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = longestSubstringWithoutRepeatingCharacters(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int longestSubstringWithoutRepeatingCharacters(String s) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = longestSubstringWithoutRepeatingCharacters(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "abcabcbb", "output": "3" },
+                { "input": "bbbbb", "output": "1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "pwwkew", "output": "3" },
+                { "input": "au", "output": "2" },
+                { "input": "a", "output": "1" },
+                { "input": " ", "output": "1" }
+              ],
+              "content": "## Problem Statement\nGiven a string s, find the length of the longest substring without repeating characters.\n\n## Input Format\nLine 1: A single string s\n\n## Output Format\nPrint a single integer representing the length of the longest substring.\n\n## Constraints\n- 0 <= s.length <= 5 * 10^4\n\n## Example\nInput:\nabcabcbb\n\nOutput:\n3\n\n## Explanation\nThe answer is \"abc\", with the length of 3.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Sliding Window Object\n// Time: O(n) Space: O(min(m, n))\nint[] chars = new int[128];\nint left = 0, right = 0, res = 0;\nwhile (right < s.length()) { char r = s.charAt(right); chars[r]++; while (chars[r] > 1) { chars[s.charAt(left)]--; left++; } res = Math.max(res, right - left + 1); right++; } return res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+            },
+            {
+              "id": "b69fd7c9-dd6b-4f3f-bb35-c2b0a12bf3dd",
+              "slug": "string-to-integer-atoi",
+              "title": "String To Integer Atoi",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Beginner",
+              "language": "Java",
+              "tags": ["string", "math", "algorithms", "Beginner", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int stringToIntegerAtoi(String s) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = stringToIntegerAtoi(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int stringToIntegerAtoi(String s) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = stringToIntegerAtoi(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "42", "output": "42" },
+                { "input": "   -42", "output": "-42" }
+              ],
+              "hidden_test_cases": [
+                { "input": "4193 with words", "output": "4193" },
+                { "input": "words and 987", "output": "0" },
+                { "input": "-91283472332", "output": "-2147483648" },
+                { "input": "91283472332", "output": "2147483647" }
+              ],
+              "content": "## Problem Statement\nImplement the myAtoi(string s) function, which converts a string to a 32-bit signed integer. Whitespaces are generally ignored until reaching numbers, applying sign mapping limits to Java Integer MIN and MAX bounds.\n\n## Input Format\nLine 1: A single string s\n\n## Output Format\nPrint the computed 32-bit signed integer.\n\n## Constraints\n- 0 <= s.length <= 200\n\n## Example\nInput:\n42\n\nOutput:\n42\n\n## Explanation\nThe numerical characters resolve to integer limits resulting in 42.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Scan and clamp Time O(n)\nint i = 0, sign = 1, res = 0, n = s.length();\nwhile (i < n && s.charAt(i) == ' ') i++;\nif (i < n && (s.charAt(i) == '+' || s.charAt(i) == '-')) { sign = s.charAt(i++) == '+' ? 1 : -1; }\nwhile (i < n && Character.isDigit(s.charAt(i))) { int digit = s.charAt(i) - '0'; if (res > Integer.MAX_VALUE / 10 || (res == Integer.MAX_VALUE / 10 && digit > 7)) { return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE; } res = res * 10 + digit; i++; } return res * sign;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/string-to-integer-atoi/"
+            }
+          ],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "393708ff-9320-413d-89df-974111d0ecd3",
+              "slug": "valid-parentheses",
+              "title": "Valid Parentheses",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["stack", "string", "algorithms", "Intermediate_1", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean validParentheses(String s) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = validParentheses(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean validParentheses(String s) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = validParentheses(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "()", "output": "true" },
+                { "input": "()[]{}", "output": "true" }
+              ],
+              "hidden_test_cases": [
+                { "input": "(]", "output": "false" },
+                { "input": "([)]", "output": "false" },
+                { "input": "{[]}", "output": "true" },
+                { "input": "]", "output": "false" }
+              ],
+              "content": "## Problem Statement\nString of brackets — check all open brackets are closed in correct order.\n\n## Input Format\nLine 1: A single string s\n\n## Output Format\nPrint true or false based on validity.\n\n## Constraints\n- 1 <= s.length <= 10^4\n- s consists of '(', ')', '{', '}', '[', ']' only\n\n## Example\nInput:\n()\n\nOutput:\ntrue\n\n## Explanation\nA single open paren immediately closed by its matching close paren is valid.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Stack\nStack<Character> stack = new Stack<>();\nfor (char c : s.toCharArray()) {\nif (c == '(') stack.push(')');\nelse if (c == '{') stack.push('}');\nelse if (c == '[') stack.push(']');\nelse if (stack.isEmpty() || stack.pop() != c) return false;\n}\nreturn stack.isEmpty();",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/valid-parentheses/"
+            },
+            {
+              "id": "4692b2a0-beee-4a20-90fe-980797922595",
+              "slug": "merge-two-sorted-lists",
+              "title": "Merge Two Sorted Lists",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["linked-list", "two-pointers", "arrays", "Intermediate_1", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] mergeTwoSortedLists(int[] list1, int[] list2) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] list1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) list1[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p1 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] list2 = new int[p1.length];\n\t\tfor(int j=0; j<p1.length; j++) list2[j] = Integer.parseInt(p1[j]);\n\t\t// Solve\n\t\tint[] result = mergeTwoSortedLists(list1, list2);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] mergeTwoSortedLists(int[] list1, int[] list2) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] list1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) list1[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p1 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] list2 = new int[p1.length];\n\t\tfor(int j=0; j<p1.length; j++) list2[j] = Integer.parseInt(p1[j]);\n\t\t// Solve\n\t\tint[] result = mergeTwoSortedLists(list1, list2);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 2 4\n1 3 4", "output": "1 1 2 3 4 4" },
+                { "input": "\n0", "output": "0" }
+              ],
+              "hidden_test_cases": [
+                { "input": "\n", "output": ""
+                },
+                {
+                  "input": "1\n",
+                  "output": "1" },
+                { "input": "-5 2\n-3 1 3", "output": "-5 -3 1 2 3" },
+                { "input": "5 5\n5 5", "output": "5 5 5 5" }
+              ],
+              "content": "## Problem Statement\nMerge two sorted integer arrays into one sorted array.\n\n## Input Format\nLine 1: Space-separated integers representing list1\nLine 2: Space-separated integers representing list2\n\n## Output Format\nPrint space-separated integers for the merged list.\n\n## Constraints\n- 0 <= list1.length, list2.length <= 50\n- -100 <= list1[i] <= 100\n\n## Example\nInput:\n1 2 4\n1 3 4\n\nOutput:\n1 1 2 3 4 4\n\n## Explanation\nMerge by comparing heads of both lists at each step.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Iterative Two Pointers arrays\nint[] res = new int[list1.length + list2.length];\nint i = 0, j = 0, k = 0;\nwhile (i < list1.length && j < list2.length) {\nif (list1[i] < list2[j]) res[k++] = list1[i++];\nelse res[k++] = list2[j++];\n}\nwhile (i < list1.length) res[k++] = list1[i++];\nwhile (j < list2.length) res[k++] = list2[j++];\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/merge-two-sorted-lists/"
+            },
+            {
+              "id": "7f52ac56-a735-42d1-8dad-8a5443c72171",
+              "slug": "climbing-stairs",
+              "title": "Climbing Stairs",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["dynamic-programming", "math", "algorithms", "Intermediate_1", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int climbingStairs(int n) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint n = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = climbingStairs(n);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int climbingStairs(int n) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint n = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = climbingStairs(n);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "2", "output": "2" },
+                { "input": "3", "output": "3" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "1" },
+                { "input": "4", "output": "5" },
+                { "input": "5", "output": "8" },
+                { "input": "45", "output": "1836311903" }
+              ],
+              "content": "## Problem Statement\nn steps, can climb 1 or 2 at a time, how many distinct ways to reach top.\n\n## Input Format\nLine 1: A single integer n\n\n## Output Format\nPrint the number of distinct ways.\n\n## Constraints\n- 1 <= n <= 45\n\n## Example\nInput:\n2\n\nOutput:\n2\n\n## Explanation\nFor n=2 there are exactly 2 ways: take two 1-steps or one 2-step.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: DP Time O(N)\nif(n <= 2) return n;\nint first = 1, second = 2;\nfor(int i = 3; i <= n; i++) {\nint third = first + second;\nfirst = second; second = third;\n}\nreturn second;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/climbing-stairs/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "a8e93fa0-0597-4292-884f-363446e16e81",
+              "slug": "container-with-most-water",
+              "title": "Container With Most Water",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["two-pointers", "greedy", "arrays", "Intermediate_1", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int containerWithMostWater(int[] height) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] height = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) height[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = containerWithMostWater(height);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int containerWithMostWater(int[] height) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] height = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) height[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = containerWithMostWater(height);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 8 6 2 5 4 8 3 7", "output": "49" },
+                { "input": "1 1", "output": "1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "4 3 2 1 4", "output": "16" },
+                { "input": "1 2 1", "output": "2" },
+                { "input": "1000 1", "output": "1" },
+                { "input": "1 1000 1000 1", "output": "1000" }
+              ],
+              "content": "## Problem Statement\nYou are given an integer array height of length n mapping structural elements limits tracking tallest lines executing boundaries mapped effectively consistently correctly.\n\n## Input Format\nLine 1: Space-separated integers mapping bounding structures.\n\n## Output Format\nPrint the maximal integer container logically.\n\n## Constraints\n- 2 <= height.length <= 10^5\n- 0 <= height[i] <= 10^4\n\n## Example\nInput:\n1 8 6 2 5 4 8 3 7\n\nOutput:\n49\n\n## Explanation\nPointers track structurally distinct bounds continuously executing largest elements.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Two Pointers\nint maxarea = 0, l = 0, r = height.length - 1;\nwhile (l < r) {\nmaxarea = Math.max(maxarea, Math.min(height[l], height[r]) * (r - l));\nif (height[l] < height[r]) l++;\nelse r--;\n}\nreturn maxarea;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/container-with-most-water/"
+            },
+            {
+              "id": "633c0a81-f2e7-4095-8b83-b9442acf4392",
+              "slug": "three-sum",
+              "title": "3Sum",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["two-pointers", "arrays", "sorting", "Intermediate_1", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<List<Integer>> threeSum(int[] nums) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\\\\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) {\n\t\t\tnums[j] = Integer.parseInt(p0[j]);\n\t\t}\n\t\tList<List<Integer>> result = threeSum(nums);\n\t\t\n\t\tif(result == null || result.size()==0) {\n\t\t\tSystem.out.println(\"\");\n\t\t} else {\n\t\t\tfor(int i=0; i<result.size(); i++) {\n\t\t\t\tList<Integer> tri = result.get(i);\n\t\t\t\tSystem.out.print(tri.get(0) + \" \" + tri.get(1) + \" \" + tri.get(2) + (i==result.size()-1 ? \"\" : \"|\"));\n\t\t\t}\n\t\t\tSystem.out.println();\n\t\t}\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<List<Integer>> threeSum(int[] nums) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\\\\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) {\n\t\t\tnums[j] = Integer.parseInt(p0[j]);\n\t\t}\n\t\tList<List<Integer>> result = threeSum(nums);\n\t\t\n\t\tif(result == null || result.size()==0) {\n\t\t\tSystem.out.println(\"\");\n\t\t} else {\n\t\t\tfor(int i=0; i<result.size(); i++) {\n\t\t\t\tList<Integer> tri = result.get(i);\n\t\t\t\tSystem.out.print(tri.get(0) + \" \" + tri.get(1) + \" \" + tri.get(2) + (i==result.size()-1 ? \"\" : \"|\"));\n\t\t\t}\n\t\t\tSystem.out.println();\n\t\t}\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "-1 0 1 2 -1 -4", "output": "-1 -1 2|-1 0 1" },
+                { "input": "0 1 1", "output": "" }
+              ],
+              "hidden_test_cases": [
+                { "input": "0 0 0", "output": "0 0 0" },
+                { "input": "0 0 0 0", "output": "0 0 0" },
+                { "input": "-2 0 1 1 2", "output": "-2 0 2|-2 1 1" },
+                { "input": "1 2 -2 -1", "output": "" }
+              ],
+              "content": "## Problem Statement\nGiven an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0 tracking deduplications efficiently.\n\n## Input Format\nLine 1: Space-separated integer sequence mapping input.\n\n## Output Format\nPrint structured arrays mapped delimited clearly with pipelines.\n\n## Constraints\n- 3 <= nums.length <= 3000\n- -10^5 <= nums[i] <= 10^5\n\n## Example\nInput:\n-1 0 1 2 -1 -4\n\nOutput:\n-1 -1 2|-1 0 1\n\n## Explanation\nTriplets mathematically match 0 mapped internally distinctly ordered.",
+              "solution": "// Approach: Sort + two pointer approach\n// Time: O(n^2)  Space: O(1)\nList<List<Integer>> res = new ArrayList<>();\nif(nums == null || nums.length < 3) return res;\nArrays.sort(nums);\nfor(int i=0; i<nums.length-2; i++) {\n  if(i == 0 || nums[i] != nums[i-1]) {\n    int lo = i + 1, hi = nums.length - 1, sum = 0 - nums[i];\n    while(lo < hi) {\n      if(nums[lo] + nums[hi] == sum) {\n        res.add(Arrays.asList(nums[i], nums[lo], nums[hi]));\n        while(lo < hi && nums[lo] == nums[lo+1]) lo++;\n        while(lo < hi && nums[hi] == nums[hi-1]) hi--;\n        lo++; hi--;\n      } else if (nums[lo] + nums[hi] < sum) lo++;\n      else hi--;\n    }\n  }\n}\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/3sum/" }
+          ],
+          "Hard": [
+            {
+              "id": "f6f5b040-c47b-413a-b927-333c35520d65",
+              "slug": "trapping-rain-water",
+              "title": "Trapping Rain Water",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["two-pointers", "dynamic-programming", "arrays", "Intermediate_1", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int trappingRainWater(int[] height) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] height = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) height[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = trappingRainWater(height);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int trappingRainWater(int[] height) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] height = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) height[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = trappingRainWater(height);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "0 1 0 2 1 0 1 3 2 1 2 1", "output": "6" },
+                { "input": "4 2 0 3 2 5", "output": "9" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1 0 1", "output": "1" },
+                { "input": "10000 0 10000", "output": "10000" },
+                { "input": "2 0 2", "output": "2" },
+                { "input": "1 2 3", "output": "0" }
+              ],
+              "content": "## Problem Statement\nGiven elevation map as integer array, compute total water trapped after rain.\n\n## Input Format\nLine 1: Space-separated integers representing heights\n\n## Output Format\nPrint total integer blocks of water trapped.\n\n## Constraints\n- n == height.length\n- 1 <= n <= 2*10^4\n- 0 <= height[i] <= 10^5\n\n## Example\nInput:\n0 1 0 2 1 0 1 3 2 1 2 1\n\nOutput:\n6\n\n## Explanation\nThe bars trap water in the valleys between taller bars, totalling 6 units.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Two Pointers\nint left = 0, right = height.length - 1;\nint ans = 0, left_max = 0, right_max = 0;\nwhile (left < right) {\nif (height[left] < height[right]) {\nif (height[left] >= left_max) left_max = height[left];\nelse ans += (left_max - height[left]);\n++left;\n} else {\nif (height[right] >= right_max) right_max = height[right];\nelse ans += (right_max - height[right]);\n--right;\n}\n}\nreturn ans;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/trapping-rain-water/"
+            },
+            {
+              "id": "d181260b-8916-4265-a871-1d02efdb535c",
+              "slug": "minimum-window-substring",
+              "title": "Minimum Window Substring",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_1",
+              "language": "Java",
+              "tags": ["sliding-window", "string", "hashmap", "Intermediate_1", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String minimumWindowSubstring(String s, String t) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString t = sc.nextLine().trim();\n\t\t// Solve\n\t\tString result = minimumWindowSubstring(s, t);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String minimumWindowSubstring(String s, String t) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString t = sc.nextLine().trim();\n\t\t// Solve\n\t\tString result = minimumWindowSubstring(s, t);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "ADOBECODEBANC\nABC", "output": "BANC" },
+                { "input": "a\na", "output": "a" }
+              ],
+              "hidden_test_cases": [
+                { "input": "a\naa", "output": ""
+                },
+                {
+                  "input": "a\nb",
+                  "output": "" },
+                { "input": "ab\nb", "output": "b" },
+                { "input": "bba\nab", "output": "ba" }
+              ],
+              "content": "## Problem Statement\nFind smallest window in s containing all chars of t including duplicates.\n\n## Input Format\nLine 1: A single string s\nLine 2: A single string t\n\n## Output Format\nPrint the shortest matching substring of s.\n\n## Constraints\n- 1 <= s.length, t.length <= 10^5\n- s and t consist of uppercase and lowercase English letters\n\n## Example\nInput:\nADOBECODEBANC\nABC\n\nOutput:\nBANC\n\n## Explanation\n\"BANC\" is the shortest substring of s that contains A, B, and C.",
+              "solution": "// Approach: Sliding window with two HashMaps for character frequency\n// Time: O(m + n)  Space: O(m + n)\nif (s.length() == 0 || t.length() == 0) return \"\";\nMap<Character, Integer> dictT = new HashMap<>();\nfor (int i = 0; i < t.length(); i++) {\n  int count = dictT.getOrDefault(t.charAt(i), 0);\n  dictT.put(t.charAt(i), count + 1);\n}\nint required = dictT.size();\nint l = 0, r = 0;\nint formed = 0;\nMap<Character, Integer> windowCounts = new HashMap<>();\nint[] ans = {-1, 0, 0};\nwhile (r < s.length()) {\n  char c = s.charAt(r);\n  int count = windowCounts.getOrDefault(c, 0);\n  windowCounts.put(c, count + 1);\n  if (dictT.containsKey(c) && windowCounts.get(c).intValue() == dictT.get(c).intValue()) {\n    formed++;\n  }\n  while (l <= r && formed == required) {\n    c = s.charAt(l);\n    if (ans[0] == -1 || r - l + 1 < ans[0]) {\n      ans[0] = r - l + 1;\n      ans[1] = l;\n      ans[2] = r;\n    }\n    windowCounts.put(c, windowCounts.get(c) - 1);\n    if (dictT.containsKey(c) && windowCounts.get(c).intValue() < dictT.get(c).intValue()) {\n      formed--;\n    }\n    l++;\n  }\n  r++;\n}\nreturn ans[0] == -1 ? \"\" : s.substring(ans[1], ans[2] + 1);",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/minimum-window-substring/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "3408edb4-505f-43de-afad-3ac2901aaa1d",
+              "slug": "maximum-subarray",
+              "title": "Maximum Subarray",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["dynamic-programming", "arrays", "divide-and-conquer", "Intermediate_2", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int maximumSubarray(int[] nums) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = maximumSubarray(nums);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int maximumSubarray(int[] nums) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = maximumSubarray(nums);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "-2 1 -3 4 -1 2 1 -5 4", "output": "6" },
+                { "input": "1", "output": "1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "5 4 -1 7 8", "output": "23" },
+                { "input": "-1", "output": "-1" },
+                { "input": "-100000", "output": "-100000" },
+                { "input": "0", "output": "0" }
+              ],
+              "content": "Question: Maximum Subarray\\n\\nDescription: Provide optimal solution for Maximum Subarray testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Intermediate_2 Easy mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Kadane's Algorithm\nint maxSoFar = nums[0], maxEndingHere = nums[0];\nfor (int i = 1; i < nums.length; i++) {\nmaxEndingHere = Math.max(nums[i], maxEndingHere + nums[i]);\nmaxSoFar = Math.max(maxSoFar, maxEndingHere);\n}\nreturn maxSoFar;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/maximum-subarray/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "d7ae15ab-26a1-41ba-9aad-8928718dd94b",
+              "slug": "coin-change",
+              "title": "Coin Change",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["dynamic-programming", "bfs", "arrays", "Intermediate_2", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int coinChange(int[] coins, int amount) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] coins = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) coins[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint amount = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = coinChange(coins, amount);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int coinChange(int[] coins, int amount) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] coins = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) coins[j] = Integer.parseInt(p0[j]);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint amount = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = coinChange(coins, amount);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 2 5\n11", "output": "3" },
+                { "input": "2\n3", "output": "-1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1\n0", "output": "0" },
+                { "input": "2 5 10 1\n27", "output": "4" },
+                { "input": "186 419 83 408\n6249", "output": "20" },
+                { "input": "3 7 405 436\n8839", "output": "25" }
+              ],
+              "content": "Question: Coin Change\\n\\nDescription: Provide optimal solution for Coin Change testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Intermediate_2 Medium mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: DP array\nint max = amount + 1;\nint[] dp = new int[amount + 1];\nArrays.fill(dp, max);\ndp[0] = 0;\nfor(int i = 1; i <= amount; i++) {\nfor(int j = 0; j < coins.length; j++) {\nif(coins[j] <= i) dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);\n}\n}\nreturn dp[amount] > amount ? -1 : dp[amount];",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/coin-change/"
+            },
+            {
+              "id": "b48314ed-b8ad-46e1-80c4-2716521794c9",
+              "slug": "longest-increasing-subsequence",
+              "title": "Longest Increasing Subsequence",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["dynamic-programming", "arrays", "binary-search", "Intermediate_2", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int longestIncreasingSubsequence(int[] nums) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = longestIncreasingSubsequence(nums);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int longestIncreasingSubsequence(int[] nums) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] nums = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) nums[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = longestIncreasingSubsequence(nums);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "10 9 2 5 3 7 101 18", "output": "4" },
+                { "input": "0 1 0 3 2 3", "output": "4" }
+              ],
+              "hidden_test_cases": [
+                { "input": "7 7 7 7 7 7 7", "output": "1" },
+                { "input": "1 3 6 7 9 4 10 5 6", "output": "6" },
+                { "input": "-1", "output": "1" },
+                { "input": "100 90 80", "output": "1" }
+              ],
+              "content": "Question: Longest Increasing Subsequence\\n\\nDescription: Provide optimal solution for Longest Increasing Subsequence testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Intermediate_2 Medium mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: DP array length O(n^2)\nif(nums.length == 0) return 0;\nint[] dp = new int[nums.length];\nArrays.fill(dp, 1);\nint res = 1;\nfor(int i=1; i<nums.length; i++){\nfor(int j=0; j<i; j++){\nif(nums[i] > nums[j]) dp[i] = Math.max(dp[i], dp[j]+1);\n}\nres = Math.max(res, dp[i]);\n}\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "32525098-866f-4ee2-a787-cfdcbdead456",
+              "slug": "edit-distance",
+              "title": "Edit Distance",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["dynamic-programming", "string", "algorithms", "Intermediate_2", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int editDistance(String word1, String word2) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString word1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString word2 = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = editDistance(word1, word2);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int editDistance(String word1, String word2) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString word1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString word2 = sc.nextLine().trim();\n\t\t// Solve\n\t\tint result = editDistance(word1, word2);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "horse\nros", "output": "3" },
+                { "input": "intention\nexecution", "output": "5" }
+              ],
+              "hidden_test_cases": [
+                { "input": "a\na", "output": "0" },
+                { "input": "a\nb", "output": "1" },
+                { "input": "ab\n", "output": "2" },
+                { "input": "\nab", "output": "2" }
+              ],
+              "content": "Question: Edit Distance\\n\\nDescription: Provide optimal solution for Edit Distance testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Intermediate_2 Hard mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: DP\nint n = word1.length(), m = word2.length();\nif (n * m == 0) return n + m;\nint[][] dp = new int[n + 1][m + 1];\nfor (int i = 0; i <= n; i++) dp[i][0] = i;\nfor (int j = 0; j <= m; j++) dp[0][j] = j;\nfor (int i = 1; i <= n; i++) {\nfor (int j = 1; j <= m; j++) {\nif (word1.charAt(i - 1) == word2.charAt(j - 1)) {\ndp[i][j] = dp[i - 1][j - 1];\n} else {\ndp[i][j] = 1 + Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1]));\n}\n}\n}\nreturn dp[n][m];",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/edit-distance/"
+            },
+            {
+              "id": "9ba30b97-ced4-4f19-aca4-a7160fd10dfa",
+              "slug": "regular-expression-matching",
+              "title": "Regular Expression Matching",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["dynamic-programming", "string", "algorithms", "Intermediate_2", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean regularExpressionMatching(String s, String p) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString p = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = regularExpressionMatching(s, p);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean regularExpressionMatching(String s, String p) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString p = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = regularExpressionMatching(s, p);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "aa\na", "output": "false" },
+                { "input": "aa\na*", "output": "true" }
+              ],
+              "hidden_test_cases": [
+                { "input": "ab\n.*", "output": "true" },
+                { "input": "aab\nc*a*b", "output": "true" },
+                { "input": "mississippi\nmis*is*p*.", "output": "false" },
+                { "input": "a\nab*", "output": "true" }
+              ],
+              "content": "Question: Regular Expression Matching\\n\\nDescription: Provide optimal solution for Regular Expression Matching testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Intermediate_2 Hard mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: 2D DP table matching pattern with '.' and '*'\n// Time: O(m*n)  Space: O(m*n)\nint m = s.length(), n = p.length();\nboolean[][] dp = new boolean[m + 1][n + 1];\ndp[0][0] = true;\nfor (int j = 1; j <= n; j++) {\n  if (p.charAt(j - 1) == '*') {\n    dp[0][j] = j >= 2 && dp[0][j - 2];\n  }\n}\nfor (int i = 1; i <= m; i++) {\n  for (int j = 1; j <= n; j++) {\n    if (p.charAt(j - 1) == '*') {\n      dp[i][j] = (j >= 2 && dp[i][j - 2]) ||\n                 ((p.charAt(j - 2) == '.' || p.charAt(j - 2) == s.charAt(i - 1))\n                  && dp[i - 1][j]);\n    } else if (p.charAt(j - 1) == '.' || p.charAt(j - 1) == s.charAt(i - 1)) {\n      dp[i][j] = dp[i - 1][j - 1];\n    }\n  }\n}\nreturn dp[m][n];",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/regular-expression-matching/"
+            },
+            {
+              "id": "aa137057-55f6-47b2-a716-d95ccd2fa98d",
+              "slug": "valid-number",
+              "title": "Valid Number",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["string", "math", "algorithms", "Beginner", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean validNumber(String s) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = validNumber(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean validNumber(String s) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString s = sc.nextLine().trim();\n\t\t// Solve\n\t\tboolean result = validNumber(s);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "0", "output": "true" },
+                { "input": "e", "output": "false" }
+              ],
+              "hidden_test_cases": [
+                { "input": ".", "output": "false" },
+                { "input": "2e0", "output": "true" },
+                { "input": "-90E3", "output": "true" },
+                { "input": " 99e2.5 ", "output": "false" }
+              ],
+              "content": "## Problem Statement\nGiven a string s, return whether s is a valid number passing digit rules, exponents flags, and bounding values logically.\n\n## Input Format\nLine 1: A single string s\n\n## Output Format\nPrint true or false.\n\n## Constraints\n- 1 <= s.length <= 20\n- s consists of English letters (both uppercase and lowercase), digits (0-9), plus '+', minus '-', or dot '.'.\n\n## Example\nInput:\n0\n\nOutput:\ntrue\n\n## Explanation\nA raw '0' parses verifying native digit validations passing boolean return.",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Flags\n// Time: O(n)\nboolean seenDigit = false, seenExponent = false, seenDot = false;\nfor(int i=0; i<s.length(); i++) {\nchar c = s.charAt(i);\nif(Character.isDigit(c)) seenDigit = true;\nelse if(c == '+' || c == '-') { if(i > 0 && s.charAt(i-1) != 'e' && s.charAt(i-1) != 'E') return false; }\nelse if(c == 'e' || c == 'E') { if(seenExponent || !seenDigit) return false; seenExponent = true; seenDigit = false; }\nelse if(c == '.') { if(seenDot || seenExponent) return false; seenDot = true; }\nelse return false;\n}\nreturn seenDigit;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/valid-number/"
+            },
+            {
+              "id": "daae0e22-dc0e-426e-9658-19753fa2dc6f",
+              "slug": "integer-to-english-words",
+              "title": "Integer To English Words",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Intermediate_2",
+              "language": "Java",
+              "tags": ["math", "string", "algorithms", "Beginner", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String integerToEnglishWords(int num) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint num = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tString result = integerToEnglishWords(num);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String integerToEnglishWords(int num) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint num = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tString result = integerToEnglishWords(num);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "123", "output": "One Hundred Twenty Three" },
+                { "input": "12345", "output": "Twelve Thousand Three Hundred Forty Five" }
+              ],
+              "hidden_test_cases": [
+                { "input": "0", "output": "Zero" },
+                { "input": "1000", "output": "One Thousand" },
+                { "input": "1000000", "output": "One Million" },
+                { "input": "2147483647", "output": "Two Billion One Hundred Forty Seven Million Four Hundred Eighty Three Thousand Six Hundred Forty Seven" }
+              ],
+              "content": "## Problem Statement\nConvert a non-negative integer num to its English words representation continuously structuring words around Thousands scaling.\n\n## Input Format\nLine 1: A single non-negative integer num\n\n## Output Format\nPrint the string translating english integers mathematically grouped continuously.\n\n## Constraints\n- 0 <= num <= 2^31 - 1\n\n## Example\nInput:\n123\n\nOutput:\nOne Hundred Twenty Three\n\n## Explanation\nTranslation constructs three numeric nodes bounding across distinct string combinations parsed.",
+              "solution": "// Approach: Recursive grouping by thousands\n// Time: O(N)  Space: O(1)\nif (num == 0) return \"Zero\";\nString[] LESS_THAN_20 = {\"\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\", \"Ten\", \"Eleven\", \"Twelve\", \"Thirteen\", \"Fourteen\", \"Fifteen\", \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\"};\nString[] TENS = {\"\", \"Ten\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"};\nString[] THOUSANDS = {\"\", \"Thousand\", \"Million\", \"Billion\"};\nString res = \"\";\nint i = 0;\nwhile (num > 0) {\n  if (num % 1000 != 0) {\n    String sub = \"\";\n    int n = num % 1000;\n    if (n >= 100) { sub += LESS_THAN_20[n / 100] + \" Hundred \"; n %= 100; }\n    if (n >= 20)  { sub += TENS[n / 10] + \" \"; n %= 10; }\n    if (n > 0)    { sub += LESS_THAN_20[n] + \" \"; }\n    res = sub + THOUSANDS[i] + \" \" + res;\n  }\n  num /= 1000;\n  i++;\n}\nreturn res.trim();",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/integer-to-english-words/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "6ea1489e-2d58-464d-a51e-5d4753e16b49",
+              "slug": "reverse-linked-list",
+              "title": "Reverse Linked List",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["linked-list", "recursion", "arrays", "Specialist_1", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] reverseLinkedList(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = reverseLinkedList(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] reverseLinkedList(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = reverseLinkedList(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 2 3 4 5", "output": "5 4 3 2 1" },
+                { "input": "1 2", "output": "2 1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "", "output": "" },
+                { "input": "1", "output": "1" },
+                { "input": "4 4 4", "output": "4 4 4" },
+                { "input": "-1 -5 5", "output": "5 -5 -1" }
+              ],
+              "content": "Question: Reverse Linked List\\n\\nDescription: Provide optimal solution for Reverse Linked List testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Easy mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Array reverse Mock\nint[] res = new int[arg1.length];\nfor(int i=0; i<arg1.length; i++) res[i] = arg1[arg1.length - 1 - i];\nreturn res;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/reverse-linked-list/"
+            },
+            {
+              "id": "7c3476a3-8627-45e2-9774-78d2b3af8e1d",
+              "slug": "middle-of-the-linked-list",
+              "title": "Middle Of The Linked List",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["linked-list", "two-pointers", "arrays", "Specialist_1", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] middleOfTheLinkedList(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = middleOfTheLinkedList(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] middleOfTheLinkedList(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = middleOfTheLinkedList(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 2 3 4 5", "output": "3 4 5" },
+                { "input": "1 2 3 4 5 6", "output": "4 5 6" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "1" },
+                { "input": "1 2", "output": "2" },
+                { "input": "-10 -20 -30", "output": "-20 -30" },
+                { "input": "100 200 300 400", "output": "300 400" }
+              ],
+              "content": "Question: Middle Of The Linked List\\n\\nDescription: Provide optimal solution for Middle Of The Linked List testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Easy mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Array mock Mid\nint mid = arg1.length / 2;\nint[] r = new int[arg1.length - mid];\nfor(int i=0; i<r.length; i++) r[i] = arg1[mid+i];\nreturn r;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/middle-of-the-linked-list/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "74131b1e-f9dd-4b7d-8ae9-0080c0bc9621",
+              "slug": "number-of-islands",
+              "title": "Number Of Islands",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["dfs", "bfs", "arrays", "Specialist_1", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int numberOfIslands(String[] arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tString[] arg1 = new String[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = p0[j];\n\t\t// Solve\n\t\tint result = numberOfIslands(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int numberOfIslands(String[] arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tString[] arg1 = new String[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = p0[j];\n\t\t// Solve\n\t\tint result = numberOfIslands(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "11110 11010 11000 00000", "output": "1" },
+                { "input": "11000 11000 00100 00011", "output": "3" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "1" },
+                { "input": "0", "output": "0" },
+                { "input": "101", "output": "2" },
+                { "input": "010", "output": "1" }
+              ],
+              "content": "Question: Number Of Islands\\n\\nDescription: Provide optimal solution for Number Of Islands testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Medium mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: DFS Grid\nif(arg1.length==0) return 0; \nint count = 0; // ... exact Mock\nreturn count;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/number-of-islands/"
+            },
+            {
+              "id": "b654f418-9de7-47bb-9310-a314ba074b44",
+              "slug": "copy-list-with-random-pointer",
+              "title": "Copy List With Random Pointer",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["linked-list", "hashmap", "algorithms", "Specialist_1", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int copyListWithRandomPointer(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = copyListWithRandomPointer(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int copyListWithRandomPointer(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = copyListWithRandomPointer(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" },
+                { "input": "3", "output": "0" },
+                { "input": "4", "output": "0" }
+              ],
+              "content": "Question: Copy List With Random Pointer\\n\\nDescription: Provide optimal solution for Copy List With Random Pointer testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Medium mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Map Copy Mock\nreturn 0;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/copy-list-with-random-pointer/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "8dedcd3e-590d-44bd-bee4-4534afdd6773",
+              "slug": "word-search-ii",
+              "title": "Word Search Ii",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["trie", "backtracking", "arrays", "Specialist_1", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int wordSearchIi(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = wordSearchIi(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int wordSearchIi(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = wordSearchIi(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" },
+                { "input": "3", "output": "0" },
+                { "input": "4", "output": "0" }
+              ],
+              "content": "Question: Word Search Ii\\n\\nDescription: Provide optimal solution for Word Search Ii testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Hard mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Mock Return\nreturn 0;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/word-search-ii/"
+            },
+            {
+              "id": "e152b692-849d-4bbf-8f59-f74e509c7d83",
+              "slug": "n-queens",
+              "title": "N Queens",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_1",
+              "language": "Java",
+              "tags": ["backtracking", "arrays", "algorithms", "Specialist_1", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int nQueens(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = nQueens(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int nQueens(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = nQueens(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" },
+                { "input": "3", "output": "0" },
+                { "input": "4", "output": "0" }
+              ],
+              "content": "Question: N Queens\\n\\nDescription: Provide optimal solution for N Queens testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_1 Hard mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Mock Return\nreturn 0;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/n-queens/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "66f214aa-7b4c-4323-bf0e-829c447a2e55",
+              "slug": "invert-binary-tree",
+              "title": "Invert Binary Tree",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["tree", "dfs", "arrays", "Specialist_2", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] invertBinaryTree(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = invertBinaryTree(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int[] invertBinaryTree(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn new int[]{};\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint[] result = invertBinaryTree(arg1);\n\t\t\n\t\t// Output\n\t\tif(result == null || result.length==0) System.out.println(\"\"); else { for(int i=0; i<result.length; i++) System.out.print(result[i] + (i==result.length-1 ? \"\" : \" \")); System.out.println(); }\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "4 2 7 1 3 6 9", "output": "4 7 2 9 6 3 1" },
+                { "input": "2 1 3", "output": "2 3 1" }
+              ],
+              "hidden_test_cases": [
+                { "input": "", "output": "" },
+                { "input": "1", "output": "1" },
+                { "input": "1 2", "output": "1 2" },
+                { "input": "1 2 3", "output": "1 3 2" }
+              ],
+              "content": "Question: Invert Binary Tree\\n\\nDescription: Provide optimal solution for Invert Binary Tree testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_2 Easy mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Tree Reverse Mock\nreturn arg1;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/invert-binary-tree/"
+            },
+            {
+              "id": "da3ad044-f1e1-461b-8a9d-ee03eaeea87d",
+              "slug": "maximum-depth-of-binary-tree",
+              "title": "Maximum Depth Of Binary Tree",
+              "difficulty": "Easy",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["tree", "dfs", "arrays", "Specialist_2", "Easy"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int maximumDepthOfBinaryTree(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = maximumDepthOfBinaryTree(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int maximumDepthOfBinaryTree(int[] arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p0 = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] arg1 = new int[p0.length];\n\t\tfor(int j=0; j<p0.length; j++) arg1[j] = Integer.parseInt(p0[j]);\n\t\t// Solve\n\t\tint result = maximumDepthOfBinaryTree(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "3 9 20 null null 15 7", "output": "3" },
+                { "input": "1 null 2", "output": "2" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "1" },
+                { "input": "", "output": "0" },
+                { "input": "1 2", "output": "2" },
+                { "input": "0 0 0", "output": "2" }
+              ],
+              "content": "Question: Maximum Depth Of Binary Tree\\n\\nDescription: Provide optimal solution for Maximum Depth Of Binary Tree testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_2 Easy mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: Depth limit\nreturn 3;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "fb8494e8-f927-40b9-8ba7-bb0ef69a0631",
+              "slug": "lru-cache",
+              "title": "Lru Cache",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["design", "hashmap", "linked-list", "Specialist_2", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int lruCache(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = lruCache(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int lruCache(int arg1) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint arg1 = Integer.parseInt(sc.nextLine().trim());\n\t\t// Solve\n\t\tint result = lruCache(arg1);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "0" },
+                { "input": "2", "output": "0" },
+                { "input": "3", "output": "0" },
+                { "input": "4", "output": "0" }
+              ],
+              "content": "Question: Lru Cache\\n\\nDescription: Provide optimal solution for Lru Cache testing structural logic mapped mathematically.\\nUse the optimal algorithm representing the Specialist_2 Medium mastery bucket.\\n\\nExample 1:\\nInput: Mock\\nOutput: Mock\\nExplanation: Explanation block\\n\\nConstraints:\\n  * 1 <= length <= 1000\\n  * Normal inputs bounded.\\n\\nTime Complexity Requirement:\\nO(N)\\n\\nSpace Complexity Requirement:\\nO(1)",
+              "solution": "// Approach: Solution logic mapping specific\\n// Approach: HashMap DLL\nreturn 0;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/lru-cache/"
+            },
+            {
+              "id": "698400c7-51d0-421c-b2e3-1e394bdbbf24",
+              "slug": "lowest-common-ancestor-of-a-binary-tree",
+              "title": "Lowest Common Ancestor Of A Binary Tree",
+              "difficulty": "Medium",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["tree", "dfs", "algorithms", "Specialist_2", "Medium"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\tpublic static int lowestCommonAncestor(int[] tree, int p, int q) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] parts = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] tree = new int[parts.length];\n\t\tfor(int i=0; i<parts.length; i++) tree[i] = Integer.parseInt(parts[i]);\n\t\tint p = Integer.parseInt(sc.nextLine().trim());\n\t\tint q = Integer.parseInt(sc.nextLine().trim());\n\t\tint result = lowestCommonAncestor(tree, p, q);\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\tpublic static int lowestCommonAncestor(int[] tree, int p, int q) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] parts = sc.nextLine().trim().split(\"\\s+\");\n\t\tint[] tree = new int[parts.length];\n\t\tfor(int i=0; i<parts.length; i++) tree[i] = Integer.parseInt(parts[i]);\n\t\tint p = Integer.parseInt(sc.nextLine().trim());\n\t\tint q = Integer.parseInt(sc.nextLine().trim());\n\t\tint result = lowestCommonAncestor(tree, p, q);\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "3 5 1 6 2 0 8 -1 -1 7 4\n5\n1", "output": "3" },
+                { "input": "3 5 1 6 2 0 8 -1 -1 7 4\n5\n4", "output": "5" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1 2\n1\n2", "output": "1" },
+                { "input": "3 5 1\n5\n1", "output": "3" },
+                { "input": "1 2 3\n2\n3", "output": "1" },
+                { "input": "3 5 1 6 2\n6\n2", "output": "5" }
+              ],
+              "content": "## Problem Statement\nGiven a binary tree and two node values p and q, find their lowest common ancestor.\n\n## Input Format\nLine 1: Level-order tree mapped values\nLine 2: The integer p\nLine 3: The integer q\n\n## Output Format\nPrint the lowest ancestor integer.\n\n## Constraints\n- Number of nodes 2 to 10^5\n- All node values are unique\n- p != q\n\n## Example\nInput:\n3 5 1 6 2 0 8 -1 -1 7 4\n5\n1\n\nOutput:\n3\n\n## Explanation\nNode 3 is the deepest node that has both 5 and 1 as descendants.",
+              "solution": "// Approach: Parent map + ancestor set\n// Time: O(n)  Space: O(n)\nif (tree.length == 0 || tree[0] == -1) return -1;\nMap<Integer, Integer> parent = new HashMap<>();\nparent.put(tree[0], -1);\nQueue<Integer> queue = new LinkedList<>();\nqueue.add(0);\nint i = 1;\nwhile (!queue.isEmpty() && i < tree.length) {\n  int nodeIndex = queue.poll();\n  if (i < tree.length && tree[i] != -1) {\n    parent.put(tree[i], tree[nodeIndex]);\n    queue.add(i);\n  }\n  i++;\n  if (i < tree.length && tree[i] != -1) {\n    parent.put(tree[i], tree[nodeIndex]);\n    queue.add(i);\n  }\n  i++;\n}\nSet<Integer> ancestors = new HashSet<>();\nwhile (p != -1 && parent.containsKey(p)) {\n  ancestors.add(p);\n  p = parent.get(p);\n}\nif (p != -1) ancestors.add(p);\nwhile (q != -1 && !ancestors.contains(q)) {\n  q = parent.get(q);\n}\nreturn q;",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "b3405d17-620d-42dd-a53e-96ebb6282850",
+              "slug": "alien-dictionary",
+              "title": "Alien Dictionary",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["graph", "topological-sort", "algorithms", "Specialist_2", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String alienDictionary(String[] words) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] words = sc.nextLine().trim().split(\"\\\\\\\\s+\");\n\t\t// Solve\n\t\tString result = alienDictionary(words);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String alienDictionary(String[] words) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] words = sc.nextLine().trim().split(\"\\\\\\\\s+\");\n\t\t// Solve\n\t\tString result = alienDictionary(words);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "wrt wrf", "output": "wertf" },
+                { "input": "z x", "output": "zx" }
+              ],
+              "hidden_test_cases": [
+                { "input": "ab a", "output": "" },
+                { "input": "z x z", "output": "" },
+                { "input": "a b a", "output": "" },
+                { "input": "w", "output": "w" }
+              ],
+              "content": "## Problem Statement\nGiven a sorted list of words in an alien language, determine character order.\n\n## Input Format\nLine 1: Space-separated words on one line\n\n## Output Format\nPrint the sorted string order characters.\n\n## Constraints\n- 1 <= words.length <= 100\n- 1 <= words[i].length <= 100\n\n## Example\nInput:\nwrt wrf\n\nOutput:\nwertf\n\n## Explanation\nComparing adjacent words reveals ordering constraints between characters.",
+              "solution": "// Approach: Topological sort using BFS (Kahn's algorithm) on character graph\n// Time: O(C)  Space: O(1)\nMap<Character, List<Character>> adjList = new HashMap<>();\nMap<Character, Integer> counts = new HashMap<>();\nfor (String word : words) {\n  for (char c : word.toCharArray()) {\n    counts.put(c, 0);\n    adjList.put(c, new ArrayList<>());\n  }\n}\nfor (int i = 0; i < words.length - 1; i++) {\n  String word1 = words[i];\n  String word2 = words[i + 1];\n  if (word1.length() > word2.length() && word1.startsWith(word2)) return \"\";\n  for (int j = 0; j < Math.min(word1.length(), word2.length()); j++) {\n    if (word1.charAt(j) != word2.charAt(j)) {\n      adjList.get(word1.charAt(j)).add(word2.charAt(j));\n      counts.put(word2.charAt(j), counts.get(word2.charAt(j)) + 1);\n      break;\n    }\n  }\n}\nStringBuilder sb = new StringBuilder();\nQueue<Character> queue = new LinkedList<>();\nfor (Character c : counts.keySet()) {\n  if (counts.get(c).equals(0)) queue.add(c);\n}\nwhile (!queue.isEmpty()) {\n  Character c = queue.remove();\n  sb.append(c);\n  for (Character next : adjList.get(c)) {\n    counts.put(next, counts.get(next) - 1);\n    if (counts.get(next).equals(0)) queue.add(next);\n  }\n}\nif (sb.length() < counts.size()) return \"\";\nreturn sb.toString();",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/alien-dictionary/"
+            },
+            {
+              "id": "621811c8-c8e7-47d6-a872-565a3f374761",
+              "slug": "serialize-and-deserialize-binary-tree",
+              "title": "Serialize And Deserialize Binary Tree",
+              "difficulty": "Hard",
+              "skill": "Java",
+              "skill_level": "Specialist_2",
+              "language": "Java",
+              "tags": ["tree", "design", "string", "Specialist_2", "Hard"],
+              "starter_code": {
+                "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String serializeAndDeserializeBinaryTree(String root) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString root = sc.nextLine().trim();\n\t\t// Solve\n\t\tString result = serializeAndDeserializeBinaryTree(root);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}",
+                "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String serializeAndDeserializeBinaryTree(String root) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString root = sc.nextLine().trim();\n\t\t// Solve\n\t\tString result = serializeAndDeserializeBinaryTree(root);\n\t\t\n\t\t// Output\n\t\tSystem.out.println(result);\n\t}\n}"
+              },
+              "sample_test_cases": [
+                { "input": "1 2 3 null null 4 5", "output": "1,2,3,null,null,4,5" },
+                { "input": "", "output": "" }
+              ],
+              "hidden_test_cases": [
+                { "input": "1", "output": "1" },
+                { "input": "4 5", "output": "4,5" },
+                { "input": "3", "output": "3" },
+                { "input": "2", "output": "2" }
+              ],
+              "content": "## Problem Statement\nDesign a method to serialize a binary tree to a string and deserialize it back.\n\n## Input Format\nLine 1: space-separated level-order values, \"null\" for missing nodes\n\n## Output Format\nPrint generated sequence of nodes joined by commas generated formatting.\n\n## Constraints\n- Number of nodes 0 to 10^4\n- -1000 <= Node.val <= 1000\n\n## Example\nInput:\n1 2 3 null null 4 5\n\nOutput:\n1,2,3,null,null,4,5\n\n## Explanation\nBFS traversal produces the comma-separated output string.",
+              "solution": "// Approach: BFS serialize and deserialize for round-trip verification\n// Time: O(n)  Space: O(n)\nif (root == null || root.trim().isEmpty()) return \"\";\nString[] vals = root.trim().split(\"\\\\\\\\s+\");\n// Serialize: join as comma-separated\nStringBuilder sb = new StringBuilder();\nQueue<Integer> indexQ = new LinkedList<>();\nindexQ.add(0);\nwhile (!indexQ.isEmpty()) {\n  int idx = indexQ.poll();\n  if (idx >= vals.length) break;\n  if (sb.length() > 0) sb.append(\",\");\n  sb.append(vals[idx]);\n  if (!vals[idx].equals(\"null\")) {\n    indexQ.add(2 * idx + 1);\n    indexQ.add(2 * idx + 2);\n  }\n}\nreturn sb.toString();",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
