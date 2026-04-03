@@ -1,0 +1,194 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["schema_version", "dataset_name", "generated_at_utc", "skills"],
+    "properties": {
+      "schema_version": { "type": "string" },
+      "dataset_name": { "type": "string" },
+      "generated_at_utc": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "skills": {
+        "type": "array",
+        "minItems": 20,
+        "maxItems": 20,
+        "items": {
+          "type": "object",
+          "required": ["skill", "levels"],
+          "properties": {
+            "skill": {
+              "type": "string",
+              "enum": [
+                "Agile",
+                "HTML, CSS, JS",
+                "React JS",
+                "React JS with Redux",
+                "TypeScript",
+                "Next JS",
+                "Angular",
+                "Python",
+                "Python with Flask",
+                "Python with Django",
+                "Python for Data Science",
+                "Java",
+                "Java Spring Boot",
+                ".NET, C#",
+                ".NET, VB.NET",
+                "SQL",
+                "MongoDB",
+                "PostgreSQL",
+                "Java Selenium",
+                "Python Selenium"
+              ]
+            },
+            "levels": {
+              "type": "object",
+              "required": [
+                "Beginner",
+                "Intermediate_1",
+                "Intermediate_2",
+                "Specialist_1",
+                "Specialist_2"
+              ],
+              "properties": {
+                "Beginner": { "$ref": "#/definitions/level" },
+                "Intermediate_1": { "$ref": "#/definitions/level" },
+                "Intermediate_2": { "$ref": "#/definitions/level" },
+                "Specialist_1": { "$ref": "#/definitions/level" },
+                "Specialist_2": { "$ref": "#/definitions/level" }
+              }
+            }
+          }
+        }
+      }
+    },
+  
+    "definitions": {
+      "level": {
+        "type": "object",
+        "required": ["Easy", "Medium", "Hard"],
+        "properties": {
+          "Easy": { "$ref": "#/definitions/questionArrayEasy" },
+          "Medium": { "$ref": "#/definitions/questionArrayMedium" },
+          "Hard": { "$ref": "#/definitions/questionArrayHard" }
+        }
+      },
+  
+      "questionArrayEasy": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/questionEasy" }
+      },
+      "questionArrayMedium": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/questionMedium" }
+      },
+      "questionArrayHard": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/questionHard" }
+      },
+  
+      "questionBase": {
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "difficulty",
+          "skill",
+          "skill_level",
+          "language",
+          "tags",
+          "starter_code",
+          "sample_test_cases",
+          "content",
+          "solution",
+          "source",
+          "url"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "difficulty": {
+            "type": "string",
+            "enum": ["Easy", "Medium", "Hard"]
+          },
+          "skill": { "type": "string" },
+          "skill_level": {
+            "type": "string",
+            "enum": [
+              "Beginner",
+              "Intermediate_1",
+              "Intermediate_2",
+              "Specialist_1",
+              "Specialist_2"
+            ]
+          },
+          "language": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "starter_code": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "sample_test_cases": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/testcase" }
+          },
+          "hidden_test_cases": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/testcase" }
+          },
+          "content": { "type": "string" },
+          "solution": { "type": "string" },
+          "source": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+  
+      "questionEasy": {
+        "allOf": [
+          { "$ref": "#/definitions/questionBase" },
+          {
+            "properties": {
+              "difficulty": { "const": "Easy" }
+            }
+          }
+        ]
+      },
+  
+      "questionMedium": {
+        "allOf": [
+          { "$ref": "#/definitions/questionBase" },
+          {
+            "properties": {
+              "difficulty": { "const": "Medium" }
+            }
+          }
+        ]
+      },
+  
+      "questionHard": {
+        "allOf": [
+          { "$ref": "#/definitions/questionBase" },
+          {
+            "properties": {
+              "difficulty": { "const": "Hard" }
+            }
+          }
+        ]
+      },
+  
+      "testcase": {
+        "type": "object",
+        "required": ["input", "output"],
+        "properties": {
+          "input": { "type": "string" },
+          "output": { "type": "string" }
+        }
+      }
+    }
+  }

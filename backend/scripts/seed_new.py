@@ -59,7 +59,7 @@ LANGUAGE_ALIASES = {
 }
 
 # Seed directly from the sample scrape payload kept beside this script.
-DEFAULT_JSON_FILE = CURRENT_FILE.parent / "scrape_sample.json"
+DEFAULT_JSON_FILE = CURRENT_FILE.parent / "problem_dataset.json"
 
 
 def to_str(value: Any) -> str:
