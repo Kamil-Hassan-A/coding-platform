@@ -72,6 +72,7 @@ class ProblemTestCase(BaseModel):
 
 
 class SessionProblemPayload(BaseModel):
+    problem_id: UUID
     title: str
     description: str
     templateCode: str | None = None
@@ -88,6 +89,7 @@ class SessionStartResponse(BaseModel):
     attempt_number: int
     attempts_remaining: int
     problem: SessionProblemPayload
+    problems: list[SessionProblemPayload] = Field(default_factory=list)
     allowed_languages: list[LanguageResponse] = Field(default_factory=list)
 
 
@@ -97,6 +99,7 @@ class SessionDetailResponse(BaseModel):
     expires_at: datetime
     seconds_remaining: int
     problem: SessionProblemPayload
+    problems: list[SessionProblemPayload] = Field(default_factory=list)
     allowed_languages: list[LanguageResponse] = Field(default_factory=list)
     last_draft_code: str | None
     last_draft_lang: str | None
@@ -117,15 +120,24 @@ class ViolationCreate(BaseModel):
     metadata: dict[str, Any] | None = None
 
 
+class SessionQuestionAnswer(BaseModel):
+    problem_id: UUID
+    code: str
+    language: str = Field(min_length=1)
+
+
 class SessionSubmitRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
     metadata: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
+    answers: list[SessionQuestionAnswer] = Field(default_factory=list)
 
 
 class SessionRunRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
+    problem_id: UUID | None = None
 
 
 class TestCaseResult(BaseModel):
