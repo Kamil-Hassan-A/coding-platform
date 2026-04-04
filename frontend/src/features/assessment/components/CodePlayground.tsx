@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import type { OnMount } from '@monaco-editor/react';
 
 interface CodePlaygroundProps {
   code?: string;
   onChange?: (val: string) => void;
+  onPaste?: () => void;
 }
 
 type FrameMessage = {
@@ -12,7 +14,7 @@ type FrameMessage = {
   payload: string;
 };
 
-const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange }) => {
+const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, onPaste }) => {
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
   const [jsCode, setJsCode] = useState('');
@@ -53,6 +55,27 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange }
   const [runtimeError, setRuntimeError] = useState<string>("");
 
   const safeJsCode = useMemo(() => jsCode.replace(/<\/script>/gi, "<\\/script>"), [jsCode]);
+
+  const handleMount = useCallback<OnMount>((editor) => {
+    const disposables = [] as { dispose: () => void }[];
+
+    if (typeof editor.onDidPaste === "function") {
+      disposables.push(editor.onDidPaste(() => onPaste?.()));
+    } else {
+      disposables.push(
+        editor.onDidChangeModelContent((event) => {
+          if (event.isFlush) return;
+          if (event.changes.some((change) => change.text.length > 5)) {
+            onPaste?.();
+          }
+        }),
+      );
+    }
+
+    return () => {
+      disposables.forEach((disposable) => disposable.dispose());
+    };
+  }, [onPaste]);
 
   const buildSrcDoc = useCallback((html: string, css: string, js: string) => {
     return `<!DOCTYPE html>
@@ -180,6 +203,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange }
               theme="vs-dark"
               value={htmlCode}
               onChange={(val) => handleEditorChange('html', val || '')}
+              onMount={handleMount}
               options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
             />
           </div>
@@ -196,6 +220,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange }
               theme="vs-dark"
               value={cssCode}
               onChange={(val) => handleEditorChange('css', val || '')}
+              onMount={handleMount}
               options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
             />
           </div>
@@ -212,6 +237,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange }
               theme="vs-dark"
               value={jsCode}
               onChange={(val) => handleEditorChange('js', val || '')}
+              onMount={handleMount}
               options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
             />
           </div>

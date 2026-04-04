@@ -1,5 +1,8 @@
 """FastAPI backend for the Coding Assessment Platform."""
 
+import logging
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
@@ -10,6 +13,23 @@ from routes.skills import router as skills_router
 from routes.submissions import router as submissions_router
 from routes.system import router as system_router
 
+logging.basicConfig(level=logging.INFO)
+
+
+def _get_allowed_origins() -> list[str]:
+    """Return safe default origins and optional env-provided production origins."""
+    default_origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://your-production-domain.com",
+    ]
+
+    env_value = os.getenv("CORS_ALLOWED_ORIGINS", "")
+    extra_origins = [origin.strip() for origin in env_value.split(",") if origin.strip()]
+
+    # Keep order stable while removing duplicates.
+    return list(dict.fromkeys(default_origins + extra_origins))
+
 app = FastAPI(
     title="Coding Assessment Platform API",
     description="Backend API for the coding assessment platform",
@@ -19,7 +39,7 @@ app = FastAPI(
 # CORS — allow all origins during development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

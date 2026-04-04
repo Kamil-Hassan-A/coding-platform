@@ -1,11 +1,13 @@
 import os
 import random
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import UUID
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -19,6 +21,7 @@ from models import (
     Problem,
     SessionStatus,
     Skill,
+    SessionViolation,
     Submission,
     SubmissionStatus,
     User,
@@ -36,10 +39,27 @@ from schemas import (
     SessionStartResponse,
     SessionSubmitRequest,
     SessionSubmitResponse,
+    ViolationCreate,
 )
 
 router = APIRouter(tags=["sessions"])
 judge0_service = Judge0Service()
+logger = logging.getLogger(__name__)
+ALLOWED_VIOLATION_TYPES = {
+    "tab_switch",
+    "window_blur",
+    "tab_switch_shortcut",
+    "fullscreen_exit",
+    "paste",
+    "copy",
+    "cut",
+    "select_all",
+    "devtools_shortcut",
+    "devtools",
+    "devtools_open",
+    "right_click",
+    "unknown",
+}
 LEVEL_ORDER = [
     Level.BEGINNER,
     Level.INTERMEDIATE_1,
@@ -47,6 +67,29 @@ LEVEL_ORDER = [
     Level.SPECIALIST_1,
     Level.SPECIALIST_2,
 ]
+
+
+def _truncate_text(value: Any, limit: int = 2000) -> str:
+    text = "" if value is None else str(value)
+    if len(text) <= limit:
+        return text
+    return f"{text[:limit]}...<truncated:{len(text) - limit}>"
+
+
+def _compute_overall_status(cases: list[dict[str, Any]]) -> str:
+    if not cases:
+        return "runtime_error"
+
+    statuses = [str(case.get("normalized_status") or "").strip() for case in cases if isinstance(case, dict)]
+    if any(status == "compile_error" for status in statuses):
+        return "compile_error"
+    if any(status == "runtime_error" for status in statuses):
+        return "runtime_error"
+    if any(status == "time_limit_exceeded" for status in statuses):
+        return "time_limit_exceeded"
+    if statuses and all(status == "success" for status in statuses):
+        return "success"
+    return "runtime_error"
 
 
 def resolve_template_code(starter_code: object) -> str | None:
@@ -123,9 +166,6 @@ def score_submission(
     language: str,
     forced_status: SubmissionStatus | None = None,
 ) -> Submission:
-    if session_obj.submission is not None:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
-
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
@@ -144,9 +184,18 @@ def score_submission(
                 "total_tests": len(problem.hidden_test_cases or []),
                 "cases": [
                     {
+                        "token": None,
                         "stdin": str(case.get("input", "")),
                         "expected_output": str(case.get("output", "")),
                         "stdout": "Pending AI feedback",
+                        "stderr": None,
+                        "compile_output": None,
+                        "message": None,
+                        "status": {"id": 3, "description": "Accepted"},
+                        "time": "0",
+                        "memory": None,
+                        "normalized_status": "success",
+                        "normalized_error": None,
                         "passed": True,
                     }
                     for case in (problem.hidden_test_cases or [])
@@ -191,12 +240,13 @@ def score_submission(
     )
     db.add(submission)
 
-    session_obj.status = (
-        SessionStatus.SUBMITTED
-        if submission_status in (SubmissionStatus.CLEARED, SubmissionStatus.FAILED)
-        else SessionStatus.TIMED_OUT
-    )
-    session_obj.submitted_at = current_time
+    if submission_status == SubmissionStatus.TIMED_OUT:
+        session_obj.status = SessionStatus.TIMED_OUT
+        session_obj.submitted_at = current_time
+    else:
+        # Keep submitted state for analytics compatibility while allowing additional submits/runs.
+        session_obj.status = SessionStatus.SUBMITTED
+        session_obj.submitted_at = current_time
 
     if submission_status == SubmissionStatus.CLEARED:
         progress = db.scalar(
@@ -403,6 +453,82 @@ def save_draft(
     return SessionDraftResponse(saved_at=session_obj.draft_saved_at)
 
 
+@router.post("/sessions/{session_id}/violation")
+def log_violation(
+    session_id: UUID,
+    payload: ViolationCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_candidate),
+) -> dict[str, str]:
+    session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
+    if session_obj is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    ensure_session_owner(session_obj, current_user)
+
+    requested_type = str(payload.type or "").strip().lower()
+    violation_type = requested_type if requested_type in ALLOWED_VIOLATION_TYPES else "unknown"
+
+    now_utc = datetime.now(timezone.utc)
+    try:
+        client_time = payload.timestamp
+    except Exception:
+        client_time = None
+
+    final_time = now_utc
+    if isinstance(client_time, datetime):
+        if client_time.tzinfo is None:
+            client_time = client_time.replace(tzinfo=timezone.utc)
+        try:
+            drift_seconds = abs((now_utc - client_time.astimezone(timezone.utc)).total_seconds())
+            if drift_seconds <= 300:
+                final_time = client_time.astimezone(timezone.utc)
+        except Exception:
+            final_time = now_utc
+
+    dedupe_since = now_utc - timedelta(seconds=2)
+    existing = db.scalar(
+        select(SessionViolation).where(
+            SessionViolation.session_id == session_obj.id,
+            SessionViolation.type == violation_type,
+            SessionViolation.timestamp >= dedupe_since,
+        )
+    )
+    if existing is not None:
+        return {"status": "duplicate_skipped"}
+
+    try:
+        violation = SessionViolation(
+            session_id=session_obj.id,
+            user_id=current_user.id,
+            type=violation_type,
+            timestamp=final_time,
+            metadata_=payload.metadata,
+        )
+        db.add(violation)
+        db.commit()
+        return {"status": "logged"}
+    except SQLAlchemyError as exc:
+        db.rollback()
+        logger.warning(
+            "Failed to log violation: session_id=%s user_id=%s type=%s error=%s",
+            session_id,
+            current_user.id,
+            violation_type,
+            exc,
+        )
+        return {"status": "failed"}
+    except Exception as exc:
+        db.rollback()
+        logger.warning(
+            "Unexpected violation logging failure: session_id=%s user_id=%s type=%s error=%s",
+            session_id,
+            current_user.id,
+            violation_type,
+            exc,
+        )
+        return {"status": "failed"}
+
+
 @router.post("/sessions/{session_id}/submit", response_model=SessionSubmitResponse)
 def submit_session(
     session_id: UUID,
@@ -410,13 +536,25 @@ def submit_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionSubmitResponse:
+    logger.info(
+        "submit_session request: session_id=%s code=%s language=%s",
+        session_id,
+        _truncate_text(payload.code),
+        payload.language,
+    )
     session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    if session_obj.status in (SessionStatus.SUBMITTED, SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already closed")
+    prior_submissions = int(
+        db.scalar(select(func.count(Submission.id)).where(Submission.session_id == session_id)) or 0
+    )
+    logger.info(
+        "submit_session attempt: session_id=%s prior_submissions=%s",
+        session_id,
+        prior_submissions,
+    )
 
     current_time = datetime.now(timezone.utc)
     expires_at = session_obj.expires_at.astimezone(timezone.utc) if session_obj.expires_at.tzinfo else session_obj.expires_at.replace(tzinfo=timezone.utc)
@@ -435,7 +573,10 @@ def submit_session(
         except SQLAlchemyError as exc:
             db.rollback()
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to persist submission") from exc
-        raise HTTPException(status_code=status.HTTP_410_GONE, detail="Session expired; draft auto-submitted")
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"status": "expired", "message": "Session has expired"},
+        )
 
     try:
         submission = score_submission(
@@ -450,8 +591,10 @@ def submit_session(
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to persist submission") from exc
 
-    cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
-    return SessionSubmitResponse(
+    raw_cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
+    normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
+    overall_status = _compute_overall_status(normalized_cases)
+    response_payload = SessionSubmitResponse(
         submission_id=submission.id,
         session_id=session_obj.id,
         status=submission.status,
@@ -459,8 +602,19 @@ def submit_session(
         passed_tests=submission.passed_tests,
         total_tests=submission.total_tests,
         time_taken_seconds=submission.time_taken_seconds,
-        cases=cases,
+        cases=raw_cases,
     )
+    logger.info(
+        "submit_session response: session_id=%s submission_id=%s status=%s overall_status=%s passed_tests=%s total_tests=%s submission_number=%s",
+        session_id,
+        response_payload.submission_id,
+        response_payload.status,
+        overall_status,
+        response_payload.passed_tests,
+        response_payload.total_tests,
+        prior_submissions + 1,
+    )
+    return response_payload
 
 
 @router.post("/sessions/{session_id}/run", response_model=SessionRunResponse)
@@ -470,13 +624,16 @@ def run_session_code(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionRunResponse:
+    logger.info(
+        "run_session_code request: session_id=%s code=%s language=%s",
+        session_id,
+        _truncate_text(payload.code),
+        payload.language,
+    )
     session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
-
-    if session_obj.status != SessionStatus.ACTIVE:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not active")
 
     current_time = datetime.now(timezone.utc)
     expires_at = (
@@ -487,7 +644,10 @@ def run_session_code(
     if expires_at <= current_time:
         session_obj.status = SessionStatus.TIMED_OUT
         db.commit()
-        raise HTTPException(status_code=status.HTTP_410_GONE, detail="Session expired")
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"status": "expired", "message": "Session has expired"},
+        )
 
     problem = db.scalar(select(Problem).where(Problem.id == session_obj.problem_id))
     if problem is None:
@@ -535,7 +695,19 @@ def run_session_code(
     except (requests.RequestException, TimeoutError, RuntimeError) as exc:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Judge0 execution failed: {str(exc)}") from exc
 
-    return SessionRunResponse(
-        cases=execution_result.get("cases", []),
+    raw_cases = execution_result.get("cases", [])
+    normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
+    overall_status = _compute_overall_status(normalized_cases)
+
+    response_payload = SessionRunResponse(
+        cases=raw_cases,
         time_taken_ms=int(execution_result.get("time_taken", 0)),
     )
+    logger.info(
+        "run_session_code response: session_id=%s case_count=%s time_taken_ms=%s overall_status=%s",
+        session_id,
+        len(response_payload.cases),
+        response_payload.time_taken_ms,
+        overall_status,
+    )
+    return response_payload

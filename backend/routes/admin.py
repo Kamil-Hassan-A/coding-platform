@@ -1,4 +1,5 @@
 import os
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import func, select
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from dependencies import require_admin
-from models import AssessmentSession, SessionStatus, Skill, Submission, SubmissionStatus, User, UserRole
+from models import AssessmentSession, SessionStatus, SessionViolation, Skill, Submission, SubmissionStatus, User, UserRole
 from schemas import (
     AdminCandidateRow,
     AdminCandidatesResponse,
@@ -17,6 +18,138 @@ from schemas import (
 from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+VIOLATION_TYPES = [
+    "tab_switch",
+    "tab_switch_shortcut",
+    "window_blur",
+    "fullscreen_exit",
+    "paste",
+    "copy",
+    "cut",
+    "select_all",
+    "devtools_shortcut",
+    "devtools",
+    "devtools_open",
+    "right_click",
+    "unknown",
+]
+
+
+def get_violation_summary(db: Session, session_id: UUID) -> dict[str, object]:
+    breakdown = {violation_type: 0 for violation_type in VIOLATION_TYPES}
+
+    rows = db.execute(
+        select(SessionViolation.type, func.count(SessionViolation.id))
+        .where(SessionViolation.session_id == session_id)
+        .group_by(SessionViolation.type)
+    ).all()
+
+    total = 0
+    for violation_type, count in rows:
+        bucket = str(violation_type or "unknown")
+        if bucket not in breakdown:
+            bucket = "unknown"
+        count_value = int(count or 0)
+        breakdown[bucket] += count_value
+        total += count_value
+
+    if total == 0:
+        severity = "none"
+    elif total <= 3:
+        severity = "low"
+    elif total <= 7:
+        severity = "medium"
+    else:
+        severity = "high"
+
+    non_zero = {key: value for key, value in breakdown.items() if value > 0}
+    most_common = max(non_zero, key=non_zero.get) if non_zero else None
+    types_count = len(non_zero)
+
+    fullscreen_exit = int(breakdown.get("fullscreen_exit", 0) or 0)
+    devtools_open = int(breakdown.get("devtools_open", 0) or 0)
+    devtools_shortcut = int(breakdown.get("devtools_shortcut", 0) or 0)
+    paste = int(breakdown.get("paste", 0) or 0)
+    copy = int(breakdown.get("copy", 0) or 0)
+    tab_switch = int(breakdown.get("tab_switch", 0) or 0)
+    right_click = int(breakdown.get("right_click", 0) or 0)
+
+    risk_score = 0
+    risk_score += min(fullscreen_exit, 5) * 2
+    risk_score += min(devtools_open, 3) * 3
+    risk_score += min(devtools_shortcut, 3) * 2
+    risk_score += min(paste, 10) * 1
+    risk_score += min(copy, 10) * 1
+    risk_score += min(tab_switch, 10) * 1
+    risk_score += min(right_click, 5) * 1
+
+    if risk_score == 0:
+        risk_level = "none"
+    elif risk_score <= 5:
+        risk_level = "low"
+    elif risk_score <= 12:
+        risk_level = "medium"
+    else:
+        risk_level = "high"
+
+    reason_candidates = [
+        ("devtools_open", devtools_open),
+        ("fullscreen_exit", fullscreen_exit),
+        ("paste", paste),
+        ("copy", copy),
+        ("tab_switch", tab_switch),
+    ]
+    reason_candidates.sort(key=lambda item: item[1], reverse=True)
+    top_reason_key = next((key for key, count in reason_candidates if count > 0), None)
+
+    reason_map = {
+        "devtools_open": "DevTools usage detected",
+        "fullscreen_exit": "Frequent fullscreen exits",
+        "paste": "Excessive paste activity",
+        "copy": "Frequent copy activity",
+        "tab_switch": "Frequent tab switching",
+    }
+    risk_reason = reason_map.get(top_reason_key, "No suspicious activity")
+
+    return {
+        "total": total,
+        "breakdown": breakdown,
+        "severity": severity,
+        "most_common": most_common,
+        "types_count": types_count,
+        "risk": {
+            "score": int(risk_score),
+            "level": risk_level,
+            "flagged": risk_level == "high",
+            "reason": risk_reason,
+        },
+    }
+
+
+def get_submission_summary(db: Session, session_id: UUID) -> dict[str, float | int]:
+    aggregate_row = db.execute(
+        select(
+            func.count(Submission.id),
+            func.max(Submission.score),
+        ).where(Submission.session_id == session_id)
+    ).one()
+
+    total_submissions = int(aggregate_row[0] or 0)
+    best_score = float(aggregate_row[1] or 0)
+
+    latest_score_row = db.execute(
+        select(Submission.score)
+        .where(Submission.session_id == session_id)
+        .order_by(Submission.submitted_at.desc(), Submission.id.desc())
+        .limit(1)
+    ).first()
+    latest_score = float(latest_score_row[0]) if latest_score_row is not None and latest_score_row[0] is not None else 0.0
+
+    return {
+        "total": total_submissions,
+        "best_score": best_score,
+        "latest_score": latest_score,
+    }
 
 
 @router.post("/seed")
@@ -161,3 +294,22 @@ def get_admin_credentials(
         )
 
     return AdminCredentialsResponse(credentials=rows)
+
+
+@router.get("/session-report/{session_id}")
+def get_admin_session_report(
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+) -> dict[str, object]:
+    session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
+    if session_obj is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    violations = get_violation_summary(db=db, session_id=session_id)
+    submissions = get_submission_summary(db=db, session_id=session_id)
+    return {
+        "session_id": str(session_id),
+        "violations": violations,
+        "submissions": submissions,
+    }

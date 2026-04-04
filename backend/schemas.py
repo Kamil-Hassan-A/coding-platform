@@ -110,6 +110,12 @@ class SessionDraftResponse(BaseModel):
     saved_at: datetime
 
 
+class ViolationCreate(BaseModel):
+    type: str
+    timestamp: datetime
+    metadata: dict[str, Any] | None = None
+
+
 class SessionSubmitRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
