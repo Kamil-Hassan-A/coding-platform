@@ -6,6 +6,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
 import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
+import InstructionsScreen from "./components/InstructionsScreen";
 import { getSkills, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
@@ -119,7 +120,7 @@ export default function CandidateDashboard() {
       allowedLanguages: skillObj?.allowed_languages || [] 
     });
     setConfirmedIds({ skill_id, level });
-    setScreen("confirmed");
+    setScreen("instructions");
   };
 
   const handleLogout = () => {
@@ -221,6 +222,12 @@ export default function CandidateDashboard() {
             />
           ) : screen === "past_assessments" ? (
             <PastAssessmentsScreen />
+          ) : screen === "instructions" && confirmed ? (
+            <InstructionsScreen
+              confirmed={confirmed}
+              onContinue={() => setScreen("confirmed")}
+              onBack={() => setScreen("home")}
+            />
           ) : (
             confirmed && (
               <ConfirmedScreen
