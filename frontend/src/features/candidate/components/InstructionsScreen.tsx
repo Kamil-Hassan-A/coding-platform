@@ -41,7 +41,7 @@ export default function InstructionsScreen({ confirmed, onContinue, onBack }: In
               <span className="text-lg font-bold mt-1 text-slate-200">{confirmed.levelLabel}</span>
             </div>
 
-            {/* NEW TEST DETAILS */}
+            {/* TEST DETAILS (Restored) */}
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
               <div className="flex flex-col text-slate-300">
                 <span className="text-[10px] font-bold tracking-[2px] text-slate-500 uppercase">Duration</span>
