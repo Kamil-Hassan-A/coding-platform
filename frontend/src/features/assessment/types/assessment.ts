@@ -55,6 +55,7 @@ export interface StartSessionPayload {
 export interface SubmitSessionPayload {
   code: string;
   language: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SessionSubmitResponse {

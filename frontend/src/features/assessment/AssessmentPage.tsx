@@ -18,7 +18,9 @@ import type {
 const SESSION_ID_STORAGE_KEY = "assessment_session_id";
 const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
 const SESSION_SKILL_NAME_STORAGE_KEY = "assessment_skill_name";
-const isDev = import.meta.env.DEV;
+const VIOLATION_WINDOW_MS = 20000;
+const VIOLATION_SPAM_DEBOUNCE_MS = 300;
+const AUTO_SUBMIT_VIOLATIONS_REASON = "AUTO_SUBMIT_VIOLATIONS_THRESHOLD";
 
 type InitialAssessmentState = {
   session_id: string;
@@ -33,6 +35,11 @@ type ViolationToast = {
   tone: "mild" | "strong" | "final";
 };
 
+type FullscreenTarget = HTMLElement & {
+  webkitRequestFullscreen?: () => Promise<void> | void;
+  msRequestFullscreen?: () => Promise<void> | void;
+};
+
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,8 +51,11 @@ export default function AssessmentPage() {
   const [isSessionResolved, setIsSessionResolved] = useState(false);
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(() => Boolean(document.fullscreenElement));
+  const [isFullscreenLost, setIsFullscreenLost] = useState(false);
   const [fullscreenViolations, setFullscreenViolations] = useState(0);
   const [hasStartedAssessment, setHasStartedAssessment] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [violationTimestamps, setViolationTimestamps] = useState<number[]>([]);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
   const lastSentRef = useRef<Record<string, number>>({});
@@ -54,13 +64,30 @@ export default function AssessmentPage() {
   const [violationCount, setViolationCount] = useState(0);
   const [violationByType, setViolationByType] = useState<Record<string, number>>({});
   const [violationToasts, setViolationToasts] = useState<ViolationToast[]>([]);
-  const fullscreenRetryTimerRef = useRef<number | null>(null);
   const lastFullscreenExitRef = useRef(0);
-  const retryAttemptedRef = useRef(false);
   const lastShortcutRef = useRef<Record<string, number>>({});
   const lastDevtoolsRef = useRef(0);
   const lastRightClickRef = useRef(0);
   const hasAutoSubmittedRef = useRef(false);
+  const hasViolationAutoSubmittedRef = useRef(false);
+  const submitInFlightRef = useRef(false);
+  const lastViolationEventRef = useRef(0);
+  const latestCodeRef = useRef("");
+  const hasSubmittedRef = useRef(false);
+  const warnedThresholdRef = useRef(false);
+  const isIntentionalExitRef = useRef(false);
+  const intentionalExitResetTimerRef = useRef<number | null>(null);
+
+  const markIntentionalFullscreenExit = useCallback(() => {
+    isIntentionalExitRef.current = true;
+    if (intentionalExitResetTimerRef.current !== null) {
+      window.clearTimeout(intentionalExitResetTimerRef.current);
+    }
+    intentionalExitResetTimerRef.current = window.setTimeout(() => {
+      isIntentionalExitRef.current = false;
+      intentionalExitResetTimerRef.current = null;
+    }, 1000);
+  }, []);
 
   const pushViolationToast = useCallback((message: string, tone: ViolationToast["tone"] = "mild") => {
     const id = ++toastIdRef.current;
@@ -70,10 +97,86 @@ export default function AssessmentPage() {
     }, 2600);
   }, []);
 
+  const requestFullscreenSafe = useCallback(async (): Promise<boolean> => {
+    const target = document.documentElement as FullscreenTarget;
+    const fullscreenEnabled = Boolean(
+      document.fullscreenEnabled ||
+      (document as Document & { webkitFullscreenEnabled?: boolean; msFullscreenEnabled?: boolean }).webkitFullscreenEnabled ||
+      (document as Document & { webkitFullscreenEnabled?: boolean; msFullscreenEnabled?: boolean }).msFullscreenEnabled,
+    );
+
+    console.debug("[AssessmentPage] Fullscreen support", {
+      fullscreenEnabled,
+      hasStandard: typeof target.requestFullscreen === "function",
+      hasWebkit: typeof target.webkitRequestFullscreen === "function",
+      hasMs: typeof target.msRequestFullscreen === "function",
+    });
+
+    const request =
+      target.requestFullscreen ||
+      target.webkitRequestFullscreen ||
+      target.msRequestFullscreen;
+
+    if (!request) {
+      console.error("[AssessmentPage] Fullscreen API not supported in this browser");
+      return false;
+    }
+
+    try {
+      const result = request.call(target);
+      if (result && typeof (result as Promise<void>).then === "function") {
+        await result;
+      }
+      return true;
+    } catch (error) {
+      console.error("[AssessmentPage] requestFullscreen failed", error);
+      return false;
+    }
+  }, []);
+
+  const exitFullscreenSafe = useCallback(async (): Promise<boolean> => {
+    if (!document.fullscreenElement) {
+      return true;
+    }
+
+    const exit =
+      document.exitFullscreen ||
+      (document as Document & { webkitExitFullscreen?: () => Promise<void> | void; msExitFullscreen?: () => Promise<void> | void }).webkitExitFullscreen ||
+      (document as Document & { webkitExitFullscreen?: () => Promise<void> | void; msExitFullscreen?: () => Promise<void> | void }).msExitFullscreen;
+
+    if (!exit) {
+      console.warn("[AssessmentPage] Exit fullscreen API not supported");
+      return false;
+    }
+
+    try {
+      const result = exit.call(document);
+      if (result && typeof (result as Promise<void>).then === "function") {
+        await result;
+      }
+      return true;
+    } catch (error) {
+      console.error("[AssessmentPage] exitFullscreen failed", error);
+      return false;
+    }
+  }, []);
+
+  const handleReenterFullscreen = useCallback(async () => {
+    const success = await requestFullscreenSafe();
+    if (success) {
+      setIsFullscreenLost(false);
+    }
+  }, [requestFullscreenSafe]);
+
   const sendViolation = useCallback((type: string) => {
-    if (!sessionId) return;
+    if (!sessionId || hasSubmittedRef.current) return;
 
     const now = Date.now();
+    if (now - lastViolationEventRef.current < VIOLATION_SPAM_DEBOUNCE_MS) {
+      return;
+    }
+    lastViolationEventRef.current = now;
+
     const last = lastSentRef.current[type] ?? 0;
     if (now - last < 1000) {
       return;
@@ -84,6 +187,11 @@ export default function AssessmentPage() {
       ...prev,
       [type]: (prev[type] ?? 0) + 1,
     }));
+
+    setViolationTimestamps((prev) => {
+      const recent = prev.filter((timestamp) => now - timestamp <= VIOLATION_WINDOW_MS);
+      return [...recent, now];
+    });
 
     const nextCount = violationCountRef.current + 1;
     violationCountRef.current = nextCount;
@@ -105,41 +213,21 @@ export default function AssessmentPage() {
     });
   }, [pushViolationToast, sessionId]);
 
-  const requestAssessmentFullscreen = useCallback(async (): Promise<boolean> => {
-    if (document.fullscreenElement) {
-      setIsFullscreen(true);
-      return true;
-    }
-
-    try {
-      await document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-      return true;
-    } catch {
-      return false;
-    }
-  }, []);
-
   const handleStartAssessment = useCallback(async () => {
     if (hasStartedAssessment) {
       return;
     }
 
-    if (isDev) {
-      setIsFullscreen(true);
-      setHasStartedAssessment(true);
-      setSubmissionError(null);
-      return;
-    }
+    console.debug("[AssessmentPage] Start Assessment clicked");
 
-    const entered = await requestAssessmentFullscreen();
+    const entered = await requestFullscreenSafe();
     if (!entered) {
       pushViolationToast("Please allow fullscreen to start the assessment", "strong");
       return;
     }
     setHasStartedAssessment(true);
     setSubmissionError(null);
-  }, [hasStartedAssessment, pushViolationToast, requestAssessmentFullscreen]);
+  }, [hasStartedAssessment, pushViolationToast, requestFullscreenSafe]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -147,12 +235,19 @@ export default function AssessmentPage() {
       setIsFullscreen(currentlyFullscreen);
 
       if (currentlyFullscreen) {
-        retryAttemptedRef.current = false;
-      }
-
-      if (currentlyFullscreen || !hasStartedAssessment || isSessionExpired) {
+        setIsFullscreenLost(false);
         return;
       }
+
+      if (!hasStartedAssessment || isSessionExpired || hasSubmittedRef.current) {
+        return;
+      }
+
+      if (isIntentionalExitRef.current) {
+        return;
+      }
+
+      setIsFullscreenLost(true);
 
       const now = Date.now();
       if (now - lastFullscreenExitRef.current > 1000) {
@@ -172,28 +267,22 @@ export default function AssessmentPage() {
         }
         return next;
       });
-
-      if (!retryAttemptedRef.current && fullscreenRetryTimerRef.current === null) {
-        retryAttemptedRef.current = true;
-        fullscreenRetryTimerRef.current = window.setTimeout(async () => {
-          fullscreenRetryTimerRef.current = null;
-          if (!document.fullscreenElement && !isSessionExpired) {
-            await requestAssessmentFullscreen();
-          }
-        }, 1000);
-      }
     };
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      if (fullscreenRetryTimerRef.current !== null) {
-        window.clearTimeout(fullscreenRetryTimerRef.current);
-        fullscreenRetryTimerRef.current = null;
+    };
+  }, [hasStartedAssessment, isSessionExpired, pushViolationToast, sendViolation]);
+
+  useEffect(() => {
+    return () => {
+      if (intentionalExitResetTimerRef.current !== null) {
+        window.clearTimeout(intentionalExitResetTimerRef.current);
       }
     };
-  }, [hasStartedAssessment, isSessionExpired, pushViolationToast, requestAssessmentFullscreen, sendViolation]);
+  }, []);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -424,8 +513,91 @@ export default function AssessmentPage() {
   const { mutate: submit, mutateAsync: submitAsync, isPending: isSubmitting } = useSubmitSession();
   const { mutate: run, isPending: isRunning } = useRunCode();
 
+  useEffect(() => {
+    latestCodeRef.current = code;
+  }, [code]);
+
+  useEffect(() => {
+    if (!sessionId || isSessionExpired || hasViolationAutoSubmittedRef.current || hasSubmittedRef.current) {
+      return;
+    }
+    if (isSubmitting || submitInFlightRef.current) {
+      return;
+    }
+
+    const now = Date.now();
+    const recent = violationTimestamps.filter((timestamp) => now - timestamp <= VIOLATION_WINDOW_MS);
+    if (recent.length !== violationTimestamps.length) {
+      setViolationTimestamps(recent);
+      return;
+    }
+
+    if (recent.length < 2) {
+      warnedThresholdRef.current = false;
+    } else if (recent.length === 2 && !warnedThresholdRef.current) {
+      warnedThresholdRef.current = true;
+      pushViolationToast("Next violation will auto-submit your test", "strong");
+    }
+
+    if (recent.length < 3) {
+      return;
+    }
+
+    if (!language) {
+      setSubmissionError("No language selected. Auto-submit could not start.");
+      return;
+    }
+
+    hasViolationAutoSubmittedRef.current = true;
+    submitInFlightRef.current = true;
+    setIsLocked(true);
+    console.log("Violation burst detected:", recent);
+    console.info("[AssessmentPage] Auto-submit reason:", AUTO_SUBMIT_VIOLATIONS_REASON);
+    setSubmissionError("Assessment auto-submitted due to repeated violations.");
+    const autoSubmitPayload = {
+      code: latestCodeRef.current,
+      language,
+      metadata: {
+        trigger: AUTO_SUBMIT_VIOLATIONS_REASON,
+      },
+    };
+    submit(
+      { session_id: sessionId, payload: autoSubmitPayload },
+      {
+        onSuccess: async () => {
+          submitInFlightRef.current = false;
+          hasSubmittedRef.current = true;
+          markIntentionalFullscreenExit();
+          await exitFullscreenSafe();
+          navigate("/candidate/thankyou");
+        },
+        onError: (error: any) => {
+          submitInFlightRef.current = false;
+          setIsLocked(false);
+          const status = error?.response?.status;
+          if (status === 409 || status === 410) {
+            handleSessionExpired(true);
+            return;
+          }
+          hasViolationAutoSubmittedRef.current = false;
+          setSubmissionError("Auto-submit failed. Please submit now.");
+        },
+      },
+    );
+  }, [
+    isSessionExpired,
+    isSubmitting,
+    language,
+    markIntentionalFullscreenExit,
+    navigate,
+    sessionId,
+    submit,
+    violationTimestamps,
+  ]);
+
   const handleSessionExpired = (redirectToThankYou = false) => {
     setIsSessionExpired(true);
+    hasSubmittedRef.current = true;
     setSubmissionError("Your session has expired");
     if (redirectToThankYou) {
       navigate("/candidate/thankyou");
@@ -433,7 +605,8 @@ export default function AssessmentPage() {
   };
 
   const handleRun = () => {
-    if (!sessionId || isSessionExpired) return;
+    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+    if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
@@ -445,7 +618,7 @@ export default function AssessmentPage() {
 
     setSubmissionError(null);
     run(
-      { sessionId, code, language },
+      { sessionId, code: latestCodeRef.current, language },
       {
         onSuccess: (data) => {
           setRunResult(data);
@@ -463,7 +636,8 @@ export default function AssessmentPage() {
   };
 
   const handleSubmit = () => {
-    if (!sessionId || isSessionExpired) return;
+    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+    if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
@@ -475,16 +649,22 @@ export default function AssessmentPage() {
     }
 
     setSubmissionError(null);
+    submitInFlightRef.current = true;
     submit(
-      { session_id: sessionId, payload: { code, language } },
+      { session_id: sessionId, payload: { code: latestCodeRef.current, language } },
       {
         onSuccess: (data) => {
+          submitInFlightRef.current = false;
+          hasSubmittedRef.current = true;
+          markIntentionalFullscreenExit();
+          void exitFullscreenSafe();
           setSubmissionResult(data);
           sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
           sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
           sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
         },
         onError: (error: any) => {
+          submitInFlightRef.current = false;
           const status = error?.response?.status;
           if (status === 409 || status === 410) {
             handleSessionExpired();
@@ -497,7 +677,8 @@ export default function AssessmentPage() {
   };
 
   const handleEndTest = async () => {
-    if (!sessionId || isSessionExpired) return;
+    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+    if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
@@ -509,10 +690,16 @@ export default function AssessmentPage() {
     }
 
     setSubmissionError(null);
+    submitInFlightRef.current = true;
     try {
-      await submitAsync({ session_id: sessionId, payload: { code, language } });
+      await submitAsync({ session_id: sessionId, payload: { code: latestCodeRef.current, language } });
+      submitInFlightRef.current = false;
+      hasSubmittedRef.current = true;
+      markIntentionalFullscreenExit();
+      await exitFullscreenSafe();
       navigate("/candidate/thankyou");
     } catch (error: any) {
+      submitInFlightRef.current = false;
       console.log("End test submission error:", error);
       const status = error?.response?.status;
       if (status === 409 || status === 410) {
@@ -524,7 +711,8 @@ export default function AssessmentPage() {
   };
 
   const handleTimeExpired = () => {
-    if (!sessionId || isSessionExpired) return;
+    if (!sessionId || isSessionExpired || hasSubmittedRef.current) return;
+    if (submitInFlightRef.current || isSubmitting) return;
     if (hasAutoSubmittedRef.current) return;
     hasAutoSubmittedRef.current = true;
 
@@ -535,17 +723,24 @@ export default function AssessmentPage() {
     }
 
     setSubmissionError(null);
+    submitInFlightRef.current = true;
     submit(
-      { session_id: sessionId, payload: { code, language } },
+      { session_id: sessionId, payload: { code: latestCodeRef.current, language } },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          markIntentionalFullscreenExit();
+          await exitFullscreenSafe();
+          submitInFlightRef.current = false;
+          hasSubmittedRef.current = true;
           navigate("/candidate/thankyou");
         },
         onError: (error: any) => {
+          submitInFlightRef.current = false;
           const status = error?.response?.status;
           if (status === 409 || status === 410) {
             handleSessionExpired(true);
           } else {
+            hasAutoSubmittedRef.current = false;
             setSubmissionError("Failed to end test. Please try again.");
           }
         },
@@ -558,7 +753,11 @@ export default function AssessmentPage() {
       <div className="flex h-screen flex-col items-center justify-center bg-admin-bg font-['Segoe_UI',sans-serif]">
         <h2 className='mb-5 text-admin-text'>No active session found.</h2>
         <button 
-          onClick={() => navigate("/candidate/dashboard")}
+          onClick={async () => {
+            markIntentionalFullscreenExit();
+            await exitFullscreenSafe();
+            navigate("/candidate/dashboard");
+          }}
           className="bg-admin-orange text-white border-0 rounded-lg py-3 px-8 font-bold cursor-pointer"
         >
           Go back to Dashboard
@@ -581,6 +780,7 @@ export default function AssessmentPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-admin-bg font-['Segoe_UI',sans-serif]">
       <Toolbar 
+        onEndTestIntent={markIntentionalFullscreenExit}
         onEndTest={handleEndTest}
         onTimeExpired={handleTimeExpired}
         onRun={handleRun}
@@ -612,6 +812,35 @@ export default function AssessmentPage() {
               className='mt-5 rounded-lg bg-admin-orange px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
             >
               Start Assessment
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isLocked && (
+        <div className='absolute inset-0 z-[1300] flex items-center justify-center bg-black/70 px-4'>
+          <div className='w-full max-w-md rounded-xl border border-rose-200 bg-white p-6 text-center shadow-xl'>
+            <h2 className='text-xl font-bold text-rose-700'>Submitting Assessment</h2>
+            <p className='mt-2 text-sm text-slate-700'>
+              Repeated violations detected. Your assessment is being auto-submitted.
+            </p>
+            <p className='mt-1 text-xs text-slate-500'>Please wait...</p>
+          </div>
+        </div>
+      )}
+
+      {isFullscreenLost && !hasSubmittedRef.current && (
+        <div className='absolute inset-0 z-[1400] flex items-center justify-center bg-black/75 px-4'>
+          <div className='w-full max-w-md rounded-xl border border-amber-300 bg-white p-6 text-center shadow-2xl'>
+            <h2 className='text-xl font-bold text-amber-700'>Fullscreen Required</h2>
+            <p className='mt-3 text-sm text-slate-700'>
+              You must return to fullscreen to continue.
+            </p>
+            <button
+              onClick={() => void handleReenterFullscreen()}
+              className='mt-4 rounded-lg bg-admin-orange px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90'
+            >
+              Re-enter Fullscreen
             </button>
           </div>
         </div>

@@ -3,6 +3,7 @@ import type { LanguageOption } from "../types/assessment";
 
 interface Props {
   onEndTest: () => void;
+  onEndTestIntent?: () => void;
   onTimeExpired: () => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -18,6 +19,7 @@ interface Props {
 
 export default function Toolbar({
   onEndTest,
+  onEndTestIntent,
   onTimeExpired,
   onRun,
   onSubmit,
@@ -89,6 +91,7 @@ export default function Toolbar({
         <div className='flex items-center gap-3'>
           <button
             onClick={() => {
+              onEndTestIntent?.();
               if (window.confirm("Are you sure you want to end the test? This cannot be undone.")) {
                 onEndTest();
               }
