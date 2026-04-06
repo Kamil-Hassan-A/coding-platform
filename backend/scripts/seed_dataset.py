@@ -374,7 +374,7 @@ def load_from_json(filepath: str, force: bool = False) -> None:
             if not isinstance(skill_entry, dict):
                 continue
 
-            skill_name = skill_entry.get("name") or skill_entry.get("skill_name")
+            skill_name = skill_entry.get("name") or skill_entry.get("skill_name") or skill_entry.get("skill")
             if not isinstance(skill_name, str) or not skill_name.strip():
                 raise ValueError("Each skill entry must include a non-empty name")
 
@@ -407,6 +407,8 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                             or question.get("hiddenTestCases")
                             or question.get("hidden_cases")
                         )
+                        starter_code_raw = question.get("starter_code")
+                        starter_code = starter_code_raw if isinstance(starter_code_raw, dict) else None
 
                         time_limit_minutes_raw = question.get("time_limit_minutes", 45)
                         try:
@@ -437,6 +439,8 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                                 problem.hidden_test_cases = hidden_cases
                             if force or time_limit_minutes_raw is not None:
                                 problem.time_limit_minutes = time_limit_minutes
+                            if force or starter_code is not None:
+                                problem.starter_code = starter_code
 
                             if has_slug:
                                 setattr(problem, "slug", slug)
@@ -455,6 +459,7 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                                 "description": description,
                                 "sample_test_cases": sample_cases,
                                 "hidden_test_cases": hidden_cases,
+                                "starter_code": starter_code,
                                 "difficulty_label": difficulty_label,
                                 "time_limit_minutes": time_limit_minutes,
                             }
@@ -556,4 +561,8 @@ if __name__ == "__main__":
     if args.json_path:
         load_from_json(args.json_path, force=args.force)
     else:
-        run_dataset_seed()
+        default_dataset_path = CURRENT_FILE.with_name("problem_dataset.json")
+        if default_dataset_path.exists():
+            load_from_json(str(default_dataset_path), force=args.force)
+        else:
+            run_dataset_seed()

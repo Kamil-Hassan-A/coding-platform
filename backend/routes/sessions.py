@@ -87,15 +87,28 @@ def choose_two_problems(problems: list[Problem], level: Level) -> list[Problem]:
             detail="At least 2 questions are required to start this assessment level",
         )
 
-    labeled = [(problem, problem.difficulty_label) for problem in problems]
+    grouped: dict[str, list[Problem]] = {}
+    for problem in problems:
+        difficulty = (problem.difficulty_label or "").strip().lower() or "unknown"
+        grouped.setdefault(difficulty, []).append(problem)
+
     preferred_first, preferred_second = preferred_difficulty_pair(level)
 
-    first_pool = [problem for problem, difficulty in labeled if difficulty == preferred_first]
-    second_pool = [problem for problem, difficulty in labeled if difficulty == preferred_second]
+    if len(grouped) >= 2:
+        ordered_labels: list[str] = []
+        for label in [preferred_first, preferred_second, "easy", "medium", "hard", *sorted(grouped.keys())]:
+            if label in grouped and label not in ordered_labels:
+                ordered_labels.append(label)
 
-    if first_pool and second_pool:
-        first = random.choice(first_pool)
-        second_candidates = [problem for problem in second_pool if problem.id != first.id]
+        first = random.choice(grouped[ordered_labels[0]])
+
+        second_candidates: list[Problem] = []
+        for label in ordered_labels[1:]:
+            candidates = [problem for problem in grouped[label] if problem.id != first.id]
+            if candidates:
+                second_candidates = candidates
+                break
+
         if second_candidates:
             second = random.choice(second_candidates)
             return [first, second]

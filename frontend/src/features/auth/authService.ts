@@ -40,16 +40,16 @@ export const loginWithSSO = async (): Promise<User> => {
   // Read role from localStorage for testing (defaults to "admin")
   const storedRole = localStorage.getItem("test_role");
   const role: UserRole = (storedRole === "admin" || storedRole === "candidate") 
-    ? storedRole 
-    : "admin";
+    ? storedRole
+    : "candidate";
 
   const user: User = {
-    id: "1",
+    id: role === "candidate" ? "b150f408-9876-454b-ba44-6317179698d6" : "6f2f373d-aaa3-4472-a0e2-b3ecd9806d3d",
     name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
     role,
     level: role === "candidate" ? "Beginner" : null,
-    department: role === "admin" ? "Engineering" : "Candidate Relations",
-    token: "dummy-sso-token-12345",
+    department: role === "admin" ? "Engineering" : "Candidate Relations",       
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTUwZjQwOC05ODc2LTQ1NGItYmE0NC02MzE3MTc5Njk4ZDYiLCJleHAiOjE3NzU0ODAzNTQsInJvbGUiOiJjYW5kaWRhdGUiLCJuYW1lIjoiVGVzdCBDYW5kaWRhdGUiLCJlbWFpbCI6ImNhbmRpZGF0ZUBleGFtcGxlLmNvbSJ9.yYKvmGPMCbFs3Nyk1nOoRTjl8_HfaE1IqlSM0wjlzig",
   };
 
   useUserStore.getState().setUser(user);
