@@ -44,6 +44,11 @@ export const runCode = async (
   return response.data;
 };
 
+export const getTestQuestions = async (skill: string | null) => {
+  const response = await axiosInstance.get("/api/test/questions", { params: skill ? { skill } : {} });
+  return response.data;
+};
+
 export const getSession = async (session_id: string): Promise<ActiveSession> => {
   const response = await axiosInstance.get<ActiveSession>(
     `/sessions/${session_id}`

@@ -17,13 +17,80 @@ import type {
 const SESSION_ID_STORAGE_KEY = "assessment_session_id";
 const SESSION_LANGUAGES_STORAGE_KEY = "assessment_allowed_languages";
 const SESSION_SKILL_NAME_STORAGE_KEY = "assessment_skill_name";
+const MULTI_QUESTION_FORMAT = "multi_question_v1";
 
 type InitialAssessmentState = {
   session_id: string;
   problem: SessionProblemPayload;
+  problems?: SessionProblemPayload[];
   skill_name?: string;
   allowed_languages?: LanguageOption[];
 };
+
+function isQuestionSetMetadata(raw: string | null | undefined): boolean {
+  if (!raw) return false;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed?.format === MULTI_QUESTION_FORMAT;
+  } catch {
+    return false;
+  }
+}
+
+function resolveProblemBoilerplate(
+  problem: SessionProblemPayload | null | undefined,
+  skillName: string | null,
+  language: string,
+): string {
+  if (!problem) return "";
+
+  if (skillName === "HTML, CSS, JS") {
+    if (problem.starter_code) {
+      return JSON.stringify({
+        html: problem.starter_code.html || "",
+        css: problem.starter_code.css || "",
+        js: problem.starter_code.javascript || problem.starter_code.js || "",
+      });
+    }
+    if (typeof problem.templateCode === "string" && problem.templateCode.trim().startsWith("{")) {
+      return problem.templateCode;
+    }
+    return JSON.stringify({ html: "", css: "", js: "" });
+  }
+
+  if (typeof problem.templateCode === "string" && problem.templateCode.trim()) {
+    return problem.templateCode;
+  }
+
+  const starter = problem.starter_code;
+  if (starter && typeof starter === "object") {
+    const entries = Object.entries(starter).filter(
+      ([, value]) => typeof value === "string" && value.trim().length > 0,
+    ) as Array<[string, string]>;
+
+    if (entries.length === 0) return "";
+
+    const requestedLanguage = (language || "").trim().toLowerCase();
+    if (requestedLanguage) {
+      const matched = entries.find(([key]) => key.trim().toLowerCase() === requestedLanguage);
+      if (matched) return matched[1];
+    }
+
+    const preferred = entries.find(([key]) => key.trim().toLowerCase() === "default");
+    if (preferred) return preferred[1];
+
+    return entries[0][1];
+  }
+
+  return "";
+}
+
+function getProblemKey(problem: SessionProblemPayload, index: number): string {
+  if (problem.problem_id) {
+    return String(problem.problem_id);
+  }
+  return `question_${index + 1}`;
+}
 
 export default function AssessmentPage() {
   const location = useLocation();
@@ -33,6 +100,7 @@ export default function AssessmentPage() {
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
   const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
   const [skillName, setSkillName] = useState<string | null>(initialState?.skill_name || null);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [isSessionResolved, setIsSessionResolved] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
@@ -79,7 +147,34 @@ export default function AssessmentPage() {
   );
 
   const activeProblem = initialProblem || recoveredSession?.problem;
+  const sessionProblems = useMemo(() => {
+    const fromInitial = initialState?.problems ?? [];
+    const fromRecovered = recoveredSession?.problems ?? [];
+    const source = fromInitial.length > 0 ? fromInitial : fromRecovered.length > 0 ? fromRecovered : (activeProblem ? [activeProblem] : []);
+
+    const unique: SessionProblemPayload[] = [];
+    const seen = new Set<string>();
+
+    source.forEach((problem, index) => {
+      const key = `${problem.problem_id ?? ""}-${problem.title ?? index}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(problem);
+      }
+    });
+
+    return unique.slice(0, 2);
+  }, [initialState?.problems, recoveredSession?.problems, activeProblem]);
+
+  const displayedProblem = sessionProblems[activeQuestionIndex] ?? activeProblem;
   const draftCode = recoveredSession?.last_draft_code;
+  const [questionDrafts, setQuestionDrafts] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (activeQuestionIndex > Math.max(0, sessionProblems.length - 1)) {
+      setActiveQuestionIndex(0);
+    }
+  }, [activeQuestionIndex, sessionProblems.length]);
 
   useEffect(() => {
     if (recoveredSession?.allowed_languages?.length) {
@@ -93,26 +188,53 @@ export default function AssessmentPage() {
 
   const resolvedAllowedLanguages = allowedLanguages;
 
-  const defaultCode = useMemo(() => {
-    if (skillName === "HTML, CSS, JS") {
-      if (draftCode && draftCode.trim().startsWith("{")) return draftCode;
-      
-      const prob = initialState?.problem || recoveredSession?.problem;
-      if (prob?.starter_code) {
-        return JSON.stringify({
-          html: prob.starter_code.html || "",
-          css: prob.starter_code.css || "",
-          js: prob.starter_code.javascript || prob.starter_code.js || ""
-        });
-      }
-      return JSON.stringify({ html: "", css: "", js: "" });
-    }
-    return initialState?.problem?.templateCode ?? draftCode ?? "";
-  }, [skillName, draftCode, initialState?.problem, recoveredSession?.problem]);
-
   // 3. Editor & Language State
-  const { code, setCode } = useEditor(defaultCode);
+  const { code, setCode } = useEditor("");
   const [language, setLanguage] = useState(initialState?.allowed_languages?.[0]?.monaco ?? "");
+
+  const currentQuestionKey = useMemo(() => {
+    if (!displayedProblem) return "";
+    return getProblemKey(displayedProblem, activeQuestionIndex);
+  }, [displayedProblem, activeQuestionIndex]);
+
+  useEffect(() => {
+    if (!displayedProblem) return;
+
+    const problemKey = getProblemKey(displayedProblem, activeQuestionIndex);
+    setQuestionDrafts((previous) => {
+      if (previous[problemKey] !== undefined) {
+        return previous;
+      }
+
+      const recoveredDraft =
+        activeQuestionIndex === 0 &&
+        typeof draftCode === "string" &&
+        draftCode.trim().length > 0 &&
+        !isQuestionSetMetadata(draftCode)
+          ? draftCode
+          : null;
+
+      const starter = recoveredDraft ?? resolveProblemBoilerplate(displayedProblem, skillName, language);
+      return { ...previous, [problemKey]: starter };
+    });
+  }, [displayedProblem, activeQuestionIndex, draftCode, skillName, language]);
+
+  useEffect(() => {
+    if (!currentQuestionKey) return;
+    const nextCode = questionDrafts[currentQuestionKey];
+    if (typeof nextCode === "string" && nextCode !== code) {
+      setCode(nextCode);
+    }
+  }, [currentQuestionKey, questionDrafts, code, setCode]);
+
+  const handleCodeChange = (nextCode: string) => {
+    setCode(nextCode);
+    if (!currentQuestionKey) return;
+    setQuestionDrafts((previous) => ({
+      ...previous,
+      [currentQuestionKey]: nextCode,
+    }));
+  };
 
   useEffect(() => {
     if (recoveredSession?.last_draft_lang) {
@@ -244,7 +366,7 @@ export default function AssessmentPage() {
     );
   }
 
-  if (isRecovering || !activeProblem) {
+  if (isRecovering || !displayedProblem) {
     return (
       <div className='flex h-screen items-center justify-center bg-admin-bg'>
         <div className='flex flex-col items-center gap-4'>
@@ -266,7 +388,7 @@ export default function AssessmentPage() {
         isSubmitting={isSubmitting}
         language={language}
         onLanguageChange={setLanguage}
-        timeLimit={activeProblem.time_limit_minutes}
+        timeLimit={displayedProblem.time_limit_minutes}
         allowedLanguages={resolvedAllowedLanguages}
         secondsRemaining={recoveredSession?.seconds_remaining}
       />
@@ -279,17 +401,42 @@ export default function AssessmentPage() {
 
       <div className='flex flex-1 overflow-hidden'>
         {/* Left Panel - 40% */}
-        <div className='flex w-2/5 flex-col border-r border-admin-border'>
-          <ProblemPanel problem={activeProblem} />
+        <div className='flex w-2/5 border-r border-admin-border bg-white'>
+          {sessionProblems.length > 1 && (
+            <div className='w-[132px] shrink-0 border-r border-admin-border bg-slate-50 p-3'>
+              <div className='flex flex-col gap-2'>
+                {sessionProblems.map((problem, index) => {
+                  const isActive = index === activeQuestionIndex;
+                  return (
+                    <button
+                      key={`${problem.problem_id ?? "problem"}-${index}`}
+                      onClick={() => setActiveQuestionIndex(index)}
+                      className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition-all ${
+                        isActive
+                          ? "bg-admin-orange text-white"
+                          : "border border-slate-200 bg-white text-slate-700"
+                      }`}
+                    >
+                      {`Question ${index + 1}`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
+            <ProblemPanel problem={displayedProblem} />
+          </div>
         </div>
 
         {/* Right Panel - 60% */}
         <div className='flex w-3/5 flex-col bg-[#1e1e1e]'>
           <div className='flex-1 overflow-hidden'>
             {skillName === "HTML, CSS, JS" ? (
-              <CodePlayground code={code} onChange={setCode} />
+              <CodePlayground code={code} onChange={handleCodeChange} />
             ) : (
-              <Editor code={code} onChange={setCode} language={activeLanguage?.monaco || "plaintext"} />
+              <Editor code={code} onChange={handleCodeChange} language={activeLanguage?.monaco || "plaintext"} />
             )}
           </div>
           

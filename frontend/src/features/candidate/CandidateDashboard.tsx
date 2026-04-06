@@ -136,13 +136,23 @@ export default function CandidateDashboard() {
           state: { 
             session_id: data.session_id, 
             problem: data.problem, 
+            problems: data.problems ?? [],
             skill_name: activeConfirmed.skill, 
             allowed_languages: data.allowed_languages ?? [] 
           },
         });
       },
-      onError: () => {
-        alert("Failed to start assessment session. The backend service may be down. Please try again.");
+      onError: (error: unknown) => {
+        const detail =
+          typeof (error as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail === "string"
+            ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail ?? null)
+            : null;
+
+        alert(
+          detail
+            ? `Failed to start assessment session: ${detail}`
+            : "Failed to start assessment session. Please try again.",
+        );
       },
     });
   };
@@ -196,7 +206,7 @@ export default function CandidateDashboard() {
 
         <main className="flex-1 overflow-y-auto px-6 py-10">
           {(isSkillsLoading || isProgressLoading) && (
-            <div className="mt-10 text-center text-slate-500">
+            <div className="mt-10 text-left text-slate-500">
               Loading your skills...
             </div>
           )}

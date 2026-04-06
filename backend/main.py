@@ -45,3 +45,6 @@ app.include_router(system_router)
 
 # ---- Mangum handler for AWS Lambda ----
 handler = Mangum(app, lifespan="off")
+
+from routes import test_questions
+app.include_router(test_questions.router)
