@@ -16,6 +16,7 @@ from dependencies import require_candidate
 from judge0_service import Judge0Service
 from models import (
     AssessmentSession,
+    Badge,
     Level,
     Problem,
     SessionStatus,
@@ -23,6 +24,7 @@ from models import (
     Submission,
     SubmissionStatus,
     User,
+    UserBadge,
     UserSkillProgress,
 )
 
@@ -49,6 +51,13 @@ LEVEL_ORDER = [
     Level.SPECIALIST_2,
 ]
 MULTI_QUESTION_COUNT = 2
+LEVEL_BADGE_LABELS = {
+    Level.BEGINNER: "Beginner",
+    Level.INTERMEDIATE_1: "Intermediate 1",
+    Level.INTERMEDIATE_2: "Intermediate 2",
+    Level.SPECIALIST_1: "Specialist 1",
+    Level.SPECIALIST_2: "Specialist 2",
+}
 
 
 def preferred_difficulty_pair(level: Level) -> tuple[str, str]:
@@ -278,6 +287,53 @@ def get_next_level(level: Level) -> Level | None:
     return LEVEL_ORDER[index + 1]
 
 
+def award_level_badge(
+    db: Session,
+    *,
+    user_id: UUID,
+    skill: Skill,
+    level: Level,
+    awarded_at: datetime,
+) -> None:
+    level_label = LEVEL_BADGE_LABELS.get(level, level.value.replace("_", " ").title())
+    badge_name = f"{skill.name} - {level_label} Cleared"
+    description = f"Awarded for clearing {level_label} level in {skill.name}."
+    criteria = json.dumps(
+        {
+            "event": "level_cleared",
+            "skill_id": str(skill.id),
+            "skill_name": skill.name,
+            "level": level.value,
+        }
+    )
+
+    badge = db.scalar(select(Badge).where(Badge.name == badge_name))
+    if badge is None:
+        badge = Badge(
+            name=badge_name,
+            description=description,
+            criteria=criteria,
+            icon_url=None,
+        )
+        db.add(badge)
+        db.flush()
+
+    existing_award = db.scalar(
+        select(UserBadge).where(
+            UserBadge.user_id == user_id,
+            UserBadge.badge_id == badge.id,
+        )
+    )
+    if existing_award is None:
+        db.add(
+            UserBadge(
+                user_id=user_id,
+                badge_id=badge.id,
+                awarded_at=awarded_at,
+            )
+        )
+
+
 def ensure_session_owner(session_obj: AssessmentSession, current_user: User) -> None:
     if session_obj.user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Session does not belong to current user")
@@ -410,6 +466,14 @@ def score_submission(
                 db.add(next_progress)
             else:
                 next_progress.unlocked = True
+
+        award_level_badge(
+            db,
+            user_id=session_obj.user_id,
+            skill=skill,
+            level=session_obj.level,
+            awarded_at=current_time,
+        )
 
     return submission
 

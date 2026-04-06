@@ -5,8 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
+import BadgesScreen from "./BadgesScreen";
 import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
-import { getSkills, getUserProgress } from "./candidateService";
+import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
   CandidateScreen,
@@ -20,6 +21,7 @@ import { useStartSession } from "../assessment/hooks/useAssessment";
 
 const CANDIDATE_MENU = [
   { id: "dashboard", label: "Dashboard" },
+  { id: "badges", label: "Badges" },
   { id: "past_assessments", label: "Past Assessments" },
 ];
 
@@ -84,6 +86,16 @@ export default function CandidateDashboard() {
     queryKey: ["user-progress"],
     queryFn: getUserProgress,
     staleTime: 1000 * 60,
+  });
+
+  const {
+    data: badges = [],
+    isLoading: isBadgesLoading,
+    isError: isBadgesError,
+  } = useQuery({
+    queryKey: ["user-badges"],
+    queryFn: getUserBadges,
+    staleTime: 0,
   });
 
   const skillsList: SkillWithProgress[] = useMemo(() => {
@@ -162,11 +174,22 @@ export default function CandidateDashboard() {
       <Sidebar
         items={CANDIDATE_MENU}
         active={
-          screen === "past_assessments" ? "past_assessments" : "dashboard"
+          screen === "past_assessments"
+            ? "past_assessments"
+            : screen === "badges"
+              ? "badges"
+              : "dashboard"
         }
         onChange={(id) => {
-          if (id === "past_assessments") setScreen("past_assessments");
-          else setScreen("home");
+          if (id === "past_assessments") {
+            setScreen("past_assessments");
+            return;
+          }
+          if (id === "badges") {
+            setScreen("badges");
+            return;
+          }
+          setScreen("home");
         }}
       />
 
@@ -228,6 +251,13 @@ export default function CandidateDashboard() {
                   data.skill_id,
                 );
               }}
+            />
+          ) : screen === "badges" ? (
+            <BadgesScreen
+              badges={badges}
+              allSkillNames={skillsList.map((skill) => skill.name)}
+              isBadgesLoading={isBadgesLoading}
+              isBadgesError={isBadgesError}
             />
           ) : screen === "past_assessments" ? (
             <PastAssessmentsScreen />
