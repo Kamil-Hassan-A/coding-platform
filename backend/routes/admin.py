@@ -83,33 +83,48 @@ def get_violation_summary(db: Session, session_id: UUID) -> dict[str, object]:
     risk_score += min(tab_switch, 10) * 1
     risk_score += min(right_click, 5) * 1
 
-    if risk_score == 0:
-        risk_level = "none"
-    elif risk_score <= 5:
+    if risk_score <= 5:
         risk_level = "low"
     elif risk_score <= 12:
         risk_level = "medium"
     else:
         risk_level = "high"
 
-    reason_candidates = [
-        ("devtools_open", devtools_open),
-        ("fullscreen_exit", fullscreen_exit),
-        ("paste", paste),
-        ("copy", copy),
-        ("tab_switch", tab_switch),
-    ]
-    reason_candidates.sort(key=lambda item: item[1], reverse=True)
-    top_reason_key = next((key for key, count in reason_candidates if count > 0), None)
-
+    weight_map = {
+        "fullscreen_exit": 2,
+        "devtools_open": 3,
+        "devtools_shortcut": 2,
+        "paste": 1,
+        "copy": 1,
+        "tab_switch": 1,
+        "right_click": 1,
+    }
     reason_map = {
         "devtools_open": "DevTools usage detected",
+        "devtools_shortcut": "DevTools shortcut usage detected",
         "fullscreen_exit": "Frequent fullscreen exits",
         "paste": "Excessive paste activity",
         "copy": "Frequent copy activity",
         "tab_switch": "Frequent tab switching",
+        "right_click": "Frequent right-click activity",
     }
-    risk_reason = reason_map.get(top_reason_key, "No suspicious activity")
+
+    reason_counts = {
+        "devtools_open": devtools_open,
+        "devtools_shortcut": devtools_shortcut,
+        "fullscreen_exit": fullscreen_exit,
+        "paste": paste,
+        "copy": copy,
+        "tab_switch": tab_switch,
+        "right_click": right_click,
+    }
+
+    ranked_reason_keys = sorted(
+        [key for key, count in reason_counts.items() if count > 0],
+        key=lambda key: (weight_map.get(key, 0) * reason_counts[key], reason_counts[key]),
+        reverse=True,
+    )
+    risk_reasons = [reason_map[key] for key in ranked_reason_keys[:3] if key in reason_map] or []
 
     return {
         "total": total,
@@ -120,8 +135,7 @@ def get_violation_summary(db: Session, session_id: UUID) -> dict[str, object]:
         "risk": {
             "score": int(risk_score),
             "level": risk_level,
-            "flagged": risk_level == "high",
-            "reason": risk_reason,
+            "reasons": risk_reasons,
         },
     }
 

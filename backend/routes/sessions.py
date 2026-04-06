@@ -51,6 +51,7 @@ ALLOWED_VIOLATION_TYPES = {
     "tab_switch_shortcut",
     "fullscreen_exit",
     "paste",
+    "paste_attempt",
     "copy",
     "cut",
     "select_all",

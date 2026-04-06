@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LogOut } from "lucide-react";
 
 import { logout } from "../auth/authService";
 import Sidebar from "../../components/layout/Sidebar";
-import CredentialsPage from "./CredentialsPage";
+import useUserStore from "../../stores/userStore";
 import { getAdminCandidates, getDashboardStats, type AdminCandidate } from "./dashboardService";
 
 const COLORS = {
@@ -72,12 +73,47 @@ function SelectBox({
 }
 
 export default function AdminDashboard() {
-  const [page, setPage] = useState<"dashboard" | "candidates" | "credentials">("dashboard");
-  const [showMenu, setShowMenu] = useState(false);
+  const [page, setPage] = useState<"dashboard" | "candidates">("dashboard");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dashSkill, setDashSkill] = useState("");
   const [filterGender, setFilterGender] = useState("All");
   const [filterDept, setFilterDept] = useState("All");
   const [filterSkill, setFilterSkill] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [yearsMin, setYearsMin] = useState<number | null>(null);
+  const [yearsMax, setYearsMax] = useState<number | null>(null);
+  const [experienceMin, setExperienceMin] = useState<number | null>(null);
+  const [experienceMax, setExperienceMax] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const user = useUserStore();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const normalizedYearsRange = useMemo(() => {
+    if (yearsMin === null || yearsMax === null) {
+      return { min: yearsMin, max: yearsMax };
+    }
+    return yearsMin <= yearsMax
+      ? { min: yearsMin, max: yearsMax }
+      : { min: yearsMax, max: yearsMin };
+  }, [yearsMax, yearsMin]);
+
+  const normalizedExperienceRange = useMemo(() => {
+    if (experienceMin === null || experienceMax === null) {
+      return { min: experienceMin, max: experienceMax };
+    }
+    return experienceMin <= experienceMax
+      ? { min: experienceMin, max: experienceMax }
+      : { min: experienceMax, max: experienceMin };
+  }, [experienceMax, experienceMin]);
 
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
@@ -85,9 +121,23 @@ export default function AdminDashboard() {
     staleTime: 1000 * 60,
   });
 
+  const candidateApiFilters = useMemo(
+    () =>
+      page === "candidates"
+        ? {
+            employeeId,
+            yearsMin: normalizedYearsRange.min,
+            yearsMax: normalizedYearsRange.max,
+            experienceMin: normalizedExperienceRange.min,
+            experienceMax: normalizedExperienceRange.max,
+          }
+        : undefined,
+    [employeeId, normalizedExperienceRange.max, normalizedExperienceRange.min, normalizedYearsRange.max, normalizedYearsRange.min, page],
+  );
+
   const { data: candidateRows = [] } = useQuery({
-    queryKey: ["admin-candidates"],
-    queryFn: getAdminCandidates,
+    queryKey: ["admin-candidates", candidateApiFilters],
+    queryFn: () => getAdminCandidates(candidateApiFilters),
     staleTime: 1000 * 60,
   });
 
@@ -104,12 +154,45 @@ export default function AdminDashboard() {
   const totalPass = candidateRows.filter((c) => c.status === "Pass").length;
   const passRate = candidateRows.length > 0 ? Math.round((totalPass / candidateRows.length) * 100) : 0;
 
-  const filtered = candidateRows.filter((c) => {
+  const filtered = useMemo(() => candidateRows.filter((c) => {
+    const candidateEmployeeId = String(c.employeeId ?? c.employee_id ?? c.user_id ?? "").toLowerCase();
+    const yearsWithCompany = (
+      typeof c.expIndium === "number"
+        ? c.expIndium
+        : typeof c.exp_indium_years === "number"
+          ? c.exp_indium_years
+          : 0
+    ) ?? 0;
+    const overallExperience = (
+      typeof c.expOverall === "number"
+        ? c.expOverall
+        : typeof c.exp_overall_years === "number"
+          ? c.exp_overall_years
+          : 0
+    ) ?? 0;
+
     if (filterGender !== "All" && c.gender !== filterGender) return false;
     if (filterDept !== "All" && c.dept !== filterDept) return false;
     if (filterSkill && c.skill !== filterSkill) return false;
+    if (employeeId.trim() && !candidateEmployeeId.includes(employeeId.trim().toLowerCase())) return false;
+
+    if (normalizedYearsRange.min !== null && yearsWithCompany < normalizedYearsRange.min) return false;
+    if (normalizedYearsRange.max !== null && yearsWithCompany > normalizedYearsRange.max) return false;
+    if (normalizedExperienceRange.min !== null && overallExperience < normalizedExperienceRange.min) return false;
+    if (normalizedExperienceRange.max !== null && overallExperience > normalizedExperienceRange.max) return false;
     return true;
-  });
+  }), [candidateRows, employeeId, filterDept, filterGender, filterSkill, normalizedExperienceRange.max, normalizedExperienceRange.min, normalizedYearsRange.max, normalizedYearsRange.min]);
+
+  const resetCandidateFilters = () => {
+    setFilterGender("All");
+    setFilterDept("All");
+    setFilterSkill("");
+    setEmployeeId("");
+    setYearsMin(null);
+    setYearsMax(null);
+    setExperienceMin(null);
+    setExperienceMax(null);
+  };
 
   const visibleStats = useMemo(() => {
     const grouped = new Map<string, { skill: string; pass: number; fail: number }>();
@@ -153,7 +236,6 @@ export default function AdminDashboard() {
   const NAV = [
     { id: "dashboard", label: "Dashboard" },
     { id: "candidates", label: "Candidates" },
-    { id: "credentials", label: "Credentials" },
   ];
 
   return (
@@ -161,34 +243,72 @@ export default function AdminDashboard() {
       <Sidebar
         items={NAV}
         active={page}
-        onChange={(id) => setPage(id as "dashboard" | "candidates" | "credentials")}
+        onChange={(id) => {
+          setPage(id as "dashboard" | "candidates");
+          setIsDropdownOpen(false);
+        }}
       />
 
       <main className='flex flex-1 flex-col overflow-hidden'>
         <header className='flex h-[52px] shrink-0 items-center justify-between border-b border-admin-border bg-white px-7'>
           <span className='text-[14px] font-semibold text-admin-text-muted'>
-            {page === "credentials" ? "Credentials" : page === "dashboard" ? "Dashboard" : "Candidates"}
+            {page === "dashboard" ? "Dashboard" : "Candidates"}
           </span>
-          <div className='relative'>
+          <div className='relative' ref={menuRef}>
             <div
-              onClick={() => setShowMenu((prev) => !prev)}
-              className='grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-white'
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              role='button'
+              tabIndex={0}
+              aria-label='Open profile menu'
+              aria-expanded={isDropdownOpen}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setIsDropdownOpen((prev) => !prev);
+                }
+                if (event.key === "Escape") {
+                  setIsDropdownOpen(false);
+                }
+              }}
+              className='flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-admin-orange text-[16px] font-bold text-white'
             >
-              AD
+              {(user?.name?.trim()?.[0] || "A").toUpperCase()}
             </div>
-            {showMenu && (
-              <div className='absolute right-0 top-10 z-[100] min-w-[140px] rounded-lg border border-admin-border bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)]'>
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    void logout();
-                  }}
-                  className='w-full cursor-pointer border-none bg-transparent px-4 py-2.5 text-left text-[13px] font-semibold text-admin-red'
-                >
-                  Sign out
-                </button>
+
+            <div
+              className={`absolute right-0 top-12 z-[100] w-60 origin-top-right overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] will-change-transform transition-all duration-150 ease-out ${
+                isDropdownOpen ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+              }`}
+              aria-hidden={!isDropdownOpen}
+            >
+              <div className='border-b border-slate-200 px-5 py-4'>
+                <p className='m-0 text-[14px] font-semibold text-[#111]'>
+                  {user?.name || "Platform Admin"}
+                </p>
+                <p className='mt-0.5 text-[12px] text-slate-500'>
+                  {user?.department || "Admin"}
+                </p>
               </div>
-            )}
+              <div
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  void logout();
+                }}
+                role='button'
+                tabIndex={0}
+                aria-label='Sign out'
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setIsDropdownOpen(false);
+                    void logout();
+                  }
+                }}
+                className='flex cursor-pointer items-center gap-3 px-5 py-3 text-[14px] text-red-600'
+              >
+                <LogOut size={16} /> Sign Out
+              </div>
+            </div>
           </div>
         </header>
 
@@ -336,17 +456,78 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {(filterGender !== "All" || filterDept !== "All" || filterSkill) && (
+                <div className='mt-4 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]'>
+                  <div className='flex flex-col gap-1.5'>
+                    <label className='text-[12px] font-semibold text-gray-600'>Employee ID</label>
+                    <input
+                      className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                      value={employeeId}
+                      onChange={(e) => setEmployeeId(e.target.value)}
+                      placeholder='e.g. IND-1042'
+                    />
+                  </div>
+
+                  <div className='flex flex-col gap-1.5'>
+                    <label className='text-[12px] font-semibold text-gray-600'>Years with Company (Min - Max)</label>
+                    <div className='flex gap-2'>
+                      <input
+                        type='number'
+                        min='0'
+                        className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                        value={yearsMin ?? ""}
+                        onChange={(e) => setYearsMin(e.target.value === "" ? null : Number(e.target.value))}
+                        placeholder='Min'
+                      />
+                      <input
+                        type='number'
+                        min='0'
+                        className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                        value={yearsMax ?? ""}
+                        onChange={(e) => setYearsMax(e.target.value === "" ? null : Number(e.target.value))}
+                        placeholder='Max'
+                      />
+                    </div>
+                  </div>
+
+                  <div className='flex flex-col gap-1.5'>
+                    <label className='text-[12px] font-semibold text-gray-600'>Overall Experience (Min - Max)</label>
+                    <div className='flex gap-2'>
+                      <input
+                        type='number'
+                        min='0'
+                        className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                        value={experienceMin ?? ""}
+                        onChange={(e) => setExperienceMin(e.target.value === "" ? null : Number(e.target.value))}
+                        placeholder='Min'
+                      />
+                      <input
+                        type='number'
+                        min='0'
+                        className='w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-[13px] outline-none'
+                        value={experienceMax ?? ""}
+                        onChange={(e) => setExperienceMax(e.target.value === "" ? null : Number(e.target.value))}
+                        placeholder='Max'
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {(filterGender !== "All" || filterDept !== "All" || filterSkill || employeeId || yearsMin !== null || yearsMax !== null || experienceMin !== null || experienceMax !== null) && (
                   <div className='mt-3.5 flex flex-wrap items-center gap-2'>
                     <span className='text-[11px] font-semibold text-admin-text-light'>Active filters:</span>
                     {filterGender !== "All" && <ActiveTag label={filterGender} />}
                     {filterDept !== "All" && <ActiveTag label={filterDept} />}
                     {filterSkill && <ActiveTag label={filterSkill} />}
+                    {employeeId && <ActiveTag label={`Employee ID: ${employeeId}`} />}
+                    {yearsMin !== null && <ActiveTag label={`Years Min: ${yearsMin}`} />}
+                    {yearsMax !== null && <ActiveTag label={`Years Max: ${yearsMax}`} />}
+                    {experienceMin !== null && <ActiveTag label={`Exp Min: ${experienceMin}`} />}
+                    {experienceMax !== null && <ActiveTag label={`Exp Max: ${experienceMax}`} />}
                     <button
-                      onClick={() => { setFilterGender("All"); setFilterDept("All"); setFilterSkill(""); }}
+                      onClick={resetCandidateFilters}
                       className='cursor-pointer border-none bg-transparent p-0 text-[11px] font-bold text-admin-red'
                     >
-                      Clear all
+                      Reset
                     </button>
                   </div>
                 )}
@@ -419,8 +600,6 @@ export default function AdminDashboard() {
               </div>
             </>
           )}
-
-          {page === "credentials" && <CredentialsPage />}
         </div>
       </main>
     </div>

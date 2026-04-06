@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
@@ -75,6 +75,8 @@ export default function CandidateDashboard() {
     queryKey: ["skills"],
     queryFn: getSkills,
     staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    placeholderData: keepPreviousData,
   });
 
   const {
@@ -210,6 +212,7 @@ export default function CandidateDashboard() {
 
           {screen === "home" ? (
             <HomeScreen
+              isSkillsLoading={isSkillsLoading}
               skillsList={skillsList}
               onStart={(data) => {
                 handleConfirm(
@@ -244,7 +247,7 @@ export default function CandidateDashboard() {
   );
 }
 
-function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
+function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & { isSkillsLoading: boolean }) {
   const user = useUserStore();
   const [search, setSearch] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
@@ -297,12 +300,28 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
         </div>
 
         <div className="flex flex-wrap gap-2.5">
-          {filteredSkills.length === 0 && (
+          {isSkillsLoading && Array.from({ length: 8 }).map((_, index) => (
+            <button
+              key={`skill-placeholder-${index}`}
+              disabled
+              className="cursor-default rounded-full border border-slate-200 px-[18px] py-2.5 text-[13px] font-semibold transition-all"
+              style={{
+                background: "#e2e8f0",
+                color: "transparent",
+                cursor: "default",
+                width: index % 2 === 0 ? 80 : 120,
+              }}
+            >
+              Loading
+            </button>
+          ))}
+
+          {!isSkillsLoading && filteredSkills.length === 0 && (
             <div className="w-full py-5 text-center text-[14px] text-slate-400">
               No skills found.
             </div>
           )}
-          {filteredSkills.map((skill) => {
+          {!isSkillsLoading && filteredSkills.map((skill) => {
             const isSelected = selectedSkillId === skill.skill_id;
             return (
               <button

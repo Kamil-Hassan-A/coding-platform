@@ -55,6 +55,7 @@ export default function AssessmentPage() {
   const [fullscreenViolations, setFullscreenViolations] = useState(0);
   const [hasStartedAssessment, setHasStartedAssessment] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [showEndTestModal, setShowEndTestModal] = useState(false);
   const [violationTimestamps, setViolationTimestamps] = useState<number[]>([]);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const initialProblem = initialState?.problem ?? null;
@@ -71,6 +72,7 @@ export default function AssessmentPage() {
   const hasAutoSubmittedRef = useRef(false);
   const hasViolationAutoSubmittedRef = useRef(false);
   const submitInFlightRef = useRef(false);
+  const runInFlightRef = useRef(false);
   const lastViolationEventRef = useRef(0);
   const latestCodeRef = useRef("");
   const hasSubmittedRef = useRef(false);
@@ -371,6 +373,15 @@ export default function AssessmentPage() {
     if (!sessionId) return;
 
     const handleKeydown = (event: KeyboardEvent) => {
+      const key = (event.key || "").toLowerCase();
+      const isCtrl = event.ctrlKey || event.metaKey;
+
+      if (isCtrl && !event.shiftKey && key === "v") {
+        event.preventDefault();
+        sendViolation("paste");
+        return;
+      }
+
       const target = event.target as HTMLElement | null;
       const tag = target?.tagName?.toLowerCase();
       if (tag === "input" || tag === "textarea") {
@@ -378,8 +389,6 @@ export default function AssessmentPage() {
       }
 
       let type: string | null = null;
-      const key = (event.key || "").toLowerCase();
-      const isCtrl = event.ctrlKey || event.metaKey;
 
       if (isCtrl && !event.shiftKey && key === "c") {
         type = "copy";
@@ -415,6 +424,23 @@ export default function AssessmentPage() {
       window.removeEventListener("keydown", handleKeydown);
     };
   }, [sendViolation, sessionId]);
+
+  useEffect(() => {
+    if (!sessionId || !hasStartedAssessment || isSessionExpired || hasSubmittedRef.current) {
+      return;
+    }
+
+    const handleGlobalPaste = (event: ClipboardEvent) => {
+      event.preventDefault();
+      sendViolation("paste_attempt");
+    };
+
+    window.addEventListener("paste", handleGlobalPaste, true);
+
+    return () => {
+      window.removeEventListener("paste", handleGlobalPaste, true);
+    };
+  }, [hasStartedAssessment, isSessionExpired, sendViolation, sessionId]);
 
   useEffect(() => {
     if (initialState?.session_id) {
@@ -605,7 +631,8 @@ export default function AssessmentPage() {
   };
 
   const handleRun = () => {
-    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+    if (!sessionId || isSessionExpired || isLocked) return;
+    if (runInFlightRef.current || isRunning) return;
     if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
@@ -617,13 +644,16 @@ export default function AssessmentPage() {
     }
 
     setSubmissionError(null);
+    runInFlightRef.current = true;
     run(
       { sessionId, code: latestCodeRef.current, language },
       {
         onSuccess: (data) => {
+          runInFlightRef.current = false;
           setRunResult(data);
         },
         onError: (error: any) => {
+          runInFlightRef.current = false;
           const status = error?.response?.status;
           if (status === 409 || status === 410) {
             handleSessionExpired();
@@ -635,8 +665,8 @@ export default function AssessmentPage() {
     );
   };
 
-  const handleSubmit = () => {
-    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+  const handleSubmit = async () => {
+    if (!sessionId || isSessionExpired || isLocked) return;
     if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
@@ -650,34 +680,32 @@ export default function AssessmentPage() {
 
     setSubmissionError(null);
     submitInFlightRef.current = true;
-    submit(
-      { session_id: sessionId, payload: { code: latestCodeRef.current, language } },
-      {
-        onSuccess: (data) => {
-          submitInFlightRef.current = false;
-          hasSubmittedRef.current = true;
-          markIntentionalFullscreenExit();
-          void exitFullscreenSafe();
-          setSubmissionResult(data);
-          sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
-          sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
-          sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
-        },
-        onError: (error: any) => {
-          submitInFlightRef.current = false;
-          const status = error?.response?.status;
-          if (status === 409 || status === 410) {
-            handleSessionExpired();
-            return;
-          }
-          setSubmissionError("Submission failed. Please try again.");
-        },
+    try {
+      const data = await submitAsync({ session_id: sessionId, payload: { code: latestCodeRef.current, language } });
+      submitInFlightRef.current = false;
+      setSubmissionResult(data);
+      sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
+    } catch (error: any) {
+      submitInFlightRef.current = false;
+      const status = error?.response?.status;
+      if (status === 409 || status === 410) {
+        handleSessionExpired();
+        return;
       }
-    );
+      setSubmissionError("Submission failed. Please try again.");
+    }
   };
 
   const handleEndTest = async () => {
-    if (!sessionId || isSessionExpired || hasSubmittedRef.current || isLocked) return;
+    if (!sessionId || isSessionExpired || isLocked) return;
+    if (submissionResult !== null) {
+      markIntentionalFullscreenExit();
+      await exitFullscreenSafe();
+      navigate("/candidate/thankyou");
+      return;
+    }
     if (submitInFlightRef.current || isSubmitting) return;
     if (!hasStartedAssessment || !isFullscreen) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
@@ -708,6 +736,23 @@ export default function AssessmentPage() {
         setSubmissionError("Failed to end test. Please try again.");
       }
     }
+  };
+
+  const handleOpenEndTestModal = () => {
+    if (submissionResult !== null) {
+      void handleEndTest();
+      return;
+    }
+    setShowEndTestModal(true);
+  };
+
+  const handleCancelEndTest = () => {
+    setShowEndTestModal(false);
+  };
+
+  const handleConfirmEndTest = () => {
+    setShowEndTestModal(false);
+    void handleEndTest();
   };
 
   const handleTimeExpired = () => {
@@ -780,8 +825,7 @@ export default function AssessmentPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-admin-bg font-['Segoe_UI',sans-serif]">
       <Toolbar 
-        onEndTestIntent={markIntentionalFullscreenExit}
-        onEndTest={handleEndTest}
+        onEndTest={handleOpenEndTestModal}
         onTimeExpired={handleTimeExpired}
         onRun={handleRun}
         onSubmit={handleSubmit}
@@ -825,6 +869,31 @@ export default function AssessmentPage() {
               Repeated violations detected. Your assessment is being auto-submitted.
             </p>
             <p className='mt-1 text-xs text-slate-500'>Please wait...</p>
+          </div>
+        </div>
+      )}
+
+      {showEndTestModal && (
+        <div className='absolute inset-0 z-[1350] flex items-center justify-center bg-black/50 backdrop-blur-[2px] px-4'>
+          <div className='w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-2xl'>
+            <h2 className='text-xl font-bold text-slate-900'>End Test</h2>
+            <p className='mt-3 text-sm text-slate-700'>
+              Are you sure you want to end the test? This cannot be undone.
+            </p>
+            <div className='mt-5 flex justify-center gap-3'>
+              <button
+                onClick={handleCancelEndTest}
+                className='rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmEndTest}
+                className='rounded-lg border-none bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600'
+              >
+                Confirm (End Test)
+              </button>
+            </div>
           </div>
         </div>
       )}

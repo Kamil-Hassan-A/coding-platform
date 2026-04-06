@@ -3,7 +3,6 @@ import type { LanguageOption } from "../types/assessment";
 
 interface Props {
   onEndTest: () => void;
-  onEndTestIntent?: () => void;
   onTimeExpired: () => void;
   onRun: () => void;
   onSubmit: () => void;
@@ -19,7 +18,6 @@ interface Props {
 
 export default function Toolbar({
   onEndTest,
-  onEndTestIntent,
   onTimeExpired,
   onRun,
   onSubmit,
@@ -90,12 +88,8 @@ export default function Toolbar({
 
         <div className='flex items-center gap-3'>
           <button
-            onClick={() => {
-              onEndTestIntent?.();
-              if (window.confirm("Are you sure you want to end the test? This cannot be undone.")) {
-                onEndTest();
-              }
-            }}
+            type='button'
+            onClick={onEndTest}
             className='rounded-lg border-none bg-red-500 px-5 py-[9px] text-[13px] font-semibold text-white transition-colors hover:bg-red-600'
           >
             End Test
@@ -121,6 +115,7 @@ export default function Toolbar({
 
           {!hideRunCode && (
             <button
+              type='button'
               onClick={onRun}
               disabled={isRunning}
               className={`rounded-lg border px-5 py-[9px] text-[13px] font-semibold transition-all ${isRunning ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : "cursor-pointer border-slate-300 bg-white text-slate-700 hover:border-admin-orange hover:text-admin-orange"}`}
@@ -130,6 +125,7 @@ export default function Toolbar({
           )}
 
           <button
+            type='button'
             onClick={onSubmit}
             disabled={isSubmitting}
             className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white transition-all ${isSubmitting ? "cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none" : "cursor-pointer bg-admin-orange shadow-lg shadow-admin-orange/20 hover:-translate-y-0.5 hover:shadow-admin-orange/40"}`}
