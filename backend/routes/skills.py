@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from dependencies import require_candidate
-from models import AssessmentSession, Level, Skill, User, UserSkillProgress
-from schemas import LevelProgressItem, SkillProgressResponse, SkillResponse
+from models import AssessmentSession, Badge, Level, Skill, User, UserBadge, UserSkillProgress
+from schemas import CandidateBadgeResponse, LevelProgressItem, SkillProgressResponse, SkillResponse
 
 router = APIRouter(tags=["skills"])
 LEVEL_ORDER = [
@@ -128,3 +128,28 @@ def get_skill_levels(
         )
 
     return SkillProgressResponse(skill_id=skill.id, skill_name=skill.name, levels=levels)
+
+
+@router.get("/user/badges", response_model=list[CandidateBadgeResponse])
+def get_user_badges(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_candidate),
+) -> list[CandidateBadgeResponse]:
+    rows = db.execute(
+        select(UserBadge, Badge)
+        .join(Badge, UserBadge.badge_id == Badge.id)
+        .where(UserBadge.user_id == current_user.id)
+        .order_by(UserBadge.awarded_at.desc())
+    ).all()
+
+    return [
+        CandidateBadgeResponse(
+            badge_id=badge.id,
+            name=badge.name,
+            description=badge.description,
+            icon_url=badge.icon_url,
+            criteria=badge.criteria,
+            awarded_at=user_badge.awarded_at,
+        )
+        for user_badge, badge in rows
+    ]

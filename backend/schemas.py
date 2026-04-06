@@ -61,6 +61,15 @@ class SkillProgressResponse(BaseModel):
     levels: list[LevelProgressItem]
 
 
+class CandidateBadgeResponse(BaseModel):
+    badge_id: UUID
+    name: str
+    description: str | None
+    icon_url: str | None
+    criteria: str
+    awarded_at: datetime
+
+
 class SessionStartRequest(BaseModel):
     skill_id: UUID
     level: Level
