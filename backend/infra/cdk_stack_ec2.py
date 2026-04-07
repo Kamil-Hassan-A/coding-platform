@@ -150,7 +150,9 @@ cat <<EOF > .env
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 POSTGRES_DB=judge0
+POSTGRES_HOST=postgres
 REDIS_PASSWORD=$REDIS_PASSWORD
+REDIS_HOST=redis
 SECRET_KEY_BASE=$SECRET_KEY_BASE
 JWT_SECRET_KEY=$JWT_SECRET_KEY
 JUDGE0_PROXY_TOKEN=$JUDGE0_PROXY_TOKEN
@@ -177,9 +179,7 @@ ENV PYTHONUNBUFFERED=1
 COPY repo/backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY repo/backend/*.py /app/
-COPY repo/backend/routes /app/routes
-COPY repo/backend/scripts /app/scripts
+COPY repo/backend /app
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 EOF
@@ -199,6 +199,11 @@ services:
     image: postgres:13
     env_file: .env
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
@@ -215,8 +220,7 @@ services:
 
   judge0-server:
     image: judge0/judge0:1.13.1
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
+    env_file: .env
     ports:
       - "2358:2358"
     restart: always
@@ -229,8 +233,7 @@ services:
   judge0-worker:
     image: judge0/judge0:1.13.1
     command: ["./scripts/workers"]
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
+    env_file: .env
     restart: always
     privileged: true
     depends_on:
@@ -246,8 +249,10 @@ services:
       - "8000:8000"
     restart: always
     depends_on:
-      - postgres
-      - judge0-server
+      postgres:
+        condition: service_healthy
+      judge0-server:
+        condition: service_started
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD}@postgres:5432/codingplatform
       JUDGE0_BASE_URL: http://judge0-server:2358
@@ -300,6 +305,12 @@ docker-compose exec -T postgres psql -U postgres -d postgres -tc "SELECT 1 FROM 
   docker-compose exec -T postgres psql -U postgres -d postgres -c "CREATE DATABASE codingplatform;"
 
 docker-compose up -d --build backend
+
+# Wait for backend to be fully up and run migrations / table creation
+sleep 10
+docker-compose exec -T backend alembic upgrade head || \
+  docker-compose exec -T backend python -c "from database import Base, engine; Base.metadata.create_all(bind=engine)" || \
+  docker-compose exec -T backend python -c "from app.database import Base, engine; Base.metadata.create_all(bind=engine)" || true
 """
         # Attach the User Data script to the EC2 instance
         instance.add_user_data(user_data_script)
