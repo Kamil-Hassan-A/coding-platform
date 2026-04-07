@@ -5,6 +5,7 @@ import { LogOut } from "lucide-react";
 
 import { logout } from "../auth/authService";
 import Sidebar from "../../components/layout/Sidebar";
+import { downloadWithAuth } from "../../lib/downloadWithAuth";
 import useUserStore from "../../stores/userStore";
 import { getAdminCandidates, getDashboardStats, type AdminCandidate } from "./dashboardService";
 
@@ -237,6 +238,21 @@ export default function AdminDashboard() {
     { id: "dashboard", label: "Dashboard" },
     { id: "candidates", label: "Candidates" },
   ];
+
+  const handleExportCsv = () => {
+    void downloadWithAuth(`${import.meta.env.VITE_API_BASE_URL}/admin/export/candidates-csv`, "candidates_report.csv").catch((error: unknown) => {
+      console.error("CSV download failed", error);
+    });
+  };
+
+  const handleOpenPdfReport = (candidateId: string) => {
+    void downloadWithAuth(
+      `${import.meta.env.VITE_API_BASE_URL}/admin/candidate-report/${candidateId}/pdf`,
+      `${candidateId}_report.pdf`,
+    ).catch((error: unknown) => {
+      console.error("PDF download failed", error);
+    });
+  };
 
   return (
     <div className='flex h-screen overflow-hidden bg-admin-bg text-admin-text text-[14px]'>
@@ -531,13 +547,22 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 )}
+
+                <div className='mt-4 flex justify-end'>
+                  <button
+                    onClick={handleExportCsv}
+                    className='cursor-pointer border-none bg-[#16a34a] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px]'
+                  >
+                    Export All CSV
+                  </button>
+                </div>
               </div>
 
               <div className='overflow-hidden rounded-xl border border-admin-border bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]'>
                 <table className='w-full border-collapse'>
                   <thead>
                     <tr className='bg-admin-bg'>
-                      {["Employee", "Gender", "Department", "Skill Tested", "Score", "Result"].map((h) => (
+                      {["Employee", "Gender", "Department", "Skill Tested", "Score", "Result", "Report"].map((h) => (
                         <th key={h} className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>
                           {h}
                         </th>
@@ -547,7 +572,7 @@ export default function AdminDashboard() {
                   <tbody>
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className='px-[18px] py-12 text-center text-[13px] text-admin-text-light'>
+                        <td colSpan={7} className='px-[18px] py-12 text-center text-[13px] text-admin-text-light'>
                           No employees match the selected filters.
                         </td>
                       </tr>
@@ -591,6 +616,22 @@ export default function AdminDashboard() {
                             >
                               {c.status}
                             </span>
+                          </td>
+                          <td className='px-[18px] py-3'>
+                            <div className='flex items-center gap-2'>
+                              <button
+                                onClick={() => handleOpenPdfReport(c.user_id)}
+                                className='cursor-pointer border-none bg-[#dc2626] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px]'
+                              >
+                                PDF
+                              </button>
+                              <button
+                                onClick={handleExportCsv}
+                                className='cursor-pointer border-none bg-[#16a34a] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px]'
+                              >
+                                CSV
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))

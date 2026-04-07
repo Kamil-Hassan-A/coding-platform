@@ -206,3 +206,58 @@ class AdminCredentialRow(BaseModel):
 
 class AdminCredentialsResponse(BaseModel):
     credentials: list[AdminCredentialRow]
+
+
+class ViolationDetail(BaseModel):
+    type: str
+    timestamp: datetime
+    metadata: dict[str, Any] | None = None
+
+
+class TestCaseDetail(BaseModel):
+    stdin: str
+    expected_output: str | None
+    stdout: str | None
+    stderr: str | None
+    passed: bool
+
+
+class SubmissionDetail(BaseModel):
+    submission_id: UUID
+    skill_name: str
+    level: str
+    language: str
+    code: str
+    score: int
+    passed_tests: int
+    total_tests: int
+    status: str
+    submitted_at: datetime
+    time_taken_seconds: int
+    cases: list[TestCaseDetail]
+
+
+class SessionReportDetail(BaseModel):
+    session_id: UUID
+    skill_name: str
+    level: str
+    started_at: datetime
+    submitted_at: datetime | None
+    status: str
+    attempt_number: int
+    violations: list[ViolationDetail]
+    violation_summary: dict[str, int]
+    submission: SubmissionDetail | None
+
+
+class CandidateFullReport(BaseModel):
+    user_id: UUID
+    name: str
+    email: str
+    employee_id: str
+    department: str
+    gender: str
+    exp_indium_years: int
+    exp_overall_years: int
+    generated_at: datetime
+    sessions: list[SessionReportDetail]
