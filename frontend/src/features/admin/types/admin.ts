@@ -32,12 +32,15 @@ export type AdminCandidate = {
   name: string;
   gender: string;
   dept: string;
+  latest_session_id?: string | null;
+  latest_skill_name?: string | null;
   exp_indium_years?: number;
   expIndium?: number;
   exp_overall_years?: number;
   expOverall?: number;
   skill: string;
   score: number;
+  latest_submitted_at?: string | null;
   status: "Pass" | "Fail" | "Pending";
 };
 

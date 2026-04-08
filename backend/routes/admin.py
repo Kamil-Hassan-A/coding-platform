@@ -6,10 +6,11 @@ from datetime import datetime, timezone
 from time import monotonic
 from typing import Any
 from uuid import UUID
+from zipfile import ZipFile
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 from fastapi.responses import StreamingResponse
-from jinja2 import Template
+from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 from xhtml2pdf import pisa
@@ -24,6 +25,9 @@ from schemas import (
     AdminCredentialsResponse,
     AdminStatsResponse,
     CandidateFullReport,
+    CandidateSessionListItem,
+    CandidateSessionReport,
+    ReportsZipExportRequest,
     SessionReportDetail,
     SubmissionDetail,
     TestCaseDetail,
@@ -32,10 +36,14 @@ from schemas import (
 from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+templates = Jinja2Templates(directory="templates")
 logger = logging.getLogger(__name__)
 REPORT_NOT_FOUND_DETAIL = "Candidate not found"
 PDF_FAILURE_DETAIL = "Failed to generate PDF report"
 CSV_FAILURE_DETAIL = "Failed to export CSV report"
+SESSION_NOT_FOUND_DETAIL = "Session not found"
+INVALID_MODE_DETAIL = "Invalid mode parameter"
+SESSION_CSV_FAILURE_DETAIL = "Failed to export session CSV report"
 VIOLATION_TYPES = [
     "tab_switch",
     "tab_switch_shortcut",
@@ -289,6 +297,9 @@ def get_admin_candidates(
                 gender=candidate.gender or "Unknown",
                 dept=candidate.department or "N/A",
                 skill=latest_skill_name or "Not Attempted",
+                latest_session_id=latest_submission.session_id if latest_submission is not None else None,
+                latest_skill_name=latest_skill_name,
+                latest_submitted_at=latest_submission.submitted_at if latest_submission is not None else None,
                 score=score,
                 status=status,
             )
@@ -494,6 +505,359 @@ def build_candidate_full_report(db: Session, user_id: UUID) -> CandidateFullRepo
     return report
 
 
+def build_candidate_session_report(
+    db: Session, user_id: UUID, session_id: UUID
+) -> CandidateSessionReport:
+    start_time = monotonic()
+
+    user = db.scalar(select(User).where(User.id == user_id))
+    if user is None or user.role != UserRole.CANDIDATE:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    session = db.scalar(
+        select(AssessmentSession)
+        .options(
+            selectinload(AssessmentSession.skill),
+            selectinload(AssessmentSession.violations),
+            selectinload(AssessmentSession.submissions),
+        )
+        .where(
+            AssessmentSession.id == session_id,
+            AssessmentSession.user_id == user_id,
+        )
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    skill_name = session.skill.name if session.skill is not None else "Unknown"
+
+    ordered_violations = sorted(session.violations, key=lambda v: v.timestamp)
+    violations = [
+        ViolationDetail(
+            type=v.type,
+            timestamp=v.timestamp,
+            metadata=v.metadata_,
+        )
+        for v in ordered_violations
+    ]
+
+    violation_summary: dict[str, int] = {}
+    for v in ordered_violations:
+        violation_summary[v.type] = violation_summary.get(v.type, 0) + 1
+
+    latest_submission = None
+    if session.submissions:
+        latest_submission = max(
+            session.submissions,
+            key=lambda s: (
+                s.submitted_at or datetime.min.replace(tzinfo=timezone.utc),
+                s.id,
+            ),
+        )
+
+    submission_detail = None
+    if latest_submission is not None:
+        submission_detail = _build_submission_detail(latest_submission, skill_name)
+
+    session_detail = SessionReportDetail(
+        session_id=session.id,
+        skill_name=skill_name,
+        level=session.level.value,
+        started_at=session.started_at,
+        submitted_at=session.submitted_at,
+        status=session.status.value,
+        attempt_number=session.attempt_number,
+        violations=violations,
+        violation_summary=violation_summary,
+        submission=submission_detail,
+    )
+
+    report = CandidateSessionReport(
+        user_id=user.id,
+        name=user.name,
+        email=user.email,
+        employee_id=user.employee_id or "",
+        department=user.department or "",
+        gender=user.gender or "",
+        exp_indium_years=max(0, user.exp_indium_years),
+        exp_overall_years=max(0, user.exp_overall_years),
+        generated_at=datetime.now(timezone.utc),
+        session=session_detail,
+    )
+
+    if logger.isEnabledFor(logging.INFO):
+        logger.info(
+            "Session report built in %.2fs for user_id=%s session_id=%s",
+            monotonic() - start_time, user_id, session_id,
+        )
+
+    return report
+
+
+def get_candidate_sessions(db: Session, user_id: UUID) -> list[CandidateSessionListItem]:
+    user = db.scalar(select(User).where(User.id == user_id))
+    if user is None:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    sessions = db.scalars(
+        select(AssessmentSession)
+        .options(
+            selectinload(AssessmentSession.submissions),
+            selectinload(AssessmentSession.skill),
+        )
+        .where(AssessmentSession.user_id == user_id)
+        .order_by(AssessmentSession.submitted_at.desc(), AssessmentSession.started_at.desc())
+    ).all()
+
+    items: list[CandidateSessionListItem] = []
+    for session in sessions:
+        latest_submission = None
+        if session.submissions:
+            latest_submission = max(
+                session.submissions,
+                key=lambda s: (
+                    s.submitted_at or datetime.min.replace(tzinfo=timezone.utc),
+                    s.id,
+                ),
+            )
+
+        items.append(
+            CandidateSessionListItem(
+                session_id=session.id,
+                skill=session.skill.name if session.skill is not None else "Unknown",
+                score=latest_submission.score if latest_submission is not None else None,
+                status=latest_submission.status.value if latest_submission is not None else session.status.value,
+                submitted_at=session.submitted_at,
+            )
+        )
+
+    return items
+
+
+@router.get("/session-report/{session_id}/csv")
+def get_session_report_csv(
+    session_id: UUID,
+    csv_type: str = Query("summary", alias="type", pattern="^(summary|detailed)$"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> StreamingResponse:
+    """Export specific session data as CSV for admin users."""
+    start_time = monotonic()
+    _ = current_user
+
+    try:
+        session = db.scalar(
+            select(AssessmentSession)
+            .options(
+                selectinload(AssessmentSession.skill),
+                selectinload(AssessmentSession.submissions),
+                selectinload(AssessmentSession.violations),
+            )
+            .where(AssessmentSession.id == session_id)
+        )
+        if session is None:
+            raise HTTPException(status_code=404, detail=SESSION_NOT_FOUND_DETAIL)
+
+        candidate = db.scalar(select(User).where(User.id == session.user_id))
+        if candidate is None:
+            raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+        skill_name = session.skill.name if session.skill is not None else "Unknown"
+        ordered_submissions = sorted(
+            session.submissions,
+            key=lambda submission: (
+                submission.submitted_at or datetime.min.replace(tzinfo=timezone.utc),
+                submission.id,
+            ),
+            reverse=True,
+        )
+        latest_submission = ordered_submissions[0] if ordered_submissions else None
+        score = latest_submission.score if latest_submission is not None else None
+        submitted_at = session.submitted_at or (
+            latest_submission.submitted_at if latest_submission is not None else None
+        )
+        violations_count = len(session.violations)
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        if csv_type == "detailed":
+            writer.writerow(
+                [
+                    "Candidate Name",
+                    "Session ID",
+                    "Skill",
+                    "Score",
+                    "Status",
+                    "Submitted At",
+                    "Violations Count",
+                    "Question ID",
+                    "Language",
+                    "Submission Status",
+                    "Execution Time (seconds)",
+                    "Passed Test Cases",
+                ]
+            )
+
+            if ordered_submissions:
+                for submission in ordered_submissions:
+                    writer.writerow(
+                        [
+                            candidate.name,
+                            str(session.id),
+                            skill_name,
+                            score if score is not None else "",
+                            session.status.value,
+                            submitted_at.isoformat() if submitted_at else "",
+                            violations_count,
+                            str(submission.problem_id),
+                            submission.language,
+                            submission.status.value,
+                            submission.time_taken_seconds,
+                            f"{submission.passed_tests}/{submission.total_tests}",
+                        ]
+                    )
+            else:
+                writer.writerow(
+                    [
+                        candidate.name,
+                        str(session.id),
+                        skill_name,
+                        score if score is not None else "",
+                        session.status.value,
+                        submitted_at.isoformat() if submitted_at else "",
+                        violations_count,
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    ]
+                )
+        else:
+            writer.writerow(
+                [
+                    "Candidate Name",
+                    "Session ID",
+                    "Skill",
+                    "Score",
+                    "Status",
+                    "Submitted At",
+                    "Violations Count",
+                ]
+            )
+            writer.writerow(
+                [
+                    candidate.name,
+                    str(session.id),
+                    skill_name,
+                    score if score is not None else "",
+                    session.status.value,
+                    submitted_at.isoformat() if submitted_at else "",
+                    violations_count,
+                ]
+            )
+
+        csv_content = output.getvalue()
+        output.close()
+
+        if logger.isEnabledFor(logging.INFO):
+            logger.info(
+                "Session CSV exported in %.2fs for session_id=%s csv_type=%s",
+                monotonic() - start_time,
+                session_id,
+                csv_type,
+            )
+
+        safe_skill = (skill_name or "unknown").replace(" ", "_")
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        return StreamingResponse(
+            iter([csv_content]),
+            media_type="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": (
+                    f'attachment; filename="session_{session_id}_{safe_skill}_{timestamp}.csv"'
+                )
+            },
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception(
+            "Session CSV export failed in %.2fs for session_id=%s",
+            monotonic() - start_time,
+            session_id,
+        )
+        raise HTTPException(status_code=500, detail=SESSION_CSV_FAILURE_DETAIL) from exc
+
+
+def build_session_report(db: Session, session_id: UUID) -> dict[str, object]:
+    """Build single session report with candidate info, submission, and violations."""
+    session = db.scalar(
+        select(AssessmentSession)
+        .options(
+            selectinload(AssessmentSession.skill),
+            selectinload(AssessmentSession.violations),
+            selectinload(AssessmentSession.submissions),
+        )
+        .where(AssessmentSession.id == session_id)
+    )
+
+    if session is None:
+        raise HTTPException(status_code=404, detail=SESSION_NOT_FOUND_DETAIL)
+
+    user = db.scalar(select(User).where(User.id == session.user_id))
+    if user is None or user.role != UserRole.CANDIDATE:
+        raise HTTPException(status_code=404, detail=SESSION_NOT_FOUND_DETAIL)
+
+    skill_name = session.skill.name if session.skill is not None else "Unknown"
+
+    ordered_violations = sorted(session.violations, key=lambda item: item.timestamp)
+    violations = [
+        ViolationDetail(
+            type=violation.type,
+            timestamp=violation.timestamp,
+            metadata=violation.metadata_,
+        )
+        for violation in ordered_violations
+    ]
+
+    latest_submission = None
+    if session.submissions:
+        latest_submission = max(
+            session.submissions,
+            key=lambda item: (
+                item.submitted_at or datetime.min.replace(tzinfo=timezone.utc),
+                item.id,
+            ),
+        )
+
+    submission_detail: SubmissionDetail | None = None
+    if latest_submission is not None:
+        submission_detail = _build_submission_detail(latest_submission, skill_name)
+
+    return {
+        "candidate": {
+            "id": str(user.id),
+            "name": user.name,
+            "email": user.email,
+            "employee_id": user.employee_id or "",
+            "department": user.department or "",
+        },
+        "session": {
+            "session_id": str(session.id),
+            "skill_name": skill_name,
+            "level": session.level.value,
+            "started_at": session.started_at,
+            "submitted_at": session.submitted_at,
+            "status": session.status.value,
+            "attempt_number": session.attempt_number,
+        },
+        "submission": submission_detail,
+        "violations": violations,
+    }
+
+
 @router.get("/candidate-report/{user_id}", response_model=CandidateFullReport)
 def get_candidate_report(
     user_id: UUID,
@@ -518,219 +882,7 @@ def get_candidate_report_pdf(
 
     report = build_candidate_full_report(db=db, user_id=user_id)
 
-    template = Template(
-        """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <style>
-        @page { size: A4; margin: 24px; }
-        body { margin: 0; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
-        h1, h2, h3, h4, p { margin: 0; }
-        .header-title { font-size: 30px; font-weight: 700; color: #f97316; }
-        .header-subtitle { margin-top: 4px; font-size: 12px; color: #6b7280; }
-        .header-divider { margin-top: 10px; border-top: 1px solid #e5e7eb; }
-        .section-title { margin-top: 16px; margin-bottom: 8px; font-size: 16px; font-weight: 700; color: #111827; }
-        .card { background: #f9fafb; border: 1px solid #e5e7eb; padding: 14px; }
-        .summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .summary-table td { width: 50%; padding: 6px 8px; vertical-align: top; }
-        .field-label { font-size: 10px; color: #6b7280; }
-        .field-value { margin-top: 2px; font-size: 12px; color: #111827; font-weight: 700; }
-        .session { page-break-before: always; margin-top: 16px; border: 1px solid #e5e7eb; padding: 14px; background: #ffffff; }
-        .session-head { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .session-head td { vertical-align: top; padding: 6px 8px; }
-        .skill-name { font-size: 18px; font-weight: 700; color: #f97316; }
-        .metric-label { font-size: 10px; color: #6b7280; }
-        .metric-value { margin-top: 2px; font-size: 13px; color: #111827; font-weight: 700; }
-        .badge-pass { display: inline-block; padding: 2px 8px; border: 1px solid #16a34a; color: #16a34a; font-size: 10px; font-weight: 700; }
-        .badge-fail { display: inline-block; padding: 2px 8px; border: 1px solid #dc2626; color: #dc2626; font-size: 10px; font-weight: 700; }
-        .subsection-title { margin-top: 14px; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #111827; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #e5e7eb; text-align: left; padding: 7px; font-size: 10px; vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere; }
-        tr { page-break-inside: avoid; }
-        th { background: #f3f4f6; color: #111827; font-weight: 700; }
-        pre { background: #f3f4f6; border: 1px solid #e5e7eb; padding: 10px; font-size: 10px; font-family: Consolas, "Courier New", monospace; white-space: pre-wrap; word-break: break-word; }
-        .passed { color: #16a34a; font-weight: 700; }
-        .failed { color: #dc2626; font-weight: 700; }
-        .muted { color: #6b7280; font-size: 10px; }
-    </style>
-</head>
-<body>
-    <div class="header-title">SkillPulse</div>
-    <div class="header-subtitle">Internal Assessment Platform</div>
-    <div class="header-divider"></div>
-
-    <div class="section-title">Candidate Summary</div>
-    <div class="card">
-        <table class="summary-table">
-            <tr>
-                <td>
-                    <div class="field-label">Name</div>
-                    <div class="field-value">{{ report.name }}</div>
-                </td>
-                <td>
-                    <div class="field-label">Email</div>
-                    <div class="field-value">{{ report.email }}</div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="field-label">Employee ID</div>
-                    <div class="field-value">{{ report.employee_id }}</div>
-                </td>
-                <td>
-                    <div class="field-label">Department</div>
-                    <div class="field-value">{{ report.department }}</div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="field-label">Gender</div>
-                    <div class="field-value">{{ report.gender }}</div>
-                </td>
-                <td>
-                    <div class="field-label">Experience</div>
-                    <div class="field-value">{{ report.exp_indium_years }} yrs at Indium, {{ report.exp_overall_years }} yrs overall</div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    {% for session in report.sessions %}
-    <div class="session">
-        <table class="session-head">
-            <tr>
-                <td style="width: 40%;">
-                    <div class="metric-label">Skill</div>
-                    <div class="skill-name">{{ session.skill_name }}</div>
-                    <div class="metric-label" style="margin-top: 4px;">Level: <span class="metric-value">{{ session.level }}</span></div>
-                </td>
-                <td style="width: 20%;">
-                    <div class="metric-label">Score</div>
-                    <div class="metric-value">{{ session.submission.score if session.submission else "-" }}</div>
-                </td>
-                <td style="width: 20%;">
-                    <div class="metric-label">Status</div>
-                    {% if session.submission and session.submission.status in ["cleared", "submitted", "success"] %}
-                    <span class="badge-pass">PASS</span>
-                    {% elif session.submission and session.submission.status %}
-                    <span class="badge-fail">FAIL</span>
-                    {% elif session.status in ["submitted"] %}
-                    <span class="badge-pass">PASS</span>
-                    {% else %}
-                    <span class="badge-fail">FAIL</span>
-                    {% endif %}
-                </td>
-                <td style="width: 20%;">
-                    <div class="metric-label">Time Taken</div>
-                    <div class="metric-value">{{ session.submission.time_taken_seconds if session.submission else "-" }} sec</div>
-                </td>
-            </tr>
-        </table>
-
-        <table class="summary-table" style="margin-bottom: 8px;">
-            <tr>
-                <td>
-                    <div class="field-label">Attempt Number</div>
-                    <div class="field-value">{{ session.attempt_number }}</div>
-                </td>
-                <td>
-                    <div class="field-label">Started At</div>
-                    <div class="field-value">{{ session.started_at }}</div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="field-label">Submitted At</div>
-                    <div class="field-value">{{ session.submitted_at or "-" }}</div>
-                </td>
-                <td>
-                    <div class="field-label">Session Status</div>
-                    <div class="field-value">{{ session.status }}</div>
-                </td>
-            </tr>
-        </table>
-
-        <div class="subsection-title">Violations</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Timestamp</th>
-                    <th>Metadata</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if session.violations %}
-                    {% for violation in session.violations %}
-                    <tr>
-                        <td>{{ violation.type }}</td>
-                        <td>{{ violation.timestamp }}</td>
-                        <td>{{ violation.metadata if violation.metadata is not none else "" }}</td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="muted">No violations recorded</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-
-        <div class="subsection-title">Submission</div>
-        {% if session.submission %}
-            <table class="summary-table" style="margin-bottom: 8px;">
-                <tr>
-                    <td><div class="field-label">Language</div><div class="field-value">{{ session.submission.language }}</div></td>
-                    <td><div class="field-label">Score</div><div class="field-value">{{ session.submission.score }}</div></td>
-                </tr>
-                <tr>
-                    <td><div class="field-label">Tests</div><div class="field-value">{{ session.submission.passed_tests }}/{{ session.submission.total_tests }}</div></td>
-                    <td><div class="field-label">Time Taken</div><div class="field-value">{{ session.submission.time_taken_seconds }} seconds</div></td>
-                </tr>
-            </table>
-
-            <div class="field-label">Code</div>
-            <pre>{{ session.submission.code }}</pre>
-
-            <div class="subsection-title">Test Cases</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Input</th>
-                        <th>Expected</th>
-                        <th>Actual</th>
-                        <th>Result</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if session.submission.cases %}
-                        {% for tc in session.submission.cases %}
-                        <tr>
-                            <td>{{ tc.stdin }}</td>
-                            <td>{{ tc.expected_output if tc.expected_output is not none else "" }}</td>
-                            <td>{{ tc.stdout if tc.stdout is not none else tc.stderr if tc.stderr is not none else "" }}</td>
-                            <td class="{{ 'passed' if tc.passed else 'failed' }}">{{ 'Passed' if tc.passed else 'Failed' }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="4" class="muted">No case details available</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        {% else %}
-            <div class="muted">No submission for this session</div>
-        {% endif %}
-    </div>
-    {% endfor %}
-</body>
-</html>
-        """.strip()
-    )
-
+    template = templates.get_template("candidate_report.html")
     html = template.render(report=report)
     pdf_buffer = io.BytesIO()
     try:
@@ -760,23 +912,327 @@ def get_candidate_report_pdf(
     )
 
 
-@router.get("/export/candidates-csv")
-def export_candidates_csv(
-    skill_id: UUID | None = None,
+@router.get("/candidate-report/{user_id}/session/{session_id}", response_model=CandidateSessionReport)
+def get_candidate_session_report(
+    user_id: UUID,
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> CandidateSessionReport:
+    _ = current_user
+    return build_candidate_session_report(db=db, user_id=user_id, session_id=session_id)
+
+
+@router.get("/candidate/{user_id}/sessions", response_model=list[CandidateSessionListItem])
+def get_candidate_sessions_for_admin(
+    user_id: UUID,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+) -> list[CandidateSessionListItem]:
+    return get_candidate_sessions(db=db, user_id=user_id)
+
+
+@router.get("/candidate-report/{user_id}/session/{session_id}/pdf")
+def get_candidate_session_report_pdf(
+    user_id: UUID,
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> Response:
+    start_time = monotonic()
+    _ = current_user
+
+    report = build_candidate_session_report(db=db, user_id=user_id, session_id=session_id)
+
+    template = templates.get_template("candidate_session_report.html")
+    html = template.render(report=report)
+    pdf_buffer = io.BytesIO()
+    try:
+        pisa_status = pisa.CreatePDF(html, dest=pdf_buffer)
+    except Exception as exc:
+        logger.exception(
+            "Session PDF generation failed in %.2fs for user_id=%s session_id=%s",
+            monotonic() - start_time, user_id, session_id,
+        )
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL) from exc
+    if pisa_status.err:
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    pdf_bytes = pdf_buffer.getvalue()
+    pdf_buffer.close()
+    if not pdf_bytes:
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    if logger.isEnabledFor(logging.INFO):
+        logger.info(
+            "Session PDF generated in %.2fs for user_id=%s session_id=%s",
+            monotonic() - start_time, user_id, session_id,
+        )
+
+    safe_employee_id = (report.employee_id or str(report.user_id)).replace(" ", "_")
+    safe_skill = report.session.skill_name.replace(" ", "_")
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{safe_employee_id}_{safe_skill}_session_report.pdf"'
+            )
+        },
+    )
+
+
+@router.get("/candidate-report/{user_id}/latest")
+def get_candidate_report_latest(
+    user_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> dict[str, object]:
+    """Return latest session report for candidate as JSON."""
+    _ = current_user
+
+    user = db.scalar(select(User).where(User.id == user_id))
+    if user is None or user.role != UserRole.CANDIDATE:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    latest_session = db.scalar(
+        select(AssessmentSession)
+        .where(AssessmentSession.user_id == user_id)
+        .order_by(AssessmentSession.submitted_at.desc(), AssessmentSession.started_at.desc())
+        .limit(1)
+    )
+
+    if latest_session is None:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    return build_session_report(db=db, session_id=latest_session.id)
+
+
+@router.get("/candidate-report/{user_id}/latest/pdf")
+def get_candidate_report_latest_pdf(
+    user_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> Response:
+    """Return latest session report for candidate as PDF."""
+    start_time = monotonic()
+    _ = current_user
+
+    user = db.scalar(select(User).where(User.id == user_id))
+    if user is None or user.role != UserRole.CANDIDATE:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    latest_session = db.scalar(
+        select(AssessmentSession)
+        .where(AssessmentSession.user_id == user_id)
+        .order_by(AssessmentSession.submitted_at.desc(), AssessmentSession.started_at.desc())
+        .limit(1)
+    )
+
+    if latest_session is None:
+        raise HTTPException(status_code=404, detail=REPORT_NOT_FOUND_DETAIL)
+
+    report = build_session_report(db=db, session_id=latest_session.id)
+
+    template = templates.get_template("session_report.html")
+    html = template.render(
+        candidate=report["candidate"],
+        session=report["session"],
+        submission=report["submission"],
+        violations=report["violations"],
+    )
+
+    pdf_buffer = io.BytesIO()
+    try:
+        pisa_status = pisa.CreatePDF(html, dest=pdf_buffer)
+    except Exception as exc:
+        logger.exception("PDF generation failed in %.2fs for user_id=%s (latest)", monotonic() - start_time, user_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL) from exc
+    if pisa_status.err:
+        logger.error("PDF generation returned errors in %.2fs for user_id=%s (latest)", monotonic() - start_time, user_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    pdf_bytes = pdf_buffer.getvalue()
+    pdf_buffer.close()
+    if not pdf_bytes:
+        logger.error("PDF generation produced empty bytes in %.2fs for user_id=%s (latest)", monotonic() - start_time, user_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    if logger.isEnabledFor(logging.INFO):
+        logger.info("PDF generated in %.2fs for user_id=%s (latest)", monotonic() - start_time, user_id)
+
+    safe_employee_id = (user.employee_id or str(user.id)).replace(" ", "_")
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{safe_employee_id}_latest_report.pdf"'},
+    )
+
+
+@router.get("/session-report/{session_id}")
+def get_session_report(
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> dict[str, object]:
+    """Return specific session report as JSON."""
+    _ = current_user
+
+    return build_session_report(db=db, session_id=session_id)
+
+
+@router.post("/export/reports-zip")
+def export_reports_zip(
+    payload: ReportsZipExportRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ) -> StreamingResponse:
-    """Export candidate performance report as CSV for admin users."""
+    """Export candidate PDFs as a ZIP archive for admin users."""
     start_time = monotonic()
     _ = current_user
 
     try:
-        # For very large exports, chunked streaming or a background job export may be needed.
-        candidate_users = db.scalars(
+        if not payload.user_ids:
+            raise HTTPException(status_code=400, detail="No user IDs provided")
+
+        candidates = db.scalars(
             select(User)
-            .where(User.role == UserRole.CANDIDATE)
+            .where(User.id.in_(payload.user_ids), User.role == UserRole.CANDIDATE)
             .order_by(User.created_at.desc())
         ).all()
+
+        zip_buffer = io.BytesIO()
+        with ZipFile(zip_buffer, mode="w") as zip_file:
+            for candidate in candidates:
+                if payload.mode == "full":
+                    report = build_candidate_full_report(db=db, user_id=candidate.id)
+                    template = templates.get_template("candidate_report.html")
+                    html = template.render(report=report)
+                else:
+                    latest_session = db.scalar(
+                        select(AssessmentSession)
+                        .where(AssessmentSession.user_id == candidate.id)
+                        .order_by(AssessmentSession.submitted_at.desc(), AssessmentSession.started_at.desc())
+                        .limit(1)
+                    )
+                    if latest_session is None:
+                        continue
+                    report = build_session_report(db=db, session_id=latest_session.id)
+                    template = templates.get_template("session_report.html")
+                    html = template.render(
+                        candidate=report["candidate"],
+                        session=report["session"],
+                        submission=report["submission"],
+                        violations=report["violations"],
+                    )
+
+                pdf_buffer = io.BytesIO()
+                pisa_status = pisa.CreatePDF(html, dest=pdf_buffer)
+                if pisa_status.err:
+                    continue
+
+                safe_employee_id = (candidate.employee_id or str(candidate.id)).replace(" ", "_")
+                zip_file.writestr(f"candidate_{safe_employee_id}.pdf", pdf_buffer.getvalue())
+
+        zip_bytes = zip_buffer.getvalue()
+        zip_buffer.close()
+
+        if logger.isEnabledFor(logging.INFO):
+            logger.info("Reports ZIP generated in %.2fs for mode=%s count=%s", monotonic() - start_time, payload.mode, len(candidates))
+
+        return StreamingResponse(
+            iter([zip_bytes]),
+            media_type="application/zip",
+            headers={"Content-Disposition": f'attachment; filename="reports_{payload.mode}.zip"'},
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Reports ZIP export failed in %.2fs for mode=%s", monotonic() - start_time, payload.mode)
+        raise HTTPException(status_code=500, detail="Failed to export reports ZIP") from exc
+
+
+@router.get("/session-report/{session_id}/pdf")
+def get_session_report_pdf(
+    session_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> Response:
+    """Return specific session report as PDF."""
+    start_time = monotonic()
+    _ = current_user
+
+    report = build_session_report(db=db, session_id=session_id)
+
+    template = templates.get_template("session_report.html")
+    html = template.render(
+        candidate=report["candidate"],
+        session=report["session"],
+        submission=report["submission"],
+        violations=report["violations"],
+    )
+
+    pdf_buffer = io.BytesIO()
+    try:
+        pisa_status = pisa.CreatePDF(html, dest=pdf_buffer)
+    except Exception as exc:
+        logger.exception("PDF generation failed in %.2fs for session_id=%s", monotonic() - start_time, session_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL) from exc
+    if pisa_status.err:
+        logger.error("PDF generation returned errors in %.2fs for session_id=%s", monotonic() - start_time, session_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    pdf_bytes = pdf_buffer.getvalue()
+    pdf_buffer.close()
+    if not pdf_bytes:
+        logger.error("PDF generation produced empty bytes in %.2fs for session_id=%s", monotonic() - start_time, session_id)
+        raise HTTPException(status_code=500, detail=PDF_FAILURE_DETAIL)
+
+    if logger.isEnabledFor(logging.INFO):
+        logger.info("PDF generated in %.2fs for session_id=%s", monotonic() - start_time, session_id)
+
+    candidate_info = report["candidate"]
+    safe_employee_id = (candidate_info.get("employee_id") or candidate_info.get("id", "unknown")).replace(" ", "_")
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{safe_employee_id}_session_report.pdf"'},
+    )
+@router.get("/export/candidates-csv")
+def export_candidates_csv(
+    mode: str = Query("latest", pattern="^(latest|all)$"),
+    skill: str | None = None,
+    gender: str | None = None,
+    department: str | None = None,
+    min_score: int | None = Query(default=None, ge=0),
+    max_score: int | None = Query(default=None, ge=0),
+    skill_id: UUID | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+) -> StreamingResponse:
+    """Export candidate performance report as CSV for admin users.
+    
+    Modes:
+    - latest: Only latest session per candidate
+    - all: Include all sessions (one row per session per candidate)
+    """
+    start_time = monotonic()
+    _ = current_user
+
+    try:
+        if mode not in ("latest", "all"):
+            raise HTTPException(status_code=400, detail=INVALID_MODE_DETAIL)
+
+        # For very large exports, chunked streaming or a background job export may be needed.
+        candidate_query = select(User).where(User.role == UserRole.CANDIDATE)
+        if gender:
+            candidate_query = candidate_query.where(User.gender == gender)
+        if department:
+            candidate_query = candidate_query.where(User.department == department)
+        candidate_users = db.scalars(candidate_query.order_by(User.created_at.desc())).all()
 
         output = io.StringIO()
         writer = csv.writer(output)
@@ -798,30 +1254,79 @@ def export_candidates_csv(
         )
 
         candidate_ids = [candidate.id for candidate in candidate_users]
-        latest_submission_by_user: dict[UUID, Submission] = {}
+        candidate_by_id = {candidate.id: candidate for candidate in candidate_users}
         skill_name_by_id: dict[UUID, str] = {}
         violations_count_by_session: dict[UUID, int] = {}
 
         if candidate_ids:
-            latest_submission_query = select(Submission).where(Submission.user_id.in_(candidate_ids))
-            if skill_id is not None:
-                latest_submission_query = latest_submission_query.where(Submission.skill_id == skill_id)
+            if mode == "latest":
+                # Get only latest submission per candidate
+                latest_query = select(Submission).where(Submission.user_id.in_(candidate_ids))
+                if skill_id is not None:
+                    latest_query = latest_query.where(Submission.skill_id == skill_id)
+                if min_score is not None:
+                    latest_query = latest_query.where(Submission.score >= min_score)
+                if max_score is not None:
+                    latest_query = latest_query.where(Submission.score <= max_score)
 
-            submissions = db.scalars(
-                latest_submission_query.order_by(
-                    Submission.user_id.asc(),
-                    Submission.submitted_at.desc(),
-                    Submission.id.desc(),
-                )
-            ).all()
+                if skill:
+                    matching_skill_ids = set(
+                        db.scalars(select(Skill.id).where(func.lower(Skill.name) == skill.strip().lower())).all()
+                    )
+                    if matching_skill_ids:
+                        latest_query = latest_query.where(Submission.skill_id.in_(matching_skill_ids))
+                    else:
+                        latest_query = latest_query.where(False)
 
-            for submission in submissions:
-                if submission.user_id not in latest_submission_by_user:
-                    latest_submission_by_user[submission.user_id] = submission
+                submissions = db.scalars(
+                    latest_query.order_by(
+                        Submission.user_id.asc(),
+                        Submission.submitted_at.desc(),
+                        Submission.id.desc(),
+                    )
+                ).all()
 
-            latest_submissions = list(latest_submission_by_user.values())
-            skill_ids = {submission.skill_id for submission in latest_submissions}
-            session_ids = {submission.session_id for submission in latest_submissions}
+                latest_submission_by_user: dict[UUID, Submission] = {}
+                for submission in submissions:
+                    if submission.user_id not in latest_submission_by_user:
+                        latest_submission_by_user[submission.user_id] = submission
+
+                if skill_id is not None:
+                    latest_submission_by_user = {
+                        k: v for k, v in latest_submission_by_user.items()
+                        if v.skill_id == skill_id
+                    }
+
+                submissions_to_export = list(latest_submission_by_user.values())
+            else:
+                # Get all submissions per candidate
+                query = select(Submission).where(Submission.user_id.in_(candidate_ids))
+                if skill_id is not None:
+                    query = query.where(Submission.skill_id == skill_id)
+                if min_score is not None:
+                    query = query.where(Submission.score >= min_score)
+                if max_score is not None:
+                    query = query.where(Submission.score <= max_score)
+
+                if skill:
+                    matching_skill_ids = set(
+                        db.scalars(select(Skill.id).where(func.lower(Skill.name) == skill.strip().lower())).all()
+                    )
+                    if matching_skill_ids:
+                        query = query.where(Submission.skill_id.in_(matching_skill_ids))
+                    else:
+                        query = query.where(False)
+
+                submissions_to_export = db.scalars(
+                    query.order_by(
+                        Submission.user_id.asc(),
+                        Submission.submitted_at.desc(),
+                        Submission.id.desc(),
+                    )
+                ).all()
+
+            skill_ids = {submission.skill_id for submission in submissions_to_export}
+            session_ids = {submission.session_id for submission in submissions_to_export}
 
             if skill_ids:
                 skills = db.scalars(select(Skill).where(Skill.id.in_(skill_ids))).all()
@@ -837,56 +1342,72 @@ def export_candidates_csv(
                     row[0]: int(row[1] or 0) for row in violation_rows
                 }
 
-        for candidate in candidate_users:
-            latest_submission = latest_submission_by_user.get(candidate.id)
+            # Build rows for each submission
+            for submission in submissions_to_export:
+                candidate = candidate_by_id.get(submission.user_id)
+                if not candidate:
+                    continue
 
-            skill_name = ""
-            level = ""
-            score = ""
-            status = ""
-            submitted_at = ""
-            violations_count = ""
-            time_taken_seconds = ""
+                skill_name = skill_name_by_id.get(submission.skill_id, "")
+                level = submission.level.value
+                score = str(submission.score)
+                status = submission.status.value
+                submitted_at = submission.submitted_at.isoformat() if submission.submitted_at else ""
+                violations_count = str(violations_count_by_session.get(submission.session_id, 0))
+                time_taken_seconds = str(submission.time_taken_seconds)
 
-            if latest_submission is not None:
-                skill_name = skill_name_by_id.get(latest_submission.skill_id, "")
-                level = latest_submission.level.value
-                score = str(latest_submission.score)
-                status = latest_submission.status.value
-                submitted_at = latest_submission.submitted_at.isoformat() if latest_submission.submitted_at else ""
-                violations_count = str(violations_count_by_session.get(latest_submission.session_id, 0))
-                time_taken_seconds = str(latest_submission.time_taken_seconds)
-
-            writer.writerow(
-                [
-                    candidate.name,
-                    candidate.email,
-                    candidate.employee_id or "",
-                    candidate.department or "",
-                    candidate.gender or "",
-                    skill_name,
-                    level,
-                    score,
-                    status,
-                    submitted_at,
-                    violations_count,
-                    time_taken_seconds,
-                ]
-            )
+                writer.writerow(
+                    [
+                        candidate.name,
+                        candidate.email,
+                        candidate.employee_id or "",
+                        candidate.department or "",
+                        candidate.gender or "",
+                        skill_name,
+                        level,
+                        score,
+                        status,
+                        submitted_at,
+                        violations_count,
+                        time_taken_seconds,
+                    ]
+                )
 
         csv_content = output.getvalue()
         output.close()
 
         if logger.isEnabledFor(logging.INFO):
-            logger.info("CSV exported in %.2fs for skill_id=%s", monotonic() - start_time, skill_id)
+            logger.info(
+                "CSV exported in %.2fs (mode=%s, skill=%s, gender=%s, department=%s, min_score=%s, max_score=%s, skill_id=%s)",
+                monotonic() - start_time,
+                mode,
+                skill,
+                gender,
+                department,
+                min_score,
+                max_score,
+                skill_id,
+            )
 
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        filename = f"candidates_{mode}_{timestamp}.csv"
         return StreamingResponse(
             iter([csv_content]),
             media_type="text/csv; charset=utf-8",
-            headers={"Content-Disposition": 'attachment; filename="candidates_report.csv"'},
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
         )
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("CSV export failed in %.2fs for skill_id=%s", monotonic() - start_time, skill_id)
+        logger.exception(
+            "CSV export failed in %.2fs (mode=%s, skill=%s, gender=%s, department=%s, min_score=%s, max_score=%s, skill_id=%s)",
+            monotonic() - start_time,
+            mode,
+            skill,
+            gender,
+            department,
+            min_score,
+            max_score,
+            skill_id,
+        )
         raise HTTPException(status_code=500, detail=CSV_FAILURE_DETAIL) from exc
