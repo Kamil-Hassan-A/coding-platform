@@ -352,6 +352,11 @@ export default function AssessmentPage() {
     if (!sessionId) return;
 
     const handleContextMenu = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(".monaco-editor")) {
+        return;
+      }
+
       event.preventDefault();
 
       const now = Date.now();
@@ -375,12 +380,6 @@ export default function AssessmentPage() {
     const handleKeydown = (event: KeyboardEvent) => {
       const key = (event.key || "").toLowerCase();
       const isCtrl = event.ctrlKey || event.metaKey;
-
-      if (isCtrl && !event.shiftKey && key === "v") {
-        event.preventDefault();
-        sendViolation("paste");
-        return;
-      }
 
       const target = event.target as HTMLElement | null;
       const tag = target?.tagName?.toLowerCase();
@@ -424,23 +423,6 @@ export default function AssessmentPage() {
       window.removeEventListener("keydown", handleKeydown);
     };
   }, [sendViolation, sessionId]);
-
-  useEffect(() => {
-    if (!sessionId || !hasStartedAssessment || isSessionExpired || hasSubmittedRef.current) {
-      return;
-    }
-
-    const handleGlobalPaste = (event: ClipboardEvent) => {
-      event.preventDefault();
-      sendViolation("paste_attempt");
-    };
-
-    window.addEventListener("paste", handleGlobalPaste, true);
-
-    return () => {
-      window.removeEventListener("paste", handleGlobalPaste, true);
-    };
-  }, [hasStartedAssessment, isSessionExpired, sendViolation, sessionId]);
 
   useEffect(() => {
     if (initialState?.session_id) {
