@@ -5,8 +5,13 @@ import { LogOut } from "lucide-react";
 
 import { logout } from "../auth/authService";
 import Sidebar from "../../components/layout/Sidebar";
+import SessionDownloadModal from "../../components/SessionDownloadModal";
+import { downloadWithAuth } from "../../lib/downloadWithAuth";
 import useUserStore from "../../stores/userStore";
 import { getAdminCandidates, getDashboardStats, type AdminCandidate } from "./dashboardService";
+
+type SortField = "score" | "submittedAt";
+type SortDirection = "asc" | "desc";
 
 const COLORS = {
   orange: "#f97316",
@@ -75,6 +80,7 @@ function SelectBox({
 export default function AdminDashboard() {
   const [page, setPage] = useState<"dashboard" | "candidates">("dashboard");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const [dashSkill, setDashSkill] = useState("");
   const [filterGender, setFilterGender] = useState("All");
   const [filterDept, setFilterDept] = useState("All");
@@ -84,13 +90,24 @@ export default function AdminDashboard() {
   const [yearsMax, setYearsMax] = useState<number | null>(null);
   const [experienceMin, setExperienceMin] = useState<number | null>(null);
   const [experienceMax, setExperienceMax] = useState<number | null>(null);
+  const [sessionModalCandidateId, setSessionModalCandidateId] = useState<string | null>(null);
+  const [sessionModalMode, setSessionModalMode] = useState<"pdf" | "csv">("pdf");
+  const [sortField, setSortField] = useState<SortField>("submittedAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [activeDownloadKey, setActiveDownloadKey] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
   const user = useUserStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+      }
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setIsExportDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -183,6 +200,53 @@ export default function AdminDashboard() {
     return true;
   }), [candidateRows, employeeId, filterDept, filterGender, filterSkill, normalizedExperienceRange.max, normalizedExperienceRange.min, normalizedYearsRange.max, normalizedYearsRange.min]);
 
+  const hasFilters =
+    filterGender !== "All" ||
+    filterDept !== "All" ||
+    Boolean(filterSkill) ||
+    Boolean(employeeId) ||
+    yearsMin !== null ||
+    yearsMax !== null ||
+    experienceMin !== null ||
+    experienceMax !== null;
+
+  const sortedFiltered = useMemo(() => {
+    const rows = [...filtered];
+    rows.sort((a, b) => {
+      if (sortField === "score") {
+        return sortDirection === "asc" ? a.score - b.score : b.score - a.score;
+      }
+
+      const aTime = a.latest_submitted_at ? new Date(a.latest_submitted_at).getTime() : 0;
+      const bTime = b.latest_submitted_at ? new Date(b.latest_submitted_at).getTime() : 0;
+      return sortDirection === "asc" ? aTime - bTime : bTime - aTime;
+    });
+    return rows;
+  }, [filtered, sortDirection, sortField]);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
+      return;
+    }
+
+    setSortField(field);
+    setSortDirection(field === "submittedAt" ? "desc" : "asc");
+  };
+
+  const formatSubmittedAt = (value?: string | null): string => {
+    if (!value) {
+      return "-";
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+
+    return parsed.toLocaleDateString();
+  };
+
   const resetCandidateFilters = () => {
     setFilterGender("All");
     setFilterDept("All");
@@ -237,6 +301,86 @@ export default function AdminDashboard() {
     { id: "dashboard", label: "Dashboard" },
     { id: "candidates", label: "Candidates" },
   ];
+
+  const runDownload = (
+    key: string,
+    action: () => Promise<void>,
+  ) => {
+    setActiveDownloadKey(key);
+    setDownloadError(null);
+    setRetryAction(null);
+
+    void action()
+      .catch((error: unknown) => {
+        console.error("Download failed", error);
+        setDownloadError("Download failed. Please try again.");
+        setRetryAction(() => () => runDownload(key, action));
+      })
+      .finally(() => {
+        setActiveDownloadKey((current) => (current === key ? null : current));
+      });
+  };
+
+  const buildExportCsvUrl = (mode: "latest" | "all", includeFilters: boolean): string => {
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/admin/export/candidates-csv`;
+    const params = new URLSearchParams({ mode });
+
+    if (includeFilters) {
+      if (filterSkill) {
+        params.set("skill", filterSkill);
+      }
+      if (filterGender !== "All") {
+        params.set("gender", filterGender);
+      }
+      if (filterDept !== "All") {
+        params.set("department", filterDept);
+      }
+    }
+
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  const handleExportCsv = (mode: "latest" | "all", includeFilters: boolean) => {
+    if (includeFilters && !hasFilters) {
+      setDownloadError("Apply at least one filter to export the current view.");
+      setRetryAction(null);
+      setIsExportDropdownOpen(false);
+      return;
+    }
+
+    if (includeFilters && sortedFiltered.length === 0) {
+      setDownloadError("No data available for selected filters.");
+      setRetryAction(null);
+      setIsExportDropdownOpen(false);
+      return;
+    }
+
+    const key = includeFilters ? `export-${mode}-filtered` : `export-${mode}`;
+    const url = buildExportCsvUrl(mode, includeFilters);
+    const filename = `candidates_${mode}.csv`;
+    runDownload(key, () => downloadWithAuth(url, filename));
+    setIsExportDropdownOpen(false);
+  };
+
+  const handleOpenPdfReport = (candidateId: string) => {
+    runDownload(
+      `candidate-pdf-${candidateId}`,
+      () => downloadWithAuth(
+        `${import.meta.env.VITE_API_BASE_URL}/admin/candidate-report/${candidateId}/pdf`,
+        `${candidateId}_report.pdf`,
+      ),
+    );
+  };
+
+  const handleOpenTestPdfReport = (candidate: AdminCandidate) => {
+    setSessionModalMode("pdf");
+    setSessionModalCandidateId(candidate.user_id);
+  };
+
+  const handleSessionCsvDownload = (candidate: AdminCandidate) => {
+    setSessionModalMode("csv");
+    setSessionModalCandidateId(candidate.user_id);
+  };
 
   return (
     <div className='flex h-screen overflow-hidden bg-admin-bg text-admin-text text-[14px]'>
@@ -512,7 +656,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {(filterGender !== "All" || filterDept !== "All" || filterSkill || employeeId || yearsMin !== null || yearsMax !== null || experienceMin !== null || experienceMax !== null) && (
+                {hasFilters && (
                   <div className='mt-3.5 flex flex-wrap items-center gap-2'>
                     <span className='text-[11px] font-semibold text-admin-text-light'>Active filters:</span>
                     {filterGender !== "All" && <ActiveTag label={filterGender} />}
@@ -531,28 +675,95 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 )}
+
+                <div className='mt-4 flex justify-end'>
+                  <div className='relative' ref={exportMenuRef}>
+                    <button
+                      onClick={() => setIsExportDropdownOpen((prev) => !prev)}
+                      disabled={activeDownloadKey?.startsWith("export-")}
+                      className='cursor-pointer border-none bg-[#16a34a] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px] disabled:cursor-not-allowed disabled:opacity-70'
+                    >
+                      {activeDownloadKey?.startsWith("export-") ? "Exporting..." : "Export CSV ▼"}
+                    </button>
+
+                    {isExportDropdownOpen && (
+                      <div className='absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-lg border border-admin-border bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)]'>
+                        <button
+                          onClick={() => handleExportCsv("latest", false)}
+                          className='block w-full cursor-pointer border-none bg-white px-3 py-2 text-left text-[12px] font-semibold text-admin-text hover:bg-admin-bg'
+                        >
+                          Latest Sessions
+                        </button>
+                        <button
+                          onClick={() => handleExportCsv("all", false)}
+                          className='block w-full cursor-pointer border-none bg-white px-3 py-2 text-left text-[12px] font-semibold text-admin-text hover:bg-admin-bg'
+                        >
+                          All Sessions
+                        </button>
+                        <button
+                          onClick={() => handleExportCsv("latest", true)}
+                          disabled={!hasFilters}
+                          className='block w-full border-none bg-white px-3 py-2 text-left text-[12px] font-semibold text-admin-text hover:bg-admin-bg disabled:cursor-not-allowed disabled:opacity-60'
+                        >
+                          Current View
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
+
+              {downloadError && (
+                <div className='mb-3 rounded-lg border border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[12px] text-[#991b1b]'>
+                  <span>{downloadError}</span>
+                  {retryAction && (
+                    <button
+                      onClick={() => retryAction()}
+                      className='ml-3 cursor-pointer rounded-[6px] border-none bg-[#dc2626] px-2 py-1 text-[11px] font-semibold text-white'
+                    >
+                      Retry
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className='overflow-hidden rounded-xl border border-admin-border bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]'>
                 <table className='w-full border-collapse'>
                   <thead>
                     <tr className='bg-admin-bg'>
-                      {["Employee", "Gender", "Department", "Skill Tested", "Score", "Result"].map((h) => (
-                        <th key={h} className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>
-                          {h}
-                        </th>
-                      ))}
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Employee</th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Gender</th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Department</th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Skill Tested</th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>
+                        <button
+                          onClick={() => toggleSort("score")}
+                          className='cursor-pointer border-none bg-transparent p-0 text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'
+                        >
+                          Score {sortField === "score" ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}
+                        </button>
+                      </th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>
+                        <button
+                          onClick={() => toggleSort("submittedAt")}
+                          className='cursor-pointer border-none bg-transparent p-0 text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'
+                        >
+                          Date {sortField === "submittedAt" ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}
+                        </button>
+                      </th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Result</th>
+                      <th className='border-b border-admin-border px-[18px] py-[11px] text-left text-[10px] font-bold uppercase tracking-[1px] text-admin-text-light'>Report</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.length === 0 ? (
+                    {sortedFiltered.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className='px-[18px] py-12 text-center text-[13px] text-admin-text-light'>
+                        <td colSpan={9} className='px-[18px] py-12 text-center text-[13px] text-admin-text-light'>
                           No employees match the selected filters.
                         </td>
                       </tr>
                     ) : (
-                      filtered.map((c: AdminCandidate, i) => (
+                      sortedFiltered.map((c: AdminCandidate, i) => (
                         <tr key={`${c.user_id}-${i}`} className='border-b border-slate-100 hover:bg-admin-bg'>
                           <td className='px-[18px] py-3'>
                             <div className='flex items-center gap-2.5'>
@@ -581,16 +792,44 @@ export default function AdminDashboard() {
                               <span className='text-[13px] font-bold text-admin-text'>{c.score}</span>
                             </div>
                           </td>
+                          <td className='px-[18px] py-3 text-[12px] text-admin-text-muted'>{formatSubmittedAt(c.latest_submitted_at)}</td>
                           <td className='px-[18px] py-3'>
                             <span
                               className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${
                                 c.status === "Pass"
                                   ? "bg-admin-green-bg text-admin-green"
-                                  : "bg-admin-red-bg text-admin-red"
+                                  : c.status === "Pending"
+                                    ? "bg-[#fef3c7] text-[#b45309]"
+                                    : "bg-admin-red-bg text-admin-red"
                               }`}
                             >
                               {c.status}
                             </span>
+                          </td>
+                          <td className='px-[18px] py-3'>
+                            <div className='flex items-center gap-2'>
+                              <button
+                                onClick={() => handleOpenPdfReport(c.user_id)}
+                                disabled={activeDownloadKey === `candidate-pdf-${c.user_id}`}
+                                className='cursor-pointer border-none bg-[#dc2626] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px] disabled:cursor-not-allowed disabled:opacity-70'
+                              >
+                                {activeDownloadKey === `candidate-pdf-${c.user_id}` ? "Downloading..." : "PDF"}
+                              </button>
+                              <button
+                                onClick={() => handleOpenTestPdfReport(c)}
+                                title='Download report for a specific session'
+                                className='cursor-pointer border-none bg-[#dc2626] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px]'
+                              >
+                                Session Report
+                              </button>
+                              <button
+                                onClick={() => handleSessionCsvDownload(c)}
+                                title='Select a session and download CSV'
+                                className='cursor-pointer border-none bg-[#16a34a] px-[10px] py-[3px] text-[11px] font-semibold text-white rounded-[6px] disabled:cursor-not-allowed disabled:opacity-70'
+                              >
+                                Session CSV
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -602,6 +841,13 @@ export default function AdminDashboard() {
           )}
         </div>
       </main>
+
+      <SessionDownloadModal
+        isOpen={sessionModalCandidateId !== null}
+        onClose={() => setSessionModalCandidateId(null)}
+        userId={sessionModalCandidateId ?? ""}
+        mode={sessionModalMode}
+      />
     </div>
   );
 }
