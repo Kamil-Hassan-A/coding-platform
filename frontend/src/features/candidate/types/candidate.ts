@@ -5,7 +5,7 @@ export type BackendLevel =
   | "specialist_1"
   | "specialist_2";
 
-export type CandidateScreen = "home" | "instructions" | "confirmed" | "past_assessments";
+export type CandidateScreen = "home" | "instructions" | "confirmed" | "past_assessments" | "badges";
 
 export type AllowedLanguage = {
   id: number;
@@ -36,6 +36,15 @@ export type SkillProgress = {
   levels: ProgressLevel[];
 };
 
+export type CandidateBadge = {
+  badge_id: string;
+  name: string;
+  description: string | null;
+  icon_url: string | null;
+  criteria: string;
+  awarded_at: string;
+};
+
 export type SkillWithProgress = Skill & {
   levels: ProgressLevel[];
 };
@@ -61,6 +70,13 @@ export type HomeStartData = {
 export type HomeScreenProps = {
   skillsList: SkillWithProgress[];
   onStart: (data: HomeStartData) => void;
+};
+
+export type BadgesScreenProps = {
+  badges: CandidateBadge[];
+  allSkillNames: string[];
+  isBadgesLoading: boolean;
+  isBadgesError: boolean;
 };
 
 export type ConfirmedScreenProps = {

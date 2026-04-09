@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
@@ -270,3 +270,14 @@ class UserBadge(Base):
 
     user: Mapped[User] = relationship(back_populates="badges", foreign_keys=[user_id])
     badge: Mapped[Badge] = relationship(back_populates="user_badges")
+
+class CandidateQuestion(Base):
+    __tablename__ = 'candidate_questions'
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    candidate_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    selected_skill: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    question1_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    question2_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+

@@ -5,9 +5,10 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
+import BadgesScreen from "./BadgesScreen";
 import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
 import InstructionsScreen from "./components/InstructionsScreen";
-import { getSkills, getUserProgress } from "./candidateService";
+import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
   CandidateScreen,
@@ -21,6 +22,7 @@ import { useStartSession } from "../assessment/hooks/useAssessment";
 
 const CANDIDATE_MENU = [
   { id: "dashboard", label: "Dashboard" },
+  { id: "badges", label: "Badges" },
   { id: "past_assessments", label: "Past Assessments" },
 ];
 
@@ -89,6 +91,16 @@ export default function CandidateDashboard() {
     staleTime: 1000 * 60,
   });
 
+  const {
+    data: badges = [],
+    isLoading: isBadgesLoading,
+    isError: isBadgesError,
+  } = useQuery({
+    queryKey: ["user-badges"],
+    queryFn: getUserBadges,
+    staleTime: 0,
+  });
+
   const skillsList: SkillWithProgress[] = useMemo(() => {
     const progressBySkill = new Map(
       (progress ?? []).map((item) => [item.skill_id, item.levels]),
@@ -139,13 +151,23 @@ export default function CandidateDashboard() {
           state: { 
             session_id: data.session_id, 
             problem: data.problem, 
+            problems: data.problems ?? [],
             skill_name: activeConfirmed.skill, 
             allowed_languages: data.allowed_languages ?? [] 
           },
         });
       },
-      onError: () => {
-        alert("Failed to start assessment session. The backend service may be down. Please try again.");
+      onError: (error: unknown) => {
+        const detail =
+          typeof (error as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail === "string"
+            ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail ?? null)
+            : null;
+
+        alert(
+          detail
+            ? `Failed to start assessment session: ${detail}`
+            : "Failed to start assessment session. Please try again.",
+        );
       },
     });
   };
@@ -155,11 +177,22 @@ export default function CandidateDashboard() {
       <Sidebar
         items={CANDIDATE_MENU}
         active={
-          screen === "past_assessments" ? "past_assessments" : "dashboard"
+          screen === "past_assessments"
+            ? "past_assessments"
+            : screen === "badges"
+              ? "badges"
+              : "dashboard"
         }
         onChange={(id) => {
-          if (id === "past_assessments") setScreen("past_assessments");
-          else setScreen("home");
+          if (id === "past_assessments") {
+            setScreen("past_assessments");
+            return;
+          }
+          if (id === "badges") {
+            setScreen("badges");
+            return;
+          }
+          setScreen("home");
         }}
       />
 
@@ -199,7 +232,7 @@ export default function CandidateDashboard() {
 
         <main className="flex-1 overflow-y-auto px-6 py-10">
           {(isSkillsLoading || isProgressLoading) && (
-            <div className="mt-10 text-center text-slate-500">
+            <div className="mt-10 text-left text-slate-500">
               Loading your skills...
             </div>
           )}
@@ -222,6 +255,13 @@ export default function CandidateDashboard() {
                   data.skill_id,
                 );
               }}
+            />
+          ) : screen === "badges" ? (
+            <BadgesScreen
+              badges={badges}
+              allSkillNames={skillsList.map((skill) => skill.name)}
+              isBadgesLoading={isBadgesLoading}
+              isBadgesError={isBadgesError}
             />
           ) : screen === "past_assessments" ? (
             <PastAssessmentsScreen />

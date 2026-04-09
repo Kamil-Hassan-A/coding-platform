@@ -33,6 +33,7 @@ export interface TestCaseResult {
 }
 
 export interface SessionProblemPayload {
+  problem_id?: string;
   title: string;
   description: string;
   templateCode?: string;
@@ -43,7 +44,12 @@ export interface SessionProblemPayload {
 
 export interface SessionStartResponse {
   session_id: string;
+  problem_id: string;
+  expires_at: string;
+  attempt_number: number;
+  attempts_remaining: number;
   problem: SessionProblemPayload;
+  problems: SessionProblemPayload[];
   allowed_languages?: LanguageOption[];
 }
 
@@ -93,6 +99,7 @@ export interface ActiveSession {
   expires_at: string;
   seconds_remaining: number;
   problem: SessionProblemPayload;
+  problems: SessionProblemPayload[];
   allowed_languages?: LanguageOption[];
   last_draft_code: string | null;
   last_draft_lang: string | null;
