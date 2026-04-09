@@ -1,4 +1,4 @@
-import { Lock, Star } from "lucide-react";
+import { Lock } from "lucide-react";
 
 type BadgeProps = {
   size?: number;

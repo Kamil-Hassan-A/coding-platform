@@ -33,6 +33,7 @@ export interface TestCaseResult {
 }
 
 export interface SessionProblemPayload {
+  problem_id?: string;
   title: string;
   description: string;
   templateCode?: string;
