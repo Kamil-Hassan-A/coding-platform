@@ -64,3 +64,14 @@ export const getSubmissionResults = async (
   );
   return response.data;
 };
+
+export const reportViolation = async (
+  sessionId: string,
+  payload: { type: string; timestamp: string; metadata?: Record<string, unknown> | null },
+): Promise<void> => {
+  try {
+    await axiosInstance.post(`/sessions/${sessionId}/violation`, payload);
+  } catch {
+    // Intentionally ignored so assessment flow is never blocked.
+  }
+};

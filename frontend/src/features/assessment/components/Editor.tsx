@@ -1,14 +1,37 @@
 import Editor from "@monaco-editor/react";
+import type { OnMount } from "@monaco-editor/react";
 
 interface Props {
   code: string;
   onChange: (value: string) => void;
   language: string;
+  onPaste?: () => void;
 }
 
-export default function CodeEditor({ code, onChange, language }: Props) {
+export default function CodeEditor({ code, onChange, language, onPaste }: Props) {
   // Map internal language names to Monaco identifiers
   const monacoLanguage = language === "cpp" ? "cpp" : language;
+
+  const handleMount: OnMount = (editor) => {
+    const disposables = [] as { dispose: () => void }[];
+
+    if (typeof editor.onDidPaste === "function") {
+      disposables.push(editor.onDidPaste(() => onPaste?.()));
+    } else {
+      disposables.push(
+        editor.onDidChangeModelContent((event) => {
+          if (event.isFlush) return;
+          if (event.changes.some((change) => change.text.length > 5)) {
+            onPaste?.();
+          }
+        }),
+      );
+    }
+
+    return () => {
+      disposables.forEach((disposable) => disposable.dispose());
+    };
+  };
 
   const loadingFallback = (
     <div className='flex h-full w-full flex-col items-center justify-center bg-[#1e1e1e] font-sans'>
@@ -26,6 +49,7 @@ export default function CodeEditor({ code, onChange, language }: Props) {
         language={monacoLanguage}
         value={code}
         onChange={(val) => onChange(val ?? "")}
+        onMount={handleMount}
         loading={loadingFallback}
         options={{
           fontSize: 14,

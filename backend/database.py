@@ -2,19 +2,52 @@
 
 import json
 import os
+import logging
 from collections.abc import Generator
 from functools import lru_cache
 from pathlib import Path
 
 import boto3
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from models import Base
 
 # Load local backend/.env if present so local uvicorn/scripts get DB settings.
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=False)
+logger = logging.getLogger(__name__)
+
+
+def _drop_legacy_submission_unique_constraint(engine) -> None:
+    """Best-effort cleanup for old schema where submissions.session_id was unique."""
+    inspector = inspect(engine)
+    try:
+        unique_constraints = inspector.get_unique_constraints("submissions")
+    except Exception:
+        return
+
+    candidates: list[str] = []
+    for constraint in unique_constraints:
+        columns = constraint.get("column_names") or []
+        name = constraint.get("name")
+        if name and columns == ["session_id"]:
+            candidates.append(name)
+
+    if not candidates:
+        return
+
+    if engine.dialect.name != "postgresql":
+        logger.info(
+            "Detected legacy unique constraint(s) on submissions.session_id but auto-drop is only enabled for PostgreSQL: %s",
+            candidates,
+        )
+        return
+
+    with engine.begin() as conn:
+        for constraint_name in candidates:
+            conn.execute(text(f'ALTER TABLE submissions DROP CONSTRAINT IF EXISTS "{constraint_name}"'))
+            logger.info("Dropped legacy constraint on submissions.session_id: %s", constraint_name)
 
 
 def get_db_credentials() -> dict:
@@ -58,6 +91,7 @@ def get_session_local() -> sessionmaker[Session]:
     engine = create_engine(database_url, pool_pre_ping=True)
 
     Base.metadata.create_all(bind=engine)
+    _drop_legacy_submission_unique_constraint(engine)
     return sessionmaker(bind=engine, autocommit=False, autoflush=False, expire_on_commit=False)
 
 

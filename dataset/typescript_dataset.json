@@ -1,0 +1,1078 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_name": "typescript_dataset_final",
+  "generated_at_utc": "2026-04-04T08:20:00Z",
+  "skills": [
+    {
+      "skill": "TypeScript",
+      "allowed_languages": [
+        {
+          "id": 74,
+          "name": "TypeScript (3.7.4)",
+          "monaco": "typescript"
+        }
+      ],
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "TS-BEG-E-1",
+              "slug": "sum-of-two-numbers",
+              "title": "Sum of Two Numbers",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "math",
+                "basics",
+                "Beginner",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const [a, b] = lines[0].split(' ').map(Number);\n  console.log(sum(a, b));\n});\nfunction sum(a: number, b: number): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const [a, b] = lines[0].split(' ').map(Number);\n  console.log(sum(a, b));\n});\nfunction sum(a: number, b: number): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "2 3",
+                  "output": "5"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "0 0",
+                  "output": "0"
+                }
+              ],
+              "content": "Read two space-separated integers from standard input and print their sum to standard output.\n\n**Input Format:**\nA single line containing two integers, `a` and `b`.\n\n**Output Format:**\nPrint the integer result of `a + b`.\n\n**Example:**\nInput:\n2 3\nOutput:\n5",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/solve-me-first/problem"
+            },
+            {
+              "id": "TS-BEG-E-2",
+              "slug": "check-even-or-odd",
+              "title": "Check Even or Odd",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "math",
+                "conditionals",
+                "Beginner",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(check(n));\n});\nfunction check(n: number): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(check(n));\n});\nfunction check(n: number): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "4",
+                  "output": "Even"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "5",
+                  "output": "Odd"
+                }
+              ],
+              "content": "Read an integer from standard input and determine if it is Even or Odd. Print the result as a string.\n\n**Input Format:**\nA single integer `n`.\n\n**Output Format:**\nPrint 'Even' if the number is even, otherwise print 'Odd'.\n\n**Example:**\nInput:\n4\nOutput:\nEven",
+              "source": "Internal",
+              "url": ""
+            }
+          ],
+          "Medium": [
+            {
+              "id": "TS-BEG-M-1",
+              "slug": "reverse-string",
+              "title": "Reverse String",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "manipulation",
+                "Beginner",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(reverse(lines[0]));\n});\nfunction reverse(s: string): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(reverse(lines[0]));\n});\nfunction reverse(s: string): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "hello",
+                  "output": "olleh"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "abc",
+                  "output": "cba"
+                }
+              ],
+              "content": "Read a string from standard input and print its reversed version to standard output.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint the reversed string.\n\n**Example:**\nInput:\nhello\nOutput:\nolleh",
+              "source": "Internal",
+              "url": ""
+            },
+            {
+              "id": "TS-BEG-M-2",
+              "slug": "find-maximum",
+              "title": "Find Maximum",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "math",
+                "Beginner",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(max(nums));\n});\nfunction max(nums: number[]): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(max(nums));\n});\nfunction max(nums: number[]): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 2 3",
+                  "output": "3"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "-1 -2",
+                  "output": "-1"
+                }
+              ],
+              "content": "Read a space-separated list of integers and find the maximum value among them. Print the result to standard output.\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the maximum integer value.\n\n**Example:**\nInput:\n1 2 3\nOutput:\n3",
+              "source": "Internal",
+              "url": ""
+            }
+          ],
+          "Hard": [
+            {
+              "id": "TS-BEG-H-1",
+              "slug": "two-sum",
+              "title": "Two Sum",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "hashmap",
+                "Beginner",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(twoSum(nums, target).join(' '));\n});\nfunction twoSum(nums: number[], target: number): number[] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(twoSum(nums, target).join(' '));\n});\nfunction twoSum(nums: number[], target: number): number[] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "2 7 11 15\n9",
+                  "output": "0 1"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "3 2 4\n6",
+                  "output": "1 2"
+                }
+              ],
+              "content": "Given a list of integers and a target value, find the indices of two numbers that add up to the target. Print the space-separated indices to standard output.\n\nEach input has exactly one solution, and you may not use the same element twice. The indices can be printed in any order.\n\n**Input Format:**\n- First line: A space-separated list of integers.\n- Second line: The target integer.\n\n**Output Format:**\nPrint the two indices separated by a space.\n\n**Example:**\nInput:\n2 7 11 15\n9\nOutput:\n0 1",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/two-sum/"
+            },
+            {
+              "id": "TS-BEG-H-2",
+              "slug": "longest-substring",
+              "title": "Longest Substring",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Beginner",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "sliding-window",
+                "Beginner",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(length(lines[0]));\n});\nfunction length(s: string): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(length(lines[0]));\n});\nfunction length(s: string): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "abcabcbb",
+                  "output": "3"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "bbbbb",
+                  "output": "1"
+                }
+              ],
+              "content": "Find the length of the longest substring without repeating characters in a given string. Print the length to standard output.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint the integer length of the longest unique substring.\n\n**Example:**\nInput:\nabcabcbb\nOutput:\n3",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+            }
+          ]
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "TS-INT1-E-1",
+              "slug": "count-vowels",
+              "title": "Count Vowels",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "Intermediate_1",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(countVowels(lines[0]));\n});\nfunction countVowels(s: string): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(countVowels(lines[0]));\n});\nfunction countVowels(s: string): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "hello",
+                  "output": "2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "AEIOU",
+                  "output": "5"
+                }
+              ],
+              "content": "Read a string from standard input and count the total number of vowels (a, e, i, o, u) it contains. The check should be case-insensitive. Print the count to standard output.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint the integer count of vowels.\n\n**Example:**\nInput:\nhello\nOutput:\n2",
+              "source": "Internal",
+              "url": ""
+            },
+            {
+              "id": "TS-INT1-E-2",
+              "slug": "factorial",
+              "title": "Factorial",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "math",
+                "recursion",
+                "Intermediate_1",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(fact(n));\n});\nfunction fact(n: number): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(fact(n));\n});\nfunction fact(n: number): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "5",
+                  "output": "120"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "0",
+                  "output": "1"
+                }
+              ],
+              "content": "Read a non-negative integer `n` from standard input and compute its factorial. Print the result to standard output.\n\nFactorial of `n` (n!) is the product of all positive integers less than or equal to `n`. Note that 0! = 1.\n\n**Input Format:**\nA single integer `n`.\n\n**Output Format:**\nPrint the integer result of `n!`.\n\n**Example:**\nInput:\n5\nOutput:\n120",
+              "source": "Internal",
+              "url": ""
+            }
+          ],
+          "Medium": [
+            {
+              "id": "TS-INT1-M-1",
+              "slug": "check-anagram",
+              "title": "Check Anagram",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "sorting",
+                "Intermediate_1",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isAnagram(lines[0], lines[1]));\n});\nfunction isAnagram(a: string, b: string): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isAnagram(lines[0], lines[1]));\n});\nfunction isAnagram(a: string, b: string): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "listen\nsilent",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "hello\nworld",
+                  "output": "false"
+                }
+              ],
+              "content": "Read two strings from standard input and determine if they are anagrams of each other. Print 'true' if they are, otherwise print 'false'.\n\nAn anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.\n\n**Input Format:**\n- First line: String `a`.\n- Second line: String `b`.\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\nlisten\nsilent\nOutput:\ntrue",
+              "source": "HackerRank",
+              "url": "https://www.hackerrank.com/challenges/anagram/problem"
+            },
+            {
+              "id": "TS-INT1-M-2",
+              "slug": "first-non-repeating-character",
+              "title": "First Non-Repeating Character",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "hashmap",
+                "Intermediate_1",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(firstUnique(lines[0]));\n});\nfunction firstUnique(s: string): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(firstUnique(lines[0]));\n});\nfunction firstUnique(s: string): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "leetcode",
+                  "output": "l"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "aabb",
+                  "output": ""
+                }
+              ],
+              "content": "Read a string from standard input and find the first character that does not repeat anywhere else in the string. If no such character exists, print an empty string.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint the first non-repeating character.\n\n**Example:**\nInput:\nleetcode\nOutput:\nl",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/first-unique-character-in-a-string/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "TS-INT1-H-1",
+              "slug": "product-of-array-except-self",
+              "title": "Product of Array Except Self",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "algorithms",
+                "Intermediate_1",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(product(nums).join(' '));\n});\nfunction product(nums: number[]): number[] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(product(nums).join(' '));\n});\nfunction product(nums: number[]): number[] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 2 3 4",
+                  "output": "24 12 8 6"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "2 3 4",
+                  "output": "12 8 6"
+                }
+              ],
+              "content": "Read a list of integers from standard input and return an array such that each element at index `i` is the product of all the numbers in the original array except the one at index `i`.\n\nConstraint: You must solve this without using the division operator and in O(n) time.\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the space-separated products.\n\n**Example:**\nInput:\n1 2 3 4\nOutput:\n24 12 8 6",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/product-of-array-except-self/"
+            },
+            {
+              "id": "TS-INT1-H-2",
+              "slug": "merge-intervals",
+              "title": "Merge Intervals",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "sorting",
+                "Intermediate_1",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const intervals = lines.map(l => l.split(' ').map(Number));\n  const res = merge(intervals);\n  res.forEach(r => console.log(r.join(' ')));\n});\nfunction merge(intervals: number[][]): number[][] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const intervals = lines.map(l => l.split(' ').map(Number));\n  const res = merge(intervals);\n  res.forEach(r => console.log(r.join(' ')));\n});\nfunction merge(intervals: number[][]): number[][] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 3\n2 6\n8 10",
+                  "output": "1 6\n8 10"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "1 4\n4 5",
+                  "output": "1 5"
+                }
+              ],
+              "content": "Read a collection of intervals from standard input and merge all overlapping intervals. Print the resulting intervals to standard output.\n\nAn interval is represented by two integers [start, end].\n\n**Input Format:**\nEach line contains a space-separated pair of integers representing an interval [start end].\n\n**Output Format:**\nPrint each merged interval on a new line as two space-separated integers.\n\n**Example:**\nInput:\n1 3\n2 6\n8 10\nOutput:\n1 6\n8 10",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/merge-intervals/"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [
+            {
+              "id": "TS-INT2-E-1",
+              "slug": "sum-of-digits",
+              "title": "Sum of Digits",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "math",
+                "Intermediate_2",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(sumDigits(n));\n});\nfunction sumDigits(n: number): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(sumDigits(n));\n});\nfunction sumDigits(n: number): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "123",
+                  "output": "6"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "999",
+                  "output": "27"
+                }
+              ],
+              "content": "Read an integer `n` from standard input and calculate the sum of its digits. Print the result to standard output.\n\n**Input Format:**\nA single integer `n`.\n\n**Output Format:**\nPrint the integer sum of the digits.\n\n**Example:**\nInput:\n123\nOutput:\n6",
+              "source": "Internal",
+              "url": ""
+            },
+            {
+              "id": "TS-INT2-E-2",
+              "slug": "check-prime",
+              "title": "Check Prime",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "math",
+                "algorithms",
+                "Intermediate_2",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(isPrime(n));\n});\nfunction isPrime(n: number): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(isPrime(n));\n});\nfunction isPrime(n: number): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "7",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "8",
+                  "output": "false"
+                }
+              ],
+              "content": "Read an integer `n` from standard input and determine if it is a prime number. Print 'true' if it is prime, otherwise print 'false'.\n\nA prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.\n\n**Input Format:**\nA single integer `n`.\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\n7\nOutput:\ntrue",
+              "source": "Internal",
+              "url": ""
+            }
+          ],
+          "Medium": [
+            {
+              "id": "TS-INT2-M-1",
+              "slug": "group-anagrams",
+              "title": "Group Anagrams",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "hashmap",
+                "Intermediate_2",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(group(strs).length);\n});\nfunction group(strs: string[]): string[][] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(group(strs).length);\n});\nfunction group(strs: string[]): string[][] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "eat tea tan ate nat bat",
+                  "output": "3"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "abc bca cab xyz",
+                  "output": "2"
+                }
+              ],
+              "content": "Read a space-separated list of strings from standard input. Group the strings that are anagrams of each other and print the total number of such groups to standard output.\n\n**Input Format:**\nA single line containing space-separated strings.\n\n**Output Format:**\nPrint the integer count of anagram groups.\n\n**Example:**\nInput:\neat tea tan ate nat bat\nOutput:\n3",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/group-anagrams/"
+            },
+            {
+              "id": "TS-INT2-M-2",
+              "slug": "longest-common-prefix",
+              "title": "Longest Common Prefix",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "algorithms",
+                "Intermediate_2",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(prefix(strs));\n});\nfunction prefix(strs: string[]): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(prefix(strs));\n});\nfunction prefix(strs: string[]): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "flower flow flight",
+                  "output": "fl"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "dog racecar car",
+                  "output": ""
+                }
+              ],
+              "content": "Read a space-separated list of strings from standard input and find the longest common prefix string amongst them. If there is no common prefix, print an empty string.\n\n**Input Format:**\nA single line containing space-separated strings.\n\n**Output Format:**\nPrint the longest common prefix string.\n\n**Example:**\nInput:\nflower flow flight\nOutput:\nfl",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-common-prefix/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "TS-INT2-H-1",
+              "slug": "longest-consecutive-sequence",
+              "title": "Longest Consecutive Sequence",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "hashset",
+                "Intermediate_2",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(longest(nums));\n});\nfunction longest(nums: number[]): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(longest(nums));\n});\nfunction longest(nums: number[]): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "100 4 200 1 3 2",
+                  "output": "4"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "0 3 7 2 5 8 4 6 0 1",
+                  "output": "9"
+                }
+              ],
+              "content": "Read a space-separated list of integers from standard input and find the length of the longest consecutive elements sequence. Print the length to standard output.\n\nConstraint: Your algorithm should run in O(n) complexity.\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the integer length of the sequence.\n\n**Example:**\nInput:\n100 4 200 1 3 2\nOutput:\n4",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/longest-consecutive-sequence/"
+            },
+            {
+              "id": "TS-INT2-H-2",
+              "slug": "valid-parentheses",
+              "title": "Valid Parentheses",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Intermediate_2",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "stack",
+                "Intermediate_2",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(valid(lines[0]));\n});\nfunction valid(s: string): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(valid(lines[0]));\n});\nfunction valid(s: string): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "()[]{}",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "(]",
+                  "output": "false"
+                }
+              ],
+              "content": "Read a string containing just the characters '(', ')', '{', '}', '[' and ']' from standard input. Determine if the input string is valid. Print 'true' if valid, otherwise print 'false'.\n\nAn input string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\n()[]{}\nOutput:\ntrue",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/valid-parentheses/"
+            }
+          ]
+        },
+        "Specialist_1": {
+          "Easy": [
+            {
+              "id": "TS-SP1-E-1",
+              "slug": "binary-search",
+              "title": "Binary Search",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "algorithms",
+                "Specialist_1",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(search(nums, target));\n});\nfunction search(nums: number[], target: number): number { return -1; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(search(nums, target));\n});\nfunction search(nums: number[], target: number): number { return -1; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 2 3 4 5\n3",
+                  "output": "2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "1 2 3 4 5\n6",
+                  "output": "-1"
+                }
+              ],
+              "content": "Read a sorted sequence of integers and a target value from standard input. Find the index of the target using binary search. If the target exists, print its 0-based index; otherwise, print -1.\n\n**Input Format:**\n- First line: A space-separated list of sorted integers.\n- Second line: The target integer.\n\n**Output Format:**\nPrint the integer index.\n\n**Example:**\nInput:\n1 2 3 4 5\n3\nOutput:\n2",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/binary-search/"
+            },
+            {
+              "id": "TS-SP1-E-2",
+              "slug": "move-zeroes",
+              "title": "Move Zeroes",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "two-pointers",
+                "Specialist_1",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(move(nums).join(' '));\n});\nfunction move(nums: number[]): number[] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(move(nums).join(' '));\n});\nfunction move(nums: number[]): number[] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "0 1 0 3 12",
+                  "output": "1 3 12 0 0"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "0 0 1",
+                  "output": "1 0 0"
+                }
+              ],
+              "content": "Read a space-separated list of integers from standard input. Move all zeroes to the end of the list while maintaining the relative order of the non-zero elements. Print the resulting list to standard output.\n\nConstraint: You must do this in-place without making a copy of the array (though in the simulation, you can return a new array).\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the space-separated integers.\n\n**Example:**\nInput:\n0 1 0 3 12\nOutput:\n1 3 12 0 0",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/move-zeroes/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "TS-SP1-M-1",
+              "slug": "subarray-sum-equals-k",
+              "title": "Subarray Sum Equals K",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "hashmap",
+                "Specialist_1",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(count(nums, k));\n});\nfunction count(nums: number[], k: number): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(count(nums, k));\n});\nfunction count(nums: number[], k: number): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 1 1\n2",
+                  "output": "2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "1 2 3\n3",
+                  "output": "2"
+                }
+              ],
+              "content": "Read a space-separated list of integers and an integer `k` from standard input. Find the total number of continuous subarrays whose sum equals to `k`. Print the count to standard output.\n\n**Input Format:**\n- First line: A space-separated list of integers.\n- Second line: The integer `k`.\n\n**Output Format:**\nPrint the integer count of such subarrays.\n\n**Example:**\nInput:\n1 1 1\n2\nOutput:\n2",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/subarray-sum-equals-k/"
+            },
+            {
+              "id": "TS-SP1-M-2",
+              "slug": "rotate-array",
+              "title": "Rotate Array",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "algorithms",
+                "Specialist_1",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(rotate(nums, k).join(' '));\n});\nfunction rotate(nums: number[], k: number): number[] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(rotate(nums, k).join(' '));\n});\nfunction rotate(nums: number[], k: number): number[] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 2 3 4 5 6 7\n3",
+                  "output": "5 6 7 1 2 3 4"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "-1 -100 3 99\n2",
+                  "output": "3 99 -1 -100"
+                }
+              ],
+              "content": "Read a space-separated list of integers and an integer `k` from standard input. Rotate the array to the right by `k` steps, where `k` is non-negative. Print the rotated array to standard output.\n\n**Input Format:**\n- First line: A space-separated list of integers.\n- Second line: The integer `k`.\n\n**Output Format:**\nPrint the space-separated rotated integers.\n\n**Example:**\nInput:\n1 2 3 4 5 6 7\n3\nOutput:\n5 6 7 1 2 3 4",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/rotate-array/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "TS-SP1-H-1",
+              "slug": "lru-cache-simulation",
+              "title": "LRU Cache (Simulation)",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "design",
+                "simulation",
+                "Specialist_1",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const capacity = Number(lines[0]);\n  console.log(simulate(capacity, lines.slice(1)));\n});\nfunction simulate(capacity: number, ops: string[]): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const capacity = Number(lines[0]);\n  console.log(simulate(capacity, lines.slice(1)));\n});\nfunction simulate(capacity: number, ops: string[]): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "2\nput 1\nput 2\nget 1",
+                  "output": "1"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "2\nput 1\nput 2\nput 3\nget 2",
+                  "output": "-1"
+                }
+              ],
+              "content": "Read the capacity of an LRU cache and a series of operations from standard input. Simulate the cache behavior and print the result of the final 'get' operation.\n\n**Operations:**\n- `put key`: Insert a key into the cache. In this simplified simulation, we only store the key (value is assumed to be the same as key or irrelevant). If the cache is full, remove the least recently used item.\n- `get key`: Retrieve the key. Print the key if found, otherwise print -1.\n\n**Input Format:**\n- First line: The integer capacity.\n- Following lines: Operations in the format 'put key' or 'get key'.\n\n**Output Format:**\nPrint the integer result of the last 'get' operation performed.\n\n**Example:**\nInput:\n2\nput 1\nput 2\nget 1\nOutput:\n1",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/lru-cache/"
+            },
+            {
+              "id": "TS-SP1-H-2",
+              "slug": "word-break",
+              "title": "Word Break",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_1",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "dynamic-programming",
+                "Specialist_1",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const s = lines[0];\n  const dict = lines[1].split(' ');\n  console.log(canBreak(s, dict));\n});\nfunction canBreak(s: string, dict: string[]): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const s = lines[0];\n  const dict = lines[1].split(' ');\n  console.log(canBreak(s, dict));\n});\nfunction canBreak(s: string, dict: string[]): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "leetcode\nleet code",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "applepenapple\napple pen",
+                  "output": "true"
+                }
+              ],
+              "content": "Read a string `s` and a dictionary of words `dict` from standard input. Determine if `s` can be segmented into a space-separated sequence of one or more dictionary words. Print 'true' if it can, otherwise print 'false'.\n\nNote that the same word in the dictionary may be reused multiple times in the segmentation.\n\n**Input Format:**\n- First line: The string `s`.\n- Second line: Space-separated words forming the dictionary.\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\nleetcode\nleet code\nOutput:\ntrue",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/word-break/"
+            }
+          ]
+        },
+        "Specialist_2": {
+          "Easy": [
+            {
+              "id": "TS-SP2-E-1",
+              "slug": "valid-palindrome",
+              "title": "Valid Palindrome",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "string",
+                "two-pointers",
+                "Specialist_2",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isPalindrome(lines[0]));\n});\nfunction isPalindrome(s: string): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isPalindrome(lines[0]));\n});\nfunction isPalindrome(s: string): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "racecar",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "hello",
+                  "output": "false"
+                }
+              ],
+              "content": "Read a string from standard input and determine if it is a palindrome, considering only alphanumeric characters and ignoring cases. Print 'true' if it is, otherwise print 'false'.\n\n**Input Format:**\nA single line containing a string `s`.\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\nracecar\nOutput:\ntrue",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/valid-palindrome/"
+            },
+            {
+              "id": "TS-SP2-E-2",
+              "slug": "missing-number",
+              "title": "Missing Number",
+              "difficulty": "Easy",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "math",
+                "Specialist_2",
+                "Easy"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(missing(nums));\n});\nfunction missing(nums: number[]): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(missing(nums));\n});\nfunction missing(nums: number[]): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "3 0 1",
+                  "output": "2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "0 1",
+                  "output": "2"
+                }
+              ],
+              "content": "Read a space-separated list of `n` distinct numbers in the range `[0, n]` from standard input. Find the only number in the range that is missing from the list. Print the missing number to standard output.\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the integer missing number.\n\n**Example:**\nInput:\n3 0 1\nOutput:\n2",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/missing-number/"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "TS-SP2-M-1",
+              "slug": "top-k-frequent-elements",
+              "title": "Top K Frequent Elements",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "hashmap",
+                "Specialist_2",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(topK(nums, k).join(' '));\n});\nfunction topK(nums: number[], k: number): number[] { return []; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(topK(nums, k).join(' '));\n});\nfunction topK(nums: number[], k: number): number[] { return []; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "1 1 1 2 2 3\n2",
+                  "output": "1 2"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "4 4 4 6 6 7\n1",
+                  "output": "4"
+                }
+              ],
+              "content": "Read a space-separated list of integers and an integer `k` from standard input. Return the `k` most frequent elements. Print the space-separated elements to standard output.\n\nYou may print the answer in any order.\n\n**Input Format:**\n- First line: A space-separated list of integers.\n- Second line: The integer `k`.\n\n**Output Format:**\nPrint the space-separated frequent elements.\n\n**Example:**\nInput:\n1 1 1 2 2 3\n2\nOutput:\n1 2",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/top-k-frequent-elements/"
+            },
+            {
+              "id": "TS-SP2-M-2",
+              "slug": "kth-largest-element",
+              "title": "Kth Largest Element",
+              "difficulty": "Medium",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "sorting",
+                "Specialist_2",
+                "Medium"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(findK(nums, k));\n});\nfunction findK(nums: number[], k: number): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(findK(nums, k));\n});\nfunction findK(nums: number[], k: number): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "3 2 1 5 6 4\n2",
+                  "output": "5"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "7 10 4 3 20 15\n3",
+                  "output": "10"
+                }
+              ],
+              "content": "Read a space-separated list of integers and an integer `k` from standard input. Find the `k`th largest element in the array. Print the result to standard output.\n\nNote that it is the `k`th largest element in the sorted order, not the `k`th distinct element.\n\n**Input Format:**\n- First line: A space-separated list of integers.\n- Second line: The integer `k`.\n\n**Output Format:**\nPrint the integer `k`th largest element.\n\n**Example:**\nInput:\n3 2 1 5 6 4\n2\nOutput:\n5",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "TS-SP2-H-1",
+              "slug": "course-schedule",
+              "title": "Course Schedule (Cycle Detection)",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "graph",
+                "bfs",
+                "dfs",
+                "Specialist_2",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  const edges = lines.slice(1).map(l => l.split(' ').map(Number));\n  console.log(canFinish(n, edges));\n});\nfunction canFinish(n: number, edges: number[][]): string { return \"\"; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  const edges = lines.slice(1).map(l => l.split(' ').map(Number));\n  console.log(canFinish(n, edges));\n});\nfunction canFinish(n: number, edges: number[][]): string { return \"\"; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "2\n1 0",
+                  "output": "true"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "2\n1 0\n0 1",
+                  "output": "false"
+                }
+              ],
+              "content": "Read the total number of courses `n` and a list of prerequisite pairs from standard input. Determine if it is possible to finish all courses. Print 'true' if it is possible, otherwise print 'false'.\n\nThere are a total of `n` courses you have to take, labeled from 0 to `n-1`. Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0, 1].\n\n**Input Format:**\n- First line: The integer `n`.\n- Following lines: Each containing two space-separated integers representing a prerequisite pair [a, b].\n\n**Output Format:**\nPrint 'true' or 'false'.\n\n**Example:**\nInput:\n2\n1 0\nOutput:\ntrue",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/course-schedule/"
+            },
+            {
+              "id": "TS-SP2-H-2",
+              "slug": "trapping-rain-water",
+              "title": "Trapping Rain Water",
+              "difficulty": "Hard",
+              "skill": "TypeScript",
+              "skill_level": "Specialist_2",
+              "language": "TypeScript",
+              "tags": [
+                "array",
+                "two-pointers",
+                "Specialist_2",
+                "Hard"
+              ],
+              "starter_code": {
+                "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const height = lines[0].split(' ').map(Number);\n  console.log(trap(height));\n});\nfunction trap(height: number[]): number { return 0; }",
+                "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const height = lines[0].split(' ').map(Number);\n  console.log(trap(height));\n});\nfunction trap(height: number[]): number { return 0; }"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "0 1 0 2 1 0 1 3 2 1 2 1",
+                  "output": "6"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "4 2 0 3 2 5",
+                  "output": "9"
+                }
+              ],
+              "content": "Read a space-separated list of non-negative integers representing an elevation map where the width of each bar is 1 from standard input. Compute how much water it can trap after raining. Print the total amount of water to standard output.\n\n**Input Format:**\nA single line containing space-separated integers.\n\n**Output Format:**\nPrint the integer total amount of trapped water.\n\n**Example:**\nInput:\n0 1 0 2 1 0 1 3 2 1 2 1\nOutput:\n6",
+              "source": "LeetCode",
+              "url": "https://leetcode.com/problems/trapping-rain-water/"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

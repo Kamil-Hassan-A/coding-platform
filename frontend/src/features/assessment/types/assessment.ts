@@ -33,6 +33,7 @@ export interface TestCaseResult {
 }
 
 export interface SessionProblemPayload {
+  problem_id?: string;
   title: string;
   description: string;
   templateCode?: string;
@@ -60,6 +61,7 @@ export interface StartSessionPayload {
 export interface SubmitSessionPayload {
   code: string;
   language: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SessionSubmitResponse {

@@ -112,6 +112,7 @@ apt-get install -y docker.io docker-compose git nginx jq pwgen
 
 systemctl enable docker
 systemctl start docker
+usermod -aG docker ubuntu || true
 
 # Add swap so t3.micro can handle Docker image builds more reliably.
 if [ ! -f /swapfile ]; then
@@ -129,9 +130,9 @@ REPO_DIR=$WORKDIR/repo
 mkdir -p $WORKDIR
 cd $WORKDIR
 
-# Pull the actual project backend code.
+# Clone full repository so all backend modules are available in the image build context.
 if [ ! -d "$REPO_DIR/.git" ]; then
-  git clone --depth 1 $REPO_URL "$REPO_DIR"
+  git clone $REPO_URL "$REPO_DIR"
 else
   cd "$REPO_DIR"
   git fetch --all --prune
@@ -141,32 +142,61 @@ fi
 
 POSTGRES_PASSWORD=$(pwgen -s 32 1)
 REDIS_PASSWORD=$(pwgen -s 32 1)
-SECRET_KEY_BASE=$(pwgen -s 32 1)
-JWT_SECRET_KEY=$(pwgen -s 40 1)
-JUDGE0_PROXY_TOKEN=$(pwgen -s 40 1)
-ADMIN_SEED_KEY=$(pwgen -s 40 1)
+SECRET_KEY_BASE=$(pwgen -s 64 1)
+JWT_SECRET_KEY=$(pwgen -s 64 1)
+JUDGE0_PROXY_TOKEN=$(pwgen -s 64 1)
+ADMIN_SEED_KEY=$(pwgen -s 64 1)
 
 cat <<EOF > .env
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 POSTGRES_DB=judge0
+CODINGPLATFORM_DB=codingplatform
+
+REDIS_HOST=redis
+REDIS_PORT=6379
 REDIS_PASSWORD=$REDIS_PASSWORD
+
 SECRET_KEY_BASE=$SECRET_KEY_BASE
 JWT_SECRET_KEY=$JWT_SECRET_KEY
 JUDGE0_PROXY_TOKEN=$JUDGE0_PROXY_TOKEN
 ADMIN_SEED_KEY=$ADMIN_SEED_KEY
+
+# Judge0 explicit variables
+JUDGE0_DB_ADAPTER=postgresql
+JUDGE0_DB_HOST=postgres
+JUDGE0_DB_PORT=5432
+JUDGE0_DB_NAME=judge0
+JUDGE0_DB_USERNAME=postgres
+JUDGE0_DB_PASSWORD=$POSTGRES_PASSWORD
+JUDGE0_REDIS_HOST=redis
+JUDGE0_REDIS_PORT=6379
+JUDGE0_REDIS_PASSWORD=$REDIS_PASSWORD
 EOF
 
 cat <<'EOF' > init-db.sql
 CREATE DATABASE codingplatform;
 EOF
 
-cat <<EOF > judge0.conf
-REDIS_PASSWORD=$REDIS_PASSWORD
-POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+cat <<'EOF' > repo/backend/wait-for-postgres.sh
+#!/bin/sh
+set -eu
+
+: "${POSTGRES_HOST:=postgres}"
+: "${POSTGRES_PORT:=5432}"
+: "${POSTGRES_USER:=postgres}"
+: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}"
+
+until PGPASSWORD="$POSTGRES_PASSWORD" pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" >/dev/null 2>&1; do
+  echo "Waiting for Postgres at ${POSTGRES_HOST}:${POSTGRES_PORT}..."
+  sleep 2
+done
+
+exec uvicorn main:app --host 0.0.0.0 --port 8000
 EOF
 
-# Build backend from the cloned repository source code.
 cat <<'EOF' > backend.Dockerfile
 FROM python:3.11-slim
 
@@ -174,14 +204,15 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-COPY repo/backend/requirements.txt /app/requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends postgresql-client && rm -rf /var/lib/apt/lists/*
+
+# Copy full backend source tree (routes, models, schemas, scripts, etc.)
+COPY repo/backend /app
+
 RUN pip install --no-cache-dir -r requirements.txt
+RUN chmod +x /app/wait-for-postgres.sh
 
-COPY repo/backend/*.py /app/
-COPY repo/backend/routes /app/routes
-COPY repo/backend/scripts /app/scripts
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/wait-for-postgres.sh"]
 EOF
 
 cat <<'EOF' > docker-compose.yml
@@ -198,25 +229,43 @@ services:
   postgres:
     image: postgres:13
     env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     <<: *default-logging
 
   redis:
     image: redis:6.0
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     env_file: .env
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     restart: always
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     <<: *default-logging
 
   judge0-server:
     image: judge0/judge0:1.13.1
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
+    env_file: .env
     ports:
       - "2358:2358"
     restart: always
@@ -229,8 +278,7 @@ services:
   judge0-worker:
     image: judge0/judge0:1.13.1
     command: ["./scripts/workers"]
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
+    env_file: .env
     restart: always
     privileged: true
     depends_on:
@@ -242,18 +290,24 @@ services:
     build:
       context: .
       dockerfile: backend.Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${CODINGPLATFORM_DB}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${CODINGPLATFORM_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JUDGE0_BASE_URL: http://judge0-server:2358
+      JUDGE0_PROXY_TOKEN: ${JUDGE0_PROXY_TOKEN}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ADMIN_SEED_KEY: ${ADMIN_SEED_KEY}
     ports:
       - "8000:8000"
     restart: always
     depends_on:
       - postgres
       - judge0-server
-    environment:
-      DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD}@postgres:5432/codingplatform
-      JUDGE0_BASE_URL: http://judge0-server:2358
-      JUDGE0_PROXY_TOKEN: ${JUDGE0_PROXY_TOKEN}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      ADMIN_SEED_KEY: ${ADMIN_SEED_KEY}
     <<: *default-logging
 
 volumes:
@@ -261,7 +315,7 @@ volumes:
   redis-data:
 EOF
 
-# Proxy port 80 to backend:8000 so opening public IP works directly.
+# Nginx reverse proxy: public :80 -> backend :8000
 cat <<'EOF' > /etc/nginx/sites-available/default
 server {
     listen 80 default_server;
@@ -286,20 +340,25 @@ chown -R ubuntu:ubuntu $WORKDIR
 
 cd $WORKDIR
 
-# Start core infra first, then ensure the backend database exists.
-docker-compose up -d postgres redis judge0-server judge0-worker
+# Bring infra up first.
+docker-compose up -d postgres redis
 
-for i in $(seq 1 40); do
-  if docker-compose exec -T postgres pg_isready -U postgres >/dev/null 2>&1; then
+for i in $(seq 1 60); do
+  if docker-compose exec -T postgres pg_isready -U postgres -d judge0 >/dev/null 2>&1; then
     break
   fi
   sleep 2
 done
 
+# Ensure codingplatform DB exists even when postgres volume already exists.
 docker-compose exec -T postgres psql -U postgres -d postgres -tc "SELECT 1 FROM pg_database WHERE datname='codingplatform'" | grep -q 1 || \
   docker-compose exec -T postgres psql -U postgres -d postgres -c "CREATE DATABASE codingplatform;"
 
+docker-compose up -d judge0-server judge0-worker
 docker-compose up -d --build backend
+
+# One-time schema bootstrap for platform tables.
+docker-compose exec -T backend python -c "from sqlalchemy import create_engine; from models import Base; from database import build_database_url; engine = create_engine(build_database_url(), pool_pre_ping=True); Base.metadata.create_all(bind=engine)"
 """
         # Attach the User Data script to the EC2 instance
         instance.add_user_data(user_data_script)

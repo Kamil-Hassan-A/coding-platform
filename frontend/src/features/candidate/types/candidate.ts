@@ -86,6 +86,12 @@ export type ConfirmedScreenProps = {
   isStarting: boolean;
 };
 
+export type InstructionsScreenProps = {
+  confirmed: CandidateSelection;
+  onContinue: () => void;
+  onBack: () => void;
+};
+
 export type LevelOption = {
   id: string;
   label: string;
