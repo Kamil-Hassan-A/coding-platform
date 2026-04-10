@@ -5,7 +5,7 @@ export type BackendLevel =
   | "specialist_1"
   | "specialist_2";
 
-export type CandidateScreen = "home" | "confirmed" | "past_assessments" | "badges";
+export type CandidateScreen = "home" | "confirmed" | "instructions" | "past_assessments" | "badges";
 
 export type AllowedLanguage = {
   id: number;

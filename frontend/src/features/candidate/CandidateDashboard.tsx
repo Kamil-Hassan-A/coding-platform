@@ -7,6 +7,7 @@ import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
 import BadgesScreen from "./BadgesScreen";
 import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
+import InstructionsScreen from "./components/InstructionsScreen";
 import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,

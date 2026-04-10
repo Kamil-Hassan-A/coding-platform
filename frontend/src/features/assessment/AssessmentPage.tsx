@@ -28,6 +28,22 @@ type InitialAssessmentState = {
   allowed_languages?: LanguageOption[];
 };
 
+type ViolationToast = {
+  id: number;
+  message: string;
+  tone: "mild" | "strong" | "final";
+};
+
+type FullscreenTarget = HTMLElement & {
+  requestFullscreen?: () => Promise<void> | void;
+  webkitRequestFullscreen?: () => Promise<void> | void;
+  msRequestFullscreen?: () => Promise<void> | void;
+};
+
+const VIOLATION_SPAM_DEBOUNCE_MS = 500;
+const VIOLATION_WINDOW_MS = 5 * 60 * 1000;
+const AUTO_SUBMIT_VIOLATIONS_REASON = "violations_threshold_reached";
+
 function isQuestionSetMetadata(raw: string | null | undefined): boolean {
   if (!raw) return false;
   try {
