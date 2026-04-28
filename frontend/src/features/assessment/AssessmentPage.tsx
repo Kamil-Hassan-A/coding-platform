@@ -29,6 +29,7 @@ type InitialAssessmentState = {
   problems?: SessionProblemPayload[];
   skill_name?: string;
   allowed_languages?: LanguageOption[];
+  auto_start?: boolean;
 };
 
 type ViolationToast = {
@@ -121,7 +122,9 @@ export default function AssessmentPage() {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(() => Boolean(document.fullscreenElement));
   const [isFullscreenLost, setIsFullscreenLost] = useState(false);
   const [fullscreenViolations, setFullscreenViolations] = useState(0);
-  const [hasStartedAssessment, setHasStartedAssessment] = useState(false);
+  const [hasStartedAssessment, setHasStartedAssessment] = useState(
+    Boolean(initialState?.auto_start && document.fullscreenElement),
+  );
   const [isLocked, setIsLocked] = useState(false);
   const [showEndTestModal, setShowEndTestModal] = useState(false);
   const [violationTimestamps, setViolationTimestamps] = useState<number[]>([]);

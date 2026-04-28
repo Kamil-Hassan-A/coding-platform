@@ -416,7 +416,7 @@ def score_submission(
     language: str,
     forced_status: SubmissionStatus | None = None,
 ) -> Submission:
-    if session_obj.submission is not None:
+    if session_obj.submissions:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
 
     problem = resolve_problem_from_session(db, session_obj, None)

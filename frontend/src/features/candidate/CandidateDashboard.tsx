@@ -7,14 +7,10 @@ import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
 import BadgesScreen from "./BadgesScreen";
 import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
-import InstructionsScreen from "./components/InstructionsScreen";
 import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
   CandidateScreen,
-  CandidateSelection,
-  CandidateSelectionIds,
-  ConfirmedScreenProps,
   HomeScreenProps,
   SkillWithProgress,
 } from "./types/candidate";
@@ -60,14 +56,11 @@ const LEVEL_META: Record<
 export default function CandidateDashboard() {
   const navigate = useNavigate();
   const user = useUserStore();
-  const [confirmed, setConfirmed] = useState<CandidateSelection | null>(null);
-  const [confirmedIds, setConfirmedIds] =
-    useState<CandidateSelectionIds | null>(null);
   const [screen, setScreen] = useState<CandidateScreen>("home");
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const { mutate: startSession, isPending: isStarting } = useStartSession();
+  useStartSession();
 
   const {
     data: apiSkills,
@@ -128,48 +121,23 @@ export default function CandidateDashboard() {
     skill_id: string,
   ) => {
     const skillObj = skillsList.find((s) => s.skill_id === skill_id);
-    setConfirmed({ 
-      skill, 
-      levelLabel, 
-      allowedLanguages: skillObj?.allowed_languages || [] 
+    const selection = {
+      skill,
+      levelLabel,
+      allowedLanguages: skillObj?.allowed_languages || [],
+    };
+    const selectionIds = { skill_id, level };
+
+    navigate("/candidate/instructions", {
+      state: {
+        confirmed: selection,
+        confirmedIds: selectionIds,
+      },
     });
-    setConfirmedIds({ skill_id, level });
-    setScreen("instructions");
   };
 
   const handleLogout = () => {
     logout();
-  };
-
-  const handleBeginAssessment = () => {
-    if (!confirmedIds || !confirmed) return;
-    const activeConfirmed = confirmed;
-
-    startSession(confirmedIds, {
-      onSuccess: (data) => {
-        navigate("/candidate/assessment", {
-          state: { 
-            session_id: data.session_id, 
-            problem: data.problem, 
-            problems: data.problems ?? [],
-            skill_name: activeConfirmed.skill, 
-            allowed_languages: data.allowed_languages ?? [] 
-          },
-        });
-      },
-      onError: (error: unknown) => {
-        const detail =
-          typeof (error as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail === "string"
-            ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail ?? null)
-            : null;
-
-        alert(
-          detail
-            ? `Failed to start assessment session: ${detail}`
-            : "Failed to start assessment session. Please try again.",
-        );
-      },
-    });
   };
 
   return (
@@ -265,22 +233,7 @@ export default function CandidateDashboard() {
             />
           ) : screen === "past_assessments" ? (
             <PastAssessmentsScreen />
-          ) : screen === "instructions" && confirmed ? (
-            <InstructionsScreen
-              confirmed={confirmed}
-              onContinue={() => setScreen("confirmed")}
-              onBack={() => setScreen("home")}
-            />
-          ) : (
-            confirmed && (
-              <ConfirmedScreen
-                confirmed={confirmed}
-                onChangeSkill={() => setScreen("home")}
-                onBegin={handleBeginAssessment}
-                isStarting={isStarting}
-              />
-            )
-          )}
+          ) : null}
         </main>
       </div>
     </div>
@@ -486,81 +439,3 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
   );
 }
 
-function ConfirmedScreen({
-  confirmed,
-  onChangeSkill,
-  onBegin,
-  isStarting,
-}: ConfirmedScreenProps) {
-  return (
-    <div className="w-full max-w-[600px] text-center">
-      <div className="rounded-[20px] bg-white px-12 py-14 shadow-[0_4px_24px_rgba(0,0,0,0.07)]">
-        <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-[20px] bg-green-500/10 text-[32px]">
-          ✅
-        </div>
-
-        <h2 className="mb-2 text-[22px] font-extrabold text-[#111]">
-          You're all set!
-        </h2>
-        <p className="mb-8 text-[14px] text-[#888]">
-          Your assessment is ready. The editor will be launched by your proctor.
-        </p>
-
-        <div className="mb-8 flex flex-wrap items-center justify-center gap-4 rounded-xl bg-[#f8f9fa] p-6">
-          <div className="flex flex-col items-center px-4">
-            <span className="text-[10px] font-semibold tracking-[0.8px] text-[#999]">
-              SKILL
-            </span>
-            <span className="mt-1 text-[16px] font-extrabold text-admin-orange">
-              {confirmed.skill}
-            </span>
-          </div>
-          <div className="self-stretch w-px bg-[#e0e0e0]" />
-          <div className="flex flex-col items-center px-4">
-            <span className="text-[10px] font-semibold tracking-[0.8px] text-[#999]">
-              LEVEL
-            </span>
-            <span className="mt-1 text-[16px] font-extrabold text-[#111]">
-              {confirmed.levelLabel}
-            </span>
-          </div>
-        </div>
-
-        <div className="mb-6 flex items-center gap-3 rounded-[10px] border border-admin-orange/20 bg-admin-orange/10 px-5 py-3.5">
-          <PulsingDot />
-          <span className="text-[13px] text-[#555]">
-            Waiting for Monaco Editor to be launched...
-          </span>
-        </div>
-
-        <button
-          onClick={onBegin}
-          disabled={isStarting}
-          className="mb-4 flex w-full items-center justify-center gap-2.5 rounded-[10px] border-none bg-admin-orange px-4 py-4 text-[16px] font-bold text-white shadow-admin-orange/25 shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {isStarting ? (
-            <>
-              <div className="h-[18px] w-[18px] animate-spin rounded-full border-2 border-white border-t-transparent" />
-              <span>Starting Session...</span>
-            </>
-          ) : (
-            "Begin Assessment →"
-          )}
-        </button>
-
-        <button
-          onClick={onChangeSkill}
-          className="cursor-pointer rounded-lg border-[1.5px] border-[#ddd] bg-transparent px-7 py-[11px] text-[13px] text-[#777]"
-        >
-          ← Change Skill / Level
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function PulsingDot() {
-  return (
-    <div className="h-2.5 w-2.5 shrink-0 animate-pulse-fast rounded-full bg-admin-orange" />
-  );
-}
