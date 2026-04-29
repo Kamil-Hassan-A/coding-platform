@@ -165,18 +165,13 @@ def parse_question_ids(raw: str | None, primary_problem_id: UUID) -> list[UUID]:
     return ordered_ids
 
 
-def build_problem_payload(problem: Problem, skill_name: str | None = None) -> SessionProblemPayload:
-    template_code = resolve_template_code(problem.starter_code)
-    starter_code_payload: dict[str, Any] | str | None = problem.starter_code
-    if skill_name and skill_name != "HTML, CSS, JS" and isinstance(problem.starter_code, dict):
-        starter_code_payload = template_code
-
+def build_problem_payload(problem: Problem) -> SessionProblemPayload:
     return SessionProblemPayload(
         problem_id=problem.id,
         title=problem.title,
         description=problem.description,
-        templateCode=template_code,
-        starter_code=starter_code_payload,
+        templateCode=resolve_template_code(problem.starter_code),
+        starter_code=problem.starter_code,
         tags=[str(tag) for tag in (problem.tags or [])],
         sample_test_cases=problem.sample_test_cases,
         time_limit_minutes=problem.time_limit_minutes,
@@ -421,14 +416,8 @@ def score_submission(
     language: str,
     forced_status: SubmissionStatus | None = None,
 ) -> Submission:
-    existing_submission = db.scalar(
-        select(Submission.id).where(Submission.session_id == session_obj.id)
-    )
-    if existing_submission is not None:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Session already submitted"
-        )
+    if session_obj.submissions:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
 
     problem = resolve_problem_from_session(db, session_obj, None)
     skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
@@ -612,8 +601,8 @@ def start_session(
         expires_at=session_obj.expires_at,
         attempt_number=session_obj.attempt_number,
         attempts_remaining=attempts_remaining,
-        problem=build_problem_payload(selected_problem, skill.name),
-        problems=[build_problem_payload(problem, skill.name) for problem in selected_problems],
+        problem=build_problem_payload(selected_problem),
+        problems=[build_problem_payload(problem) for problem in selected_problems],
         allowed_languages=skill.allowed_languages or [],
     )
 
@@ -648,8 +637,8 @@ def get_session(
         status=session_obj.status,
         expires_at=expires_at,
         seconds_remaining=seconds_remaining,
-        problem=build_problem_payload(primary_problem, skill.name),
-        problems=[build_problem_payload(problem, skill.name) for problem in problems],
+        problem=build_problem_payload(primary_problem),
+        problems=[build_problem_payload(problem) for problem in problems],
         allowed_languages=skill.allowed_languages or [],
         last_draft_code=session_obj.last_draft_code,
         last_draft_lang=session_obj.last_draft_lang,

@@ -5,7 +5,6 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
 from mangum import Mangum
 from routes.admin import router as admin_router
 from routes.auth import router as auth_router
@@ -73,23 +72,3 @@ handler = Mangum(app, lifespan="off")
 
 from routes import test_questions
 app.include_router(test_questions.router)
-
-import os as _os
-
-_REQUIRED_TEMPLATES = [
-    "candidate_report.html",
-    "candidate_session_report.html",
-    "session_report.html",
-]
-_TEMPLATES_DIR = _os.path.normpath(
-    _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "templates")
-)
-
-# Initialize templates with absolute path
-templates = Jinja2Templates(directory=_TEMPLATES_DIR)
-
-@app.on_event("startup")
-async def _verify_templates():
-    missing = [t for t in _REQUIRED_TEMPLATES if not _os.path.isfile(_os.path.join(_TEMPLATES_DIR, t))]
-    if missing:
-        raise RuntimeError(f"[SkillPulse] Missing report templates in {_TEMPLATES_DIR}: {missing}")

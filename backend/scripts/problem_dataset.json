@@ -4522,6 +4522,91 @@
       }
     },
     {
+      "skill": "Python with Django",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "1008",
+              "slug": "basic-python-with-django-task",
+              "title": "Basic Python with Django Task",
+              "difficulty": "Easy",
+              "skill": "Python with Django",
+              "skill_level": "Beginner",
+              "language": "Python",
+              "tags": [
+                "python-with-django",
+                "beginner"
+              ],
+              "starter_code": {
+                "default": "def solution():\n    pass"
+              },
+              "sample_test_cases": [
+                {
+                  "input": "Sample test",
+                  "output": "Expected output"
+                }
+              ],
+              "hidden_test_cases": [],
+              "content": "Complete the basic task for Python with Django. Ensure your implementation satisfies the requirements.",
+              "solution": "Here is the solution...",
+              "source": "Generated",
+              "url": ""
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
       "skill": "Python for Data Science",
       "allowed_languages": [
         {

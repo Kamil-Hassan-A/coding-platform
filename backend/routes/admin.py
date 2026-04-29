@@ -10,13 +10,13 @@ from zipfile import ZipFile
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 from fastapi.responses import StreamingResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 from xhtml2pdf import pisa
 
 from database import get_db
 from dependencies import require_admin
-from main import templates
 from models import AssessmentSession, SessionStatus, SessionViolation, Skill, Submission, SubmissionStatus, User, UserRole
 from schemas import (
     AdminCandidateRow,
@@ -36,6 +36,7 @@ from schemas import (
 from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+templates = Jinja2Templates(directory="templates")
 logger = logging.getLogger(__name__)
 REPORT_NOT_FOUND_DETAIL = "Candidate not found"
 PDF_FAILURE_DETAIL = "Failed to generate PDF report"

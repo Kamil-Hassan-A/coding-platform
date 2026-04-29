@@ -172,31 +172,6 @@ def validate_payload(payload: dict[str, Any]) -> list[str]:
     return errors
 
 
-def load_dataset_payload(input_json: Path) -> dict[str, Any]:
-    if not input_json.exists():
-        raise FileNotFoundError(f"Input JSON file not found: {input_json}")
-
-    raw_payload = json.loads(input_json.read_text(encoding="utf-8"))
-    if not isinstance(raw_payload, dict):
-        raise ValueError("Input JSON must be a top-level object.")
-
-    validation_errors = validate_payload(raw_payload)
-    if validation_errors:
-        joined = "\n- " + "\n- ".join(validation_errors)
-        raise ValueError(f"Input JSON validation failed:{joined}")
-
-    dataset_name = to_str(raw_payload.get("dataset_name")) or input_json.stem
-    skills_payload = raw_payload.get("skills")
-    if not isinstance(skills_payload, list):
-        raise ValueError("Input JSON must include a 'skills' array.")
-
-    return {
-        "path": input_json,
-        "dataset_name": dataset_name,
-        "skills_payload": skills_payload,
-    }
-
-
 def create_user(
     db,
     email: str,
@@ -372,31 +347,22 @@ def seed_problems_from_payload(
 
 
 def run_seed(input_json: Path) -> None:
-    run_seed_files([input_json])
+    if not input_json.exists():
+        raise FileNotFoundError(f"Input JSON file not found: {input_json}")
 
+    raw_payload = json.loads(input_json.read_text(encoding="utf-8"))
+    if not isinstance(raw_payload, dict):
+        raise ValueError("Input JSON must be a top-level object.")
 
-def run_seed_files(input_jsons: list[Path]) -> None:
-    if not input_jsons:
-        raise ValueError("At least one input JSON file is required.")
+    validation_errors = validate_payload(raw_payload)
+    if validation_errors:
+        joined = "\n- " + "\n- ".join(validation_errors)
+        raise ValueError(f"Input JSON validation failed:{joined}")
 
-    payloads = [load_dataset_payload(path) for path in input_jsons]
-
-    skill_precedence: dict[str, int] = {}
-    for index, payload in enumerate(payloads):
-        for skill_obj in payload["skills_payload"]:
-            skill_name = to_str(skill_obj.get("skill"))
-            if skill_name:
-                skill_precedence[skill_name] = index
-
-    merged_skills_payload: list[dict[str, Any]] = []
-    for index, payload in enumerate(payloads):
-        for skill_obj in payload["skills_payload"]:
-            skill_name = to_str(skill_obj.get("skill"))
-            if not skill_name:
-                continue
-            if skill_precedence.get(skill_name) != index:
-                continue
-            merged_skills_payload.append(skill_obj)
+    dataset_name = to_str(raw_payload.get("dataset_name")) or input_json.stem
+    skills_payload = raw_payload.get("skills")
+    if not isinstance(skills_payload, list):
+        raise ValueError("Input JSON must include a 'skills' array.")
 
     admin_email = os.getenv("SEED_ADMIN_EMAIL", "admin@example.com")
     admin_password = os.getenv("SEED_ADMIN_PASSWORD", "AdminPass123!")
@@ -459,41 +425,29 @@ def run_seed_files(input_jsons: list[Path]) -> None:
         )
         counts["users_created"] += 1
 
-        skills = create_skills_from_payload(db, merged_skills_payload)
+        skills = create_skills_from_payload(db, skills_payload)
         counts["skills_created"] = len(skills)
 
         skills_by_name = {skill.name: skill for skill in skills}
 
-        for index, payload in enumerate(payloads):
-            filtered_skills_payload = [
-                skill_obj
-                for skill_obj in payload["skills_payload"]
-                if to_str(skill_obj.get("skill"))
-                and skill_precedence.get(to_str(skill_obj.get("skill"))) == index
-            ]
-
-            problem_counts = seed_problems_from_payload(
-                db=db,
-                dataset_name=payload["dataset_name"],
-                skills_by_name=skills_by_name,
-                skills_payload=filtered_skills_payload,
-            )
-            counts["problems_created"] += problem_counts["problems_created"]
-            counts["problems_skipped_invalid"] += problem_counts["problems_skipped_invalid"]
-            counts["problems_skipped_unknown_skill"] += problem_counts["problems_skipped_unknown_skill"]
-            counts["problems_skipped_unknown_level"] += problem_counts["problems_skipped_unknown_level"]
+        problem_counts = seed_problems_from_payload(
+            db=db,
+            dataset_name=dataset_name,
+            skills_by_name=skills_by_name,
+            skills_payload=skills_payload,
+        )
+        counts["problems_created"] += problem_counts["problems_created"]
+        counts["problems_skipped_invalid"] += problem_counts["problems_skipped_invalid"]
+        counts["problems_skipped_unknown_skill"] += problem_counts["problems_skipped_unknown_skill"]
+        counts["problems_skipped_unknown_level"] += problem_counts["problems_skipped_unknown_level"]
 
         counts["progress_created"] = create_progress_for_candidate(db, candidate_user, skills)
 
         db.commit()
 
         print("Seeding complete (seed_new.py).")
-        print("- Input JSON files:")
-        for payload in payloads:
-            print(f"  - {payload['path'].resolve()}")
-        print("- Dataset names:")
-        for payload in payloads:
-            print(f"  - {payload['dataset_name']}")
+        print(f"- Input JSON: {input_json.resolve()}")
+        print(f"- Dataset name: {dataset_name}")
         print(f"- Users created: {counts['users_created']}")
         print(f"- Skills created: {counts['skills_created']}")
         print(f"- Problems created: {counts['problems_created']}")

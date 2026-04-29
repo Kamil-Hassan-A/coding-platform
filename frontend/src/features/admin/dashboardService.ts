@@ -27,6 +27,7 @@ export const SKILLS: Skill[] = [
   { id: 6, name: "Next JS", category: "Frontend", tag: "fe" },
   { id: 7, name: "Angular", category: "Frontend", tag: "fe" },
   { id: 8, name: "Python with Flask", category: "Backend", tag: "be" },
+  { id: 9, name: "Python with Django", category: "Backend", tag: "be" },
   { id: 10, name: "Python for Data Science", category: "Backend", tag: "be" },
   { id: 11, name: "Java", category: "Backend", tag: "be" },
   { id: 12, name: "Java Springboot", category: "Backend", tag: "be" },
