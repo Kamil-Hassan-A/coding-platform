@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        @page { size: A4; margin: 24px; }
+        body { margin: 0; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #111827; }
+        h1, h2, h3, h4, p { margin: 0; }
+        .header-title { font-size: 30px; font-weight: 700; color: #f97316; }
+        .header-subtitle { margin-top: 4px; font-size: 12px; color: #6b7280; }
+        .header-divider { margin-top: 10px; border-top: 1px solid #e5e7eb; }
+        .section-title { margin-top: 16px; margin-bottom: 8px; font-size: 16px; font-weight: 700; color: #111827; }
+        .section { margin-bottom: 12px; page-break-inside: avoid; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; padding: 14px; }
+        .summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .summary-table td { width: 50%; padding: 6px 8px; vertical-align: top; }
+        .field-label { font-size: 10px; color: #6b7280; }
+        .field-value { margin-top: 2px; font-size: 12px; color: #111827; font-weight: 700; }
+        .skill-name { font-size: 18px; font-weight: 700; color: #f97316; }
+        .metric-label { font-size: 10px; color: #6b7280; }
+        .metric-value { margin-top: 2px; font-size: 13px; color: #111827; font-weight: 700; }
+        .badge-pass { padding: 2px 8px; border: 1px solid #16a34a; color: #16a34a; font-size: 10px; font-weight: 700; }
+        .badge-fail { padding: 2px 8px; border: 1px solid #dc2626; color: #dc2626; font-size: 10px; font-weight: 700; }
+        .subsection-title { margin-top: 14px; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #111827; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { border: 1px solid #ddd; text-align: left; padding: 6px; font-size: 10px; vertical-align: top; word-wrap: break-word; word-break: break-all; }
+        td { white-space: normal; }
+        tr { page-break-inside: avoid; }
+        th { background: #f3f4f6; color: #111827; font-weight: 700; }
+        pre { background: #f3f4f6; border: 1px solid #e5e7eb; padding: 10px; }
+        .code-block { font-family: monospace; font-size: 9px; white-space: pre-wrap; word-wrap: break-word; }
+        .passed { color: #16a34a; font-weight: 700; }
+        .failed { color: #dc2626; font-weight: 700; }
+        .muted { color: #6b7280; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header-title">SkillPulse</div>
+    <div class="header-subtitle">Internal Assessment Platform</div>
+    <div class="header-divider"></div>
+
+    <div class="section">
+    <div class="section-title">Candidate Summary</div>
+    <div class="card">
+        <table class="summary-table">
+            <tr>
+                <td>
+                    <div class="field-label">Name</div>
+                    <div class="field-value">{{ candidate.name }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Email</div>
+                    <div class="field-value">{{ candidate.email }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Employee ID</div>
+                    <div class="field-value">{{ candidate.employee_id }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Department</div>
+                    <div class="field-value">{{ candidate.department }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
+    <div class="section">
+    <div class="section-title">Session Report</div>
+    <div class="card">
+        <table class="summary-table">
+            <tr>
+                <td>
+                    <div class="metric-label">Skill</div>
+                    <div class="skill-name">{{ session.skill_name }}</div>
+                </td>
+                <td>
+                    <div class="metric-label">Level</div>
+                    <div class="metric-value">{{ session.level }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="metric-label">Score</div>
+                    <div class="metric-value">{{ submission.score if submission else "-" }}</div>
+                </td>
+                <td>
+                    <div class="metric-label">Status</div>
+                    {% if submission and submission.status in ["cleared", "submitted", "success"] %}
+                    <span class="badge-pass">PASS</span>
+                    {% elif submission and submission.status %}
+                    <span class="badge-fail">FAIL</span>
+                    {% elif session.status in ["submitted"] %}
+                    <span class="badge-pass">PASS</span>
+                    {% else %}
+                    <span class="badge-fail">FAIL</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="metric-label">Started At</div>
+                    <div class="field-value">{{ session.started_at }}</div>
+                </td>
+                <td>
+                    <div class="metric-label">Submitted At</div>
+                    <div class="field-value">{{ session.submitted_at or "-" }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="metric-label">Attempt Number</div>
+                    <div class="field-value">{{ session.attempt_number }}</div>
+                </td>
+                <td>
+                    <div class="metric-label">Session Status</div>
+                    <div class="field-value">{{ session.status }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
+    <div class="section">
+    <div class="subsection-title">Violations</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Timestamp</th>
+                <th>Metadata</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if violations %}
+                {% for violation in violations %}
+                <tr>
+                    <td>{{ violation.type }}</td>
+                    <td>{{ violation.timestamp }}</td>
+                    <td>{{ violation.metadata if violation.metadata is not none else "" }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="muted">No violations recorded</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    </div>
+
+    {% if submission %}
+    <div class="section">
+    <div class="subsection-title">Submission Details</div>
+    <div class="card">
+        <table class="summary-table">
+            <tr>
+                <td>
+                    <div class="field-label">Language</div>
+                    <div class="field-value">{{ submission.language }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Tests Passed</div>
+                    <div class="field-value">{{ submission.passed_tests }}/{{ submission.total_tests }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Time Taken</div>
+                    <div class="field-value">{{ submission.time_taken_seconds }} seconds</div>
+                </td>
+                <td>
+                    <div class="field-label">Score</div>
+                    <div class="field-value">{{ submission.score }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="field-label">Code</div>
+    <pre class="code-block">{{ submission.code }}</pre>
+
+    </div>
+
+    <div class="section">
+    <div class="subsection-title">Test Cases</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Input</th>
+                <th>Expected</th>
+                <th>Actual</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if submission.cases %}
+                {% for tc in submission.cases %}
+                <tr>
+                    <td>{{ tc.stdin }}</td>
+                    <td>{{ tc.expected_output if tc.expected_output is not none else "" }}</td>
+                    <td>{{ tc.stdout if tc.stdout is not none else tc.stderr if tc.stderr is not none else "" }}</td>
+                    <td class="{{ 'passed' if tc.passed else 'failed' }}">{{ 'Passed' if tc.passed else 'Failed' }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="muted">No case details available</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="muted">No submission for this session</div>
+    {% endif %}
+</body>
+</html>
