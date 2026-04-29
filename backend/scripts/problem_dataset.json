@@ -17,10 +17,7 @@
               "skill": "Agile",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "agile",
-                "beginner"
-              ],
+              "tags": ["agile", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -92,10 +89,7 @@
               "skill": "HTML, CSS, JS",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": [
-                "html,-css,-js",
-                "beginner"
-              ],
+              "tags": ["html,-css,-js", "beginner"],
               "starter_code": {
                 "default": "{\n  \"html\": \"<h1>Hello World</h1>\",\n  \"css\": \"h1 { color: red; }\",\n  \"js\": \"console.log('test');\"\n}"
               },
@@ -167,10 +161,7 @@
               "skill": "React JS",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": [
-                "react-js",
-                "beginner"
-              ],
+              "tags": ["react-js", "beginner"],
               "starter_code": {
                 "default": "export default function App() { return <div>Hello App</div>; }"
               },
@@ -242,10 +233,7 @@
               "skill": "React JS with Redux",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": [
-                "react-js-with-redux",
-                "beginner"
-              ],
+              "tags": ["react-js-with-redux", "beginner"],
               "starter_code": {
                 "default": "export default function App() { return <div>Hello App</div>; }"
               },
@@ -312,12 +300,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "math",
-                "basics",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["math", "basics", "Beginner", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const [a, b] = lines[0].split(' ').map(Number);\n  console.log(sum(a, b));\n});\nfunction sum(a: number, b: number): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const [a, b] = lines[0].split(' ').map(Number);\n  console.log(sum(a, b));\n});\nfunction sum(a: number, b: number): number { return 0; }"
@@ -346,12 +329,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "math",
-                "conditionals",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["math", "conditionals", "Beginner", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(check(n));\n});\nfunction check(n: number): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(check(n));\n});\nfunction check(n: number): string { return \"\"; }"
@@ -382,12 +360,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "manipulation",
-                "Beginner",
-                "Medium"
-              ],
+              "tags": ["string", "manipulation", "Beginner", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(reverse(lines[0]));\n});\nfunction reverse(s: string): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(reverse(lines[0]));\n});\nfunction reverse(s: string): string { return \"\"; }"
@@ -416,12 +389,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "math",
-                "Beginner",
-                "Medium"
-              ],
+              "tags": ["array", "math", "Beginner", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(max(nums));\n});\nfunction max(nums: number[]): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(max(nums));\n});\nfunction max(nums: number[]): number { return 0; }"
@@ -452,12 +420,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "hashmap",
-                "Beginner",
-                "Hard"
-              ],
+              "tags": ["array", "hashmap", "Beginner", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(twoSum(nums, target).join(' '));\n});\nfunction twoSum(nums: number[], target: number): number[] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(twoSum(nums, target).join(' '));\n});\nfunction twoSum(nums: number[], target: number): number[] { return []; }"
@@ -486,12 +449,7 @@
               "skill": "TypeScript",
               "skill_level": "Beginner",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "sliding-window",
-                "Beginner",
-                "Hard"
-              ],
+              "tags": ["string", "sliding-window", "Beginner", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(length(lines[0]));\n});\nfunction length(s: string): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(length(lines[0]));\n});\nfunction length(s: string): number { return 0; }"
@@ -524,11 +482,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "Intermediate_1",
-                "Easy"
-              ],
+              "tags": ["string", "Intermediate_1", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(countVowels(lines[0]));\n});\nfunction countVowels(s: string): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(countVowels(lines[0]));\n});\nfunction countVowels(s: string): number { return 0; }"
@@ -557,12 +511,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "math",
-                "recursion",
-                "Intermediate_1",
-                "Easy"
-              ],
+              "tags": ["math", "recursion", "Intermediate_1", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(fact(n));\n});\nfunction fact(n: number): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(fact(n));\n});\nfunction fact(n: number): number { return 0; }"
@@ -593,12 +542,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "sorting",
-                "Intermediate_1",
-                "Medium"
-              ],
+              "tags": ["string", "sorting", "Intermediate_1", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isAnagram(lines[0], lines[1]));\n});\nfunction isAnagram(a: string, b: string): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isAnagram(lines[0], lines[1]));\n});\nfunction isAnagram(a: string, b: string): string { return \"\"; }"
@@ -627,12 +571,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "hashmap",
-                "Intermediate_1",
-                "Medium"
-              ],
+              "tags": ["string", "hashmap", "Intermediate_1", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(firstUnique(lines[0]));\n});\nfunction firstUnique(s: string): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(firstUnique(lines[0]));\n});\nfunction firstUnique(s: string): string { return \"\"; }"
@@ -663,12 +602,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "algorithms",
-                "Intermediate_1",
-                "Hard"
-              ],
+              "tags": ["array", "algorithms", "Intermediate_1", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(product(nums).join(' '));\n});\nfunction product(nums: number[]): number[] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(product(nums).join(' '));\n});\nfunction product(nums: number[]): number[] { return []; }"
@@ -697,12 +631,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "sorting",
-                "Intermediate_1",
-                "Hard"
-              ],
+              "tags": ["array", "sorting", "Intermediate_1", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const intervals = lines.map(l => l.split(' ').map(Number));\n  const res = merge(intervals);\n  res.forEach(r => console.log(r.join(' ')));\n});\nfunction merge(intervals: number[][]): number[][] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const intervals = lines.map(l => l.split(' ').map(Number));\n  const res = merge(intervals);\n  res.forEach(r => console.log(r.join(' ')));\n});\nfunction merge(intervals: number[][]): number[][] { return []; }"
@@ -735,11 +664,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "math",
-                "Intermediate_2",
-                "Easy"
-              ],
+              "tags": ["math", "Intermediate_2", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(sumDigits(n));\n});\nfunction sumDigits(n: number): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(sumDigits(n));\n});\nfunction sumDigits(n: number): number { return 0; }"
@@ -768,12 +693,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "math",
-                "algorithms",
-                "Intermediate_2",
-                "Easy"
-              ],
+              "tags": ["math", "algorithms", "Intermediate_2", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(isPrime(n));\n});\nfunction isPrime(n: number): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  console.log(isPrime(n));\n});\nfunction isPrime(n: number): string { return \"\"; }"
@@ -804,12 +724,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "hashmap",
-                "Intermediate_2",
-                "Medium"
-              ],
+              "tags": ["string", "hashmap", "Intermediate_2", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(group(strs).length);\n});\nfunction group(strs: string[]): string[][] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(group(strs).length);\n});\nfunction group(strs: string[]): string[][] { return []; }"
@@ -838,12 +753,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "algorithms",
-                "Intermediate_2",
-                "Medium"
-              ],
+              "tags": ["string", "algorithms", "Intermediate_2", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(prefix(strs));\n});\nfunction prefix(strs: string[]): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const strs = lines[0].split(' ');\n  console.log(prefix(strs));\n});\nfunction prefix(strs: string[]): string { return \"\"; }"
@@ -874,12 +784,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "hashset",
-                "Intermediate_2",
-                "Hard"
-              ],
+              "tags": ["array", "hashset", "Intermediate_2", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(longest(nums));\n});\nfunction longest(nums: number[]): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(longest(nums));\n});\nfunction longest(nums: number[]): number { return 0; }"
@@ -908,12 +813,7 @@
               "skill": "TypeScript",
               "skill_level": "Intermediate_2",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "stack",
-                "Intermediate_2",
-                "Hard"
-              ],
+              "tags": ["string", "stack", "Intermediate_2", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(valid(lines[0]));\n});\nfunction valid(s: string): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(valid(lines[0]));\n});\nfunction valid(s: string): string { return \"\"; }"
@@ -946,12 +846,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "algorithms",
-                "Specialist_1",
-                "Easy"
-              ],
+              "tags": ["array", "algorithms", "Specialist_1", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(search(nums, target));\n});\nfunction search(nums: number[], target: number): number { return -1; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const target = Number(lines[1]);\n  console.log(search(nums, target));\n});\nfunction search(nums: number[], target: number): number { return -1; }"
@@ -980,12 +875,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "two-pointers",
-                "Specialist_1",
-                "Easy"
-              ],
+              "tags": ["array", "two-pointers", "Specialist_1", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(move(nums).join(' '));\n});\nfunction move(nums: number[]): number[] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(move(nums).join(' '));\n});\nfunction move(nums: number[]): number[] { return []; }"
@@ -1016,12 +906,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "hashmap",
-                "Specialist_1",
-                "Medium"
-              ],
+              "tags": ["array", "hashmap", "Specialist_1", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(count(nums, k));\n});\nfunction count(nums: number[], k: number): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(count(nums, k));\n});\nfunction count(nums: number[], k: number): number { return 0; }"
@@ -1050,12 +935,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "algorithms",
-                "Specialist_1",
-                "Medium"
-              ],
+              "tags": ["array", "algorithms", "Specialist_1", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(rotate(nums, k).join(' '));\n});\nfunction rotate(nums: number[], k: number): number[] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(rotate(nums, k).join(' '));\n});\nfunction rotate(nums: number[], k: number): number[] { return []; }"
@@ -1086,12 +966,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "design",
-                "simulation",
-                "Specialist_1",
-                "Hard"
-              ],
+              "tags": ["design", "simulation", "Specialist_1", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const capacity = Number(lines[0]);\n  console.log(simulate(capacity, lines.slice(1)));\n});\nfunction simulate(capacity: number, ops: string[]): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const capacity = Number(lines[0]);\n  console.log(simulate(capacity, lines.slice(1)));\n});\nfunction simulate(capacity: number, ops: string[]): number { return 0; }"
@@ -1120,12 +995,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_1",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "dynamic-programming",
-                "Specialist_1",
-                "Hard"
-              ],
+              "tags": ["string", "dynamic-programming", "Specialist_1", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const s = lines[0];\n  const dict = lines[1].split(' ');\n  console.log(canBreak(s, dict));\n});\nfunction canBreak(s: string, dict: string[]): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const s = lines[0];\n  const dict = lines[1].split(' ');\n  console.log(canBreak(s, dict));\n});\nfunction canBreak(s: string, dict: string[]): string { return \"\"; }"
@@ -1158,12 +1028,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "string",
-                "two-pointers",
-                "Specialist_2",
-                "Easy"
-              ],
+              "tags": ["string", "two-pointers", "Specialist_2", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isPalindrome(lines[0]));\n});\nfunction isPalindrome(s: string): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  console.log(isPalindrome(lines[0]));\n});\nfunction isPalindrome(s: string): string { return \"\"; }"
@@ -1192,12 +1057,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "math",
-                "Specialist_2",
-                "Easy"
-              ],
+              "tags": ["array", "math", "Specialist_2", "Easy"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(missing(nums));\n});\nfunction missing(nums: number[]): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  console.log(missing(nums));\n});\nfunction missing(nums: number[]): number { return 0; }"
@@ -1228,12 +1088,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "hashmap",
-                "Specialist_2",
-                "Medium"
-              ],
+              "tags": ["array", "hashmap", "Specialist_2", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(topK(nums, k).join(' '));\n});\nfunction topK(nums: number[], k: number): number[] { return []; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(topK(nums, k).join(' '));\n});\nfunction topK(nums: number[], k: number): number[] { return []; }"
@@ -1262,12 +1117,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "sorting",
-                "Specialist_2",
-                "Medium"
-              ],
+              "tags": ["array", "sorting", "Specialist_2", "Medium"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(findK(nums, k));\n});\nfunction findK(nums: number[], k: number): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const nums = lines[0].split(' ').map(Number);\n  const k = Number(lines[1]);\n  console.log(findK(nums, k));\n});\nfunction findK(nums: number[], k: number): number { return 0; }"
@@ -1298,13 +1148,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "graph",
-                "bfs",
-                "dfs",
-                "Specialist_2",
-                "Hard"
-              ],
+              "tags": ["graph", "bfs", "dfs", "Specialist_2", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  const edges = lines.slice(1).map(l => l.split(' ').map(Number));\n  console.log(canFinish(n, edges));\n});\nfunction canFinish(n: number, edges: number[][]): string { return \"\"; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const n = Number(lines[0]);\n  const edges = lines.slice(1).map(l => l.split(' ').map(Number));\n  console.log(canFinish(n, edges));\n});\nfunction canFinish(n: number, edges: number[][]): string { return \"\"; }"
@@ -1333,12 +1177,7 @@
               "skill": "TypeScript",
               "skill_level": "Specialist_2",
               "language": "TypeScript",
-              "tags": [
-                "array",
-                "two-pointers",
-                "Specialist_2",
-                "Hard"
-              ],
+              "tags": ["array", "two-pointers", "Specialist_2", "Hard"],
               "starter_code": {
                 "default": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const height = lines[0].split(' ').map(Number);\n  console.log(trap(height));\n});\nfunction trap(height: number[]): number { return 0; }",
                 "typescript": "import * as readline from 'readline';\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines: string[] = [];\nrl.on('line', (line) => lines.push(line.trim()));\nrl.on('close', () => {\n  const height = lines[0].split(' ').map(Number);\n  console.log(trap(height));\n});\nfunction trap(height: number[]): number { return 0; }"
@@ -1403,10 +1242,7 @@
               "skill": "Next JS",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": [
-                "next-js",
-                "beginner"
-              ],
+              "tags": ["next-js", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -1488,10 +1324,7 @@
               "skill": "Angular",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": [
-                "angular",
-                "beginner"
-              ],
+              "tags": ["angular", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -1573,15 +1406,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "csv",
-                "data-cleaning",
-                "beginner",
-                "easy"
-              ],
+              "tags": ["python", "csv", "data-cleaning", "beginner", "easy"],
               "starter_code": {
-                "default": "def solution(lines):\n    \"\"\"lines: list[str] where each row is item,amount\"\"\"\n    pass"
+                "default": "def solution(lines):\n    \"\"\"lines: list[str] where each row is item,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    lines = [line.rstrip('\n') for line in sys.stdin]\n    print(solution(lines))"
               },
               "sample_test_cases": [
                 {
@@ -1616,15 +1443,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "strings",
-                "email",
-                "beginner",
-                "easy"
-              ],
+              "tags": ["python", "strings", "email", "beginner", "easy"],
               "starter_code": {
-                "default": "def solution(emails):\n    \"\"\"emails: list[str], return domain counts sorted as domain:count\"\"\"\n    pass"
+                "default": "def solution(emails):\n    \"\"\"emails: list[str], return domain counts sorted as domain:count\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    emails = [line.rstrip('\n') for line in sys.stdin]\n    print(solution(emails))"
               },
               "sample_test_cases": [
                 {
@@ -1667,7 +1488,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(weight_kg, is_express):\n    \"\"\"base=5, +ceil(weight_kg), +5 if express\"\"\"\n    pass"
+                "default": "import math\n\ndef solution(weight_kg, is_express):\n    \"\"\"base=5, +ceil(weight_kg), +5 if express\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    weight_kg = float(data[0]) if data else 0.0\n    is_express = (data[1].lower() == 'true') if len(data) > 1 else False\n    print(solution(weight_kg, is_express))"
               },
               "sample_test_cases": [
                 {
@@ -1702,15 +1523,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "validation",
-                "security",
-                "beginner",
-                "easy"
-              ],
+              "tags": ["python", "validation", "security", "beginner", "easy"],
               "starter_code": {
-                "default": "def solution(password):\n    \"\"\"return true/false string\"\"\"\n    pass"
+                "default": "def solution(password):\n    \"\"\"return true/false string\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    password = sys.stdin.read().strip()\n    print(solution(password))"
               },
               "sample_test_cases": [
                 {
@@ -1753,7 +1568,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(raw):\n    \"\"\"keep digits only, return last 10 digits\"\"\"\n    pass"
+                "default": "def solution(raw):\n    \"\"\"keep digits only, return last 10 digits\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    print(solution(raw))"
               },
               "sample_test_cases": [
                 {
@@ -1790,15 +1605,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "dict",
-                "aggregation",
-                "beginner",
-                "medium"
-              ],
+              "tags": ["python", "dict", "aggregation", "beginner", "medium"],
               "starter_code": {
-                "default": "def solution(records):\n    \"\"\"records: list[str] of category,amount\"\"\"\n    pass"
+                "default": "def solution(records):\n    \"\"\"records: list[str] of category,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    records = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(records))"
               },
               "sample_test_cases": [
                 {
@@ -1841,7 +1650,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(records, threshold):\n    \"\"\"records: list[str] where each row is sku,qty\"\"\"\n    pass"
+                "default": "def solution(records, threshold):\n    \"\"\"records: list[str] where each row is sku,qty\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    threshold = int(data[-1]) if data else 0\n    records = data[:-1] if len(data) > 1 else []\n    print(solution(records, threshold))"
               },
               "sample_test_cases": [
                 {
@@ -1876,15 +1685,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "helpdesk",
-                "grouping",
-                "beginner",
-                "medium"
-              ],
+              "tags": ["python", "helpdesk", "grouping", "beginner", "medium"],
               "starter_code": {
-                "default": "def solution(records):\n    \"\"\"records: list[str] where each row is ticket_id,severity\"\"\"\n    pass"
+                "default": "def solution(records):\n    \"\"\"records: list[str] where each row is ticket_id,severity\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    records = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(records))"
               },
               "sample_test_cases": [
                 {
@@ -1919,15 +1722,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "time",
-                "scheduling",
-                "beginner",
-                "medium"
-              ],
+              "tags": ["python", "time", "scheduling", "beginner", "medium"],
               "starter_code": {
-                "default": "def solution(start1, end1, start2, end2):\n    \"\"\"times are HH:MM\"\"\"\n    pass"
+                "default": "def solution(start1, end1, start2, end2):\n    \"\"\"times are HH:MM\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    start1 = data[0] if len(data) > 0 else ''\n    end1 = data[1] if len(data) > 1 else ''\n    start2 = data[2] if len(data) > 2 else ''\n    end2 = data[3] if len(data) > 3 else ''\n    print(solution(start1, end1, start2, end2))"
               },
               "sample_test_cases": [
                 {
@@ -1970,7 +1767,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(days_to_due):\n    pass"
+                "default": "def solution(days_to_due):\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    days_to_due = int(raw) if raw else 0\n    print(solution(days_to_due))"
               },
               "sample_test_cases": [
                 {
@@ -2015,7 +1812,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(logs, limit, window_seconds):\n    \"\"\"logs: list[str] where each row is timestamp,user\"\"\"\n    pass"
+                "default": "from collections import deque, defaultdict\n\ndef solution(logs, limit, window_seconds):\n    \"\"\"logs: list[str] where each row is timestamp,user\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    window_seconds = int(data[-1]) if len(data) >= 1 else 0\n    limit = int(data[-2]) if len(data) >= 2 else 0\n    logs = data[:-2] if len(data) > 2 else []\n    print(solution(logs, limit, window_seconds))"
               },
               "sample_test_cases": [
                 {
@@ -2050,15 +1847,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "fraud",
-                "transactions",
-                "beginner",
-                "hard"
-              ],
+              "tags": ["python", "fraud", "transactions", "beginner", "hard"],
               "starter_code": {
-                "default": "def solution(records, max_count, window_seconds):\n    \"\"\"records: list[str] where each row is timestamp,account,amount\"\"\"\n    pass"
+                "default": "from collections import deque, defaultdict\n\ndef solution(records, max_count, window_seconds):\n    \"\"\"records: list[str] where each row is timestamp,account,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    window_seconds = int(data[-1]) if len(data) >= 1 else 0\n    max_count = int(data[-2]) if len(data) >= 2 else 0\n    records = data[:-2] if len(data) > 2 else []\n    print(solution(records, max_count, window_seconds))"
               },
               "sample_test_cases": [
                 {
@@ -2093,15 +1884,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "sla",
-                "rolling-window",
-                "beginner",
-                "hard"
-              ],
+              "tags": ["python", "sla", "rolling-window", "beginner", "hard"],
               "starter_code": {
-                "default": "def solution(latencies_ms, threshold, window_size):\n    pass"
+                "default": "def solution(latencies_ms, threshold, window_size):\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    latencies_ms = [int(x) for x in data[0].split()] if len(data) > 0 else []\n    threshold = int(data[1]) if len(data) > 1 else 0\n    window_size = int(data[2]) if len(data) > 2 else 0\n    print(solution(latencies_ms, threshold, window_size))"
               },
               "sample_test_cases": [
                 {
@@ -2136,15 +1921,9 @@
               "skill": "Python",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python",
-                "webhooks",
-                "retries",
-                "beginner",
-                "hard"
-              ],
+              "tags": ["python", "webhooks", "retries", "beginner", "hard"],
               "starter_code": {
-                "default": "def solution(status_codes):\n    \"\"\"status_codes: list[int]\"\"\"\n    pass"
+                "default": "def solution(status_codes):\n    \"\"\"status_codes: list[int]\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    status_codes = [int(x) for x in raw.split()] if raw else []\n    print(solution(status_codes))"
               },
               "sample_test_cases": [
                 {
@@ -2187,7 +1966,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(capacity, groups):\n    \"\"\"groups: list[int], seated in arrival order\"\"\"\n    pass"
+                "default": "def solution(capacity, groups):\n    \"\"\"groups: list[int], seated in arrival order\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    capacity = int(data[0]) if len(data) > 0 else 0\n    groups = [int(x) for x in data[1].split()] if len(data) > 1 else []\n    print(solution(capacity, groups))"
               },
               "sample_test_cases": [
                 {
@@ -2226,15 +2005,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_1",
               "language": "Python",
-              "tags": [
-                "python",
-                "json",
-                "etl",
-                "intermediate_1",
-                "easy"
-              ],
+              "tags": ["python", "json", "etl", "intermediate_1", "easy"],
               "starter_code": {
-                "default": "def solution(events):\n    \"\"\"events: list[dict], return cleaned list[dict] with keys id,timestamp,type,payload\"\"\"\n    pass"
+                "default": "import json\n\ndef solution(events):\n    \"\"\"events: list[dict], return cleaned list[dict] with keys id,timestamp,type,payload\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    events = []\n    for line in sys.stdin:\n        line = line.strip()\n        if not line:\n            continue\n        try:\n            events.append(json.loads(line))\n        except ValueError:\n            continue\n    result = solution(events)\n    for item in result or []:\n        print(json.dumps(item))"
               },
               "sample_test_cases": [
                 {
@@ -2273,7 +2046,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(default_cfg, env_cfg, user_cfg):\n    \"\"\"merge dicts with precedence default < env < user\"\"\"\n    pass"
+                "default": "import json\n\ndef solution(default_cfg, env_cfg, user_cfg):\n    \"\"\"merge dicts with precedence default < env < user\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    default_cfg = json.loads(data[0]) if len(data) > 0 else {}\n    env_cfg = json.loads(data[1]) if len(data) > 1 else {}\n    user_cfg = json.loads(data[2]) if len(data) > 2 else {}\n    print(json.dumps(solution(default_cfg, env_cfg, user_cfg)))"
               },
               "sample_test_cases": [
                 {
@@ -2304,15 +2077,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_1",
               "language": "Python",
-              "tags": [
-                "python",
-                "api",
-                "pagination",
-                "intermediate_1",
-                "easy"
-              ],
+              "tags": ["python", "api", "pagination", "intermediate_1", "easy"],
               "starter_code": {
-                "default": "def solution(pages):\n    \"\"\"pages: list[list[dict]] where item has id; return deduped items by first appearance\"\"\"\n    pass"
+                "default": "import json\n\ndef solution(pages):\n    \"\"\"pages: list[list[dict]] where item has id; return deduped items by first appearance\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    pages = json.loads(raw) if raw else []\n    print(json.dumps(solution(pages)))"
               },
               "sample_test_cases": [
                 {
@@ -2343,15 +2110,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_1",
               "language": "Python",
-              "tags": [
-                "python",
-                "csv",
-                "validation",
-                "intermediate_1",
-                "easy"
-              ],
+              "tags": ["python", "csv", "validation", "intermediate_1", "easy"],
               "starter_code": {
-                "default": "def solution(header, rows, schema):\n    \"\"\"schema: {column:type} where type in int,float,str\"\"\"\n    pass"
+                "default": "import json\n\ndef solution(header, rows, schema):\n    \"\"\"schema: {column:type} where type in int,float,str\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    header = data[0].split(',') if len(data) > 0 and data[0] else []\n    rows_line = data[1] if len(data) > 1 else ''\n    rows = [r.split(',') for r in rows_line.split('|')] if rows_line else []\n    schema = json.loads(data[2]) if len(data) > 2 and data[2] else {}\n    print(solution(header, rows, schema))"
               },
               "sample_test_cases": [
                 {
@@ -2390,7 +2151,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(chunks):\n    \"\"\"chunks: list[list[dict]] where each dict has sequence and value\"\"\"\n    pass"
+                "default": "import json\n\ndef solution(chunks):\n    \"\"\"chunks: list[list[dict]] where each dict has sequence and value\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    chunks = json.loads(raw) if raw else []\n    print(json.dumps(solution(chunks)))"
               },
               "sample_test_cases": [
                 {
@@ -2431,7 +2192,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(events):\n    \"\"\"events: list[str] format service,hit|miss\"\"\"\n    pass"
+                "default": "def solution(events):\n    \"\"\"events: list[str] format service,hit|miss\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    events = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(events))"
               },
               "sample_test_cases": [
                 {
@@ -2470,7 +2231,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(payments, refunds):\n    \"\"\"payments/refunds: list[str] txn_id,amount\"\"\"\n    pass"
+                "default": "def solution(payments, refunds):\n    \"\"\"payments/refunds: list[str] txn_id,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    if '---' in data:\n        split_idx = data.index('---')\n        payments = data[:split_idx]\n        refunds = data[split_idx + 1:]\n    else:\n        payments = data\n        refunds = []\n    print(solution(payments, refunds))"
               },
               "sample_test_cases": [
                 {
@@ -2509,7 +2270,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(rows):\n    \"\"\"rows: list[str] tenant,plan,units\"\"\"\n    pass"
+                "default": "def solution(rows):\n    \"\"\"rows: list[str] tenant,plan,units\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    rows = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(rows))"
               },
               "sample_test_cases": [
                 {
@@ -2548,7 +2309,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(alerts, window_seconds):\n    \"\"\"alerts: list[str] timestamp,signature\"\"\"\n    pass"
+                "default": "def solution(alerts, window_seconds):\n    \"\"\"alerts: list[str] timestamp,signature\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    window_seconds = int(data[-1]) if data else 0\n    alerts = data[:-1] if len(data) > 1 else []\n    print(solution(alerts, window_seconds))"
               },
               "sample_test_cases": [
                 {
@@ -2587,7 +2348,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(delays):\n    \"\"\"delays: list[int] where negative means early\"\"\"\n    pass"
+                "default": "def solution(delays):\n    \"\"\"delays: list[int] where negative means early\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    delays = [int(x) for x in raw.split()] if raw else []\n    print(solution(delays))"
               },
               "sample_test_cases": [
                 {
@@ -2628,7 +2389,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(records):\n    \"\"\"records: list[str] key,payload_hash\"\"\"\n    pass"
+                "default": "def solution(records):\n    \"\"\"records: list[str] key,payload_hash\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    records = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(records))"
               },
               "sample_test_cases": [
                 {
@@ -2667,7 +2428,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(logs, limit, window_seconds):\n    \"\"\"logs: list[str] timestamp,user,ip\"\"\"\n    pass"
+                "default": "from collections import deque, defaultdict\n\ndef solution(logs, limit, window_seconds):\n    \"\"\"logs: list[str] timestamp,user,ip\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    window_seconds = int(data[-1]) if len(data) >= 1 else 0\n    limit = int(data[-2]) if len(data) >= 2 else 0\n    logs = data[:-2] if len(data) > 2 else []\n    print(solution(logs, limit, window_seconds))"
               },
               "sample_test_cases": [
                 {
@@ -2706,7 +2467,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(events, allowed_lateness):\n    \"\"\"events: list[int] event_time\"\"\"\n    pass"
+                "default": "def solution(events, allowed_lateness):\n    \"\"\"events: list[int] event_time\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.strip() for line in sys.stdin if line.strip() != '']\n    events = [int(x) for x in data[0].split()] if len(data) > 0 else []\n    allowed_lateness = int(data[1]) if len(data) > 1 else 0\n    print(solution(events, allowed_lateness))"
               },
               "sample_test_cases": [
                 {
@@ -2745,7 +2506,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(logs, threshold):\n    \"\"\"logs: list[str] service,status where status in ok|retry|error\"\"\"\n    pass"
+                "default": "def solution(logs, threshold):\n    \"\"\"logs: list[str] service,status where status in ok|retry|error\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    threshold = int(data[-1]) if data else 0\n    logs = data[:-1] if len(data) > 1 else []\n    print(solution(logs, threshold))"
               },
               "sample_test_cases": [
                 {
@@ -2784,7 +2545,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(logs, quota, interval_seconds):\n    \"\"\"logs: list[str] timestamp,tenant\"\"\"\n    pass"
+                "default": "from collections import deque, defaultdict\n\ndef solution(logs, quota, interval_seconds):\n    \"\"\"logs: list[str] timestamp,tenant\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    data = [line.rstrip('\\n') for line in sys.stdin]\n    interval_seconds = int(data[-1]) if len(data) >= 1 else 0\n    quota = int(data[-2]) if len(data) >= 2 else 0\n    logs = data[:-2] if len(data) > 2 else []\n    print(solution(logs, quota, interval_seconds))"
               },
               "sample_test_cases": [
                 {
@@ -2827,7 +2588,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(default_flags, rules, context):\n    # default_flags: dict[str, bool]\n    # rules: list[dict] with keys flag,key,value,flag_value,priority\n    # context: dict[str, str]\n    pass"
+                "default": "import json\n\ndef solution(default_flags, rules, context):\n    # default_flags: dict[str, bool]\n    # rules: list[dict] with keys flag,key,value,flag_value,priority\n    # context: dict[str, str]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    default_flags = data.get('defaults', {})\n    rules = data.get('rules', [])\n    context = data.get('context', {})\n    print(json.dumps(solution(default_flags, rules, context)))"
               },
               "sample_test_cases": [
                 {
@@ -2854,15 +2615,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "etl",
-                "data-cleaning",
-                "imputation",
-                "easy"
-              ],
+              "tags": ["python", "etl", "data-cleaning", "imputation", "easy"],
               "starter_code": {
-                "default": "def solution(rows, strategies):\n    # rows: list[dict]\n    # strategies: dict[col] -> {'type':'constant'|'mean'|'mode','value':...}\n    pass"
+                "default": "import json\n\ndef solution(rows, strategies):\n    # rows: list[dict]\n    # strategies: dict[col] -> {'type':'constant'|'mean'|'mode','value':...}\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    rows = data.get('rows', [])\n    strategies = data.get('strategies', {})\n    print(json.dumps(solution(rows, strategies)))"
               },
               "sample_test_cases": [
                 {
@@ -2889,15 +2644,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "inventory",
-                "diff",
-                "warehouse",
-                "easy"
-              ],
+              "tags": ["python", "inventory", "diff", "warehouse", "easy"],
               "starter_code": {
-                "default": "def solution(old_snapshot, new_snapshot):\n    # each snapshot: dict[sku] -> quantity\n    pass"
+                "default": "import json\n\ndef solution(old_snapshot, new_snapshot):\n    # each snapshot: dict[sku] -> quantity\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    old_snapshot = data.get('old', {})\n    new_snapshot = data.get('new', {})\n    print(json.dumps(solution(old_snapshot, new_snapshot)))"
               },
               "sample_test_cases": [
                 {
@@ -2924,15 +2673,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "sessions",
-                "security",
-                "timeouts",
-                "easy"
-              ],
+              "tags": ["python", "sessions", "security", "timeouts", "easy"],
               "starter_code": {
-                "default": "def solution(events, threshold_seconds, now_ts):\n    # events: list[(session_id, ts)] activity events\n    pass"
+                "default": "import json\n\ndef solution(events, threshold_seconds, now_ts):\n    # events: list[(session_id, ts)] activity events\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    events = data.get('events', [])\n    threshold_seconds = data.get('threshold_seconds', 0)\n    now_ts = data.get('now_ts', 0)\n    print(json.dumps(solution(events, threshold_seconds, now_ts)))"
               },
               "sample_test_cases": [
                 {
@@ -2959,15 +2702,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "kpi",
-                "analytics",
-                "business",
-                "easy"
-              ],
+              "tags": ["python", "kpi", "analytics", "business", "easy"],
               "starter_code": {
-                "default": "def solution(actuals, targets):\n    # return dict[kpi] -> on_track|at_risk|off_track\n    pass"
+                "default": "import json\n\ndef solution(actuals, targets):\n    # return dict[kpi] -> on_track|at_risk|off_track\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    actuals = data.get('actuals', {})\n    targets = data.get('targets', {})\n    print(json.dumps(solution(actuals, targets)))"
               },
               "sample_test_cases": [
                 {
@@ -3004,7 +2741,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(records, window_days):\n    # records: list[dict] with date,channel,impressions,conversions\n    pass"
+                "default": "import json\n\ndef solution(records, window_days):\n    # records: list[dict] with date,channel,impressions,conversions\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    records = data.get('records', [])\n    window_days = data.get('window_days', 0)\n    print(json.dumps(solution(records, window_days)))"
               },
               "sample_test_cases": [
                 {
@@ -3031,15 +2768,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "fraud",
-                "risk",
-                "normalization",
-                "medium"
-              ],
+              "tags": ["python", "fraud", "risk", "normalization", "medium"],
               "starter_code": {
-                "default": "def solution(scores, bands):\n    # scores: list[float], bands: list[(label,min_inclusive,max_exclusive)]\n    pass"
+                "default": "import json\n\ndef solution(scores, bands):\n    # scores: list[float], bands: list[(label,min_inclusive,max_exclusive)]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    scores = data.get('scores', [])\n    bands = data.get('bands', [])\n    print(json.dumps(solution(scores, bands)))"
               },
               "sample_test_cases": [
                 {
@@ -3066,15 +2797,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "search",
-                "ctr",
-                "aggregation",
-                "medium"
-              ],
+              "tags": ["python", "search", "ctr", "aggregation", "medium"],
               "starter_code": {
-                "default": "def solution(records, min_impressions):\n    # records: list[dict] with query, impressions, clicks\n    pass"
+                "default": "import json\n\ndef solution(records, min_impressions):\n    # records: list[dict] with query, impressions, clicks\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    records = data.get('records', [])\n    min_impressions = data.get('min_impressions', 0)\n    print(json.dumps(solution(records, min_impressions)))"
               },
               "sample_test_cases": [
                 {
@@ -3101,15 +2826,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "sla",
-                "uptime",
-                "latency",
-                "medium"
-              ],
+              "tags": ["python", "sla", "uptime", "latency", "medium"],
               "starter_code": {
-                "default": "def solution(records, latency_sla_ms):\n    # records: list[dict] with region, uptime_minutes, downtime_minutes, p95_latency_ms\n    pass"
+                "default": "import json\n\ndef solution(records, latency_sla_ms):\n    # records: list[dict] with region, uptime_minutes, downtime_minutes, p95_latency_ms\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    records = data.get('records', [])\n    latency_sla_ms = data.get('latency_sla_ms', 0)\n    print(json.dumps(solution(records, latency_sla_ms)))"
               },
               "sample_test_cases": [
                 {
@@ -3136,15 +2855,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "churn",
-                "risk-modeling",
-                "saas",
-                "medium"
-              ],
+              "tags": ["python", "churn", "risk-modeling", "saas", "medium"],
               "starter_code": {
-                "default": "def solution(customers):\n    # customer has product,billing,support signal scores in [0,1]\n    pass"
+                "default": "import json\n\ndef solution(customers):\n    # customer has product,billing,support signal scores in [0,1]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    customers = data.get('customers', [])\n    print(json.dumps(solution(customers)))"
               },
               "sample_test_cases": [
                 {
@@ -3173,15 +2886,9 @@
               "skill": "Python",
               "skill_level": "Intermediate_2",
               "language": "Python",
-              "tags": [
-                "python",
-                "queues",
-                "sla",
-                "backlog",
-                "hard"
-              ],
+              "tags": ["python", "queues", "sla", "backlog", "hard"],
               "starter_code": {
-                "default": "def solution(tasks, sla_by_class):\n    # tasks: list[dict] with queue_class, enqueued_ts, started_ts\n    pass"
+                "default": "import json\n\ndef solution(tasks, sla_by_class):\n    # tasks: list[dict] with queue_class, enqueued_ts, started_ts\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    tasks = data.get('tasks', [])\n    sla_by_class = data.get('sla_by_class', {})\n    print(json.dumps(solution(tasks, sla_by_class)))"
               },
               "sample_test_cases": [
                 {
@@ -3216,7 +2923,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(acquisition_logs, p95_threshold_ms):\n    # log has lock_key, wait_ms\n    pass"
+                "default": "import json\n\ndef solution(acquisition_logs, p95_threshold_ms):\n    # log has lock_key, wait_ms\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    acquisition_logs = data.get('acquisition_logs', [])\n    p95_threshold_ms = data.get('p95_threshold_ms', 0)\n    print(json.dumps(solution(acquisition_logs, p95_threshold_ms)))"
               },
               "sample_test_cases": [
                 {
@@ -3251,7 +2958,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(events):\n    # events sorted by ts: region,status where status in primary_down|traffic_shifted|primary_restored\n    pass"
+                "default": "import json\n\ndef solution(events):\n    # events sorted by ts: region,status where status in primary_down|traffic_shifted|primary_restored\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    events = data.get('events', [])\n    print(json.dumps(solution(events)))"
               },
               "sample_test_cases": [
                 {
@@ -3286,7 +2993,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(series, baseline_window, sigma):\n    # return indices where value > mean + sigma*std of previous baseline_window points\n    pass"
+                "default": "import json\n\ndef solution(series, baseline_window, sigma):\n    # return indices where value > mean + sigma*std of previous baseline_window points\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    series = data.get('series', [])\n    baseline_window = data.get('baseline_window', 0)\n    sigma = data.get('sigma', 0)\n    print(json.dumps(solution(series, baseline_window, sigma)))"
               },
               "sample_test_cases": [
                 {
@@ -3321,7 +3028,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(request_logs, share_threshold):\n    # request_logs: list[dict] with partition,count\n    pass"
+                "default": "import json\n\ndef solution(request_logs, share_threshold):\n    # request_logs: list[dict] with partition,count\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    request_logs = data.get('request_logs', [])\n    share_threshold = data.get('share_threshold', 0)\n    print(json.dumps(solution(request_logs, share_threshold)))"
               },
               "sample_test_cases": [
                 {
@@ -3361,7 +3068,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(record, sensitive_fields):\n    # return redacted copy preserving keys\n    pass"
+                "default": "import json\n\ndef solution(record, sensitive_fields):\n    # return redacted copy preserving keys\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    record = data.get('record', {})\n    sensitive_fields = data.get('sensitive_fields', [])\n    print(json.dumps(solution(record, sensitive_fields)))"
               },
               "sample_test_cases": [
                 {
@@ -3397,7 +3104,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(masked_record, pii_fields):\n    # return true if all pii fields are masked as ***\n    pass"
+                "default": "import json\n\ndef solution(masked_record, pii_fields):\n    # return true if all pii fields are masked as ***\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    masked_record = data.get('masked_record', {})\n    pii_fields = data.get('pii_fields', [])\n    print(solution(masked_record, pii_fields))"
               },
               "sample_test_cases": [
                 {
@@ -3432,7 +3139,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(component_statuses):\n    # statuses: list[str] of pass|warn|fail\n    pass"
+                "default": "def solution(component_statuses):\n    # statuses: list[str] of pass|warn|fail\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    component_statuses = raw.split() if raw else []\n    print(solution(component_statuses))"
               },
               "sample_test_cases": [
                 {
@@ -3468,7 +3175,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(checks):\n    # checks: dict[str,bool]\n    pass"
+                "default": "import json\n\ndef solution(checks):\n    # checks: dict[str,bool]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    checks = json.loads(raw) if raw else {}\n    print(solution(checks))"
               },
               "sample_test_cases": [
                 {
@@ -3504,7 +3211,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(events):\n    # events: list[dict] with step, start_ts, end_ts\n    pass"
+                "default": "import json\n\ndef solution(events):\n    # events: list[dict] with step, start_ts, end_ts\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    events = json.loads(raw) if raw else []\n    print(json.dumps(solution(events)))"
               },
               "sample_test_cases": [
                 {
@@ -3542,7 +3249,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(suppliers):\n    # each supplier has delay_rate, defect_rate, geo_risk in [0,1]\n    pass"
+                "default": "import json\n\ndef solution(suppliers):\n    # each supplier has delay_rate, defect_rate, geo_risk in [0,1]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    suppliers = json.loads(raw) if raw else []\n    print(json.dumps(solution(suppliers)))"
               },
               "sample_test_cases": [
                 {
@@ -3578,7 +3285,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(total_shared_cost, usage_weights):\n    # usage_weights: dict[team] -> float\n    pass"
+                "default": "import json\n\ndef solution(total_shared_cost, usage_weights):\n    # usage_weights: dict[team] -> float\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    total_shared_cost = data.get('total_shared_cost', 0)\n    usage_weights = data.get('usage_weights', {})\n    print(json.dumps(solution(total_shared_cost, usage_weights)))"
               },
               "sample_test_cases": [
                 {
@@ -3614,7 +3321,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(feeds):\n    # feed has freshness_score, completeness_score, error_rate in [0,1]\n    pass"
+                "default": "import json\n\ndef solution(feeds):\n    # feed has freshness_score, completeness_score, error_rate in [0,1]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    feeds = json.loads(raw) if raw else []\n    print(json.dumps(solution(feeds)))"
               },
               "sample_test_cases": [
                 {
@@ -3650,7 +3357,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(control_metrics, variant_metrics, thresholds):\n    # thresholds: max allowed negative deltas per metric\n    pass"
+                "default": "import json\n\ndef solution(control_metrics, variant_metrics, thresholds):\n    # thresholds: max allowed negative deltas per metric\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    control_metrics = data.get('control', {})\n    variant_metrics = data.get('variant', {})\n    thresholds = data.get('thresholds', {})\n    print(json.dumps(solution(control_metrics, variant_metrics, thresholds)))"
               },
               "sample_test_cases": [
                 {
@@ -3686,7 +3393,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(notes, theme_keywords):\n    # map each note to first matching theme; else 'other'\n    pass"
+                "default": "import json\n\ndef solution(notes, theme_keywords):\n    # map each note to first matching theme; else 'other'\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    notes = data.get('notes', [])\n    theme_keywords = data.get('theme_keywords', {})\n    print(json.dumps(solution(notes, theme_keywords)))"
               },
               "sample_test_cases": [
                 {
@@ -3724,7 +3431,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(access_events):\n    # event has user, device, location, trusted_devices, usual_locations\n    pass"
+                "default": "import json\n\ndef solution(access_events):\n    # event has user, device, location, trusted_devices, usual_locations\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    access_events = json.loads(raw) if raw else []\n    print(json.dumps(solution(access_events)))"
               },
               "sample_test_cases": [
                 {
@@ -3760,7 +3467,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(credentials, max_age_days, today_day):\n    # credential has id,last_rotated_day\n    pass"
+                "default": "import json\n\ndef solution(credentials, max_age_days, today_day):\n    # credential has id,last_rotated_day\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    credentials = data.get('credentials', [])\n    max_age_days = data.get('max_age_days', 0)\n    today_day = data.get('today_day', 0)\n    print(json.dumps(solution(credentials, max_age_days, today_day)))"
               },
               "sample_test_cases": [
                 {
@@ -3796,7 +3503,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(baseline, current, critical_paths, threshold_ms):\n    # baseline/current: dict[path] -> p95 latency\n    pass"
+                "default": "import json\n\ndef solution(baseline, current, critical_paths, threshold_ms):\n    # baseline/current: dict[path] -> p95 latency\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    baseline = data.get('baseline', {})\n    current = data.get('current', {})\n    critical_paths = data.get('critical_paths', [])\n    threshold_ms = data.get('threshold_ms', 0)\n    print(json.dumps(solution(baseline, current, critical_paths, threshold_ms)))"
               },
               "sample_test_cases": [
                 {
@@ -3832,7 +3539,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(cluster_configs):\n    # cluster_configs: dict[cluster] -> dict[key] -> value\n    pass"
+                "default": "import json\n\ndef solution(cluster_configs):\n    # cluster_configs: dict[cluster] -> dict[key] -> value\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    cluster_configs = json.loads(raw) if raw else {}\n    print(json.dumps(solution(cluster_configs)))"
               },
               "sample_test_cases": [
                 {
@@ -3868,7 +3575,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(operations, allowed_windows):\n    # operation has id, day, minute_of_day; windows: dict[day] -> list[(start,end)] inclusive\n    pass"
+                "default": "import json\n\ndef solution(operations, allowed_windows):\n    # operation has id, day, minute_of_day; windows: dict[day] -> list[(start,end)] inclusive\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    operations = data.get('operations', [])\n    allowed_windows = data.get('allowed_windows', {})\n    print(json.dumps(solution(operations, allowed_windows)))"
               },
               "sample_test_cases": [
                 {
@@ -3907,7 +3614,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(capacity_rows):\n    # row: region,service,total_capacity,used_capacity\n    pass"
+                "default": "import json\n\ndef solution(capacity_rows):\n    # row: region,service,total_capacity,used_capacity\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    capacity_rows = json.loads(raw) if raw else []\n    print(json.dumps(solution(capacity_rows)))"
               },
               "sample_test_cases": [
                 {
@@ -3943,7 +3650,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(events):\n    # event: service,delta_pct,reason_hint\n    pass"
+                "default": "import json\n\ndef solution(events):\n    # event: service,delta_pct,reason_hint\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    events = json.loads(raw) if raw else []\n    print(json.dumps(solution(events)))"
               },
               "sample_test_cases": [
                 {
@@ -3978,7 +3685,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(actuals, targets):\n    # return summary list of kpi,status\n    pass"
+                "default": "import json\n\ndef solution(actuals, targets):\n    # return summary list of kpi,status\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    actuals = data.get('actuals', {})\n    targets = data.get('targets', {})\n    print(json.dumps(solution(actuals, targets)))"
               },
               "sample_test_cases": [
                 {
@@ -4013,7 +3720,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(old_schema, new_schema):\n    # schemas: dict[field] -> type\n    pass"
+                "default": "import json\n\ndef solution(old_schema, new_schema):\n    # schemas: dict[field] -> type\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    old_schema = data.get('old', {})\n    new_schema = data.get('new', {})\n    print(json.dumps(solution(old_schema, new_schema)))"
               },
               "sample_test_cases": [
                 {
@@ -4049,7 +3756,7 @@
                 "easy"
               ],
               "starter_code": {
-                "default": "def solution(tasks):\n    # task has id,risk_score,urgency_score\n    pass"
+                "default": "import json\n\ndef solution(tasks):\n    # task has id,risk_score,urgency_score\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    tasks = json.loads(raw) if raw else []\n    print(json.dumps(solution(tasks)))"
               },
               "sample_test_cases": [
                 {
@@ -4087,7 +3794,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(signals):\n    # signal row has user,chargeback_ratio,velocity_score,device_risk\n    pass"
+                "default": "import json\n\ndef solution(signals):\n    # signal row has user,chargeback_ratio,velocity_score,device_risk\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    signals = json.loads(raw) if raw else []\n    print(json.dumps(solution(signals)))"
               },
               "sample_test_cases": [
                 {
@@ -4123,7 +3830,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(usage_records, invoice_records, price_map):\n    # find unbilled usage and amount mismatches\n    pass"
+                "default": "import json\n\ndef solution(usage_records, invoice_records, price_map):\n    # find unbilled usage and amount mismatches\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    usage_records = data.get('usage', [])\n    invoice_records = data.get('invoices', [])\n    price_map = data.get('price_map', {})\n    print(json.dumps(solution(usage_records, invoice_records, price_map)))"
               },
               "sample_test_cases": [
                 {
@@ -4159,7 +3866,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(required_features, locale_translations):\n    # locale_translations: dict[locale] -> set/list translated feature keys\n    pass"
+                "default": "import json\n\ndef solution(required_features, locale_translations):\n    # locale_translations: dict[locale] -> set/list translated feature keys\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    required_features = data.get('required', [])\n    locale_translations = data.get('translations', {})\n    print(json.dumps(solution(required_features, locale_translations)))"
               },
               "sample_test_cases": [
                 {
@@ -4195,7 +3902,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(checkpoints, weights, min_score):\n    # checkpoints: dict[name]->bool\n    pass"
+                "default": "import json\n\ndef solution(checkpoints, weights, min_score):\n    # checkpoints: dict[name]->bool\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    checkpoints = data.get('checkpoints', {})\n    weights = data.get('weights', {})\n    min_score = data.get('min_score', 0)\n    print(json.dumps(solution(checkpoints, weights, min_score)))"
               },
               "sample_test_cases": [
                 {
@@ -4231,7 +3938,7 @@
                 "medium"
               ],
               "starter_code": {
-                "default": "def solution(results):\n    # row: region,objective,passed,max_points\n    pass"
+                "default": "import json\n\ndef solution(results):\n    # row: region,objective,passed,max_points\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    results = json.loads(raw) if raw else []\n    print(json.dumps(solution(results)))"
               },
               "sample_test_cases": [
                 {
@@ -4269,7 +3976,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(error_rates, latency_p95, err_budget, lat_threshold):\n    # return breach probability in [0,1]\n    pass"
+                "default": "import json\n\ndef solution(error_rates, latency_p95, err_budget, lat_threshold):\n    # return breach probability in [0,1]\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    error_rates = data.get('error_rates', [])\n    latency_p95 = data.get('latency_p95', [])\n    err_budget = data.get('err_budget', 0)\n    lat_threshold = data.get('lat_threshold', 0)\n    print(solution(error_rates, latency_p95, err_budget, lat_threshold))"
               },
               "sample_test_cases": [
                 {
@@ -4305,7 +4012,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(accounts):\n    # account has domain,external_id,email_hash,phone_hash\n    pass"
+                "default": "import json\n\ndef solution(accounts):\n    # account has domain,external_id,email_hash,phone_hash\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    accounts = json.loads(raw) if raw else []\n    print(json.dumps(solution(accounts)))"
               },
               "sample_test_cases": [
                 {
@@ -4341,7 +4048,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(series, threshold_ratio):\n    # row: ts,demand,supply\n    pass"
+                "default": "import json\n\ndef solution(series, threshold_ratio):\n    # row: ts,demand,supply\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    series = data if isinstance(data, list) else data.get('series', [])\n    threshold_ratio = data.get('threshold_ratio', 0) if isinstance(data, dict) else 0\n    print(json.dumps(solution(series, threshold_ratio)))"
               },
               "sample_test_cases": [
                 {
@@ -4377,7 +4084,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(edge_signals, app_signals, req_threshold, err_threshold):\n    # signals keyed by minute bucket\n    pass"
+                "default": "import json\n\ndef solution(edge_signals, app_signals, req_threshold, err_threshold):\n    # signals keyed by minute bucket\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    edge_signals = data.get('edge', {})\n    app_signals = data.get('app', {})\n    req_threshold = data.get('req_threshold', 0)\n    err_threshold = data.get('err_threshold', 0)\n    print(json.dumps(solution(edge_signals, app_signals, req_threshold, err_threshold)))"
               },
               "sample_test_cases": [
                 {
@@ -4413,7 +4120,7 @@
                 "hard"
               ],
               "starter_code": {
-                "default": "def solution(incidents, overlap_minutes):\n    # incident: provider,region,start,end\n    pass"
+                "default": "import json\n\ndef solution(incidents, overlap_minutes):\n    # incident: provider,region,start,end\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    raw = sys.stdin.read().strip()\n    data = json.loads(raw) if raw else {}\n    incidents = data if isinstance(data, list) else data.get('incidents', [])\n    overlap_minutes = data.get('overlap_minutes', 0) if isinstance(data, dict) else 0\n    print(json.dumps(solution(incidents, overlap_minutes)))"
               },
               "sample_test_cases": [
                 {
@@ -4476,10 +4183,7 @@
               "skill": "Python with Flask",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python-with-flask",
-                "beginner"
-              ],
+              "tags": ["python-with-flask", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -4561,10 +4265,7 @@
               "skill": "Python with Django",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python-with-django",
-                "beginner"
-              ],
+              "tags": ["python-with-django", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -4646,10 +4347,7 @@
               "skill": "Python for Data Science",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "python-for-data-science",
-                "beginner"
-              ],
+              "tags": ["python-for-data-science", "beginner"],
               "starter_code": {
                 "default": "def solution():\n    pass"
               },
@@ -4721,13 +4419,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "strings",
-                "parsing",
-                "aggregation",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["strings", "parsing", "aggregation", "Beginner", "Easy"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static long dailySalesTotal(List<String> lines) {\n\t\t// Write your solution here\n\t\treturn 0L;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> lines = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tlines.add(line);\n\t\t}\n\t\tlong result = dailySalesTotal(lines);\n\t\tSystem.out.println(result);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static long dailySalesTotal(List<String> lines) {\n\t\t// Write your solution here\n\t\treturn 0L;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> lines = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tlines.add(line);\n\t\t}\n\t\tlong result = dailySalesTotal(lines);\n\t\tSystem.out.println(result);\n\t}\n}"
@@ -4773,13 +4465,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "hashmap",
-                "strings",
-                "sorting",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["hashmap", "strings", "sorting", "Beginner", "Easy"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> emailDomainCounter(List<String> emails) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> emails = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\temails.add(line.trim());\n\t\t}\n\t\tList<String> result = emailDomainCounter(emails);\n\t\tfor (String row : result) System.out.println(row);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> emailDomainCounter(List<String> emails) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> emails = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\temails.add(line.trim());\n\t\t}\n\t\tList<String> result = emailDomainCounter(emails);\n\t\tfor (String row : result) System.out.println(row);\n\t}\n}"
@@ -4929,13 +4615,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "strings",
-                "data-cleaning",
-                "regex",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["strings", "data-cleaning", "regex", "Beginner", "Easy"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String normalizePhoneNumber(String raw) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString raw = sc.nextLine();\n\t\tString result = normalizePhoneNumber(raw);\n\t\tSystem.out.println(result);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String normalizePhoneNumber(String raw) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString raw = sc.nextLine();\n\t\tString result = normalizePhoneNumber(raw);\n\t\tSystem.out.println(result);\n\t}\n}"
@@ -5035,13 +4715,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "arrays",
-                "filtering",
-                "sorting",
-                "Beginner",
-                "Medium"
-              ],
+              "tags": ["arrays", "filtering", "sorting", "Beginner", "Medium"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> inventoryReorderAlerts(List<String> records, int threshold) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint threshold = Integer.parseInt(sc.nextLine().trim());\n\t\tList<String> records = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trecords.add(line);\n\t\t}\n\t\tList<String> result = inventoryReorderAlerts(records, threshold);\n\t\tfor (String sku : result) System.out.println(sku);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> inventoryReorderAlerts(List<String> records, int threshold) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint threshold = Integer.parseInt(sc.nextLine().trim());\n\t\tList<String> records = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trecords.add(line);\n\t\t}\n\t\tList<String> result = inventoryReorderAlerts(records, threshold);\n\t\tfor (String sku : result) System.out.println(sku);\n\t}\n}"
@@ -5087,13 +4761,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "hashmap",
-                "counting",
-                "strings",
-                "Beginner",
-                "Medium"
-              ],
+              "tags": ["hashmap", "counting", "strings", "Beginner", "Medium"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String supportTicketPriorityBuckets(List<String> severities) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> severities = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tseverities.add(line.trim());\n\t\t}\n\t\tString result = supportTicketPriorityBuckets(severities);\n\t\tSystem.out.println(result);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String supportTicketPriorityBuckets(List<String> severities) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> severities = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tseverities.add(line.trim());\n\t\t}\n\t\tString result = supportTicketPriorityBuckets(severities);\n\t\tSystem.out.println(result);\n\t}\n}"
@@ -5139,13 +4807,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "time",
-                "intervals",
-                "parsing",
-                "Beginner",
-                "Medium"
-              ],
+              "tags": ["time", "intervals", "parsing", "Beginner", "Medium"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean meetingOverlapChecker(String start1, String end1, String start2, String end2) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString start1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString end1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString start2 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString end2 = sc.nextLine().trim();\n\t\tSystem.out.println(meetingOverlapChecker(start1, end1, start2, end2));\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static boolean meetingOverlapChecker(String start1, String end1, String start2, String end2) {\n\t\t// Write your solution here\n\t\treturn false;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tString start1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString end1 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString start2 = sc.nextLine().trim();\n\t\tif (!sc.hasNextLine()) return;\n\t\tString end2 = sc.nextLine().trim();\n\t\tSystem.out.println(meetingOverlapChecker(start1, end1, start2, end2));\n\t}\n}"
@@ -5401,13 +5063,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "state-machine",
-                "logs",
-                "counting",
-                "Beginner",
-                "Hard"
-              ],
+              "tags": ["state-machine", "logs", "counting", "Beginner", "Hard"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int webhookRetryStormCounter(List<String> statuses) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> statuses = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tstatuses.add(line.trim());\n\t\t}\n\t\tSystem.out.println(webhookRetryStormCounter(statuses));\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int webhookRetryStormCounter(List<String> statuses) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> statuses = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tstatuses.add(line.trim());\n\t\t}\n\t\tSystem.out.println(webhookRetryStormCounter(statuses));\n\t}\n}"
@@ -5453,13 +5109,7 @@
               "skill": "Java",
               "skill_level": "Beginner",
               "language": "Java",
-              "tags": [
-                "greedy",
-                "simulation",
-                "arrays",
-                "Beginner",
-                "Hard"
-              ],
+              "tags": ["greedy", "simulation", "arrays", "Beginner", "Hard"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int capacitySeatAllocation(int totalSeats, int[] groupSizes) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint totalSeats = Integer.parseInt(sc.nextLine().trim());\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p = sc.nextLine().trim().split(\"\\\\s+\");\n\t\tint[] groups = new int[p.length];\n\t\tfor (int i = 0; i < p.length; i++) groups[i] = Integer.parseInt(p[i]);\n\t\tSystem.out.println(capacitySeatAllocation(totalSeats, groups));\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static int capacitySeatAllocation(int totalSeats, int[] groupSizes) {\n\t\t// Write your solution here\n\t\treturn 0;\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tif (!sc.hasNextLine()) return;\n\t\tint totalSeats = Integer.parseInt(sc.nextLine().trim());\n\t\tif (!sc.hasNextLine()) return;\n\t\tString[] p = sc.nextLine().trim().split(\"\\\\s+\");\n\t\tint[] groups = new int[p.length];\n\t\tfor (int i = 0; i < p.length; i++) groups[i] = Integer.parseInt(p[i]);\n\t\tSystem.out.println(capacitySeatAllocation(totalSeats, groups));\n\t}\n}"
@@ -5665,13 +5315,7 @@
               "skill": "Java",
               "skill_level": "Intermediate_1",
               "language": "Java",
-              "tags": [
-                "csv",
-                "validation",
-                "schema",
-                "Intermediate_1",
-                "Easy"
-              ],
+              "tags": ["csv", "validation", "schema", "Intermediate_1", "Easy"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String validateCsv(List<String> lines) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> lines = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tlines.add(line);\n\t\t}\n\t\tSystem.out.println(validateCsv(lines));\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static String validateCsv(List<String> lines) {\n\t\t// Write your solution here\n\t\treturn \"\";\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> lines = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\tlines.add(line);\n\t\t}\n\t\tSystem.out.println(validateCsv(lines));\n\t}\n}"
@@ -6821,13 +6465,7 @@
               "skill": "Java",
               "skill_level": "Intermediate_2",
               "language": "Java",
-              "tags": [
-                "queues",
-                "sla",
-                "detection",
-                "Intermediate_2",
-                "Hard"
-              ],
+              "tags": ["queues", "sla", "detection", "Intermediate_2", "Hard"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> backlogBreach(List<String> rows) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> rows = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trows.add(line);\n\t\t}\n\t\tList<String> out = backlogBreach(rows);\n\t\tfor (String x : out) System.out.println(x);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> backlogBreach(List<String> rows) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> rows = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trows.add(line);\n\t\t}\n\t\tList<String> out = backlogBreach(rows);\n\t\tfor (String x : out) System.out.println(x);\n\t}\n}"
@@ -7085,13 +6723,7 @@
               "skill": "Java",
               "skill_level": "Specialist_1",
               "language": "Java",
-              "tags": [
-                "security",
-                "redaction",
-                "logs",
-                "Specialist_1",
-                "Easy"
-              ],
+              "tags": ["security", "redaction", "logs", "Specialist_1", "Easy"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> redactLogs(List<String> rows) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> rows = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trows.add(line);\n\t\t}\n\t\tList<String> result = redactLogs(rows);\n\t\tfor (String r : result) System.out.println(r);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> redactLogs(List<String> rows) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> rows = new ArrayList<>();\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line == null || line.trim().equals(\"\")) break;\n\t\t\trows.add(line);\n\t\t}\n\t\tList<String> result = redactLogs(rows);\n\t\tfor (String r : result) System.out.println(r);\n\t}\n}"
@@ -8187,13 +7819,7 @@
               "skill": "Java",
               "skill_level": "Specialist_2",
               "language": "Java",
-              "tags": [
-                "billing",
-                "audit",
-                "revenue",
-                "Specialist_2",
-                "Medium"
-              ],
+              "tags": ["billing", "audit", "revenue", "Specialist_2", "Medium"],
               "starter_code": {
                 "default": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> revenueLeakageAuditor(List<String> usage, List<String> billed) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> usage = new ArrayList<>(), billed = new ArrayList<>();\n\t\tint section = 0;\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line.trim().equals(\"---\")) { section++; continue; }\n\t\t\tif (line.trim().equals(\"\")) break;\n\t\t\tif (section == 0) usage.add(line); else billed.add(line);\n\t\t}\n\t\tList<String> result = revenueLeakageAuditor(usage, billed);\n\t\tfor (String r : result) System.out.println(r);\n\t}\n}",
                 "java": "import java.util.*;\n\npublic class Main {\n\n\tpublic static List<String> revenueLeakageAuditor(List<String> usage, List<String> billed) {\n\t\t// Write your solution here\n\t\treturn new ArrayList<>();\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\tList<String> usage = new ArrayList<>(), billed = new ArrayList<>();\n\t\tint section = 0;\n\t\twhile (sc.hasNextLine()) {\n\t\t\tString line = sc.nextLine();\n\t\t\tif (line.trim().equals(\"---\")) { section++; continue; }\n\t\t\tif (line.trim().equals(\"\")) break;\n\t\t\tif (section == 0) usage.add(line); else billed.add(line);\n\t\t}\n\t\tList<String> result = revenueLeakageAuditor(usage, billed);\n\t\tfor (String r : result) System.out.println(r);\n\t}\n}"
@@ -8683,10 +8309,7 @@
               "skill": "Java Spring Boot",
               "skill_level": "Beginner",
               "language": "Python",
-              "tags": [
-                "java-spring-boot",
-                "beginner"
-              ],
+              "tags": ["java-spring-boot", "beginner"],
               "starter_code": {
                 "default": "class Solution { public void run() {} }"
               },
@@ -8757,11 +8380,7 @@
               "solution": "using System;\nclass Program {\n  static void Main() {\n    Console.WriteLine(\"Hello, World!\");\n  }\n}",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/csharp-hello-world",
-              "tags": [
-                "hello-world",
-                "console",
-                "csharp-basics"
-              ],
+              "tags": ["hello-world", "console", "csharp-basics"],
               "starter_code": {
                 "csharp": "using System;\nclass Program {\n    static void Main() {\n        // Your code here\n    }\n}"
               },
@@ -8790,11 +8409,7 @@
               "solution": "string Reverse(string s) {\n  char[] arr = s.ToCharArray();\n  Array.Reverse(arr);\n  return new string(arr);\n}",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/csharp-string",
-              "tags": [
-                "string",
-                "array",
-                "csharp-basics"
-              ],
+              "tags": ["string", "array", "csharp-basics"],
               "starter_code": {
                 "csharp": "using System;\nclass Solution {\n    static string Reverse(string s) {\n        // Your code here\n    }\n}"
               },
@@ -8835,11 +8450,7 @@
               "solution": "int a=0,b=1;\nfor(int i=0;i<10;i++){\n  Console.WriteLine(a);\n  int temp=a+b; a=b; b=temp;\n}",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/csharp-fibonacci",
-              "tags": [
-                "math",
-                "loop",
-                "csharp-basics"
-              ],
+              "tags": ["math", "loop", "csharp-basics"],
               "starter_code": {
                 "csharp": "using System;\nclass Program {\n    static void Main() {\n        // Print first 10 Fibonacci numbers\n    }\n}"
               },
@@ -9649,11 +9260,7 @@
               "solution": "Module Program\n  Sub Main()\n    Console.WriteLine(\"Hello, World!\")\n  End Sub\nEnd Module",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/vbnet-hello",
-              "tags": [
-                "hello-world",
-                "console",
-                "vbnet-basics"
-              ],
+              "tags": ["hello-world", "console", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Module Program\n    Sub Main()\n        ' Your code here\n    End Sub\nEnd Module"
               },
@@ -9682,11 +9289,7 @@
               "solution": "Function ReverseString(s As String) As String\n  Dim arr As Char() = s.ToCharArray()\n  Array.Reverse(arr)\n  Return New String(arr)\nEnd Function",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/vbnet-string",
-              "tags": [
-                "string",
-                "array",
-                "vbnet-basics"
-              ],
+              "tags": ["string", "array", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Function ReverseString(s As String) As String\n    ' Your code here\nEnd Function"
               },
@@ -9723,11 +9326,7 @@
               "solution": "Dim a As Integer = 0, b As Integer = 1\nFor i As Integer = 0 To 9\n  Console.WriteLine(a)\n  Dim temp As Integer = a + b\n  a = b\n  b = temp\nNext",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/vbnet-fibonacci",
-              "tags": [
-                "math",
-                "loop",
-                "vbnet-basics"
-              ],
+              "tags": ["math", "loop", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Dim a As Integer = 0, b As Integer = 1\nFor i As Integer = 0 To 9\n    ' Print and update\nNext"
               },
@@ -9758,12 +9357,7 @@
               "solution": "Public Class Car\n  Public Property Make As String\n  Public Property Model As String\n  Public Property Year As Integer\n  Public Function Describe() As String\n    Return $\"{Year} {Make} {Model}\"\n  End Function\nEnd Class",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/objects-and-classes/",
-              "tags": [
-                "oop",
-                "classes",
-                "properties",
-                "vbnet-basics"
-              ],
+              "tags": ["oop", "classes", "properties", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Public Class Car\n    Public Property Make As String\n    Public Property Model As String\n    Public Property Year As Integer\n    Public Function Describe() As String\n        ' Return formatted string\n    End Function\nEnd Class"
               },
@@ -9792,12 +9386,7 @@
               "solution": "Dim result = From n In numbers\n             Where n > 10\n             Order By n Descending\n             Select n\nFor Each n In result\n  Console.WriteLine(n)\nNext",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/linq/",
-              "tags": [
-                "linq",
-                "filtering",
-                "sorting",
-                "vbnet-basics"
-              ],
+              "tags": ["linq", "filtering", "sorting", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Dim result = From n In numbers\n             Where n > 10\n             Order By n Descending\n             Select n"
               },
@@ -9828,11 +9417,7 @@
               "solution": "Interface IShape\n  Function Area() As Double\n  Function Perimeter() As Double\nEnd Interface\n\nClass Rectangle\n  Implements IShape\n  Public Property Width As Double\n  Public Property Height As Double\n  Public Function Area() As Double Implements IShape.Area\n    Return Width * Height\n  End Function\n  Public Function Perimeter() As Double Implements IShape.Perimeter\n    Return 2 * (Width + Height)\n  End Function\nEnd Class",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/interfaces/",
-              "tags": [
-                "interfaces",
-                "oop",
-                "vbnet-basics"
-              ],
+              "tags": ["interfaces", "oop", "vbnet-basics"],
               "starter_code": {
                 "vbnet": "Interface IShape\n    Function Area() As Double\n    Function Perimeter() As Double\nEnd Interface\n\nClass Rectangle\n    Implements IShape\n    ' Implement Area and Perimeter\nEnd Class"
               },
@@ -9865,11 +9450,7 @@
               "solution": "Async Function FetchPageAsync(url As String) As Task(Of String)\n  Using client As New HttpClient()\n    Return Await client.GetStringAsync(url)\n  End Using\nEnd Function",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/concepts/async/",
-              "tags": [
-                "async-await",
-                "http-client",
-                "vbnet-intermediate"
-              ],
+              "tags": ["async-await", "http-client", "vbnet-intermediate"],
               "starter_code": {
                 "vbnet": "Async Function FetchPageAsync(url As String) As Task(Of String)\n    ' Your code here\nEnd Function"
               },
@@ -9938,11 +9519,7 @@
               "solution": "Public Class SimpleTimer\n  Public Event Tick()\n  Public Sub Start(seconds As Integer)\n    For i As Integer = 1 To seconds\n      System.Threading.Thread.Sleep(1000)\n      RaiseEvent Tick()\n    Next\n  End Sub\nEnd Class\n\nDim t As New SimpleTimer()\nAddHandler t.Tick, Sub() Console.WriteLine(\"Tick!\")\nt.Start(3)",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/events/",
-              "tags": [
-                "events",
-                "delegates",
-                "vbnet-intermediate"
-              ],
+              "tags": ["events", "delegates", "vbnet-intermediate"],
               "starter_code": {
                 "vbnet": "Public Class SimpleTimer\n    Public Event Tick()\n    Public Sub Start(seconds As Integer)\n        ' Raise Tick every second\n    End Sub\nEnd Class"
               },
@@ -10063,12 +9640,7 @@
               "solution": "Public Class Product\n  Public Property Id As Integer\n  Public Property Name As String\n  Public Property Price As Decimal\nEnd Class\n\nPublic Class AppDbContext\n  Inherits DbContext\n  Public Property Products As DbSet(Of Product)\nEnd Class\n\nDim products = Await _context.Products\n  .Where(Function(p) p.Price > 50)\n  .ToListAsync()",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/ef/core/",
-              "tags": [
-                "ef-core",
-                "orm",
-                "linq",
-                "vbnet-intermediate"
-              ],
+              "tags": ["ef-core", "orm", "linq", "vbnet-intermediate"],
               "starter_code": {
                 "vbnet": "Dim products = Await _context.Products\n    .Where(Function(p) p.Price > 50)\n    .ToListAsync()"
               },
@@ -10099,11 +9671,7 @@
               "solution": "Dim wordApp As New Word.Application()\nwordApp.Visible = True\nDim doc As Word.Document = wordApp.Documents.Add()\ndoc.Content.Text = \"Hello from VB.NET!\"\ndoc.SaveAs2(\"C:\\output.docx\")\ndoc.Close()\nwordApp.Quit()\nRuntime.InteropServices.Marshal.ReleaseComObject(wordApp)",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/com-interop/",
-              "tags": [
-                "com-interop",
-                "office-automation",
-                "vbnet-advanced"
-              ],
+              "tags": ["com-interop", "office-automation", "vbnet-advanced"],
               "starter_code": {
                 "vbnet": "Dim wordApp As New Word.Application()\n' Open, add text, save, quit"
               },
@@ -10136,11 +9704,7 @@
               "solution": "Dim catalog =\n  <Catalog>\n    <Book id=\"1\"><Title>VB.NET Mastery</Title><Price>29.99</Price></Book>\n    <Book id=\"2\"><Title>ASP.NET Core</Title><Price>39.99</Price></Book>\n  </Catalog>\n\nDim cheapBooks = From b In catalog.<Book>\n                 Where CDec(b.<Price>.Value) < 35\n                 Select b.<Title>.Value\nFor Each title In cheapBooks\n  Console.WriteLine(title)\nNext",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/xml/xml-literals-overview",
-              "tags": [
-                "xml-literals",
-                "linq-to-xml",
-                "vbnet-advanced"
-              ],
+              "tags": ["xml-literals", "linq-to-xml", "vbnet-advanced"],
               "starter_code": {
                 "vbnet": "Dim catalog =\n  <Catalog>\n    <Book id=\"1\"><Title>VB.NET</Title><Price>29.99</Price></Book>\n  </Catalog>\n' Query books with Price < 35"
               },
@@ -10171,12 +9735,7 @@
               "solution": "' ILoginView interface\nPublic Interface ILoginView\n  Property Username As String\n  Property Password As String\n  Event LoginButtonClicked As EventHandler\n  Sub ShowError(msg As String)\nEnd Interface\n\n' LoginPresenter\nPublic Class LoginPresenter\n  Private _view As ILoginView\n  Private _model As LoginModel\n  Public Sub New(view As ILoginView, model As LoginModel)\n    _view = view\n    _model = model\n    AddHandler _view.LoginButtonClicked, AddressOf OnLogin\n  End Sub\n  Private Sub OnLogin(s As Object, e As EventArgs)\n    If Not _model.Validate(_view.Username, _view.Password) Then\n      _view.ShowError(\"Invalid credentials\")\n    End If\n  End Sub\nEnd Class",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/desktop/winforms/",
-              "tags": [
-                "winforms",
-                "mvp",
-                "design-patterns",
-                "vbnet-advanced"
-              ],
+              "tags": ["winforms", "mvp", "design-patterns", "vbnet-advanced"],
               "starter_code": {
                 "vbnet": "Public Interface ILoginView\n    Property Username As String\n    Property Password As String\n    Event LoginButtonClicked As EventHandler\n    Sub ShowError(msg As String)\nEnd Interface"
               },
@@ -10253,12 +9812,7 @@
               "solution": "Imports System.Runtime.InteropServices\n\nModule NativeMethods\n  <DllImport(\"user32.dll\", CharSet:=CharSet.Unicode)>\n  Public Function MessageBox(hWnd As IntPtr, text As String, caption As String, type As UInteger) As Integer\n  End Function\nEnd Module\n\nNativeMethods.MessageBox(IntPtr.Zero, \"Hello!\", \"P/Invoke Demo\", 0)",
               "source": "Microsoft Docs",
               "url": "https://docs.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke",
-              "tags": [
-                "pinvoke",
-                "interop",
-                "native",
-                "vbnet-advanced"
-              ],
+              "tags": ["pinvoke", "interop", "native", "vbnet-advanced"],
               "starter_code": {
                 "vbnet": "Imports System.Runtime.InteropServices\nModule NativeMethods\n    <DllImport(\"user32.dll\", CharSet:=CharSet.Unicode)>\n    Public Function MessageBox(...) As Integer\n    End Function\nEnd Module"
               },
@@ -10384,12 +9938,7 @@
               "solution": "SELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\nLEFT JOIN Address a ON p.PersonId = a.PersonId;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/combine-two-tables/",
-              "tags": [
-                "sql",
-                "left-join",
-                "null-handling",
-                "joins"
-              ],
+              "tags": ["sql", "left-join", "null-handling", "joins"],
               "starter_code": {
                 "sql": "SELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\n-- Add LEFT JOIN\n;"
               },
@@ -10422,12 +9971,7 @@
               "solution": "SELECT e.Name AS Employee\nFROM Employee e\nJOIN Employee m ON e.ManagerId = m.Id\nWHERE e.Salary > m.Salary;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/employees-earning-more-than-their-managers/",
-              "tags": [
-                "sql",
-                "self-join",
-                "comparison",
-                "joins"
-              ],
+              "tags": ["sql", "self-join", "comparison", "joins"],
               "starter_code": {
                 "sql": "SELECT e.Name AS Employee\nFROM Employee e\n-- JOIN with manager alias\nWHERE e.Salary > m.Salary;"
               },
@@ -10456,12 +10000,7 @@
               "solution": "SELECT Email\nFROM Person\nGROUP BY Email\nHAVING COUNT(*) > 1;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/duplicate-emails/",
-              "tags": [
-                "sql",
-                "group-by",
-                "having",
-                "aggregation"
-              ],
+              "tags": ["sql", "group-by", "having", "aggregation"],
               "starter_code": {
                 "sql": "SELECT Email\nFROM Person\nGROUP BY Email\n-- Add HAVING\n;"
               },
@@ -10490,12 +10029,7 @@
               "solution": "SELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE o.Id IS NULL;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/customers-who-never-order/",
-              "tags": [
-                "sql",
-                "left-join",
-                "subquery",
-                "null-check"
-              ],
+              "tags": ["sql", "left-join", "subquery", "null-check"],
               "starter_code": {
                 "sql": "SELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE -- filter non-ordering customers\n;"
               },
@@ -10524,11 +10058,7 @@
               "solution": "SELECT * FROM CITY;",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/select-all-sql",
-              "tags": [
-                "sql",
-                "select",
-                "basics"
-              ],
+              "tags": ["sql", "select", "basics"],
               "starter_code": {
                 "sql": "-- Write SELECT statement here\n"
               },
@@ -10557,12 +10087,7 @@
               "solution": "SELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/revising-the-select-query",
-              "tags": [
-                "sql",
-                "where",
-                "filtering",
-                "basics"
-              ],
+              "tags": ["sql", "where", "filtering", "basics"],
               "starter_code": {
                 "sql": "SELECT * FROM CITY\nWHERE COUNTRYCODE = 'USA'\n-- AND condition for population\n;"
               },
@@ -10639,12 +10164,7 @@
               "solution": "DELETE p1 FROM Person p1\nJOIN Person p2\nWHERE p1.Id > p2.Id AND p1.Email = p2.Email;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/delete-duplicate-emails/",
-              "tags": [
-                "sql",
-                "delete",
-                "self-join",
-                "deduplication"
-              ],
+              "tags": ["sql", "delete", "self-join", "deduplication"],
               "starter_code": {
                 "sql": "DELETE p1 FROM Person p1\nJOIN Person p2\nWHERE -- condition to keep lowest Id\n;"
               },
@@ -10714,12 +10234,7 @@
               "solution": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\n  ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/rising-temperature/",
-              "tags": [
-                "sql",
-                "self-join",
-                "date-functions",
-                "comparison"
-              ],
+              "tags": ["sql", "self-join", "date-functions", "comparison"],
               "starter_code": {
                 "sql": "SELECT w1.id\nFROM Weather w1\nJOIN Weather w2\n  ON DATEDIFF(w1.recordDate, w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature;"
               },
@@ -10750,12 +10265,7 @@
               "solution": "SELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/earnings-of-employees",
-              "tags": [
-                "sql",
-                "window-functions",
-                "dense-rank",
-                "partition-by"
-              ],
+              "tags": ["sql", "window-functions", "dense-rank", "partition-by"],
               "starter_code": {
                 "sql": "SELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;"
               },
@@ -10784,12 +10294,7 @@
               "solution": "SELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;",
               "source": "SQLZoo",
               "url": "https://sqlzoo.net/",
-              "tags": [
-                "sql",
-                "window-functions",
-                "running-total",
-                "sum-over"
-              ],
+              "tags": ["sql", "window-functions", "running-total", "sum-over"],
               "starter_code": {
                 "sql": "SELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;"
               },
@@ -10820,12 +10325,7 @@
               "solution": "SELECT\n  product_id,\n  SUM(CASE WHEN MONTH(sale_date)=1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN MONTH(sale_date)=2 THEN amount ELSE 0 END) AS Feb,\n  SUM(CASE WHEN MONTH(sale_date)=3 THEN amount ELSE 0 END) AS Mar\nFROM Sales\nGROUP BY product_id;",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/occupations",
-              "tags": [
-                "sql",
-                "pivot",
-                "conditional-aggregation",
-                "case-when"
-              ],
+              "tags": ["sql", "pivot", "conditional-aggregation", "case-when"],
               "starter_code": {
                 "sql": "SELECT product_id,\n  SUM(CASE WHEN MONTH(sale_date)=1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN MONTH(sale_date)=2 THEN amount ELSE 0 END) AS Feb\nFROM Sales GROUP BY product_id;"
               },
@@ -10858,13 +10358,7 @@
               "solution": "WITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees\n  GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal\nFROM dept_avg, company_avg\nWHERE avg_sal > co_avg;",
               "source": "SQLZoo",
               "url": "https://sqlzoo.net/",
-              "tags": [
-                "sql",
-                "cte",
-                "aggregation",
-                "avg",
-                "subquery"
-              ],
+              "tags": ["sql", "cte", "aggregation", "avg", "subquery"],
               "starter_code": {
                 "sql": "WITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal FROM dept_avg, company_avg\nWHERE avg_sal > co_avg;"
               },
@@ -10895,12 +10389,7 @@
               "solution": "SELECT month,\n  revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0*(revenue - LAG(revenue) OVER (ORDER BY month)) / LAG(revenue) OVER (ORDER BY month), 2) AS growth_pct\nFROM MonthlyRevenue\nORDER BY month;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/month-over-month-revenue-growth/",
-              "tags": [
-                "sql",
-                "lag",
-                "window-functions",
-                "growth-calculation"
-              ],
+              "tags": ["sql", "lag", "window-functions", "growth-calculation"],
               "starter_code": {
                 "sql": "SELECT month, revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0*(revenue - LAG(revenue) OVER (ORDER BY month)) / LAG(revenue) OVER (ORDER BY month), 2) AS growth_pct\nFROM MonthlyRevenue ORDER BY month;"
               },
@@ -10929,12 +10418,7 @@
               "solution": "SELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;",
               "source": "HackerRank",
               "url": "https://www.hackerrank.com/challenges/binary-search-tree-1",
-              "tags": [
-                "sql",
-                "self-join",
-                "hierarchy",
-                "employee-tree"
-              ],
+              "tags": ["sql", "self-join", "hierarchy", "employee-tree"],
               "starter_code": {
                 "sql": "SELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;"
               },
@@ -10965,12 +10449,7 @@
               "solution": "WITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth\n  FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth+1\n  FROM Employee e JOIN org o ON e.manager_id=o.id\n)\nSELECT name, depth FROM org ORDER BY depth, name;",
               "source": "SQLZoo",
               "url": "https://sqlzoo.net/",
-              "tags": [
-                "sql",
-                "recursive-cte",
-                "hierarchy",
-                "graph-traversal"
-              ],
+              "tags": ["sql", "recursive-cte", "hierarchy", "graph-traversal"],
               "starter_code": {
                 "sql": "WITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth+1\n  FROM Employee e JOIN org o ON e.manager_id=o.id\n)\nSELECT name, depth FROM org ORDER BY depth, name;"
               },
@@ -11003,12 +10482,7 @@
               "solution": "CREATE MATERIALIZED VIEW daily_sales_mv AS\nSELECT sale_date, SUM(amount) AS total\nFROM Sales\nGROUP BY sale_date;\n-- Refresh manually: REFRESH MATERIALIZED VIEW daily_sales_mv;\n-- Use when: expensive aggregations queried frequently, data freshness lag acceptable",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "sql",
-                "materialized-view",
-                "performance",
-                "caching"
-              ],
+              "tags": ["sql", "materialized-view", "performance", "caching"],
               "starter_code": {
                 "sql": "CREATE MATERIALIZED VIEW daily_sales_mv AS\nSELECT sale_date, SUM(amount) AS total\nFROM Sales GROUP BY sale_date;\n-- REFRESH MATERIALIZED VIEW daily_sales_mv;"
               },
@@ -11074,13 +10548,7 @@
               "solution": "SELECT p.project_id, p.employee_id\nFROM Project p\nJOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years)\n  FROM Project p2 JOIN Employee e2 ON p2.employee_id=e2.employee_id\n  GROUP BY p2.project_id\n);",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/project-employees-iii/",
-              "tags": [
-                "sql",
-                "subquery",
-                "join",
-                "max",
-                "correlated"
-              ],
+              "tags": ["sql", "subquery", "join", "max", "correlated"],
               "starter_code": {
                 "sql": "SELECT p.project_id, p.employee_id\nFROM Project p JOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years) ...\n);"
               },
@@ -11189,12 +10657,7 @@
               "solution": "CREATE TABLE sales (\n  id BIGSERIAL,\n  sale_date DATE NOT NULL,\n  amount NUMERIC(10,2)\n) PARTITION BY RANGE (sale_date);\n\nCREATE TABLE sales_2023 PARTITION OF sales\n  FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');\nCREATE TABLE sales_2024 PARTITION OF sales\n  FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "sql",
-                "partitioning",
-                "range-partition",
-                "ddl"
-              ],
+              "tags": ["sql", "partitioning", "range-partition", "ddl"],
               "starter_code": {
                 "sql": "CREATE TABLE sales (...) PARTITION BY RANGE (sale_date);\n-- Add partition for 2023\nCREATE TABLE sales_2023 PARTITION OF sales FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');"
               },
@@ -11260,12 +10723,7 @@
               "solution": "WITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id-1 FROM sub WHERE sub_id>1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s\nLEFT JOIN Executed e\n  ON s.task_id=e.task_id AND s.sub_id=e.subtask_id\nWHERE e.subtask_id IS NULL;",
               "source": "LeetCode",
               "url": "https://leetcode.com/problems/find-the-subtasks-that-did-not-execute/",
-              "tags": [
-                "sql",
-                "recursive-cte",
-                "left-join",
-                "subtask-tracking"
-              ],
+              "tags": ["sql", "recursive-cte", "left-join", "subtask-tracking"],
               "starter_code": {
                 "sql": "WITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id-1 FROM sub WHERE sub_id>1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s LEFT JOIN Executed e ...\nWHERE e.subtask_id IS NULL;"
               },
@@ -11310,12 +10768,7 @@
               "solution": "db.users.insertOne({\n  name: 'Alice',\n  age: 30,\n  email: 'alice@example.com'\n});",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "insert",
-                "crud",
-                "basics"
-              ],
+              "tags": ["mongodb", "insert", "crud", "basics"],
               "starter_code": {
                 "javascript": "db.users.insertOne({\n  name: '',\n  age: 0,\n  email: ''\n  // fill in values\n});"
               },
@@ -11344,12 +10797,7 @@
               "solution": "db.products.find({}).forEach(doc => printjson(doc));",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "find",
-                "read",
-                "basics"
-              ],
+              "tags": ["mongodb", "find", "read", "basics"],
               "starter_code": {
                 "javascript": "db.products.find({}).forEach(doc => printjson(doc));"
               },
@@ -11378,12 +10826,7 @@
               "solution": "db.products.find({ category: 'Electronics' });",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "find",
-                "equality-filter",
-                "basics"
-              ],
+              "tags": ["mongodb", "find", "equality-filter", "basics"],
               "starter_code": {
                 "javascript": "db.products.find({ category: '' /* fill in */ });"
               },
@@ -11412,12 +10855,7 @@
               "solution": "db.users.deleteOne({ name: 'Bob' });",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "delete",
-                "crud",
-                "basics"
-              ],
+              "tags": ["mongodb", "delete", "crud", "basics"],
               "starter_code": {
                 "javascript": "db.users.deleteOne({ name: '' /* fill in */ });"
               },
@@ -11452,13 +10890,7 @@
               "solution": "db.users.updateOne(\n  { email: 'alice@example.com' },\n  {\n    $set: { status: 'active' },\n    $inc: { loginCount: 1 }\n  }\n);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "update",
-                "set",
-                "inc",
-                "operators"
-              ],
+              "tags": ["mongodb", "update", "set", "inc", "operators"],
               "starter_code": {
                 "javascript": "db.users.updateOne(\n  { email: '' },\n  {\n    $set: { status: '' },\n    $inc: { loginCount: 0 }\n  }\n);"
               },
@@ -11525,12 +10957,7 @@
               "solution": "db.users.bulkWrite([\n  { insertOne: { document: { name: 'Charlie', age: 25 } } },\n  { updateOne: { filter: { name: 'Alice' }, update: { $set: { email: 'alice@new.com' } } } },\n  { deleteOne: { filter: { name: 'DeleteMe' } } }\n]);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "bulk-write",
-                "mixed-operations",
-                "crud"
-              ],
+              "tags": ["mongodb", "bulk-write", "mixed-operations", "crud"],
               "starter_code": {
                 "javascript": "db.users.bulkWrite([\n  { insertOne: { document: { } } },\n  { updateOne: { filter: {}, update: {} } },\n  { deleteOne: { filter: {} } }\n]);"
               },
@@ -11563,12 +10990,7 @@
               "solution": "db.users.find({}, { name: 1, email: 1, _id: 0 });",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "projection",
-                "include-exclude",
-                "fields"
-              ],
+              "tags": ["mongodb", "projection", "include-exclude", "fields"],
               "starter_code": {
                 "javascript": "db.users.find({}, { name: 1, email: 1, _id: 0 });"
               },
@@ -11599,13 +11021,7 @@
               "solution": "db.products.aggregate([\n  { $group: { _id: '$category', count: { $sum: 1 } } },\n  { $sort: { count: -1 } },\n  { $project: { category: '$_id', count: 1, _id: 0 } }\n]);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "aggregation",
-                "group",
-                "sum",
-                "sort"
-              ],
+              "tags": ["mongodb", "aggregation", "group", "sum", "sort"],
               "starter_code": {
                 "javascript": "db.products.aggregate([\n  { $group: { _id: '', count: { $sum: 0 } } },\n  { $sort: {} },\n  { $project: {} }\n]);"
               },
@@ -11634,12 +11050,7 @@
               "solution": "db.orders.aggregate([\n  {\n    $lookup: {\n      from: 'users',\n      localField: 'userId',\n      foreignField: '_id',\n      as: 'user'\n    }\n  },\n  { $unwind: '$user' }\n]);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "lookup",
-                "join",
-                "aggregation"
-              ],
+              "tags": ["mongodb", "lookup", "join", "aggregation"],
               "starter_code": {
                 "javascript": "db.orders.aggregate([\n  {\n    $lookup: {\n      from: '',\n      localField: '',\n      foreignField: '',\n      as: ''\n    }\n  },\n  { $unwind: '' }\n]);"
               },
@@ -11670,12 +11081,7 @@
               "solution": "db.products.createIndex({ description: 'text' });\ndb.products.find(\n  { $text: { $search: 'wireless bluetooth' } },\n  { score: { $meta: 'textScore' } }\n).sort({ score: { $meta: 'textScore' } });",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "text-search",
-                "index",
-                "full-text"
-              ],
+              "tags": ["mongodb", "text-search", "index", "full-text"],
               "starter_code": {
                 "javascript": "db.products.createIndex({ description: 'text' });\ndb.products.find(\n  { $text: { $search: '' } },\n  { score: { $meta: 'textScore' } }\n).sort({ score: { $meta: 'textScore' } });"
               },
@@ -11708,12 +11114,7 @@
               "solution": "db.orders.find({\n  items: {\n    $elemMatch: { quantity: { $gt: 5 }, price: { $lt: 20 } }\n  }\n});",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "array",
-                "elem-match",
-                "query-operators"
-              ],
+              "tags": ["mongodb", "array", "elem-match", "query-operators"],
               "starter_code": {
                 "javascript": "db.orders.find({\n  items: {\n    $elemMatch: { quantity: {}, price: {} }\n  }\n});"
               },
@@ -11783,12 +11184,7 @@
               "solution": "const session = client.startSession();\ntry {\n  session.startTransaction();\n  await db.accounts.updateOne(\n    { _id: 'A' }, { $inc: { balance: -100 } }, { session }\n  );\n  await db.accounts.updateOne(\n    { _id: 'B' }, { $inc: { balance: 100 } }, { session }\n  );\n  await session.commitTransaction();\n} catch(err) {\n  await session.abortTransaction();\n  throw err;\n} finally {\n  session.endSession();\n}",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "transactions",
-                "acid",
-                "multi-document"
-              ],
+              "tags": ["mongodb", "transactions", "acid", "multi-document"],
               "starter_code": {
                 "javascript": "const session = client.startSession();\ntry {\n  session.startTransaction();\n  // debit A, credit B\n  await session.commitTransaction();\n} catch(err) {\n  await session.abortTransaction();\n} finally {\n  session.endSession();\n}"
               },
@@ -11823,12 +11219,7 @@
               "solution": "const changeStream = db.orders.watch(\n  [{ $match: { operationType: 'insert' } }]\n);\nchangeStream.on('change', next => {\n  console.log('New order:', next.fullDocument);\n});",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "change-streams",
-                "real-time",
-                "events"
-              ],
+              "tags": ["mongodb", "change-streams", "real-time", "events"],
               "starter_code": {
                 "javascript": "const changeStream = db.orders.watch(\n  [{ $match: { operationType: '' } }]\n);\nchangeStream.on('change', next => {\n  // handle\n});"
               },
@@ -11861,12 +11252,7 @@
               "solution": "// Index definition (Atlas UI or API):\n// { mappings: { fields: { name: [{ type: 'autocomplete', tokenization: 'edgeGram', minGrams: 2 }] } } }\n\ndb.products.aggregate([\n  {\n    $search: {\n      index: 'autocomplete_idx',\n      autocomplete: {\n        query: 'wire',\n        path: 'name',\n        fuzzy: { maxEdits: 1 }\n      }\n    }\n  },\n  { $limit: 5 },\n  { $project: { name: 1 } }\n]);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "atlas-search",
-                "autocomplete",
-                "full-text"
-              ],
+              "tags": ["mongodb", "atlas-search", "autocomplete", "full-text"],
               "starter_code": {
                 "javascript": "db.products.aggregate([\n  { $search: { index: '', autocomplete: { query: '', path: '' } } },\n  { $limit: 5 },\n  { $project: { name: 1 } }\n]);"
               },
@@ -11935,13 +11321,7 @@
               "solution": "db.createCollection('sensor_readings', {\n  timeseries: {\n    timeField: 'timestamp',\n    metaField: 'sensorId',\n    granularity: 'minutes'\n  },\n  expireAfterSeconds: 2592000 // 30 days TTL\n});\n\ndb.sensor_readings.insertOne({\n  timestamp: new Date(),\n  sensorId: 'sensor-001',\n  temperature: 22.5\n});",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "time-series",
-                "iot",
-                "ttl",
-                "collections"
-              ],
+              "tags": ["mongodb", "time-series", "iot", "ttl", "collections"],
               "starter_code": {
                 "javascript": "db.createCollection('sensor_readings', {\n  timeseries: {\n    timeField: '',\n    metaField: '',\n    granularity: ''\n  },\n  expireAfterSeconds: 0 // fill in\n});"
               },
@@ -11972,12 +11352,7 @@
               "solution": "db.employees.aggregate([\n  { $match: { name: 'CEO' } },\n  {\n    $graphLookup: {\n      from: 'employees',\n      startWith: '$_id',\n      connectFromField: '_id',\n      connectToField: 'managerId',\n      as: 'allReports',\n      maxDepth: 10,\n      depthField: 'level'\n    }\n  }\n]);",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "graph-lookup",
-                "recursive",
-                "hierarchy"
-              ],
+              "tags": ["mongodb", "graph-lookup", "recursive", "hierarchy"],
               "starter_code": {
                 "javascript": "db.employees.aggregate([\n  { $match: { name: 'CEO' } },\n  { $graphLookup: {\n    from: '', startWith: '', connectFromField: '',\n    connectToField: '', as: '', maxDepth: 0, depthField: ''\n  }}\n]);"
               },
@@ -12047,12 +11422,7 @@
               "solution": "// Enable sharding on database\nsh.enableSharding('ecommerce');\n\n// Create hashed shard key index\ndb.orders.createIndex({ userId: 'hashed' });\n\n// Shard the collection\nsh.shardCollection('ecommerce.orders', { userId: 'hashed' });\n\n// Verify with:\nsh.status();",
               "source": "MongoDB University",
               "url": "https://university.mongodb.com/",
-              "tags": [
-                "mongodb",
-                "sharding",
-                "horizontal-scaling",
-                "hash-key"
-              ],
+              "tags": ["mongodb", "sharding", "horizontal-scaling", "hash-key"],
               "starter_code": {
                 "javascript": "sh.enableSharding('ecommerce');\ndb.orders.createIndex({ userId: 'hashed' });\nsh.shardCollection('ecommerce.orders', { userId: 'hashed' });"
               },
@@ -12169,12 +11539,7 @@
               "solution": "INSERT INTO users (name, email)\nVALUES ('Alice', 'alice@example.com')\nRETURNING id, created_at;",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "insert",
-                "returning",
-                "dml"
-              ],
+              "tags": ["postgresql", "insert", "returning", "dml"],
               "starter_code": {
                 "sql": "INSERT INTO users (name, email)\nVALUES ('', '')\nRETURNING id, created_at;"
               },
@@ -12239,13 +11604,7 @@
               "solution": "INSERT INTO users (name, email)\nVALUES ('Bob', 'bob@example.com')\nON CONFLICT (email)\nDO UPDATE SET name = EXCLUDED.name, updated_at = NOW();",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "upsert",
-                "on-conflict",
-                "merge",
-                "dml"
-              ],
+              "tags": ["postgresql", "upsert", "on-conflict", "merge", "dml"],
               "starter_code": {
                 "sql": "INSERT INTO users (name, email)\nVALUES ('', '')\nON CONFLICT (email)\nDO UPDATE SET name = EXCLUDED.name, updated_at = NOW();"
               },
@@ -12278,12 +11637,7 @@
               "solution": "SELECT * FROM products\nWHERE metadata->>'brand' = 'Sony';",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "jsonb",
-                "operators",
-                "semi-structured"
-              ],
+              "tags": ["postgresql", "jsonb", "operators", "semi-structured"],
               "starter_code": {
                 "sql": "SELECT * FROM products\nWHERE metadata ->> '' = '';  -- fill in key and value"
               },
@@ -12436,13 +11790,7 @@
               "solution": "CREATE TABLE orders_audit (\n  audit_id SERIAL PRIMARY KEY,\n  order_id INT,\n  old_status TEXT,\n  new_status TEXT,\n  changed_at TIMESTAMPTZ DEFAULT NOW()\n);\n\nCREATE OR REPLACE FUNCTION audit_order_changes()\nRETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO orders_audit(order_id, old_status, new_status)\n  VALUES (OLD.id, OLD.status, NEW.status);\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER order_audit_trigger\nAFTER UPDATE ON orders\nFOR EACH ROW EXECUTE FUNCTION audit_order_changes();",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "triggers",
-                "audit",
-                "plpgsql",
-                "dml"
-              ],
+              "tags": ["postgresql", "triggers", "audit", "plpgsql", "dml"],
               "starter_code": {
                 "sql": "CREATE OR REPLACE FUNCTION audit_order_changes()\nRETURNS TRIGGER AS $$\nBEGIN\n  INSERT INTO orders_audit(order_id, old_status, new_status)\n  VALUES (OLD.id, OLD.status, NEW.status);\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER order_audit_trigger\nAFTER UPDATE ON orders\nFOR EACH ROW EXECUTE FUNCTION audit_order_changes();"
               },
@@ -12512,12 +11860,7 @@
               "solution": "WITH RECURSIVE fib(a, b) AS (\n  SELECT 0, 1\n  UNION ALL\n  SELECT b, a+b FROM fib WHERE a < 100\n)\nSELECT a AS fibonacci FROM fib LIMIT 10;",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "recursive-cte",
-                "fibonacci",
-                "sequence"
-              ],
+              "tags": ["postgresql", "recursive-cte", "fibonacci", "sequence"],
               "starter_code": {
                 "sql": "WITH RECURSIVE fib(a, b) AS (\n  SELECT 0, 1\n  UNION ALL\n  SELECT b, a+b FROM fib WHERE a < 100\n)\nSELECT a AS fibonacci FROM fib LIMIT 10;"
               },
@@ -12548,12 +11891,7 @@
               "solution": "SELECT c.name, o.id, o.amount\nFROM customers c\nCROSS JOIN LATERAL (\n  SELECT id, amount\n  FROM orders\n  WHERE customer_id = c.id\n  ORDER BY amount DESC\n  LIMIT 3\n) o;",
               "source": "PGExercises",
               "url": "https://pgexercises.com/",
-              "tags": [
-                "postgresql",
-                "lateral-join",
-                "top-n",
-                "subquery"
-              ],
+              "tags": ["postgresql", "lateral-join", "top-n", "subquery"],
               "starter_code": {
                 "sql": "SELECT c.name, o.id, o.amount\nFROM customers c\nCROSS JOIN LATERAL (\n  SELECT id, amount FROM orders\n  WHERE customer_id = c.id\n  ORDER BY amount DESC LIMIT 3\n) o;"
               },
