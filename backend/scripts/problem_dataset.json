@@ -154,31 +154,80 @@
         "Beginner": {
           "Easy": [
             {
-              "id": "1002",
-              "slug": "basic-react-js-task",
-              "title": "Basic React JS Task",
+              "id": "react-js-card-builder",
+              "slug": "react-js-profile-card",
+              "title": "React JS - Profile Card",
               "difficulty": "Easy",
               "skill": "React JS",
               "skill_level": "Beginner",
               "language": "JavaScript",
-              "tags": ["react-js", "beginner"],
+              "tags": ["react", "state", "beginner"],
               "starter_code": {
-                "default": "export default function App() { return <div>Hello App</div>; }"
+                "default": {
+                  "/App.js": "import \"./styles.css\";\n\nexport default function App() {\n  return (\n    <div className=\"app\">\n      <h1>Profile Card</h1>\n      <p>Build the requested UI below.</p>\n      <button type=\"button\">Click me</button>\n    </div>\n  );\n}\n",
+                  "/index.js": "import { StrictMode } from \"react\";\nimport { createRoot } from \"react-dom/client\";\nimport App from \"./App\";\n\nconst root = createRoot(document.getElementById(\"root\"));\nroot.render(\n  <StrictMode>\n    <App />\n  </StrictMode>\n);\n",
+                  "/styles.css": "body {\n  margin: 0;\n  padding: 24px;\n  font-family: 'Segoe UI', system-ui, sans-serif;\n  background: #0f172a;\n  color: #f8fafc;\n}\n\n.app {\n  max-width: 560px;\n  padding: 24px;\n  border-radius: 16px;\n  background: #111827;\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);\n}\n\nbutton {\n  margin-top: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  border: none;\n  background: #38bdf8;\n  color: #0f172a;\n  font-weight: 600;\n}\n",
+                  "/public/index.html": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>React Assessment</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+                }
               },
               "sample_test_cases": [
                 {
-                  "input": "Sample test",
-                  "output": "Expected output"
+                  "input": "test(\"renders connect button\", () => {\n  render(<App />);\n  expect(screen.getByText(/connect/i)).toBeInTheDocument();\n});",
+                  "output": "pass"
+                },
+                {
+                  "input": "test(\"toggles button label\", () => {\n  render(<App />);\n  const btn = screen.getByRole('button', { name: /connect/i });\n  fireEvent.click(btn);\n  expect(screen.getByRole('button', { name: /connected/i })).toBeInTheDocument();\n});",
+                  "output": "pass"
                 }
               ],
-              "hidden_test_cases": [],
-              "content": "Complete the basic task for React JS. Ensure your implementation satisfies the requirements.",
-              "solution": "Here is the solution...",
-              "source": "Generated",
-              "url": ""
+              "hidden_test_cases": [
+                {
+                  "input": "test(\"button can toggle back\", () => {\n  render(<App />);\n  const btn = screen.getByRole('button', { name: /connect/i });\n  fireEvent.click(btn);\n  fireEvent.click(screen.getByRole('button', { name: /connected/i }));\n  expect(screen.getByRole('button', { name: /connect/i })).toBeInTheDocument();\n});",
+                  "output": "pass"
+                }
+              ],
+              "content": "Create a ProfileCard component that renders a name, role, and a CTA button. The button text must be \"Connect\" and clicking it should toggle to \"Connected\".",
+              "solution": "Use useState to toggle button label and render card content.",
+              "source": "Custom",
+              "url": "https://example.com/react-js-profile-card"
             }
           ],
-          "Medium": [],
+          "Medium": [
+            {
+              "id": "react-js-filter-list",
+              "slug": "react-js-filterable-list",
+              "title": "React JS - Filterable List",
+              "difficulty": "Medium",
+              "skill": "React JS",
+              "skill_level": "Beginner",
+              "language": "JavaScript",
+              "tags": ["react", "filter", "beginner"],
+              "starter_code": {
+                "default": {
+                  "/App.js": "import \"./styles.css\";\n\nexport default function App() {\n  return (\n    <div className=\"app\">\n      <h1>Filterable List</h1>\n      <p>Build the requested UI below.</p>\n      <button type=\"button\">Click me</button>\n    </div>\n  );\n}\n",
+                  "/index.js": "import { StrictMode } from \"react\";\nimport { createRoot } from \"react-dom/client\";\nimport App from \"./App\";\n\nconst root = createRoot(document.getElementById(\"root\"));\nroot.render(\n  <StrictMode>\n    <App />\n  </StrictMode>\n);\n",
+                  "/styles.css": "body {\n  margin: 0;\n  padding: 24px;\n  font-family: 'Segoe UI', system-ui, sans-serif;\n  background: #0f172a;\n  color: #f8fafc;\n}\n\n.app {\n  max-width: 560px;\n  padding: 24px;\n  border-radius: 16px;\n  background: #111827;\n  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);\n}\n\nbutton {\n  margin-top: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  border: none;\n  background: #38bdf8;\n  color: #0f172a;\n  font-weight: 600;\n}\n",
+                  "/public/index.html": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>React Assessment</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+                }
+              },
+              "sample_test_cases": [
+                {
+                  "input": "test(\"filters list by query\", () => {\n  render(<App />);\n  const input = screen.getByRole('textbox');\n  fireEvent.change(input, { target: { value: 'ap' } });\n  expect(screen.queryByText(/banana/i)).toBeNull();\n});",
+                  "output": "pass"
+                }
+              ],
+              "hidden_test_cases": [
+                {
+                  "input": "test(\"filter is case insensitive\", () => {\n  render(<App />);\n  const input = screen.getByRole('textbox');\n  fireEvent.change(input, { target: { value: 'AP' } });\n  expect(screen.queryByText(/banana/i)).toBeNull();\n});",
+                  "output": "pass"
+                }
+              ],
+              "content": "Build a list of items with a text input. As the user types, only show items that include the query (case-insensitive).",
+              "solution": "Track input state and filter array with toLowerCase includes.",
+              "source": "Custom",
+              "url": "https://example.com/react-js-filter-list"
+            }
+          ],
           "Hard": []
         },
         "Intermediate_1": {
@@ -1408,7 +1457,7 @@
               "language": "Python",
               "tags": ["python", "csv", "data-cleaning", "beginner", "easy"],
               "starter_code": {
-                "default": "def solution(lines):\n    \"\"\"lines: list[str] where each row is item,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    lines = [line.rstrip('\n') for line in sys.stdin]\n    print(solution(lines))"
+                "default": "def solution(lines):\n    \"\"\"lines: list[str] where each row is item,amount\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    lines = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(lines))"
               },
               "sample_test_cases": [
                 {
@@ -1445,7 +1494,7 @@
               "language": "Python",
               "tags": ["python", "strings", "email", "beginner", "easy"],
               "starter_code": {
-                "default": "def solution(emails):\n    \"\"\"emails: list[str], return domain counts sorted as domain:count\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    emails = [line.rstrip('\n') for line in sys.stdin]\n    print(solution(emails))"
+                "default": "def solution(emails):\n    \"\"\"emails: list[str], return domain counts sorted as domain:count\"\"\"\n    # TODO: implement\n    pass\n\n\nif __name__ == '__main__':\n    import sys\n    emails = [line.rstrip('\\n') for line in sys.stdin]\n    print(solution(emails))"
               },
               "sample_test_cases": [
                 {
