@@ -111,6 +111,7 @@ function getProblemKey(problem: SessionProblemPayload, index: number): string {
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isProctoringEnabled = import.meta.env.VITE_DISABLE_PROCTORING !== "true";
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
   const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
@@ -123,7 +124,7 @@ export default function AssessmentPage() {
   const [isFullscreenLost, setIsFullscreenLost] = useState(false);
   const [fullscreenViolations, setFullscreenViolations] = useState(0);
   const [hasStartedAssessment, setHasStartedAssessment] = useState(
-    Boolean(initialState?.auto_start && document.fullscreenElement),
+    Boolean(!isProctoringEnabled || (initialState?.auto_start && document.fullscreenElement)),
   );
   const [isLocked, setIsLocked] = useState(false);
   const [showEndTestModal, setShowEndTestModal] = useState(false);
@@ -242,7 +243,7 @@ export default function AssessmentPage() {
   }, [requestFullscreenSafe]);
 
   const sendViolation = useCallback((type: string) => {
-    if (!sessionId || hasSubmittedRef.current) return;
+    if (!isProctoringEnabled || !sessionId || hasSubmittedRef.current) return;
 
     const now = Date.now();
     if (now - lastViolationEventRef.current < VIOLATION_SPAM_DEBOUNCE_MS) {
@@ -287,7 +288,7 @@ export default function AssessmentPage() {
   }, [pushViolationToast, sessionId]);
 
   const handleStartAssessment = useCallback(async () => {
-    if (hasStartedAssessment) {
+    if (!isProctoringEnabled || hasStartedAssessment) {
       return;
     }
 
@@ -303,6 +304,7 @@ export default function AssessmentPage() {
   }, [hasStartedAssessment, pushViolationToast, requestFullscreenSafe]);
 
   useEffect(() => {
+    if (!isProctoringEnabled) return;
     const handleFullscreenChange = () => {
       const currentlyFullscreen = Boolean(document.fullscreenElement);
       setIsFullscreen(currentlyFullscreen);
@@ -347,7 +349,7 @@ export default function AssessmentPage() {
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
-  }, [hasStartedAssessment, isSessionExpired, pushViolationToast, sendViolation]);
+  }, [hasStartedAssessment, isProctoringEnabled, isSessionExpired, pushViolationToast, sendViolation]);
 
   useEffect(() => {
     return () => {
@@ -358,7 +360,7 @@ export default function AssessmentPage() {
   }, []);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!isProctoringEnabled || !sessionId) return;
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
@@ -377,10 +379,10 @@ export default function AssessmentPage() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [sendViolation, sessionId]);
+  }, [isProctoringEnabled, sendViolation, sessionId]);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!isProctoringEnabled || !sessionId) return;
 
     const logDevtoolsOpen = () => {
       const now = Date.now();
@@ -399,28 +401,13 @@ export default function AssessmentPage() {
       }
     }, 2000);
 
-    let timingIntervalId: number | null = null;
-    if (import.meta.env.DEV) {
-      timingIntervalId = window.setInterval(() => {
-        const start = Date.now();
-        debugger;
-        const end = Date.now();
-        if (end - start > 100) {
-          logDevtoolsOpen();
-        }
-      }, 3000);
-    }
-
     return () => {
       window.clearInterval(sizeIntervalId);
-      if (timingIntervalId !== null) {
-        window.clearInterval(timingIntervalId);
-      }
     };
-  }, [sendViolation, sessionId]);
+  }, [isProctoringEnabled, sendViolation, sessionId]);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!isProctoringEnabled || !sessionId) return;
 
     const handleContextMenu = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
@@ -443,10 +430,10 @@ export default function AssessmentPage() {
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
     };
-  }, [sendViolation, sessionId]);
+  }, [isProctoringEnabled, sendViolation, sessionId]);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!isProctoringEnabled || !sessionId) return;
 
     const handleKeydown = (event: KeyboardEvent) => {
       const key = (event.key || "").toLowerCase();
@@ -493,7 +480,7 @@ export default function AssessmentPage() {
     return () => {
       window.removeEventListener("keydown", handleKeydown);
     };
-  }, [sendViolation, sessionId]);
+  }, [isProctoringEnabled, sendViolation, sessionId]);
 
   useEffect(() => {
     if (initialState?.session_id) {
@@ -651,7 +638,7 @@ export default function AssessmentPage() {
   }, [code]);
 
   useEffect(() => {
-    if (!sessionId || isSessionExpired || hasViolationAutoSubmittedRef.current || hasSubmittedRef.current) {
+    if (!isProctoringEnabled || !sessionId || isSessionExpired || hasViolationAutoSubmittedRef.current || hasSubmittedRef.current) {
       return;
     }
     if (isSubmitting || submitInFlightRef.current) {
@@ -718,6 +705,7 @@ export default function AssessmentPage() {
       },
     );
   }, [
+    isProctoringEnabled,
     isSessionExpired,
     isSubmitting,
     language,
@@ -741,7 +729,7 @@ export default function AssessmentPage() {
     if (!sessionId || isSessionExpired || isLocked) return;
     if (runInFlightRef.current || isRunning) return;
     if (submitInFlightRef.current || isSubmitting) return;
-    if (!hasStartedAssessment || !isFullscreen) {
+    if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
     }
@@ -775,7 +763,7 @@ export default function AssessmentPage() {
   const handleSubmit = async () => {
     if (!sessionId || isSessionExpired || isLocked) return;
     if (submitInFlightRef.current || isSubmitting) return;
-    if (!hasStartedAssessment || !isFullscreen) {
+    if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
     }
@@ -814,7 +802,7 @@ export default function AssessmentPage() {
       return;
     }
     if (submitInFlightRef.current || isSubmitting) return;
-    if (!hasStartedAssessment || !isFullscreen) {
+    if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
     }
@@ -951,7 +939,7 @@ export default function AssessmentPage() {
         </div>
       )}
 
-      {!hasStartedAssessment && (
+      {isProctoringEnabled && !hasStartedAssessment && (
         <div className='absolute inset-0 z-[1100] flex items-center justify-center bg-black/55 px-4'>
           <div className='w-full max-w-md rounded-xl bg-white p-6 text-center shadow-xl'>
             <h2 className='text-xl font-bold text-slate-900'>Start Assessment</h2>
@@ -1005,7 +993,7 @@ export default function AssessmentPage() {
         </div>
       )}
 
-      {isFullscreenLost && !hasSubmittedRef.current && (
+      {isProctoringEnabled && isFullscreenLost && !hasSubmittedRef.current && (
         <div className='absolute inset-0 z-[1400] flex items-center justify-center bg-black/75 px-4'>
           <div className='w-full max-w-md rounded-xl border border-amber-300 bg-white p-6 text-center shadow-2xl'>
             <h2 className='text-xl font-bold text-amber-700'>Fullscreen Required</h2>
