@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        @page {
+            size: A4;
+            margin: 24px;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #111827;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        p {
+            margin: 0;
+        }
+
+        .header-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        .header-subtitle {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .header-divider {
+            margin-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 14px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .summary-table td {
+            width: 50%;
+            padding: 6px 8px;
+            vertical-align: top;
+        }
+
+        .field-label {
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        .field-value {
+            margin-top: 2px;
+            font-size: 12px;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .session {
+            page-break-before: always;
+            margin-top: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 14px;
+            background: #ffffff;
+        }
+
+        .session-head {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .session-head td {
+            vertical-align: top;
+            padding: 6px 8px;
+        }
+
+        .skill-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        .metric-value {
+            margin-top: 2px;
+            font-size: 13px;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .badge-pass {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #16a34a;
+            color: #16a34a;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-fail {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid #dc2626;
+            color: #dc2626;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .subsection-title {
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #e5e7eb;
+            text-align: left;
+            padding: 7px;
+            font-size: 10px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        th {
+            background: #f3f4f6;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        pre {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            font-size: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .passed {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        .failed {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-title">SkillPulse</div>
+    <div class="header-subtitle">Internal Assessment Platform</div>
+    <div class="header-divider"></div>
+
+    <div class="section-title">Candidate Summary</div>
+    <div class="card">
+        <table class="summary-table">
+            <tr>
+                <td>
+                    <div class="field-label">Name</div>
+                    <div class="field-value">{{ report.name }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Email</div>
+                    <div class="field-value">{{ report.email }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Employee ID</div>
+                    <div class="field-value">{{ report.employee_id }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Department</div>
+                    <div class="field-value">{{ report.department }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Gender</div>
+                    <div class="field-value">{{ report.gender }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Experience</div>
+                    <div class="field-value">{{ report.exp_indium_years }} yrs at Indium, {{ report.exp_overall_years }}
+                        yrs overall</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% for session in report.sessions %}
+    <div class="session">
+        <table class="session-head">
+            <tr>
+                <td style="width: 40%;">
+                    <div class="metric-label">Skill</div>
+                    <div class="skill-name">{{ session.skill_name }}</div>
+                    <div class="metric-label" style="margin-top: 4px;">Level: <span class="metric-value">{{
+                            session.level }}</span></div>
+                </td>
+                <td style="width: 20%;">
+                    <div class="metric-label">Score</div>
+                    <div class="metric-value">{{ session.submission.score if session.submission else "-" }}</div>
+                </td>
+                <td style="width: 20%;">
+                    <div class="metric-label">Status</div>
+                    {% if session.submission and session.submission.status in ["cleared", "submitted", "success"] %}
+                    <span class="badge-pass">PASS</span>
+                    {% elif session.submission and session.submission.status %}
+                    <span class="badge-fail">FAIL</span>
+                    {% elif session.status in ["submitted"] %}
+                    <span class="badge-pass">PASS</span>
+                    {% else %}
+                    <span class="badge-fail">FAIL</span>
+                    {% endif %}
+                </td>
+                <td style="width: 20%;">
+                    <div class="metric-label">Time Taken</div>
+                    <div class="metric-value">{{ session.submission.time_taken_seconds if session.submission else "-" }}
+                        sec</div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="summary-table" style="margin-bottom: 8px;">
+            <tr>
+                <td>
+                    <div class="field-label">Attempt Number</div>
+                    <div class="field-value">{{ session.attempt_number }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Started At</div>
+                    <div class="field-value">{{ session.started_at }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Submitted At</div>
+                    <div class="field-value">{{ session.submitted_at or "-" }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Session Status</div>
+                    <div class="field-value">{{ session.status }}</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="subsection-title">Violations</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Timestamp</th>
+                    <th>Metadata</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if session.violations %}
+                {% for violation in session.violations %}
+                <tr>
+                    <td>{{ violation.type }}</td>
+                    <td>{{ violation.timestamp }}</td>
+                    <td>{{ violation.metadata if violation.metadata is not none else "" }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3" class="muted">No violations recorded</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <div class="subsection-title">Submission</div>
+        {% if session.submission %}
+        <table class="summary-table" style="margin-bottom: 8px;">
+            <tr>
+                <td>
+                    <div class="field-label">Language</div>
+                    <div class="field-value">{{ session.submission.language }}</div>
+                </td>
+                <td>
+                    <div class="field-label">Score</div>
+                    <div class="field-value">{{ session.submission.score }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="field-label">Tests</div>
+                    <div class="field-value">{{ session.submission.passed_tests }}/{{ session.submission.total_tests }}
+                    </div>
+                </td>
+                <td>
+                    <div class="field-label">Time Taken</div>
+                    <div class="field-value">{{ session.submission.time_taken_seconds }} seconds</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="field-label">Code</div>
+        <pre>{{ session.submission.code }}</pre>
+
+        <div class="subsection-title">Test Cases</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Input</th>
+                    <th>Expected</th>
+                    <th>Actual</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if session.submission.cases %}
+                {% for tc in session.submission.cases %}
+                <tr>
+                    <td>{{ tc.stdin }}</td>
+                    <td>{{ tc.expected_output if tc.expected_output is not none else "" }}</td>
+                    <td>{{ tc.stdout if tc.stdout is not none else tc.stderr if tc.stderr is not none else "" }}</td>
+                    <td class="{{ 'passed' if tc.passed else 'failed' }}">{{ 'Passed' if tc.passed else 'Failed' }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="muted">No case details available</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="muted">No submission for this session</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</body>
+
+</html>

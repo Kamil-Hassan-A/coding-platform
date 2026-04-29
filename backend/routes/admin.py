@@ -36,8 +36,18 @@ from schemas import (
 from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
-templates = Jinja2Templates(directory="templates")
+# Dynamically resolve templates directory relative to this file
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.normpath(os.path.join(_BASE_DIR, "..", "templates"))
+
+# Ensure templates folder exists at runtime
+if not os.path.exists(TEMPLATES_DIR):
+    raise RuntimeError(f"CRITICAL: Templates directory not found at {TEMPLATES_DIR}")
+
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 logger = logging.getLogger(__name__)
+logger.debug("Jinja2 templates directory resolved to: %s", TEMPLATES_DIR)
+
 REPORT_NOT_FOUND_DETAIL = "Candidate not found"
 PDF_FAILURE_DETAIL = "Failed to generate PDF report"
 CSV_FAILURE_DETAIL = "Failed to export CSV report"
