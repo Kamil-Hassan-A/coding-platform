@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 import { logout } from "../auth/authService";
 import Sidebar from "../../components/layout/Sidebar";
 import SessionDownloadModal from "../../components/SessionDownloadModal";
-import { downloadWithAuth } from "../../lib/downloadWithAuth";
+import { downloadBlob } from "../../api/axiosInstance";
 import useUserStore from "../../stores/userStore";
 import { getAdminCandidates, getDashboardStats, type AdminCandidate } from "./dashboardService";
 
@@ -358,14 +358,14 @@ export default function AdminDashboard() {
     const key = includeFilters ? `export-${mode}-filtered` : `export-${mode}`;
     const url = buildExportCsvUrl(mode, includeFilters);
     const filename = `candidates_${mode}.csv`;
-    runDownload(key, () => downloadWithAuth(url, filename));
+    runDownload(key, () => downloadBlob(url, filename));
     setIsExportDropdownOpen(false);
   };
 
   const handleOpenPdfReport = (candidateId: string) => {
     runDownload(
       `candidate-pdf-${candidateId}`,
-      () => downloadWithAuth(
+      () => downloadBlob(
         `${import.meta.env.VITE_API_BASE_URL}/admin/candidate-report/${candidateId}/pdf`,
         `${candidateId}_report.pdf`,
       ),

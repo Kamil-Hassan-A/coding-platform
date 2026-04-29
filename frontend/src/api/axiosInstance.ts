@@ -32,3 +32,21 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
+export async function downloadBlob(url: string, filename: string): Promise<void> {
+  const response = await axiosInstance.get(url, { responseType: "blob" });
+  const blob = response.data as Blob;
+  const objectUrl = URL.createObjectURL(blob);
+
+  try {
+    const anchor = document.createElement("a");
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}

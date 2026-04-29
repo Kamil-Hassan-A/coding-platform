@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import axiosInstance from "../api/axiosInstance";
-import { downloadWithAuth } from "../lib/downloadWithAuth";
+import axiosInstance, { downloadBlob } from "../api/axiosInstance";
 
 type SessionDownloadModalProps = {
   isOpen: boolean;
@@ -109,7 +108,7 @@ export default function SessionDownloadModal({ isOpen, onClose, userId, mode, cs
         ? `${userId}_session_${sessionId}_${csvType}.csv`
         : `${userId}_session_${sessionId}.pdf`;
 
-    void downloadWithAuth(endpoint, fileName)
+    void downloadBlob(endpoint, fileName)
       .catch((downloadError: unknown) => {
         console.error("Session download failed", downloadError);
       })
