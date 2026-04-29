@@ -8,6 +8,8 @@
 infra/cdk.out/
 !routes/
 !scripts/
+!templates/
+!templates/**
 *.db
 
 /six.py
