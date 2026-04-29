@@ -85,7 +85,7 @@ class SessionProblemPayload(BaseModel):
     title: str
     description: str
     templateCode: str | None = None
-    starter_code: dict[str, Any] | None = None
+    starter_code: dict[str, Any] | str | None = None
     tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int

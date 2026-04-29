@@ -1,13 +1,13 @@
 export const MOCK_SKILLS = [
-  "Agile", "HTML, CSS, JS", "React JS", "React JS with Redux", "TypeScript",
-  "Next JS", "Angular", "Python with Flask", "Python with Django",
-  "Python for Data Science", "Java", "Java Springboot", ".NET, C#",
-  ".NET, VB.NET", "SQL", "MongoDB", "PostgreSQL DB", "Java Selenium", "Python Selenium",
+  "Agile", "HTML, CSS, JS", "TypeScript", "Next JS", "Angular", "Python with Flask",
+  "Python for Data Science", "Java", "Java Springboot", ".NET, C#", ".NET, VB.NET",
+  "SQL", "MongoDB", "PostgreSQL DB", "Java Selenium", "Python Selenium",
+  "React JS", "React JS with Redux",
 ];
 
 export const SKILL_CATEGORIES = [
   { name: "Frontend", skills: ["HTML, CSS, JS", "React JS", "React JS with Redux", "TypeScript", "Next JS", "Angular"] },
-  { name: "Backend", skills: ["Python with Flask", "Python with Django", "Java", "Java Springboot", ".NET, C#", ".NET, VB.NET"] },
+  { name: "Backend", skills: ["Python with Flask", "Java", "Java Springboot", ".NET, C#", ".NET, VB.NET"] },
   { name: "Data", skills: ["Python for Data Science", "SQL", "MongoDB", "PostgreSQL DB"] },
   { name: "Testing", skills: ["Java Selenium", "Python Selenium"] },
   { name: "Other", skills: ["Agile"] },

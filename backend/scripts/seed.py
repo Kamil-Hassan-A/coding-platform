@@ -88,12 +88,6 @@ SKILL_SEEDS = [
         "allowed_languages": [LANGS["python"]],
     },
     {
-        "name": "Python with Django",
-        "description": "Backend and web application development with Django",
-        "icon_url": None,
-        "allowed_languages": [LANGS["python"]],
-    },
-    {
         "name": "Python for Data Science",
         "description": "Data analysis and modeling workflows in Python",
         "icon_url": None,
