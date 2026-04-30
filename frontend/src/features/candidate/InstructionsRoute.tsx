@@ -56,7 +56,7 @@ export default function InstructionsRoute() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-admin-bg px-6 py-10">
+    <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-admin-bg px-4 py-6">
       <InstructionsScreen
         confirmed={confirmed}
         onBack={() =>

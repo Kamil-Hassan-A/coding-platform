@@ -199,7 +199,7 @@ export default function CandidateDashboard() {
         </header>
 
         <main className="flex-1 overflow-y-auto px-6 py-10">
-          {(isSkillsLoading || isProgressLoading) && (
+          {isSkillsLoading && (
             <div className="mt-10 text-left text-slate-500">
               Loading your skills...
             </div>
@@ -271,10 +271,10 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
   };
 
   return (
-    <div className="w-full max-w-[900px] pb-14">
+    <div className="mx-auto w-full max-w-[900px] pb-14">
       <div className="mb-8 rounded-2xl bg-gradient-to-br from-admin-orange to-orange-600 p-8 text-white shadow-[0_4px_12px_rgba(249,115,22,0.15)]">
         <h1 className="mb-2 mt-0 text-[28px] font-bold">
-          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"} .
+          Welcome back, {user?.name ? user.name : "Candidate"} .
           👋
         </h1>
         <p className="m-0 text-[16px] text-white/90">
