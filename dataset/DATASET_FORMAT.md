@@ -68,15 +68,12 @@ Use these exact keys:
 - `difficulty` (`Easy` | `Medium` | `Hard`)
 - `skill` (string)
 - `skill_level` (one of 5 levels)
-- `language` (string)
 - `tags` (array of strings)
 - `starter_code` (object, recommended keys: `default`, `python`, `javascript`, `java`, etc.)
 - `sample_test_cases` (array of `{ "input": string, "output": string }`)
 - `hidden_test_cases` (array of `{ "input": string, "output": string }`, optional)
 - `content` (string)
 - `solution` (string)
-- `source` (string)
-- `url` (string)
 
 ## JSON Showcase
 
@@ -105,7 +102,6 @@ Use these exact keys:
               "difficulty": "Easy",
               "skill": "Java",
               "skill_level": "Beginner",
-              "language": "Java",
               "tags": ["arrays", "hashmap", "beginner"],
               "starter_code": {
                 "default": "public class Solution { public int[] twoSum(int[] nums, int target) { return new int[]{}; } }",
@@ -119,8 +115,6 @@ Use these exact keys:
               ],
               "content": "Given an array of integers...",
               "solution": "Map<Integer, Integer> map = new HashMap<>(); ...",
-              "source": "LeetCode",
-              "url": "https://leetcode.com/problems/two-sum/"
             },
             {
               "id": "9",
@@ -129,7 +123,6 @@ Use these exact keys:
               "difficulty": "Easy",
               "skill": "Java",
               "skill_level": "Beginner",
-              "language": "Java",
               "tags": ["math", "strings", "beginner"],
               "starter_code": {
                 "default": "public class Solution { public boolean isPalindrome(int x) { return false; } }",
@@ -143,8 +136,6 @@ Use these exact keys:
               ],
               "content": "Given an integer x, return true if x is a palindrome...",
               "solution": "Reverse half of the number and compare...",
-              "source": "LeetCode",
-              "url": "https://leetcode.com/problems/palindrome-number/"
             }
           ],
           "Medium": [
@@ -155,7 +146,6 @@ Use these exact keys:
               "difficulty": "Medium",
               "skill": "Java",
               "skill_level": "Beginner",
-              "language": "Java",
               "tags": ["sliding-window", "hashset", "strings"],
               "starter_code": {
                 "default": "public class Solution { public int lengthOfLongestSubstring(String s) { return 0; } }",
@@ -169,8 +159,6 @@ Use these exact keys:
               ],
               "content": "Given a string s...",
               "solution": "int l = 0, r = 0; Set<Character> set = new HashSet<>(); ...",
-              "source": "LeetCode",
-              "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
             }
           ],
           "Hard": []
@@ -209,7 +197,6 @@ Use these exact keys:
               "difficulty": "Easy",
               "skill": "SQL",
               "skill_level": "Beginner",
-              "language": "SQL",
               "tags": ["joins", "select", "beginner"],
               "starter_code": {
                 "default": "SELECT p.firstName, p.lastName, a.city, a.state FROM Person p LEFT JOIN Address a ON p.personId = a.personId;",
@@ -223,8 +210,6 @@ Use these exact keys:
               ],
               "content": "Write a query to report...",
               "solution": "SELECT p.FirstName, p.LastName, a.City, a.State ...",
-              "source": "LeetCode",
-              "url": "https://leetcode.com/problems/combine-two-tables/"
             }
           ],
           "Medium": [],

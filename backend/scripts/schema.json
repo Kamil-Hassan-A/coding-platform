@@ -111,14 +111,11 @@
           "difficulty",
           "skill",
           "skill_level",
-          "language",
           "tags",
           "starter_code",
           "sample_test_cases",
           "content",
-          "solution",
-          "source",
-          "url"
+          "solution"
         ],
         "properties": {
           "id": { "type": "string" },
@@ -139,7 +136,6 @@
               "Specialist_2"
             ]
           },
-          "language": { "type": "string" },
           "tags": {
             "type": "array",
             "items": { "type": "string" }
@@ -157,9 +153,7 @@
             "items": { "$ref": "#/definitions/testcase" }
           },
           "content": { "type": "string" },
-          "solution": { "type": "string" },
-          "source": { "type": "string" },
-          "url": { "type": "string", "format": "uri" }
+          "solution": { "type": "string" }
         }
       },
   
