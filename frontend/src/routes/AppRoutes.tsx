@@ -7,9 +7,9 @@ import ProtectedRoute from "../features/auth/ProtectedRoute";
 const Login = lazy(() => import("../features/auth/Login"));
 const AdminDashboard = lazy(() => import("../features/admin/AdminDashboard"));
 const CandidateDashboard = lazy(() => import("../features/candidate/CandidateDashboard"));
-const CandidateInstructions = lazy(() => import("../features/candidate/InstructionsRoute"));
 const ThankYouPage = lazy(() => import("../features/candidate/ThankYouPage"));
 const AssessmentPage = lazy(() => import("../features/assessment/AssessmentPage"));
+const AgileAnalysisPage = lazy(() => import("../features/assessment/AgileAnalysisPage"));
 const PastScores = lazy(() => import("../features/assessment/PastScores"));
 
 const PageLoader = () => (
@@ -30,8 +30,8 @@ const AppRoutes = () => {
 
           <Route element={<ProtectedRoute allowedRoles={["candidate"]} />}>
             <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
-            <Route path="/candidate/instructions" element={<CandidateInstructions />} />
             <Route path="/candidate/assessment" element={<AssessmentPage />} />
+            <Route path="/candidate/agile-analysis" element={<AgileAnalysisPage />} />
             <Route path="/candidate/thankyou" element={<ThankYouPage />} />
             <Route path="/candidate/scores" element={<PastScores />} />
           </Route>

@@ -1,14 +1,13 @@
 import os
 import random
-import logging
 import json
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import UUID
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -23,7 +22,6 @@ from models import (
     Problem,
     SessionStatus,
     Skill,
-    SessionViolation,
     Submission,
     SubmissionStatus,
     User,
@@ -42,28 +40,10 @@ from schemas import (
     SessionStartResponse,
     SessionSubmitRequest,
     SessionSubmitResponse,
-    ViolationCreate,
 )
 
 router = APIRouter(tags=["sessions"])
 judge0_service = Judge0Service()
-logger = logging.getLogger(__name__)
-ALLOWED_VIOLATION_TYPES = {
-    "tab_switch",
-    "window_blur",
-    "tab_switch_shortcut",
-    "fullscreen_exit",
-    "paste",
-    "paste_attempt",
-    "copy",
-    "cut",
-    "select_all",
-    "devtools_shortcut",
-    "devtools",
-    "devtools_open",
-    "right_click",
-    "unknown",
-}
 LEVEL_ORDER = [
     Level.BEGINNER,
     Level.INTERMEDIATE_1,
@@ -71,7 +51,12 @@ LEVEL_ORDER = [
     Level.SPECIALIST_1,
     Level.SPECIALIST_2,
 ]
-MULTI_QUESTION_COUNT = 2
+DEFAULT_QUESTION_COUNT = 2
+AGILE_QUESTION_COUNT = 5
+MCQ_OPTION_PATTERN = re.compile(r"\b([A-D])\b", re.IGNORECASE)
+MCQ_ANSWER_PATTERN = re.compile(r"correct\s*answer\s*[:\-]\s*([A-D])\b", re.IGNORECASE)
+MCQ_DESCRIPTION_OPTION_PATTERN = re.compile(r"(?mi)^\s*([A-D])\)\s+.+$")
+MCQ_SAMPLE_INPUT_ANSWER_PATTERN = re.compile(r"answer\s*=\s*['\"]?([A-D])['\"]?", re.IGNORECASE)
 LEVEL_BADGE_LABELS = {
     Level.BEGINNER: "Beginner",
     Level.INTERMEDIATE_1: "Intermediate 1",
@@ -79,6 +64,285 @@ LEVEL_BADGE_LABELS = {
     Level.SPECIALIST_1: "Specialist 1",
     Level.SPECIALIST_2: "Specialist 2",
 }
+COMBINED_WEB_SKILL_KEYS = {"htmlcssjs"}
+WEB_SKILL_KEYS = {"htmlcssjs"}
+WEB_MONACO_LANGUAGES = {"html_css_js", "html", "css", "javascript_web", "javascript"}
+
+
+def normalize_skill_key(value: str | None) -> str:
+    return re.sub(r"[^a-z0-9]+", "", (value or "").strip().lower())
+
+
+def is_combined_html_css_js_skill(skill: Skill) -> bool:
+    return normalize_skill_key(skill.name) in COMBINED_WEB_SKILL_KEYS
+
+
+def dedupe_allowed_languages(languages: list[Any]) -> list[dict[str, Any]]:
+    deduped: list[dict[str, Any]] = []
+    seen: set[str] = set()
+
+    for item in languages:
+        if not isinstance(item, dict):
+            continue
+
+        lang_id = item.get("id")
+        monaco = str(item.get("monaco") or "").strip().lower()
+        name = str(item.get("name") or "").strip().lower()
+        dedupe_key = f"{lang_id}:{monaco}:{name}"
+        if dedupe_key in seen:
+            continue
+
+        deduped.append(item)
+        seen.add(dedupe_key)
+
+    return deduped
+
+
+def get_skill_scope_ids(db: Session, skill: Skill) -> set[UUID]:
+    if not is_combined_html_css_js_skill(skill):
+        return {skill.id}
+
+    all_skills = db.scalars(select(Skill)).all()
+    scoped_ids = {
+        candidate.id
+        for candidate in all_skills
+        if normalize_skill_key(candidate.name) in WEB_SKILL_KEYS
+    }
+    if not scoped_ids:
+        scoped_ids = {skill.id}
+    return scoped_ids
+
+
+def merge_allowed_languages_for_skill(db: Session, skill: Skill) -> list[dict[str, Any]]:
+    if not is_combined_html_css_js_skill(skill):
+        return dedupe_allowed_languages(skill.allowed_languages or [])
+
+    scoped_skill_ids = get_skill_scope_ids(db, skill)
+    scoped_skills = db.scalars(select(Skill).where(Skill.id.in_(scoped_skill_ids))).all()
+
+    merged: list[Any] = []
+    for scoped_skill in scoped_skills:
+        merged.extend(scoped_skill.allowed_languages or [])
+
+    return dedupe_allowed_languages(merged)
+
+
+def get_assessment_problem_pool(db: Session, skill: Skill, level: Level) -> tuple[list[Problem], set[UUID]]:
+    if not is_combined_html_css_js_skill(skill):
+        problems = db.scalars(select(Problem).where(Problem.skill_id == skill.id, Problem.level == level)).all()
+        return problems, {skill.id}
+
+    all_skills = db.scalars(select(Skill)).all()
+    web_skill_ids = {
+        candidate.id
+        for candidate in all_skills
+        if normalize_skill_key(candidate.name) in WEB_SKILL_KEYS
+    }
+    scoped_ids = set(web_skill_ids)
+    if not scoped_ids:
+        scoped_ids = {skill.id}
+        web_skill_ids = {skill.id}
+
+    problems = db.scalars(
+        select(Problem).where(
+            Problem.skill_id.in_(scoped_ids),
+            Problem.level == level,
+        )
+    ).all()
+    return problems, web_skill_ids
+
+
+def choose_combined_html_css_js_problems(
+    problems: list[Problem],
+    level: Level,
+    required_count: int,
+    web_skill_ids: set[UUID],
+) -> list[Problem]:
+    if len(problems) < required_count:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"At least {required_count} questions are required to start this assessment level",
+        )
+
+    web_problems = [problem for problem in problems if problem.skill_id in web_skill_ids]
+    if not web_problems:
+        return choose_problems(problems, level, required_count)
+
+    selected: list[Problem] = [random.choice(web_problems)]
+    selected_ids = {problem.id for problem in selected}
+
+    if required_count > len(selected):
+        remaining = [problem for problem in problems if problem.id not in selected_ids]
+        if len(remaining) < required_count - len(selected):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"At least {required_count} questions are required to start this assessment level",
+            )
+        selected.extend(random.sample(remaining, required_count - len(selected)))
+
+    return selected[:required_count]
+
+
+def is_web_sandbox_problem(problem: Problem) -> bool:
+    starter_code = problem.starter_code if isinstance(problem.starter_code, dict) else {}
+    starter_keys = {str(key).strip().lower() for key in starter_code.keys()}
+    if {"html", "css"}.issubset(starter_keys):
+        return True
+    if "javascript" in starter_keys or "js" in starter_keys:
+        return True
+
+    normalized_tags = {
+        normalize_skill_key(str(tag))
+        for tag in (problem.tags or [])
+        if str(tag).strip()
+    }
+    web_tags = {
+        "html",
+        "css",
+        "javascript",
+        "js",
+        "frontend",
+        "web",
+        "htmlcssjs",
+    }
+    if normalized_tags.intersection(web_tags):
+        return True
+
+    return False
+
+
+def parse_web_bundle(raw: object) -> dict[str, str]:
+    def _coerce_from_dict(value: dict[str, Any]) -> dict[str, str]:
+        return {
+            "html": str(value.get("html") or ""),
+            "css": str(value.get("css") or ""),
+            "js": str(value.get("js") or value.get("javascript") or ""),
+        }
+
+    if isinstance(raw, dict):
+        return _coerce_from_dict(raw)
+
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return {"html": "", "css": "", "js": ""}
+
+        try:
+            parsed = json.loads(text)
+            if isinstance(parsed, dict):
+                return _coerce_from_dict(parsed)
+        except (TypeError, ValueError):
+            pass
+
+        # If plain text was sent, treat it as JS-only content.
+        return {"html": "", "css": "", "js": text}
+
+    return {"html": "", "css": "", "js": ""}
+
+
+def solution_web_bundle(problem: Problem) -> dict[str, str]:
+    candidates: list[object] = []
+
+    if problem.solution_text:
+        candidates.append(problem.solution_text)
+
+    if isinstance(problem.starter_code, dict):
+        default_value = problem.starter_code.get("default")
+        if default_value is not None:
+            candidates.append(default_value)
+        candidates.append(problem.starter_code)
+
+    for candidate in candidates:
+        bundle = parse_web_bundle(candidate)
+        if any(value.strip() for value in bundle.values()):
+            return bundle
+
+    return {"html": "", "css": "", "js": ""}
+
+
+def _tokenize_segment(value: str) -> set[str]:
+    tokens = re.findall(r"[a-z0-9_#.-]+", (value or "").lower())
+    return {token for token in tokens if token}
+
+
+def _segment_similarity(reference: str, candidate: str) -> float:
+    ref_tokens = _tokenize_segment(reference)
+    cand_tokens = _tokenize_segment(candidate)
+
+    if not ref_tokens and not cand_tokens:
+        return 1.0
+    if not ref_tokens:
+        return 1.0
+    if not cand_tokens:
+        return 0.0
+
+    union = ref_tokens.union(cand_tokens)
+    if not union:
+        return 0.0
+
+    return len(ref_tokens.intersection(cand_tokens)) / len(union)
+
+
+def _build_web_case(stdin: str, expected_output: str, stdout: str, passed: bool) -> dict[str, Any]:
+    return {
+        "stdin": stdin,
+        "expected_output": expected_output,
+        "stdout": stdout,
+        "stderr": None,
+        "compile_output": None,
+        "message": None,
+        "status": {"id": 3, "description": "Accepted"} if passed else {"id": 4, "description": "Wrong Answer"},
+        "time": "0",
+        "memory": None,
+        "passed": passed,
+    }
+
+
+def evaluate_web_submission(problem: Problem, code: str) -> dict[str, Any]:
+    candidate = parse_web_bundle(code)
+    reference = solution_web_bundle(problem)
+
+    cases: list[dict[str, Any]] = []
+
+    for segment in ("html", "css", "js"):
+        value = candidate.get(segment, "")
+        passed = bool(value.strip())
+        cases.append(
+            _build_web_case(
+                stdin=f"segment:{segment}",
+                expected_output="non-empty code",
+                stdout="non-empty" if passed else "empty",
+                passed=passed,
+            )
+        )
+
+    reference_segments = [segment for segment in ("html", "css", "js") if reference.get(segment, "").strip()]
+    if reference_segments:
+        similarities = [_segment_similarity(reference[segment], candidate.get(segment, "")) for segment in reference_segments]
+        average_similarity = sum(similarities) / len(similarities)
+        # Keep threshold lenient so alternate implementations can still pass.
+        reference_passed = average_similarity >= 0.12
+        cases.append(
+            _build_web_case(
+                stdin="solution_match",
+                expected_output="candidate should align with reference solution",
+                stdout=f"similarity={average_similarity:.2f}",
+                passed=reference_passed,
+            )
+        )
+
+    passed_tests = sum(1 for case in cases if case.get("passed"))
+    total_tests = len(cases)
+    score = int(round((passed_tests / total_tests) * 100)) if total_tests else 0
+
+    return {
+        "resolved_monaco": "html_css_js",
+        "score": score,
+        "passed_tests": passed_tests,
+        "total_tests": total_tests,
+        "time_taken": 0,
+        "cases": cases,
+    }
 
 
 def preferred_difficulty_pair(level: Level) -> tuple[str, str]:
@@ -89,11 +353,17 @@ def preferred_difficulty_pair(level: Level) -> tuple[str, str]:
     return ("medium", "hard")
 
 
-def choose_two_problems(problems: list[Problem], level: Level) -> list[Problem]:
-    if len(problems) < MULTI_QUESTION_COUNT:
+def get_required_question_count(skill: Skill) -> int:
+    if skill.name.strip().lower() == "agile":
+        return AGILE_QUESTION_COUNT
+    return DEFAULT_QUESTION_COUNT
+
+
+def choose_problems(problems: list[Problem], level: Level, required_count: int) -> list[Problem]:
+    if len(problems) < required_count:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="At least 2 questions are required to start this assessment level",
+            detail=f"At least {required_count} questions are required to start this assessment level",
         )
 
     grouped: dict[str, list[Problem]] = {}
@@ -103,27 +373,42 @@ def choose_two_problems(problems: list[Problem], level: Level) -> list[Problem]:
 
     preferred_first, preferred_second = preferred_difficulty_pair(level)
 
-    if len(grouped) >= 2:
-        ordered_labels: list[str] = []
-        for label in [preferred_first, preferred_second, "easy", "medium", "hard", *sorted(grouped.keys())]:
-            if label in grouped and label not in ordered_labels:
-                ordered_labels.append(label)
+    ordered_labels: list[str] = []
+    for label in [preferred_first, preferred_second, "easy", "medium", "hard", *sorted(grouped.keys())]:
+        if label in grouped and label not in ordered_labels:
+            ordered_labels.append(label)
 
-        first = random.choice(grouped[ordered_labels[0]])
+    selected: list[Problem] = []
+    selected_ids: set[UUID] = set()
 
-        second_candidates: list[Problem] = []
-        for label in ordered_labels[1:]:
-            candidates = [problem for problem in grouped[label] if problem.id != first.id]
-            if candidates:
-                second_candidates = candidates
+    while len(selected) < required_count:
+        made_progress = False
+        for label in ordered_labels:
+            candidates = [problem for problem in grouped[label] if problem.id not in selected_ids]
+            if not candidates:
+                continue
+            picked = random.choice(candidates)
+            selected.append(picked)
+            selected_ids.add(picked.id)
+            made_progress = True
+            if len(selected) >= required_count:
                 break
 
-        if second_candidates:
-            second = random.choice(second_candidates)
-            return [first, second]
+        if not made_progress:
+            break
 
-    sampled = random.sample(problems, MULTI_QUESTION_COUNT)
-    return [sampled[0], sampled[1]]
+    if len(selected) < required_count:
+        remaining = [problem for problem in problems if problem.id not in selected_ids]
+        if len(remaining) >= (required_count - len(selected)):
+            selected.extend(random.sample(remaining, required_count - len(selected)))
+
+    if len(selected) < required_count:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"At least {required_count} questions are required to start this assessment level",
+        )
+
+    return selected[:required_count]
 
 
 def build_question_set_payload(problem_ids: list[UUID]) -> str:
@@ -159,8 +444,6 @@ def parse_question_ids(raw: str | None, primary_problem_id: UUID) -> list[UUID]:
             continue
         if parsed_id not in ordered_ids:
             ordered_ids.append(parsed_id)
-        if len(ordered_ids) >= MULTI_QUESTION_COUNT:
-            break
 
     return ordered_ids
 
@@ -179,6 +462,11 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
 
 
 def get_session_problem_set(db: Session, session_obj: AssessmentSession) -> list[Problem]:
+    parent_skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
+    allowed_skill_ids = {session_obj.skill_id}
+    if parent_skill is not None:
+        allowed_skill_ids = get_skill_scope_ids(db, parent_skill)
+
     ordered_ids = parse_question_ids(session_obj.last_draft_code, session_obj.problem_id)
     resolved: list[Problem] = []
 
@@ -186,7 +474,7 @@ def get_session_problem_set(db: Session, session_obj: AssessmentSession) -> list
         problem = db.scalar(select(Problem).where(Problem.id == problem_id))
         if problem is None:
             continue
-        if problem.skill_id != session_obj.skill_id or problem.level != session_obj.level:
+        if problem.skill_id not in allowed_skill_ids or problem.level != session_obj.level:
             continue
         resolved.append(problem)
 
@@ -215,6 +503,90 @@ def resolve_problem_from_session(
     raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Problem is not part of this session")
 
 
+def is_mcq_problem(problem: Problem, skill: Skill | None = None) -> bool:
+    tags = [str(tag).strip().lower() for tag in (problem.tags or []) if str(tag).strip()]
+    if "mcq" in tags:
+        return True
+    if skill is not None and skill.name.strip().lower() == "agile":
+        return True
+    return False
+
+
+def extract_mcq_correct_option(problem: Problem) -> str | None:
+    for source_text in (problem.solution_text or "", problem.description or ""):
+        match = MCQ_ANSWER_PATTERN.search(source_text)
+        if match:
+            return match.group(1).upper()
+
+    sample_cases = problem.sample_test_cases or []
+    if isinstance(sample_cases, list):
+        for case in sample_cases:
+            if not isinstance(case, dict):
+                continue
+            raw_input = str(case.get("input", ""))
+            match = MCQ_SAMPLE_INPUT_ANSWER_PATTERN.search(raw_input)
+            if match:
+                return match.group(1).upper()
+
+    return None
+
+
+def has_complete_mcq_options(problem: Problem) -> bool:
+    description = problem.description or ""
+    found = {match.group(1).upper() for match in MCQ_DESCRIPTION_OPTION_PATTERN.finditer(description)}
+    return {"A", "B", "C", "D"}.issubset(found)
+
+
+def is_pure_mcq_problem(problem: Problem, skill: Skill | None = None) -> bool:
+    if not is_mcq_problem(problem, skill):
+        return False
+    if not has_complete_mcq_options(problem):
+        return False
+    if not extract_mcq_correct_option(problem):
+        return False
+    return True
+
+
+def extract_mcq_selected_option(raw_answer: str) -> str | None:
+    if not isinstance(raw_answer, str):
+        return None
+    cleaned = raw_answer.strip()
+    if not cleaned:
+        return None
+    match = MCQ_OPTION_PATTERN.search(cleaned)
+    if not match:
+        return None
+    return match.group(1).upper()
+
+
+def evaluate_mcq_submission(problem: Problem, selected_option: str | None) -> dict[str, Any]:
+    correct_option = extract_mcq_correct_option(problem)
+    passed = bool(selected_option and correct_option and selected_option == correct_option)
+
+    status_payload = {"id": 3, "description": "Accepted"} if passed else {"id": 4, "description": "Wrong Answer"}
+    case = {
+        "stdin": selected_option or "",
+        "expected_output": correct_option or "",
+        "stdout": selected_option or "",
+        "stderr": None,
+        "compile_output": None,
+        "message": None,
+        "status": status_payload,
+        "time": "0",
+        "memory": None,
+        "passed": passed,
+    }
+
+    return {
+        "resolved_monaco": "mcq",
+        "score": 100 if passed else 0,
+        "passed_tests": 1 if passed else 0,
+        "total_tests": 1,
+        "time_taken": 0,
+        "cases": [case],
+    }
+
+
 def execute_problem(
     problem: Problem,
     skill: Skill,
@@ -223,34 +595,16 @@ def execute_problem(
     *,
     use_hidden_cases: bool,
 ) -> dict[str, Any]:
+    if is_mcq_problem(problem, skill):
+        selected_option = extract_mcq_selected_option(code)
+        return evaluate_mcq_submission(problem, selected_option)
+
     resolved_monaco, resolved_language_id = resolve_language_from_skill(language, skill.allowed_languages or [])
 
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
     try:
-        if resolved_monaco in ("html_css_js", "html", "css", "javascript_web"):
-            cases = [
-                {
-                    "stdin": str(case.get("input", "")),
-                    "expected_output": str(case.get("output", "")),
-                    "stdout": "Pending AI feedback",
-                    "stderr": None,
-                    "compile_output": None,
-                    "message": None,
-                    "status": {"id": 3, "description": "Accepted"},
-                    "time": "0",
-                    "memory": None,
-                    "passed": True,
-                }
-                for case in (test_inputs or [])
-                if isinstance(case, dict)
-            ]
-            execution_result = {
-                "score": 100,
-                "passed_tests": len(cases),
-                "total_tests": len(cases),
-                "time_taken": 0,
-                "cases": cases,
-            }
+        if resolved_monaco in WEB_MONACO_LANGUAGES and is_web_sandbox_problem(problem):
+            execution_result = evaluate_web_submission(problem, code)
         else:
             execution_result = judge0_service.execute(
                 code=code,
@@ -272,32 +626,9 @@ def execute_problem(
     }
 
 
-def _truncate_text(value: Any, limit: int = 2000) -> str:
-    text = "" if value is None else str(value)
-    if len(text) <= limit:
-        return text
-    return f"{text[:limit]}...<truncated:{len(text) - limit}>"
-
-
-def _compute_overall_status(cases: list[dict[str, Any]]) -> str:
-    if not cases:
-        return "runtime_error"
-
-    statuses = [str(case.get("normalized_status") or "").strip() for case in cases if isinstance(case, dict)]
-    if any(status == "compile_error" for status in statuses):
-        return "compile_error"
-    if any(status == "runtime_error" for status in statuses):
-        return "runtime_error"
-    if any(status == "time_limit_exceeded" for status in statuses):
-        return "time_limit_exceeded"
-    if statuses and all(status == "success" for status in statuses):
-        return "success"
-    return "runtime_error"
-
-
 def resolve_template_code(starter_code: object) -> str | None:
     if isinstance(starter_code, dict):
-        for key in ("python", "default", "javascript", "java"):
+        for key in ("python", "default", "javascript", "java", "csharp", "c#", "cs", "dotnet", ".net", "vb", "vb.net", "visual basic"):
             value = starter_code.get(key)
             if isinstance(value, str) and value.strip():
                 return value
@@ -383,10 +714,57 @@ def ensure_session_owner(session_obj: AssessmentSession, current_user: User) -> 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Session does not belong to current user")
 
 
+def canonical_monaco_language(language: str) -> str:
+    raw = (language or "").strip().lower()
+    collapsed = re.sub(r"[\s\-_.(),]+", "", raw)
+
+    if raw in {"c#", "csharp", "cs", "dotnet", ".net", ".net, c#", ".net,c#"} or collapsed in {
+        "c#",
+        "csharp",
+        "cs",
+        "dotnet",
+        "net",
+        "netc#",
+        "netcsharp",
+    }:
+        return "csharp"
+
+    if raw in {"vb", "vb.net", "vbnet", "visual basic", "visual basic.net", "visual basic .net"} or collapsed in {
+        "vb",
+        "vbnet",
+        "visualbasic",
+        "visualbasicnet",
+    }:
+        return "vb"
+
+    return raw
+
+
+def expand_language_aliases(value: object) -> set[str]:
+    if value is None:
+        return set()
+    raw = str(value).strip().lower()
+    if not raw:
+        return set()
+
+    collapsed = re.sub(r"[\s\-_.(),]+", "", raw)
+    canonical = canonical_monaco_language(raw)
+    aliases = {raw, collapsed, canonical}
+
+    if canonical == "csharp":
+        aliases.update({"c#", "cs", "dotnet", ".net", "net", "netc#", "netcsharp"})
+    elif canonical == "vb":
+        aliases.update({"vb", "vb.net", "vbnet", "visual basic", "visualbasic", "visualbasicnet"})
+
+    return {item for item in aliases if item}
+
+
 def resolve_language_from_skill(language: str, allowed_languages: list[Any]) -> tuple[str, int]:
     requested = (language or "").strip().lower()
     if not requested:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Language is required")
+
+    requested_aliases = expand_language_aliases(requested)
 
     for item in allowed_languages or []:
         if not isinstance(item, dict):
@@ -397,9 +775,13 @@ def resolve_language_from_skill(language: str, allowed_languages: list[Any]) -> 
         if lang_id is None:
             continue
 
-        if requested == monaco or requested == name or requested == str(lang_id).strip().lower():
+        item_aliases = expand_language_aliases(monaco)
+        item_aliases.update(expand_language_aliases(name))
+        item_aliases.add(str(lang_id).strip().lower())
+
+        if requested_aliases.intersection(item_aliases):
             try:
-                return (monaco or requested), int(lang_id)
+                return (canonical_monaco_language(monaco or requested), int(lang_id))
             except (TypeError, ValueError):
                 continue
 
@@ -416,7 +798,7 @@ def score_submission(
     language: str,
     forced_status: SubmissionStatus | None = None,
 ) -> Submission:
-    if session_obj.submissions:
+    if session_obj.submission is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
 
     problem = resolve_problem_from_session(db, session_obj, None)
@@ -432,9 +814,9 @@ def score_submission(
         use_hidden_cases=True,
     )
 
-    score = int(execution_result.get("score", 0))
-    passed_tests = int(execution_result.get("passed_tests", 0))
-    total_tests = int(execution_result.get("total_tests", 0))
+    score = execution_result["score"]
+    passed_tests = execution_result["passed_tests"]
+    total_tests = execution_result["total_tests"]
 
     default_status = SubmissionStatus.CLEARED if score >= get_pass_threshold() else SubmissionStatus.FAILED
     submission_status = forced_status or default_status
@@ -460,13 +842,12 @@ def score_submission(
     )
     db.add(submission)
 
-    if submission_status == SubmissionStatus.TIMED_OUT:
-        session_obj.status = SessionStatus.TIMED_OUT
-        session_obj.submitted_at = current_time
-    else:
-        # Keep submitted state for analytics compatibility while allowing additional submits/runs.
-        session_obj.status = SessionStatus.SUBMITTED
-        session_obj.submitted_at = current_time
+    session_obj.status = (
+        SessionStatus.SUBMITTED
+        if submission_status in (SubmissionStatus.CLEARED, SubmissionStatus.FAILED)
+        else SessionStatus.TIMED_OUT
+    )
+    session_obj.submitted_at = current_time
 
     if submission_status == SubmissionStatus.CLEARED:
         progress = db.scalar(
@@ -565,11 +946,23 @@ def start_session(
     if int(attempts_used) >= max_attempts:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Max attempts reached")
 
-    problems = db.scalars(select(Problem).where(Problem.skill_id == payload.skill_id, Problem.level == payload.level)).all()
+    problems, web_skill_ids = get_assessment_problem_pool(db, skill, payload.level)
     if not problems:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Problem not found")
 
-    selected_problems = choose_two_problems(problems, payload.level)
+    if skill.name.strip().lower() == "agile":
+        problems = [problem for problem in problems if is_pure_mcq_problem(problem, skill)]
+
+    required_count = get_required_question_count(skill)
+    if is_combined_html_css_js_skill(skill):
+        selected_problems = choose_combined_html_css_js_problems(
+            problems,
+            payload.level,
+            required_count,
+            web_skill_ids,
+        )
+    else:
+        selected_problems = choose_problems(problems, payload.level, required_count)
     selected_problem = selected_problems[0]
     started = datetime.now(timezone.utc)
     expires_at = started + timedelta(minutes=selected_problem.time_limit_minutes)
@@ -603,7 +996,7 @@ def start_session(
         attempts_remaining=attempts_remaining,
         problem=build_problem_payload(selected_problem),
         problems=[build_problem_payload(problem) for problem in selected_problems],
-        allowed_languages=skill.allowed_languages or [],
+        allowed_languages=merge_allowed_languages_for_skill(db, skill),
     )
 
 
@@ -639,7 +1032,7 @@ def get_session(
         seconds_remaining=seconds_remaining,
         problem=build_problem_payload(primary_problem),
         problems=[build_problem_payload(problem) for problem in problems],
-        allowed_languages=skill.allowed_languages or [],
+        allowed_languages=merge_allowed_languages_for_skill(db, skill),
         last_draft_code=session_obj.last_draft_code,
         last_draft_lang=session_obj.last_draft_lang,
     )
@@ -668,82 +1061,6 @@ def save_draft(
     return SessionDraftResponse(saved_at=session_obj.draft_saved_at)
 
 
-@router.post("/sessions/{session_id}/violation")
-def log_violation(
-    session_id: UUID,
-    payload: ViolationCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_candidate),
-) -> dict[str, str]:
-    session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
-    if session_obj is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
-    ensure_session_owner(session_obj, current_user)
-
-    requested_type = str(payload.type or "").strip().lower()
-    violation_type = requested_type if requested_type in ALLOWED_VIOLATION_TYPES else "unknown"
-
-    now_utc = datetime.now(timezone.utc)
-    try:
-        client_time = payload.timestamp
-    except Exception:
-        client_time = None
-
-    final_time = now_utc
-    if isinstance(client_time, datetime):
-        if client_time.tzinfo is None:
-            client_time = client_time.replace(tzinfo=timezone.utc)
-        try:
-            drift_seconds = abs((now_utc - client_time.astimezone(timezone.utc)).total_seconds())
-            if drift_seconds <= 300:
-                final_time = client_time.astimezone(timezone.utc)
-        except Exception:
-            final_time = now_utc
-
-    dedupe_since = now_utc - timedelta(seconds=2)
-    existing = db.scalar(
-        select(SessionViolation).where(
-            SessionViolation.session_id == session_obj.id,
-            SessionViolation.type == violation_type,
-            SessionViolation.timestamp >= dedupe_since,
-        )
-    )
-    if existing is not None:
-        return {"status": "duplicate_skipped"}
-
-    try:
-        violation = SessionViolation(
-            session_id=session_obj.id,
-            user_id=current_user.id,
-            type=violation_type,
-            timestamp=final_time,
-            metadata_=payload.metadata,
-        )
-        db.add(violation)
-        db.commit()
-        return {"status": "logged"}
-    except SQLAlchemyError as exc:
-        db.rollback()
-        logger.warning(
-            "Failed to log violation: session_id=%s user_id=%s type=%s error=%s",
-            session_id,
-            current_user.id,
-            violation_type,
-            exc,
-        )
-        return {"status": "failed"}
-    except Exception as exc:
-        db.rollback()
-        logger.warning(
-            "Unexpected violation logging failure: session_id=%s user_id=%s type=%s error=%s",
-            session_id,
-            current_user.id,
-            violation_type,
-            exc,
-        )
-        return {"status": "failed"}
-
-
 @router.post("/sessions/{session_id}/submit", response_model=SessionSubmitResponse)
 def submit_session(
     session_id: UUID,
@@ -751,25 +1068,13 @@ def submit_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionSubmitResponse:
-    logger.info(
-        "submit_session request: session_id=%s code=%s language=%s",
-        session_id,
-        _truncate_text(payload.code),
-        payload.language,
-    )
     session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    prior_submissions = int(
-        db.scalar(select(func.count(Submission.id)).where(Submission.session_id == session_id)) or 0
-    )
-    logger.info(
-        "submit_session attempt: session_id=%s prior_submissions=%s",
-        session_id,
-        prior_submissions,
-    )
+    if session_obj.status in (SessionStatus.SUBMITTED, SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already closed")
 
     current_time = datetime.now(timezone.utc)
     expires_at = session_obj.expires_at.astimezone(timezone.utc) if session_obj.expires_at.tzinfo else session_obj.expires_at.replace(tzinfo=timezone.utc)
@@ -789,10 +1094,7 @@ def submit_session(
         except SQLAlchemyError as exc:
             db.rollback()
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to persist submission") from exc
-        return JSONResponse(
-            status_code=status.HTTP_409_CONFLICT,
-            content={"status": "expired", "message": "Session has expired"},
-        )
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="Session expired; draft auto-submitted")
 
     try:
         if answer_items:
@@ -817,10 +1119,11 @@ def submit_session(
                 deduped_answers.append((problem, answer.code, answer.language))
                 seen_problem_ids.add(answer.problem_id)
 
-            if len(deduped_answers) < MULTI_QUESTION_COUNT:
+            required_count = len(session_problem_set)
+            if len(deduped_answers) < required_count:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="Please submit solutions for both questions",
+                    detail=f"Please submit solutions for all {required_count} questions",
                 )
 
             executions = [
@@ -936,10 +1239,8 @@ def submit_session(
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to persist submission") from exc
 
-    raw_cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
-    normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
-    overall_status = _compute_overall_status(normalized_cases)
-    response_payload = SessionSubmitResponse(
+    cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
+    return SessionSubmitResponse(
         submission_id=submission.id,
         session_id=session_obj.id,
         status=submission.status,
@@ -947,19 +1248,8 @@ def submit_session(
         passed_tests=submission.passed_tests,
         total_tests=submission.total_tests,
         time_taken_seconds=submission.time_taken_seconds,
-        cases=raw_cases,
+        cases=cases,
     )
-    logger.info(
-        "submit_session response: session_id=%s submission_id=%s status=%s overall_status=%s passed_tests=%s total_tests=%s submission_number=%s",
-        session_id,
-        response_payload.submission_id,
-        response_payload.status,
-        overall_status,
-        response_payload.passed_tests,
-        response_payload.total_tests,
-        prior_submissions + 1,
-    )
-    return response_payload
 
 
 @router.post("/sessions/{session_id}/run", response_model=SessionRunResponse)
@@ -969,16 +1259,13 @@ def run_session_code(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionRunResponse:
-    logger.info(
-        "run_session_code request: session_id=%s code=%s language=%s",
-        session_id,
-        _truncate_text(payload.code),
-        payload.language,
-    )
     session_obj = db.scalar(select(AssessmentSession).where(AssessmentSession.id == session_id))
     if session_obj is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
+
+    if session_obj.status != SessionStatus.ACTIVE:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not active")
 
     current_time = datetime.now(timezone.utc)
     expires_at = (
@@ -989,10 +1276,7 @@ def run_session_code(
     if expires_at <= current_time:
         session_obj.status = SessionStatus.TIMED_OUT
         db.commit()
-        return JSONResponse(
-            status_code=status.HTTP_409_CONFLICT,
-            content={"status": "expired", "message": "Session has expired"},
-        )
+        raise HTTPException(status_code=status.HTTP_410_GONE, detail="Session expired")
 
     problem = resolve_problem_from_session(db, session_obj, payload.problem_id)
     skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
@@ -1007,19 +1291,7 @@ def run_session_code(
         use_hidden_cases=False,
     )
 
-    raw_cases = execution_result.get("cases", [])
-    normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
-    overall_status = _compute_overall_status(normalized_cases)
-
-    response_payload = SessionRunResponse(
-        cases=raw_cases,
+    return SessionRunResponse(
+        cases=execution_result.get("cases", []),
         time_taken_ms=int(execution_result.get("time_taken", 0)),
     )
-    logger.info(
-        "run_session_code response: session_id=%s case_count=%s time_taken_ms=%s overall_status=%s",
-        session_id,
-        len(response_payload.cases),
-        response_payload.time_taken_ms,
-        overall_status,
-    )
-    return response_payload

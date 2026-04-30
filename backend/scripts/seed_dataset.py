@@ -359,7 +359,7 @@ def load_from_json(filepath: str, force: bool = False) -> None:
         raise ValueError("JSON payload must contain a skills array")
 
     has_slug = hasattr(Problem, "slug")
-    has_solution = hasattr(Problem, "solution_text")
+    has_solution = hasattr(Problem, "solution")
     has_source_url = hasattr(Problem, "source_url")
 
     session_local = get_session_local()
@@ -445,7 +445,7 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                             if has_slug:
                                 setattr(problem, "slug", slug)
                             if has_solution and (force or question.get("solution") is not None):
-                                setattr(problem, "solution_text", question.get("solution"))
+                                setattr(problem, "solution", question.get("solution"))
                             if has_source_url and (force or question.get("url") is not None):
                                 setattr(problem, "source_url", question.get("url"))
 
@@ -467,7 +467,7 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                             if has_slug:
                                 create_kwargs["slug"] = slug
                             if has_solution:
-                                create_kwargs["solution_text"] = question.get("solution")
+                                create_kwargs["solution"] = question.get("solution")
                             if has_source_url:
                                 create_kwargs["source_url"] = question.get("url")
 

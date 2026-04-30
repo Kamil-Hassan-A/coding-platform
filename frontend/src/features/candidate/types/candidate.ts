@@ -5,7 +5,7 @@ export type BackendLevel =
   | "specialist_1"
   | "specialist_2";
 
-export type CandidateScreen = "home" | "instructions" | "confirmed" | "past_assessments" | "badges";
+export type CandidateScreen = "home" | "confirmed" | "past_assessments" | "badges";
 
 export type AllowedLanguage = {
   id: number;
@@ -84,12 +84,6 @@ export type ConfirmedScreenProps = {
   onChangeSkill: () => void;
   onBegin: () => void;
   isStarting: boolean;
-};
-
-export type InstructionsScreenProps = {
-  confirmed: CandidateSelection;
-  onContinue: () => void;
-  onBack: () => void;
 };
 
 export type LevelOption = {

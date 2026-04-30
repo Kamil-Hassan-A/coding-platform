@@ -33,11 +33,12 @@ export interface TestCaseResult {
 }
 
 export interface SessionProblemPayload {
-  problem_id?: string;
+  problem_id: string;
   title: string;
   description: string;
   templateCode?: string;
   starter_code?: Record<string, any>;
+  tags?: string[];
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
 }
@@ -58,10 +59,16 @@ export interface StartSessionPayload {
   level: string;
 }
 
+export interface SessionQuestionAnswerPayload {
+  problem_id: string;
+  code: string;
+  language: string;
+}
+
 export interface SubmitSessionPayload {
   code: string;
   language: string;
-  metadata?: Record<string, unknown>;
+  answers?: SessionQuestionAnswerPayload[];
 }
 
 export interface SessionSubmitResponse {

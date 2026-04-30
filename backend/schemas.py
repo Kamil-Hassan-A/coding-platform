@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Literal
 from typing import Any
 from uuid import UUID
 
@@ -123,12 +122,6 @@ class SessionDraftResponse(BaseModel):
     saved_at: datetime
 
 
-class ViolationCreate(BaseModel):
-    type: str
-    timestamp: datetime
-    metadata: dict[str, Any] | None = None
-
-
 class SessionQuestionAnswer(BaseModel):
     problem_id: UUID
     code: str
@@ -138,8 +131,6 @@ class SessionQuestionAnswer(BaseModel):
 class SessionSubmitRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
-    metadata: dict[str, Any] | None = None
-    metadata: dict[str, Any] | None = None
     answers: list[SessionQuestionAnswer] = Field(default_factory=list)
 
 
@@ -207,9 +198,6 @@ class AdminCandidateRow(BaseModel):
     gender: str
     dept: str
     skill: str
-    latest_session_id: UUID | None = None
-    latest_skill_name: str | None = None
-    latest_submitted_at: datetime | None = None
     score: int
     status: str
 
@@ -231,86 +219,3 @@ class AdminCredentialRow(BaseModel):
 
 class AdminCredentialsResponse(BaseModel):
     credentials: list[AdminCredentialRow]
-
-
-class ViolationDetail(BaseModel):
-    type: str
-    timestamp: datetime
-    metadata: dict[str, Any] | None = None
-
-
-class TestCaseDetail(BaseModel):
-    stdin: str
-    expected_output: str | None
-    stdout: str | None
-    stderr: str | None
-    passed: bool
-
-
-class SubmissionDetail(BaseModel):
-    submission_id: UUID
-    skill_name: str
-    level: str
-    language: str
-    code: str
-    score: int
-    passed_tests: int
-    total_tests: int
-    status: str
-    submitted_at: datetime
-    time_taken_seconds: int
-    cases: list[TestCaseDetail]
-
-
-class SessionReportDetail(BaseModel):
-    session_id: UUID
-    skill_name: str
-    level: str
-    started_at: datetime
-    submitted_at: datetime | None
-    status: str
-    attempt_number: int
-    violations: list[ViolationDetail]
-    violation_summary: dict[str, int]
-    submission: SubmissionDetail | None
-
-
-class CandidateFullReport(BaseModel):
-    user_id: UUID
-    name: str
-    email: str
-    employee_id: str
-    department: str
-    gender: str
-    exp_indium_years: int
-    exp_overall_years: int
-    generated_at: datetime
-    sessions: list[SessionReportDetail]
-
-
-class CandidateSessionReport(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    user_id: UUID
-    name: str
-    email: str
-    employee_id: str
-    department: str
-    gender: str
-    exp_indium_years: int
-    exp_overall_years: int
-    generated_at: datetime
-    session: SessionReportDetail
-
-
-class CandidateSessionListItem(BaseModel):
-    session_id: UUID
-    skill: str
-    score: int | None
-    status: str
-    submitted_at: datetime | None
-
-
-class ReportsZipExportRequest(BaseModel):
-    user_ids: list[UUID]
-    mode: Literal["latest", "full"]

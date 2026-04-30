@@ -84,7 +84,6 @@ class User(Base):
     skill_progress: Mapped[list["UserSkillProgress"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     sessions: Mapped[list["AssessmentSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    violations: Mapped[list["SessionViolation"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     badges: Mapped[list["UserBadge"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
@@ -183,8 +182,7 @@ class AssessmentSession(Base):
     user: Mapped[User] = relationship(back_populates="sessions")
     problem: Mapped[Problem] = relationship(back_populates="sessions")
     skill: Mapped[Skill] = relationship(back_populates="sessions")
-    submissions: Mapped[list["Submission"]] = relationship(back_populates="session")
-    violations: Mapped[list["SessionViolation"]] = relationship(back_populates="session", cascade="all, delete-orphan")
+    submission: Mapped["Submission | None"] = relationship(back_populates="session", uselist=False)
 
 class Submission(Base):
     __tablename__ = "submissions"
@@ -195,7 +193,7 @@ class Submission(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
-    session_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("assessment_sessions.id"), nullable=False)
+    session_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("assessment_sessions.id"), nullable=False, unique=True)
     user_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     problem_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("problems.id"), nullable=False)
     skill_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("skills.id"), nullable=False)
@@ -216,30 +214,10 @@ class Submission(Base):
     )
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
-    session: Mapped[AssessmentSession] = relationship(back_populates="submissions")
+    session: Mapped[AssessmentSession] = relationship(back_populates="submission")
     user: Mapped[User] = relationship(back_populates="submissions")
     problem: Mapped[Problem] = relationship(back_populates="submissions")
     skill: Mapped[Skill] = relationship(back_populates="submissions")
-
-
-class SessionViolation(Base):
-    __tablename__ = "session_violations"
-    __table_args__ = (
-        Index("ix_session_violations_session_id", "session_id"),
-        Index("ix_session_violations_user_id", "user_id"),
-        Index("ix_session_violations_type", "type"),
-        Index("idx_session_type_time", "session_id", "type", "timestamp"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    session_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("assessment_sessions.id", ondelete="CASCADE"), nullable=False)
-    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    type: Mapped[str] = mapped_column(String(50), nullable=False)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    metadata_: Mapped[dict[str, Any] | None] = mapped_column("metadata", JSON)
-
-    session: Mapped[AssessmentSession] = relationship(back_populates="violations")
-    user: Mapped[User] = relationship(back_populates="violations")
 
 
 class Badge(Base):
