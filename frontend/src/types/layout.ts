@@ -1,6 +1,9 @@
+import type { ReactNode } from "react";
+
 export interface SidebarItem {
   id: string;
   label: string;
+  icon?: ReactNode;
 }
 
 export interface SidebarProps {

@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { LogOut } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Award, Clock, LayoutGrid } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
-import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
 import BadgesScreen from "./BadgesScreen";
-import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
+import PastAssessmentsScreen from "./PastAssessmentsScreen";
 import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
@@ -17,9 +16,9 @@ import type {
 import { useStartSession } from "../assessment/hooks/useAssessment";
 
 const CANDIDATE_MENU = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "badges", label: "Badges" },
-  { id: "past_assessments", label: "Past Assessments" },
+  { id: "dashboard", label: "Dashboard", icon: <LayoutGrid size={15} strokeWidth={2} /> },
+  { id: "badges", label: "Badges", icon: <Award size={15} strokeWidth={2} /> },
+  { id: "past_assessments", label: "Past Assessments", icon: <Clock size={15} strokeWidth={2} /> },
 ];
 
 const LEVEL_META: Record<
@@ -53,12 +52,21 @@ const LEVEL_META: Record<
   },
 };
 
+const resolveActiveMenu = (screen: CandidateScreen) => {
+  if (screen === "past_assessments") return "past_assessments";
+  if (screen === "badges") return "badges";
+  return "dashboard";
+};
+
+const resolveScreenFromMenu = (id: string): CandidateScreen => {
+  if (id === "past_assessments") return "past_assessments";
+  if (id === "badges") return "badges";
+  return "home";
+};
+
 export default function CandidateDashboard() {
   const navigate = useNavigate();
-  const user = useUserStore();
   const [screen, setScreen] = useState<CandidateScreen>("home");
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   useStartSession();
 
@@ -103,16 +111,6 @@ export default function CandidateDashboard() {
     }));
   }, [apiSkills, progress]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const handleConfirm = (
     skill: string,
     level: BackendLevel,
@@ -135,106 +133,53 @@ export default function CandidateDashboard() {
     });
   };
 
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
     <div className="flex h-screen w-full overflow-hidden font-['Segoe_UI',sans-serif]">
       <Sidebar
         items={CANDIDATE_MENU}
-        active={
-          screen === "past_assessments"
-            ? "past_assessments"
-            : screen === "badges"
-              ? "badges"
-              : "dashboard"
-        }
-        onChange={(id) => {
-          if (id === "past_assessments") {
-            setScreen("past_assessments");
-            return;
-          }
-          if (id === "badges") {
-            setScreen("badges");
-            return;
-          }
-          setScreen("home");
-        }}
+        active={resolveActiveMenu(screen)}
+        onChange={(id) => setScreen(resolveScreenFromMenu(id))}
       />
 
-      <div className="flex flex-1 flex-col overflow-hidden bg-admin-bg">
-        <header className="flex h-[60px] shrink-0 items-center justify-end border-b border-slate-200 bg-white px-7">
-          <div className="relative" ref={menuRef}>
-            <div
-              onClick={() => setShowMenu((prev) => !prev)}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-admin-orange text-[16px] font-bold text-white"
-            >
-              {(user?.name?.trim()?.[0] || "C").toUpperCase()}
-            </div>
-
-            {showMenu && (
-              <div className="absolute right-0 top-12 z-[100] w-60 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-                <div className="border-b border-slate-200 px-5 py-4">
-                  <p className="m-0 text-[14px] font-semibold text-[#111]">
-                    {user?.name || "Candidate User"}
-                  </p>
-                  <p className="mt-0.5 text-[12px] text-slate-500">
-                    {user?.department || "candidate@indium.com"}
-                  </p>
-                </div>
-                <div
-                  onClick={() => {
-                    setShowMenu(false);
-                    handleLogout();
-                  }}
-                  className="flex cursor-pointer items-center gap-3 px-5 py-3 text-[14px] text-red-600"
-                >
-                  <LogOut size={16} /> Sign Out
-                </div>
-              </div>
-            )}
+      <main className="flex-1 overflow-y-auto bg-admin-bg px-6 py-10">
+          <>
+        {isSkillsLoading && (
+          <div className="mt-10 text-left text-slate-500">
+            Loading your skills...
           </div>
-        </header>
+        )}
 
-        <main className="flex-1 overflow-y-auto px-6 py-10">
-          {isSkillsLoading && (
-            <div className="mt-10 text-left text-slate-500">
-              Loading your skills...
-            </div>
-          )}
+        {(isSkillsError || isProgressError) && (
+          <div className="mx-auto max-w-[900px] rounded-xl border border-red-200 bg-rose-50 px-5 py-4 text-[14px] text-red-700">
+            Failed to load dashboard data from backend. Please try again.
+          </div>
+        )}
 
-          {(isSkillsError || isProgressError) && (
-            <div className="mx-auto max-w-[900px] rounded-xl border border-red-200 bg-rose-50 px-5 py-4 text-[14px] text-red-700">
-              Failed to load dashboard data from backend. Please try again.
-            </div>
-          )}
-
-          {screen === "home" ? (
-            <HomeScreen
-              isSkillsLoading={isSkillsLoading}
-              skillsList={skillsList}
-              onStart={(data) => {
-                handleConfirm(
-                  data.skill,
-                  data.level,
-                  data.levelLabel,
-                  data.skill_id,
-                );
-              }}
-            />
-          ) : screen === "badges" ? (
-            <BadgesScreen
-              badges={badges}
-              allSkillNames={skillsList.map((skill) => skill.name)}
-              isBadgesLoading={isBadgesLoading}
-              isBadgesError={isBadgesError}
-            />
-          ) : screen === "past_assessments" ? (
-            <PastAssessmentsScreen />
-          ) : null}
+        {screen === "home" ? (
+          <HomeScreen
+            isSkillsLoading={isSkillsLoading}
+            skillsList={skillsList}
+            onStart={(data) => {
+              handleConfirm(
+                data.skill,
+                data.level,
+                data.levelLabel,
+                data.skill_id,
+              );
+            }}
+          />
+        ) : screen === "badges" ? (
+          <BadgesScreen
+            badges={badges}
+            allSkillNames={skillsList.map((skill) => skill.name)}
+            isBadgesLoading={isBadgesLoading}
+            isBadgesError={isBadgesError}
+          />
+        ) : screen === "past_assessments" ? (
+          <PastAssessmentsScreen />
+        ) : null}
+          </>
         </main>
-      </div>
     </div>
   );
 }

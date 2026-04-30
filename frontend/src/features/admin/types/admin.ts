@@ -1,21 +1,3 @@
-import type { CSSProperties } from "react";
-
-export type SkillTag = "fe" | "be" | "db" | "qa" | "pm";
-
-export type SkillCategory =
-  | "Frontend"
-  | "Backend"
-  | "Database"
-  | "QA"
-  | "Process";
-
-export type Skill = {
-  id: number;
-  name: string;
-  category: SkillCategory;
-  tag: SkillTag;
-};
-
 export type DashboardStats = {
   totalEmployees: number;
   totalAssessments: number;
@@ -42,20 +24,4 @@ export type AdminCandidate = {
   score: number;
   latest_submitted_at?: string | null;
   status: "Pass" | "Fail" | "Pending";
-};
-
-export type TagConfig = {
-  label: string;
-  style: CSSProperties;
-};
-
-export type StatCard = {
-  key: keyof DashboardStats;
-  label: string;
-};
-
-export type CategoryFilter = "All" | SkillCategory;
-
-export type SkillCardProps = {
-  skill: Skill;
 };
