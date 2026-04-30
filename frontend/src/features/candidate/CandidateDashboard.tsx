@@ -76,7 +76,6 @@ export default function CandidateDashboard() {
 
   const {
     data: progress,
-    isLoading: isProgressLoading,
     isError: isProgressError,
   } = useQuery({
     queryKey: ["user-progress"],
