@@ -89,6 +89,8 @@ class SessionProblemPayload(BaseModel):
     tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int
+    question_type: str | None = None
+    options: list[str] | None = None
 
 
 class SessionStartResponse(BaseModel):

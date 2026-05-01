@@ -133,6 +133,9 @@ class Problem(Base):
     source_url: Mapped[str | None] = mapped_column(String(1000))
     source_dataset: Mapped[str | None] = mapped_column(String(100))
     solution_text: Mapped[str | None] = mapped_column(Text)
+    question_type: Mapped[str | None] = mapped_column(String(50), nullable=True, default=None)
+    options: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True, default=None)
+    correct_option: Mapped[str | None] = mapped_column(String(1), nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     skill: Mapped[Skill] = relationship(back_populates="problems")
