@@ -242,15 +242,13 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         tags=[str(tag) for tag in (problem.tags or [])],
         sample_test_cases=sanitized_samples,
         time_limit_minutes=problem.time_limit_minutes,
-<<<<<<< HEAD
         schema_tables=schema_tables,
-=======
         question_type=problem.question_type,
         type_data=(
             {k: v for k, v in (problem.type_data or {}).items() if k != "correct_option"}
             if problem.type_data else None
         ),
->>>>>>> 694ffbbebe179f33598eb61c1717a4b07dbe0e1f
+
     )
 
 
