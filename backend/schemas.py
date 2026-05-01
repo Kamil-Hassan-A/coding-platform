@@ -80,6 +80,16 @@ class ProblemTestCase(BaseModel):
     output: str
 
 
+class SqlTableColumn(BaseModel):
+    name: str
+    type: str
+
+
+class SqlTableSchema(BaseModel):
+    table: str
+    columns: list[SqlTableColumn]
+
+
 class SessionProblemPayload(BaseModel):
     problem_id: UUID
     title: str
@@ -89,6 +99,7 @@ class SessionProblemPayload(BaseModel):
     tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int
+    schema_tables: list[SqlTableSchema] = Field(default_factory=list)
     question_type: str | None = None
     type_data: dict[str, Any] | None = None
 
@@ -178,6 +189,9 @@ class SessionSubmitResponse(BaseModel):
 class SessionRunResponse(BaseModel):
     cases: list[TestCaseResult]
     time_taken_ms: int
+    sql_run: bool = False
+    stdout: str | None = None
+    expected_output: str | None = None
 
 
 class SubmissionResultsResponse(BaseModel):
