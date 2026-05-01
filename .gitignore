@@ -1,0 +1,14 @@
+# --- Project: keep repo free of generated / local junk ---
+
+# SQL audit dry-run output (regenerate: python scripts/sql_dataset_full_audit_fix.py --dry-run-report …)
+backend/sql_audit_report.json
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Local environment (never commit secrets)
+.env
+
+# JavaScript dependencies
+node_modules/

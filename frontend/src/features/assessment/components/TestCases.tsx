@@ -10,11 +10,72 @@ interface Props {
   runResult: SessionRunResponse | null;
 }
 
+/**
+ * Displays submit or run outputs. Rendering is fully driven by `submissionResult` /
+ * `runResult` props; parent should reset those when the question changes and remount via `key`.
+ */
 export default function TestCases({ submissionResult, runResult }: Props) {
   if (!submissionResult && runResult) {
     const runCases = runResult.cases ?? [];
     const passedCases = runCases.filter((tc) => tc.passed).length;
     const allPassed = runCases.length > 0 && passedCases === runCases.length;
+
+    if (runResult.sql_run === true) {
+      const tc0 = runCases[0];
+      const userOut =
+        (runResult.stdout as string | null | undefined) ??
+        (typeof tc0?.stdout === "string" ? tc0.stdout : tc0?.stdout != null ? String(tc0.stdout) : null);
+      const expectedOut =
+        (runResult.expected_output as string | null | undefined) ??
+        (typeof tc0?.expected_output === "string"
+          ? tc0.expected_output
+          : tc0?.expected_output != null
+            ? String(tc0.expected_output)
+            : null);
+
+      const outBlock =
+        "m-0 max-h-[min(420px,50vh)] min-h-[4rem] overflow-auto whitespace-pre-wrap rounded-md border border-[#eee] bg-white p-3 font-mono text-[13px] text-[#333]";
+
+      return (
+        <div className="p-6 font-['Segoe_UI',sans-serif]">
+          <div
+            className={`mb-5 rounded-lg border px-4 py-3 text-sm font-semibold ${
+              allPassed
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-red-200 bg-red-50 text-red-700"
+            }`}
+          >
+            {allPassed ? "✓ Query ran and output matches the expected result" : "✗ Output differs or the query did not run successfully"}
+          </div>
+
+          <div className="mb-6 flex items-center justify-between border-b border-[#eee] pb-4">
+            <div className="text-[11px] font-bold tracking-[0.5px] text-[#999]">SQL RUN</div>
+            <div className="text-right">
+              <div className="text-[11px] font-bold text-[#999]">TIME</div>
+              <div className="text-[14px] font-semibold text-[#555]">{runResult.time_taken_ms}ms</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="min-h-0 min-w-0">
+              <div className="mb-2 text-[11px] font-bold tracking-[0.5px] text-[#999]">YOUR OUTPUT (STDOUT)</div>
+              <pre className={outBlock}>{userOut != null && userOut !== "" ? userOut : "(empty)"}</pre>
+            </div>
+            <div className="min-h-0 min-w-0">
+              <div className="mb-2 text-[11px] font-bold tracking-[0.5px] text-[#999]">EXPECTED OUTPUT</div>
+              {expectedOut != null && expectedOut !== "" ? (
+                <pre className={outBlock}>{expectedOut}</pre>
+              ) : (
+                <div className="max-h-[min(420px,50vh)] min-h-[4rem] overflow-auto rounded-md border border-dashed border-[#ddd] bg-[#fafafa] p-3 text-sm text-[#777]">
+                  No reference output is available for this problem (missing reference SQL in the database). Your query
+                  still runs against the seeded tables; only the side-by-side comparison is unavailable.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="p-6 font-['Segoe_UI',sans-serif]">

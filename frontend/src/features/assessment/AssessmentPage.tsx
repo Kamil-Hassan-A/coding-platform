@@ -8,6 +8,7 @@ import Editor from "./components/Editor";
 import CodePlayground from "./components/CodePlayground";
 import TestCases from "./components/TestCases";
 import { reportViolation } from "./services/assessmentService";
+import { isSqlLikeLanguage, SQL_STARTER_COMMENT } from "./utils/sqlUi";
 import type {
   SessionSubmitResponse,
   SessionRunResponse,
@@ -53,6 +54,14 @@ function isQuestionSetMetadata(raw: string | null | undefined): boolean {
   }
 }
 
+/** Pick a clean per-language scaffold for the editor.
+ *
+ *  For SQL we never let raw CREATE TABLE / INSERT INTO setup (which legacy
+ *  datasets sometimes stored under the `default` key) reach the candidate.
+ *  Instead we surface a HackerRank-style comment that explains how to write
+ *  their query. The hidden setup is prepended on the backend before Judge0
+ *  runs the candidate's code.
+ */
 function resolveProblemBoilerplate(
   problem: SessionProblemPayload | null | undefined,
   skillName: string | null,
@@ -74,6 +83,20 @@ function resolveProblemBoilerplate(
     return JSON.stringify({ html: "", css: "", js: "" });
   }
 
+  const requestedLanguage = (language || "").trim().toLowerCase();
+  const sqlLike =
+    isSqlLikeLanguage(requestedLanguage) ||
+    (Array.isArray(problem.schema_tables) && problem.schema_tables.length > 0);
+
+  if (sqlLike) {
+    // Hard-reset: every SQL problem starts with the same clean comment.
+    // The dataset/backend may sometimes pre-fill the answer in
+    // starter_code.sql (e.g. recursive CTE problems where the starter IS
+    // the solution); we never want that to leak into the candidate's
+    // editor. Per-question drafts persist via questionDrafts elsewhere.
+    return SQL_STARTER_COMMENT;
+  }
+
   if (typeof problem.templateCode === "string" && problem.templateCode.trim()) {
     return problem.templateCode;
   }
@@ -86,7 +109,6 @@ function resolveProblemBoilerplate(
 
     if (entries.length === 0) return "";
 
-    const requestedLanguage = (language || "").trim().toLowerCase();
     if (requestedLanguage) {
       const matched = entries.find(([key]) => key.trim().toLowerCase() === requestedLanguage);
       if (matched) return matched[1];
@@ -574,6 +596,10 @@ export default function AssessmentPage() {
     return getProblemKey(displayedProblem, activeQuestionIndex);
   }, [displayedProblem, activeQuestionIndex]);
 
+  /** Latest question key — used so async run callbacks ignore stale completions after switching questions. */
+  const currentQuestionKeyRef = useRef(currentQuestionKey);
+  currentQuestionKeyRef.current = currentQuestionKey;
+
   useEffect(() => {
     if (!displayedProblem) return;
 
@@ -631,7 +657,14 @@ export default function AssessmentPage() {
 
   // 4. Submission Logic
   const { mutate: submit, mutateAsync: submitAsync, isPending: isSubmitting } = useSubmitSession();
-  const { mutate: run, isPending: isRunning } = useRunCode();
+  const { mutate: run, isPending: isRunning, reset: resetRunMutation } = useRunCode();
+
+  /** Stdout / expected output / cases all live on `runResult`; clear when the active question changes. */
+  useEffect(() => {
+    setRunResult(null);
+    runInFlightRef.current = false;
+    resetRunMutation();
+  }, [currentQuestionKey, resetRunMutation]);
 
   useEffect(() => {
     latestCodeRef.current = code;
@@ -740,15 +773,23 @@ export default function AssessmentPage() {
 
     setSubmissionError(null);
     runInFlightRef.current = true;
+    const runStartedForKey = currentQuestionKeyRef.current;
     run(
-      { sessionId, code: latestCodeRef.current, language },
+      {
+        sessionId,
+        code: latestCodeRef.current,
+        language,
+        problemId: displayedProblem?.problem_id ?? null,
+      },
       {
         onSuccess: (data) => {
           runInFlightRef.current = false;
+          if (currentQuestionKeyRef.current !== runStartedForKey) return;
           setRunResult(data);
         },
         onError: (error: any) => {
           runInFlightRef.current = false;
+          if (currentQuestionKeyRef.current !== runStartedForKey) return;
           const status = error?.response?.status;
           if (status === 409 || status === 410) {
             handleSessionExpired();
@@ -917,6 +958,8 @@ export default function AssessmentPage() {
     );
   }
 
+
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-admin-bg font-['Segoe_UI',sans-serif]">
       <Toolbar 
@@ -1037,7 +1080,7 @@ export default function AssessmentPage() {
           )}
 
           <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
-            <ProblemPanel problem={displayedProblem} />
+            <ProblemPanel problem={displayedProblem} language={activeLanguage?.monaco ?? language} />
           </div>
         </div>
 
@@ -1058,7 +1101,11 @@ export default function AssessmentPage() {
           
           {(submissionResult || runResult) && skillName !== "HTML, CSS, JS" && (
             <div className='h-2/5 overflow-y-auto border-t-2 border-admin-orange bg-white'>
-              <TestCases submissionResult={submissionResult} runResult={runResult} />
+              <TestCases
+                key={currentQuestionKey || "tests"}
+                submissionResult={submissionResult}
+                runResult={runResult}
+              />
             </div>
           )}
         </div>

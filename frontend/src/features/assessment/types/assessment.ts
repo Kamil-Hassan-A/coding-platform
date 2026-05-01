@@ -32,6 +32,16 @@ export interface TestCaseResult {
   passed: boolean;
 }
 
+export interface SqlTableColumn {
+  name: string;
+  type: string;
+}
+
+export interface SqlTableSchema {
+  table: string;
+  columns: SqlTableColumn[];
+}
+
 export interface SessionProblemPayload {
   problem_id?: string;
   title: string;
@@ -40,6 +50,8 @@ export interface SessionProblemPayload {
   starter_code?: Record<string, any>;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
+  /** HackerRank-style table schema; empty for non-SQL problems. */
+  schema_tables?: SqlTableSchema[];
 }
 
 export interface SessionStartResponse {
@@ -78,6 +90,10 @@ export interface SessionSubmitResponse {
 export interface SessionRunResponse {
   cases: TestCaseResult[];
   time_taken_ms: number;
+  /** Present on SQL `/run` responses: structured stdout vs reference output. */
+  sql_run?: boolean;
+  stdout?: string | null;
+  expected_output?: string | null;
 }
 
 export interface SubmissionResultsResponse {

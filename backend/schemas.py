@@ -80,6 +80,16 @@ class ProblemTestCase(BaseModel):
     output: str
 
 
+class SqlTableColumn(BaseModel):
+    name: str
+    type: str
+
+
+class SqlTableSchema(BaseModel):
+    table: str
+    columns: list[SqlTableColumn]
+
+
 class SessionProblemPayload(BaseModel):
     problem_id: UUID
     title: str
@@ -89,6 +99,9 @@ class SessionProblemPayload(BaseModel):
     tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int
+    # HackerRank-style schema list. Empty for non-SQL problems.
+    # `hidden_sql_setup` is intentionally NOT exposed here.
+    schema_tables: list[SqlTableSchema] = Field(default_factory=list)
 
 
 class SessionStartResponse(BaseModel):
@@ -139,7 +152,6 @@ class SessionSubmitRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
     metadata: dict[str, Any] | None = None
-    metadata: dict[str, Any] | None = None
     answers: list[SessionQuestionAnswer] = Field(default_factory=list)
 
 
@@ -177,6 +189,9 @@ class SessionSubmitResponse(BaseModel):
 class SessionRunResponse(BaseModel):
     cases: list[TestCaseResult]
     time_taken_ms: int
+    sql_run: bool = False
+    stdout: str | None = None
+    expected_output: str | None = None
 
 
 class SubmissionResultsResponse(BaseModel):
