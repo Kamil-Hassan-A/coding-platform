@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Award, ChevronDown, Lock } from "lucide-react";
 
-import type { BadgesScreenProps, CandidateBadge } from "./types/candidate";
-import { IronBadge, BronzeBadge, SilverBadge, GoldBadge, PlatinumBadge } from "./BadgeIcons";
+import type { CandidateBadge } from "../types/candidate";
+import { IronBadge, BronzeBadge, SilverBadge, GoldBadge, PlatinumBadge } from "../components/BadgeIcons";
 
 type BadgeTier = {
   level: string;
@@ -111,12 +111,29 @@ function composeBadgeLabel(skillName: string | null, levelLabel: string): string
   return `${trimSkillName(skillName)} ${levelLabel}`;
 }
 
-export default function BadgesScreen({
-  badges,
-  allSkillNames,
-  isBadgesLoading,
-  isBadgesError,
-}: BadgesScreenProps) {
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getSkills, getUserBadges } from "../candidateService";
+
+export default function BadgesPage() {
+  const { data: apiSkills } = useQuery({
+    queryKey: ["skills"],
+    queryFn: getSkills,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    placeholderData: keepPreviousData,
+  });
+
+  const {
+    data: badges = [],
+    isLoading: isBadgesLoading,
+    isError: isBadgesError,
+  } = useQuery({
+    queryKey: ["user-badges"],
+    queryFn: getUserBadges,
+    staleTime: 0,
+  });
+
+  const allSkillNames = useMemo(() => (apiSkills ?? []).map((skill) => skill.name), [apiSkills]);
   const [selectedSkill, setSelectedSkill] = useState<string>(ALL_SKILLS);
   const [statusFilter, setStatusFilter] = useState<"all" | "unlocked" | "locked">(
     "all",

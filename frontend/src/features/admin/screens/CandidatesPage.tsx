@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { downloadBlob } from "../../../api/axiosInstance";
-import { getAdminCandidates } from "../dashboardService";
+import { getAdminCandidates } from "../adminService";
 import type { AdminCandidate } from "../types/admin";
 
 type SortField = "score" | "submittedAt";
@@ -75,7 +75,7 @@ type CandidateGroup = {
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-export default function AdminCandidatesView() {
+export default function CandidatesPage() {
   // Filter state
   const [filterGender, setFilterGender] = useState("All");
   const [filterDept, setFilterDept] = useState("All");

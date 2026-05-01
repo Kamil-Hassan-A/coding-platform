@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { BackendLevel, Skill, SkillModalProps } from "./types/candidate";
+import type { BackendLevel, Skill, SkillModalProps } from "../types/candidate";
 
 export default function SkillModal({ skills, levels, onClose, onConfirm }: SkillModalProps) {
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);

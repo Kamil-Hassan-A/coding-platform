@@ -1,25 +1,9 @@
-import { useMemo, useState } from "react";
-import { Award, Clock, LayoutGrid } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import Sidebar from "../../components/layout/Sidebar";
-import useUserStore from "../../stores/userStore";
-import BadgesScreen from "./BadgesScreen";
-import PastAssessmentsScreen from "./PastAssessmentsScreen";
-import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
-import type {
-  BackendLevel,
-  CandidateScreen,
-  HomeScreenProps,
-  SkillWithProgress,
-} from "./types/candidate";
-import { useStartSession } from "../assessment/hooks/useAssessment";
-
-const CANDIDATE_MENU = [
-  { id: "dashboard", label: "Dashboard", icon: <LayoutGrid size={15} strokeWidth={2} /> },
-  { id: "badges", label: "Badges", icon: <Award size={15} strokeWidth={2} /> },
-  { id: "past_assessments", label: "Past Assessments", icon: <Clock size={15} strokeWidth={2} /> },
-];
+import useUserStore from "../../../stores/userStore";
+import type { BackendLevel, SkillWithProgress } from "../types/candidate";
+import { getSkills, getUserProgress } from "../candidateService";
 
 const LEVEL_META: Record<
   string,
@@ -52,23 +36,12 @@ const LEVEL_META: Record<
   },
 };
 
-const resolveActiveMenu = (screen: CandidateScreen) => {
-  if (screen === "past_assessments") return "past_assessments";
-  if (screen === "badges") return "badges";
-  return "dashboard";
-};
-
-const resolveScreenFromMenu = (id: string): CandidateScreen => {
-  if (id === "past_assessments") return "past_assessments";
-  if (id === "badges") return "badges";
-  return "home";
-};
-
-export default function CandidateDashboard() {
+export default function DashboardPage() {
   const navigate = useNavigate();
-  const [screen, setScreen] = useState<CandidateScreen>("home");
-
-  useStartSession();
+  const user = useUserStore();
+  const [search, setSearch] = useState("");
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<BackendLevel | null>(null);
 
   const {
     data: apiSkills,
@@ -91,16 +64,6 @@ export default function CandidateDashboard() {
     staleTime: 1000 * 60,
   });
 
-  const {
-    data: badges = [],
-    isLoading: isBadgesLoading,
-    isError: isBadgesError,
-  } = useQuery({
-    queryKey: ["user-badges"],
-    queryFn: getUserBadges,
-    staleTime: 0,
-  });
-
   const skillsList: SkillWithProgress[] = useMemo(() => {
     const progressBySkill = new Map(
       (progress ?? []).map((item) => [item.skill_id, item.levels]),
@@ -110,85 +73,6 @@ export default function CandidateDashboard() {
       levels: progressBySkill.get(skill.skill_id) ?? [],
     }));
   }, [apiSkills, progress]);
-
-  const handleConfirm = (
-    skill: string,
-    level: BackendLevel,
-    levelLabel: string,
-    skill_id: string,
-  ) => {
-    const skillObj = skillsList.find((s) => s.skill_id === skill_id);
-    const selection = {
-      skill,
-      levelLabel,
-      allowedLanguages: skillObj?.allowed_languages || [],
-    };
-    const selectionIds = { skill_id, level };
-
-    navigate("/candidate/instructions", {
-      state: {
-        confirmed: selection,
-        confirmedIds: selectionIds,
-      },
-    });
-  };
-
-  return (
-    <div className="flex h-screen w-full overflow-hidden font-['Segoe_UI',sans-serif]">
-      <Sidebar
-        items={CANDIDATE_MENU}
-        active={resolveActiveMenu(screen)}
-        onChange={(id) => setScreen(resolveScreenFromMenu(id))}
-      />
-
-      <main className="flex-1 overflow-y-auto bg-admin-bg px-6 py-10">
-          <>
-        {isSkillsLoading && (
-          <div className="mt-10 text-left text-slate-500">
-            Loading your skills...
-          </div>
-        )}
-
-        {(isSkillsError || isProgressError) && (
-          <div className="mx-auto max-w-[900px] rounded-xl border border-red-200 bg-rose-50 px-5 py-4 text-[14px] text-red-700">
-            Failed to load dashboard data from backend. Please try again.
-          </div>
-        )}
-
-        {screen === "home" ? (
-          <HomeScreen
-            isSkillsLoading={isSkillsLoading}
-            skillsList={skillsList}
-            onStart={(data) => {
-              handleConfirm(
-                data.skill,
-                data.level,
-                data.levelLabel,
-                data.skill_id,
-              );
-            }}
-          />
-        ) : screen === "badges" ? (
-          <BadgesScreen
-            badges={badges}
-            allSkillNames={skillsList.map((skill) => skill.name)}
-            isBadgesLoading={isBadgesLoading}
-            isBadgesError={isBadgesError}
-          />
-        ) : screen === "past_assessments" ? (
-          <PastAssessmentsScreen />
-        ) : null}
-          </>
-        </main>
-    </div>
-  );
-}
-
-function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & { isSkillsLoading: boolean }) {
-  const user = useUserStore();
-  const [search, setSearch] = useState("");
-  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<BackendLevel | null>(null);
 
   const filteredSkills = useMemo(
     () =>
@@ -206,16 +90,28 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
   const handleStart = () => {
     if (!selectedSkill || !selectedLevel) return;
 
-    onStart({
+    const selection = {
       skill: selectedSkill.name,
-      level: selectedLevel,
       levelLabel: LEVEL_META[selectedLevel]?.label ?? selectedLevel,
-      skill_id: selectedSkill.skill_id,
+      allowedLanguages: selectedSkill.allowed_languages || [],
+    };
+    const selectionIds = { skill_id: selectedSkill.skill_id, level: selectedLevel };
+
+    navigate("/candidate/instructions", {
+      state: {
+        confirmed: selection,
+        confirmedIds: selectionIds,
+      },
     });
   };
 
   return (
     <div className="mx-auto w-full max-w-[900px] pb-14">
+      {(isSkillsError || isProgressError) && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-rose-50 px-5 py-4 text-[14px] text-red-700">
+          Failed to load dashboard data from backend. Please try again.
+        </div>
+      )}
       <div className="mb-8 rounded-2xl bg-gradient-to-br from-admin-orange to-orange-600 p-8 text-white shadow-[0_4px_12px_rgba(249,115,22,0.15)]">
         <h1 className="mb-2 mt-0 text-[28px] font-bold">
           Welcome back, {user?.name ? user.name : "Candidate"} .
@@ -307,7 +203,6 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
                     }}
                     className="flex items-center rounded-xl px-5 py-4 transition-all"
                     style={{
-                      /* dynamic — intentionally inline */
                       border: isSelected
                         ? `2px solid ${meta.color}`
                         : "1px solid #e2e8f0",
@@ -330,7 +225,6 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
                       <div
                         className="mr-4 h-5 w-5 rounded-full bg-white transition-all"
                         style={{
-                          /* dynamic — intentionally inline */
                           border: isSelected
                             ? `6px solid ${meta.color}`
                             : "2px solid #cbd5e1",
@@ -343,7 +237,6 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
                         <h3
                           className="m-0 text-[15px] font-bold"
                           style={{
-                            /* dynamic — intentionally inline */
                             color: lvl.unlocked ? meta.color : "#64748b",
                           }}
                         >
@@ -382,4 +275,3 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
     </div>
   );
 }
-

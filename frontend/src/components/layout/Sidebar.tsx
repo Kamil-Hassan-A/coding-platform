@@ -1,10 +1,13 @@
+import { useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, Users } from 'lucide-react';
 import type { SidebarProps } from '../../types/layout';
 import { logout } from '../../features/auth/authService';
 import useUserStore from '../../stores/userStore';
 
-export default function Sidebar({ items, active, onChange }: SidebarProps) {
+export default function Sidebar({ items }: SidebarProps) {
   const user = useUserStore();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const displayName = user?.name?.trim() ?? '';
   const subtitle = user?.department?.trim() ?? '';
@@ -20,12 +23,12 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
       <nav className='flex-1 px-2 py-3'>
         <div className='px-3 pb-2 pt-1.5 text-[9px] font-bold uppercase tracking-[1.8px] text-admin-text-light'>Overview</div>
         {items.map(item => {
-          const isActive = active === item.id;
+          const isActive = location.pathname.startsWith(item.path);
           return (
             <button
-              key={item.id}
+              key={item.path}
               type='button'
-              onClick={() => onChange(item.id)}
+              onClick={() => navigate(item.path)}
               aria-current={isActive ? 'page' : undefined}
               className={`mb-0.5 flex w-full items-center gap-2.5 rounded-lg border-0 px-3 py-[9px] text-left text-[13px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-orange/40 ${
                 isActive

@@ -276,10 +276,28 @@ def get_admin_stats(
 
 @router.get("/candidates", response_model=AdminCandidatesResponse)
 def get_admin_candidates(
+    employee_id: str | None = Query(None),
+    years_min: int | None = Query(None),
+    years_max: int | None = Query(None),
+    exp_min: int | None = Query(None),
+    exp_max: int | None = Query(None),
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ) -> AdminCandidatesResponse:
-    candidate_users = db.scalars(select(User).where(User.role == UserRole.CANDIDATE).order_by(User.created_at.desc())).all()
+    query = select(User).where(User.role == UserRole.CANDIDATE)
+
+    if employee_id:
+        query = query.where(User.employee_id.ilike(f"%{employee_id}%"))
+    if years_min is not None:
+        query = query.where(User.exp_indium_years >= years_min)
+    if years_max is not None:
+        query = query.where(User.exp_indium_years <= years_max)
+    if exp_min is not None:
+        query = query.where(User.exp_overall_years >= exp_min)
+    if exp_max is not None:
+        query = query.where(User.exp_overall_years <= exp_max)
+
+    candidate_users = db.scalars(query.order_by(User.created_at.desc())).all()
 
     all_sessions = db.scalars(
         select(AssessmentSession)

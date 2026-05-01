@@ -1,8 +1,8 @@
 import React from "react";
 import { ChevronLeft, ClipboardList, ShieldAlert, Monitor, Terminal } from "lucide-react";
-import type { InstructionsScreenProps } from "../types/candidate";
+import type { InstructionsViewProps } from "../types/candidate";
 
-export default function InstructionsScreen({ confirmed, onContinue, onBack }: InstructionsScreenProps) {
+export default function InstructionsView({ confirmed, onContinue, onBack }: InstructionsViewProps) {
   return (
     <div className="flex h-full min-h-0 w-full max-w-[1000px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:flex-row">
       

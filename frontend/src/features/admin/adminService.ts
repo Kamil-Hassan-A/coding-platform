@@ -1,18 +1,10 @@
 import axiosInstance from "../../api/axiosInstance";
 
-import type { AdminCandidate, DashboardStats } from "./types/admin";
+import type { AdminCandidate, AdminCandidateFilters, DashboardStats } from "./types/admin";
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   const response = await axiosInstance.get<DashboardStats>("/admin/stats");
   return response.data;
-};
-
-export type AdminCandidateFilters = {
-  employeeId?: string;
-  yearsMin?: number | null;
-  yearsMax?: number | null;
-  experienceMin?: number | null;
-  experienceMax?: number | null;
 };
 
 export const getAdminCandidates = async (filters?: AdminCandidateFilters): Promise<AdminCandidate[]> => {

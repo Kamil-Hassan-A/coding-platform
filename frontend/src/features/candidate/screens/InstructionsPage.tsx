@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import InstructionsScreen from "./components/InstructionsScreen";
-import type { CandidateSelection, CandidateSelectionIds } from "./types/candidate";
-import { useStartSession } from "../assessment/hooks/useAssessment";
+import InstructionsView from "../components/InstructionsView";
+import type { CandidateSelection, CandidateSelectionIds } from "../types/candidate";
+import { useStartSession } from "../../assessment/hooks/useAssessment";
 
 type InstructionsRouteState = {
   confirmed?: CandidateSelection;
@@ -15,7 +15,7 @@ type FullscreenTarget = HTMLElement & {
   msRequestFullscreen?: () => Promise<void> | void;
 };
 
-export default function InstructionsRoute() {
+export default function InstructionsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as InstructionsRouteState | null;
@@ -57,7 +57,7 @@ export default function InstructionsRoute() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center overflow-hidden bg-admin-bg px-4 py-6">
-      <InstructionsScreen
+      <InstructionsView
         confirmed={confirmed}
         onBack={() =>
           navigate("/candidate/dashboard")

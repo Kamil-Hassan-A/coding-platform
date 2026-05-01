@@ -20,7 +20,7 @@ type LevelRow = {
   cleared: boolean;
 };
 
-export default function PastScores() {
+export default function PastScoresPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "cleared" | "active" | "locked">(
     "all",

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-import { getAdminCandidates, getDashboardStats } from "../dashboardService";
+import { getAdminCandidates, getDashboardStats } from "../adminService";
 
 export type PieDatum = { name: string; value: number; fill: string };
 
@@ -23,7 +23,7 @@ function StatCard({ label, value, sub }: { label: string; value: string | number
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-export default function AdminDashboardOverview() {
+export default function OverviewPage() {
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: getDashboardStats,

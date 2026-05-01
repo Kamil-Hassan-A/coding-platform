@@ -86,7 +86,7 @@ export type ConfirmedScreenProps = {
   isStarting: boolean;
 };
 
-export type InstructionsScreenProps = {
+export type InstructionsViewProps = {
   confirmed: CandidateSelection;
   onContinue: () => void;
   onBack: () => void;
