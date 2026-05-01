@@ -90,7 +90,7 @@ class SessionProblemPayload(BaseModel):
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int
     question_type: str | None = None
-    options: list[str] | None = None
+    type_data: dict[str, Any] | None = None
 
 
 class SessionStartResponse(BaseModel):
@@ -140,7 +140,6 @@ class SessionQuestionAnswer(BaseModel):
 class SessionSubmitRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
-    metadata: dict[str, Any] | None = None
     metadata: dict[str, Any] | None = None
     answers: list[SessionQuestionAnswer] = Field(default_factory=list)
 

@@ -40,6 +40,8 @@ export interface SessionProblemPayload {
   starter_code?: Record<string, any>;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
+  question_type?: string | null;
+  type_data?: Record<string, any> | null;
 }
 
 export interface SessionStartResponse {
