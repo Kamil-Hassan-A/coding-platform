@@ -99,9 +99,14 @@ class SessionProblemPayload(BaseModel):
     tags: list[str] = Field(default_factory=list)
     sample_test_cases: list[ProblemTestCase]
     time_limit_minutes: int
+<<<<<<< HEAD
     # HackerRank-style schema list. Empty for non-SQL problems.
     # `hidden_sql_setup` is intentionally NOT exposed here.
     schema_tables: list[SqlTableSchema] = Field(default_factory=list)
+=======
+    question_type: str | None = None
+    type_data: dict[str, Any] | None = None
+>>>>>>> 694ffbbebe179f33598eb61c1717a4b07dbe0e1f
 
 
 class SessionStartResponse(BaseModel):

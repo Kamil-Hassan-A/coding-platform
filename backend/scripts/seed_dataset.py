@@ -416,6 +416,18 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                         except (TypeError, ValueError):
                             time_limit_minutes = 45
 
+                        question_type = question.get("question_type", "coding")
+
+                        raw_options = question.get("options")
+                        raw_correct = question.get("correct_option")
+                        if question.get("question_type") == "mcq" and raw_options:
+                            type_data = {
+                                "options": raw_options,
+                                "correct_option": raw_correct,
+                            }
+                        else:
+                            type_data = None
+
                         lookup = select(Problem).where(
                             Problem.skill_id == skill.id,
                             Problem.level == mapped_level,
@@ -441,6 +453,8 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                                 problem.time_limit_minutes = time_limit_minutes
                             if force or starter_code is not None:
                                 problem.starter_code = starter_code
+                            problem.question_type = question_type
+                            problem.type_data = type_data
 
                             if has_slug:
                                 setattr(problem, "slug", slug)
@@ -462,6 +476,8 @@ def load_from_json(filepath: str, force: bool = False) -> None:
                                 "starter_code": starter_code,
                                 "difficulty_label": difficulty_label,
                                 "time_limit_minutes": time_limit_minutes,
+                                "question_type": question_type,
+                                "type_data": type_data,
                             }
 
                             if has_slug:

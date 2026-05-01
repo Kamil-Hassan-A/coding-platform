@@ -50,8 +50,13 @@ export interface SessionProblemPayload {
   starter_code?: Record<string, any>;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
+<<<<<<< HEAD
   /** HackerRank-style table schema; empty for non-SQL problems. */
   schema_tables?: SqlTableSchema[];
+=======
+  question_type?: string | null;
+  type_data?: Record<string, any> | null;
+>>>>>>> 694ffbbebe179f33598eb61c1717a4b07dbe0e1f
 }
 
 export interface SessionStartResponse {

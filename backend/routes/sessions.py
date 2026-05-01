@@ -242,7 +242,15 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         tags=[str(tag) for tag in (problem.tags or [])],
         sample_test_cases=sanitized_samples,
         time_limit_minutes=problem.time_limit_minutes,
+<<<<<<< HEAD
         schema_tables=schema_tables,
+=======
+        question_type=problem.question_type,
+        type_data=(
+            {k: v for k, v in (problem.type_data or {}).items() if k != "correct_option"}
+            if problem.type_data else None
+        ),
+>>>>>>> 694ffbbebe179f33598eb61c1717a4b07dbe0e1f
     )
 
 
@@ -332,6 +340,35 @@ def execute_problem(
     *,
     use_hidden_cases: bool,
 ) -> dict[str, Any]:
+    if problem.question_type == "mcq":
+        correct = (problem.type_data or {}).get("correct_option")
+        selected = (code or "").strip().upper()
+        passed = bool(correct and selected and selected == correct)
+        score = 100 if passed else 0
+        case = {
+            "stdin": selected,
+            "expected_output": correct or "",
+            "stdout": selected,
+            "stderr": None,
+            "compile_output": None,
+            "status": {
+                "id": 3 if passed else 4,
+                "description": "Accepted" if passed else "Wrong Answer",
+            },
+            "passed": passed,
+            "time": "0",
+            "memory": "0",
+        }
+        return {
+            "resolved_monaco": (language or "mcq").strip().lower() or "mcq",
+            "passed": passed,
+            "passed_tests": 1 if passed else 0,
+            "total_tests": 1,
+            "score": score,
+            "time_taken": 0,
+            "cases": [case],
+        }
+
     resolved_monaco, resolved_language_id = resolve_language_from_skill(language, skill.allowed_languages or [])
 
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
