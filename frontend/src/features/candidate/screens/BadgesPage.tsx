@@ -1,14 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Award, ChevronDown, Lock } from "lucide-react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import type { CandidateBadge } from "../types/candidate";
-import { IronBadge, BronzeBadge, SilverBadge, GoldBadge, PlatinumBadge } from "../components/BadgeIcons";
+import {
+  IronBadge,
+  BronzeBadge,
+  SilverBadge,
+  GoldBadge,
+  PlatinumBadge,
+} from "../components/BadgeIcons";
+import { getSkills, getUserBadges } from "../candidateService";
 
 type BadgeTier = {
   level: string;
   rank: string;
   subtitle: string;
-  IconComponent: React.ComponentType<{ size?: number; unlocked?: boolean; label?: string }>;
+  IconComponent: React.ComponentType<{
+    size?: number;
+    unlocked?: boolean;
+    label?: string;
+  }>;
 };
 
 type ParsedBadge = {
@@ -24,7 +36,11 @@ type TierRow = {
   unlocked: boolean;
   badge: CandidateBadge | null;
   skillName: string | null;
-  IconComponent: React.ComponentType<{ size?: number; unlocked?: boolean; label?: string }>;
+  IconComponent: React.ComponentType<{
+    size?: number;
+    unlocked?: boolean;
+    label?: string;
+  }>;
 };
 
 const TIER_ORDER: BadgeTier[] = [
@@ -72,7 +88,8 @@ function parseBadgeCriteria(criteria: string): {
       level?: unknown;
     };
     return {
-      skillName: typeof parsed?.skill_name === "string" ? parsed.skill_name : null,
+      skillName:
+        typeof parsed?.skill_name === "string" ? parsed.skill_name : null,
       level: typeof parsed?.level === "string" ? parsed.level : null,
     };
   } catch {
@@ -82,9 +99,7 @@ function parseBadgeCriteria(criteria: string): {
 
 function formatAwardDate(value: string): string {
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return "Recently";
-  }
+  if (Number.isNaN(parsed.getTime())) return "Recently";
   return parsed.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
@@ -101,18 +116,98 @@ function normalizeSkillName(value: string | null | undefined): string {
   return (value ?? "").trim().toLowerCase();
 }
 
-function trimSkillName(value: string): string {
-  const cleaned = value.trim();
-  return cleaned.length <= 12 ? cleaned : `${cleaned.slice(0, 12)}.`;
-}
-
-function composeBadgeLabel(skillName: string | null, levelLabel: string): string {
+function composeBadgeLabel(
+  skillName: string | null,
+  levelLabel: string
+): string {
   if (!skillName) return levelLabel;
-  return `${trimSkillName(skillName)} ${levelLabel}`;
+  return `${skillName.trim()} ${levelLabel}`;
 }
 
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getSkills, getUserBadges } from "../candidateService";
+function BadgeCard({ row }: { row: TierRow }) {
+  const isUnlocked = row.unlocked;
+  const badgeLabel = composeBadgeLabel(row.skillName, row.subtitle);
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md">
+      <div
+        className={`relative flex flex-col items-center justify-center p-8 ${
+          isUnlocked
+            ? "bg-gradient-to-b from-orange-50 to-white"
+            : "bg-slate-50"
+        }`}
+      >
+        <div
+          className={`grid place-items-center rounded-2xl transition-all duration-300 ${
+            isUnlocked
+              ? "h-[140px] w-[140px] bg-white shadow-[0_0_0_4px_rgba(249,115,22,0.1),0_12px_30px_rgba(249,115,22,0.2)]"
+              : "h-[80px] w-[80px] bg-slate-100 opacity-60 grayscale filter"
+          }`}
+        >
+          <row.IconComponent
+            size={isUnlocked ? 110 : 48}
+            unlocked={isUnlocked}
+            label={badgeLabel}
+          />
+        </div>
+
+        <div className="absolute right-4 top-4">
+          <span
+            className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider ${
+              isUnlocked
+                ? "bg-green-100 text-green-700"
+                : "bg-slate-200 text-slate-500"
+            }`}
+          >
+            {isUnlocked ? "Unlocked" : "Locked"}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col border-t border-slate-100 p-6">
+        <div className="mb-4 text-center">
+          <h3 className="m-0 text-lg font-bold text-slate-900">{badgeLabel}</h3>
+          <p className="mt-1 text-[13px] font-medium text-slate-500">
+            {row.rank} Tier
+          </p>
+        </div>
+
+        <div className="flex-1">
+          {isUnlocked && row.badge ? (
+            <div className="flex flex-col gap-3 rounded-xl bg-slate-50 p-4 text-[13px]">
+              <div className="flex justify-between border-b border-slate-200 pb-2">
+                <span className="font-semibold text-slate-600">Skill</span>
+                <span className="font-bold text-slate-900">
+                  {row.skillName ?? "-"}
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-slate-200 pb-2">
+                <span className="font-semibold text-slate-600">Awarded</span>
+                <span className="font-bold text-slate-900">
+                  {formatAwardDate(row.badge.awarded_at)}
+                </span>
+              </div>
+              <div className="flex flex-col pt-1">
+                <span className="font-semibold text-slate-600">Summary</span>
+                <span className="mt-1 leading-relaxed text-slate-700">
+                  {row.badge.description ||
+                    "Demonstrated proficiency and passed the assessment."}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center text-center text-slate-400">
+              <Lock className="mb-2 h-6 w-6 opacity-50" />
+              <p className="m-0 text-[13px]">
+                Clear the {row.subtitle} assessment to unlock this rank.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BadgesPage() {
   const { data: apiSkills } = useQuery({
@@ -133,14 +228,11 @@ export default function BadgesPage() {
     staleTime: 0,
   });
 
-  const allSkillNames = useMemo(() => (apiSkills ?? []).map((skill) => skill.name), [apiSkills]);
+  const allSkillNames = useMemo(
+    () => (apiSkills ?? []).map((skill) => skill.name),
+    [apiSkills]
+  );
   const [selectedSkill, setSelectedSkill] = useState<string>(ALL_SKILLS);
-  const [statusFilter, setStatusFilter] = useState<"all" | "unlocked" | "locked">(
-    "all",
-  );
-  const [expandedTierLevel, setExpandedTierLevel] = useState<string | null>(
-    TIER_ORDER[0].level,
-  );
 
   const parsedBadges = useMemo<ParsedBadge[]>(() => {
     return badges
@@ -154,19 +246,17 @@ export default function BadgesPage() {
       })
       .sort(
         (a, b) =>
-          getAwardTimestamp(b.badge.awarded_at) - getAwardTimestamp(a.badge.awarded_at),
+          getAwardTimestamp(b.badge.awarded_at) -
+          getAwardTimestamp(a.badge.awarded_at)
       );
   }, [badges]);
 
   const skillOptions = useMemo(() => {
     const unique = new Map<string, string>();
-
     const addSkill = (value: string | null | undefined) => {
       if (!value || !value.trim()) return;
       const normalized = normalizeSkillName(value);
-      if (!unique.has(normalized)) {
-        unique.set(normalized, value.trim());
-      }
+      if (!unique.has(normalized)) unique.set(normalized, value.trim());
     };
 
     allSkillNames.forEach((skillName) => addSkill(skillName));
@@ -178,105 +268,89 @@ export default function BadgesPage() {
     ];
   }, [allSkillNames, parsedBadges]);
 
-  const filteredBadges = useMemo(
-    () =>
-      selectedSkill === ALL_SKILLS
-        ? parsedBadges
-        : parsedBadges.filter(
-            (item) => normalizeSkillName(item.skillName) === normalizeSkillName(selectedSkill),
-          ),
-    [parsedBadges, selectedSkill],
-  );
+  // Group all earned badges by skill
+  const badgesBySkill = useMemo(() => {
+    const map = new Map<
+      string,
+      Map<string, { badge: CandidateBadge; skillName: string | null }>
+    >();
 
-  const latestBadgeByLevel = useMemo(() => {
-    const map = new Map<string, { badge: CandidateBadge; skillName: string | null }>();
-    filteredBadges.forEach((item) => {
-      if (!item.level || map.has(item.level)) return;
-      map.set(item.level, { badge: item.badge, skillName: item.skillName });
+    parsedBadges.forEach((item) => {
+      const skill = item.skillName || "Unknown Skill";
+      if (!map.has(skill)) {
+        map.set(skill, new Map());
+      }
+      if (item.level && !map.get(skill)!.has(item.level)) {
+        map
+          .get(skill)!
+          .set(item.level, { badge: item.badge, skillName: item.skillName });
+      }
     });
     return map;
-  }, [filteredBadges]);
+  }, [parsedBadges]);
 
-  const unlockedLevels = useMemo(
-    () => new Set(Array.from(latestBadgeByLevel.keys())),
-    [latestBadgeByLevel],
-  );
-
-  useEffect(() => {
-    if (selectedSkill !== ALL_SKILLS && !skillOptions.includes(selectedSkill)) {
-      setSelectedSkill(ALL_SKILLS);
+  // Determine which skills to display sections for
+  const visibleSkills = useMemo(() => {
+    // If a specific skill is selected, show it (even if 0 badges)
+    if (selectedSkill !== ALL_SKILLS) {
+      return [selectedSkill];
     }
-  }, [selectedSkill, skillOptions]);
+    // If All Skills, only show skills that have at least one badge earned
+    const active = Array.from(badgesBySkill.keys());
+    return active.sort((a, b) => a.localeCompare(b));
+  }, [selectedSkill, badgesBySkill]);
 
-  const tierRows = useMemo<TierRow[]>(
-    () =>
-      TIER_ORDER.map((tier) => {
-        const tierBadge = latestBadgeByLevel.get(tier.level) ?? null;
+  // For each visible skill, generate the 5 tier rows
+  const skillSections = useMemo(() => {
+    return visibleSkills
+      .map((skillName) => {
+        const skillBadges = badgesBySkill.get(skillName) || new Map();
+
+        const tierRows: TierRow[] = TIER_ORDER.map((tier) => {
+          const tierBadge = skillBadges.get(tier.level) ?? null;
+          return {
+            level: tier.level,
+            rank: tier.rank,
+            subtitle: tier.subtitle,
+            unlocked: !!tierBadge,
+            badge: tierBadge?.badge ?? null,
+            skillName: tierBadge?.skillName ?? skillName,
+            IconComponent: tier.IconComponent,
+          };
+        });
+
+        const filteredRows = tierRows.filter((row) => {
+          if (selectedSkill === ALL_SKILLS && !row.unlocked) return false;
+          return true;
+        });
+
         return {
-          level: tier.level,
-          rank: tier.rank,
-          subtitle: tier.subtitle,
-          unlocked: unlockedLevels.has(tier.level),
-          badge: tierBadge?.badge ?? null,
-          skillName: tierBadge?.skillName ?? null,
-          IconComponent: tier.IconComponent,
+          skillName,
+          rows: filteredRows,
         };
-      }),
-    [latestBadgeByLevel, unlockedLevels],
-  );
-
-  const visibleTierRows = useMemo(
-    () =>
-      tierRows.filter((row) => {
-        if (statusFilter === "all") return true;
-        if (statusFilter === "unlocked") return row.unlocked;
-        return !row.unlocked;
-      }),
-    [tierRows, statusFilter],
-  );
-
-  useEffect(() => {
-    if (visibleTierRows.length === 0) {
-      setExpandedTierLevel(null);
-      return;
-    }
-
-    const exists = expandedTierLevel
-      ? visibleTierRows.some((row) => row.level === expandedTierLevel)
-      : false;
-    if (!exists) {
-      setExpandedTierLevel(visibleTierRows[0].level);
-    }
-  }, [expandedTierLevel, visibleTierRows]);
-
-  const unlockedCount = unlockedLevels.size;
-  const lockedCount = TIER_ORDER.length - unlockedCount;
-  const earnedCount = filteredBadges.length;
+      })
+      .filter((section) => section.rows.length > 0);
+  }, [visibleSkills, badgesBySkill, selectedSkill]);
 
   return (
-    <div className="mx-auto w-full max-w-[980px] pb-10">
-      <div className="mb-5 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))]">
-        <SummaryCard label="Tiers" value={`${TIER_ORDER.length}`} icon="🏅" />
-        <SummaryCard label="Earned" value={`${earnedCount}`} icon="🎖️" />
-        <SummaryCard label="Locked" value={`${lockedCount}`} icon="🔒" />
-        <SummaryCard label="Unlocked" value={`${unlockedCount}`} icon="✅" highlight />
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] pb-14 px-4 sm:px-6">
+      <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h2 className="m-0 text-[28px] font-bold">
+            <span className="text-admin-orange">Badge</span> Showcase
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            View and track your earned achievements across all skills.
+          </p>
+        </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 text-[24px] font-bold">
-          <span className="text-admin-orange">Badge</span> Achievement Progress
-        </h2>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative">
+        <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
             <select
               id="badges-skill-filter"
               value={selectedSkill}
-              onChange={(e) => {
-                setSelectedSkill(e.target.value);
-                setExpandedTierLevel(null);
-              }}
-              className="min-w-[220px] appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2 pr-9 text-[13px] outline-none"
+              onChange={(e) => setSelectedSkill(e.target.value)}
+              className="w-full min-w-[200px] appearance-none rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-[14px] font-medium outline-none transition-colors hover:border-slate-400 focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20"
             >
               {skillOptions.map((skill) => (
                 <option key={skill} value={skill}>
@@ -285,217 +359,61 @@ export default function BadgesPage() {
               ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
-              <ChevronDown size={16} />
+              <ChevronDown size={18} />
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-1.5">
-            {([
-              ["all", "All"],
-              ["unlocked", "Unlocked"],
-              ["locked", "Locked"],
-            ] as const).map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                className={`cursor-pointer rounded-lg border-none px-3 py-1.5 text-[12px] font-semibold ${
-                  statusFilter === key
-                    ? "bg-admin-orange text-white"
-                    : "bg-gray-100 text-gray-600"
-                }`}
-                onClick={() => setStatusFilter(key)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-4 rounded-xl border border-gray-200 bg-white p-3.5">
-        <p className="mb-2 text-[13px] font-semibold text-admin-text">Tier Journey</p>
-        <div className="grid gap-2 [grid-template-columns:repeat(auto-fit,minmax(130px,1fr))]">
-          {tierRows.map((row) => (
-            <div
-              key={row.level}
-              className={`rounded-lg border px-2.5 py-2 ${
-                row.unlocked
-                  ? "border-green-200 bg-green-50"
-                  : "border-gray-200 bg-gray-50"
-              }`}
-            >
-              <div className="mb-1 flex items-center gap-2">
-                <row.IconComponent
-                  size={24}
-                  unlocked={row.unlocked}
-                  label={composeBadgeLabel(
-                    selectedSkill === ALL_SKILLS ? row.skillName : selectedSkill,
-                    row.subtitle,
-                  )}
-                />
-                <span className="text-[12px] font-bold text-admin-text">{row.rank}</span>
-              </div>
-              <p className="m-0 text-[11px] text-admin-text-muted">{row.subtitle}</p>
-            </div>
-          ))}
         </div>
       </div>
 
       {isBadgesLoading && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-gray-400">
-          Loading your badges...
+        <div className="rounded-2xl border border-slate-200 bg-white py-12 text-center text-slate-400">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-[3px] border-admin-orange/30 border-t-admin-orange"></div>
+          <p className="mt-4 font-medium">Loading your badges...</p>
         </div>
       )}
 
       {isBadgesError && (
-        <div className="rounded-xl border border-red-200 bg-rose-50 p-6 text-center text-red-700">
-          Failed to load badges right now. Please refresh in a moment.
+        <div className="rounded-2xl border border-red-200 bg-rose-50 py-10 text-center text-red-700">
+          <p className="font-semibold">Failed to load badges right now.</p>
+          <p className="mt-1 text-sm opacity-80">
+            Please refresh the page to try again.
+          </p>
         </div>
       )}
 
-      {!isBadgesLoading && !isBadgesError && visibleTierRows.length === 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-gray-400">
-          No badge records match the selected filter.
+      {!isBadgesLoading && !isBadgesError && skillSections.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-slate-500">
+          <Award className="mx-auto mb-3 h-12 w-12 text-slate-300" />
+          <h3 className="text-lg font-semibold text-slate-700">
+            No Badges Found
+          </h3>
+          <p className="mt-1 text-sm">
+            {selectedSkill === ALL_SKILLS
+              ? "No badges match the selected filters."
+              : `You haven't earned any badges for ${selectedSkill} yet.`}
+          </p>
         </div>
       )}
 
-      {!isBadgesLoading && !isBadgesError && visibleTierRows.length > 0 && (
-        <div className="flex flex-col gap-3">
-          {visibleTierRows.map((row) => {
-            const isOpen = expandedTierLevel === row.level;
-            const showcaseBadge = !isOpen && row.unlocked;
-
-            return (
-              <div
-                key={row.level}
-                className="overflow-hidden rounded-xl border border-gray-200 bg-white"
-              >
-                <div
-                  className={`flex cursor-pointer items-center px-4 ${
-                    showcaseBadge ? "gap-5 py-5" : "gap-3.5 py-3.5"
-                  }`}
-                  onClick={() => setExpandedTierLevel(isOpen ? null : row.level)}
-                >
-                  <div
-                    className={`grid shrink-0 place-items-center rounded-xl border transition-all duration-300 ${
-                      showcaseBadge
-                        ? "h-[136px] w-[136px] border-orange-200 bg-orange-50 shadow-[0_0_0_3px_rgba(249,115,22,0.14),0_14px_34px_rgba(249,115,22,0.3)]"
-                        : "h-16 w-16 border-gray-200 bg-gray-50"
-                    }`}
-                  >
-                    <row.IconComponent
-                      size={showcaseBadge ? 108 : 52}
-                      unlocked={row.unlocked}
-                      label={composeBadgeLabel(
-                        selectedSkill === ALL_SKILLS ? row.skillName : selectedSkill,
-                        row.subtitle,
-                      )}
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="m-0 text-[15px] font-bold text-admin-text">
-                      {composeBadgeLabel(
-                        selectedSkill === ALL_SKILLS ? row.skillName : selectedSkill,
-                        row.subtitle,
-                      )}
-                    </p>
-                    <p className="mt-1 text-[12px] text-admin-text-muted">
-                      {row.subtitle} • {row.unlocked ? `Earned in ${row.skillName ?? "a skill"}` : "Not unlocked yet"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-1.5">
-                    <span
-                      className={`rounded-lg px-2.5 py-1 text-[12px] font-bold ${
-                        row.unlocked
-                          ? "bg-green-100 text-green-600"
-                          : "bg-slate-100 text-slate-500"
-                      }`}
-                    >
-                      {row.unlocked ? "Unlocked" : "Locked"}
-                    </span>
-                    <span className="text-[12px] font-semibold text-admin-text-muted">
-                      {isOpen ? "▲ Hide" : "▼ Details"}
-                    </span>
-                  </div>
-                </div>
-
-                {isOpen && (
-                  <div className="border-t border-gray-100 bg-gray-50 px-4 py-3.5">
-                    <p className="mb-2 text-[13px] font-semibold text-admin-text">Badge Details</p>
-
-                    {row.badge ? (
-                      <div className="grid gap-2.5 text-[13px] text-admin-text-muted">
-                        <div className="grid grid-cols-[110px_1fr] gap-2">
-                          <span className="font-semibold text-admin-text">Badge Name</span>
-                          <span>{row.badge.name}</span>
-                        </div>
-                        <div className="grid grid-cols-[110px_1fr] gap-2">
-                          <span className="font-semibold text-admin-text">Skill</span>
-                          <span>{row.skillName ?? "-"}</span>
-                        </div>
-                        <div className="grid grid-cols-[110px_1fr] gap-2">
-                          <span className="font-semibold text-admin-text">Awarded</span>
-                          <span>{formatAwardDate(row.badge.awarded_at)}</span>
-                        </div>
-                        {row.badge.description && (
-                          <div className="grid grid-cols-[110px_1fr] gap-2">
-                            <span className="font-semibold text-admin-text">Summary</span>
-                            <span>{row.badge.description}</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-[13px] text-admin-text-muted">
-                        <Lock className="h-4 w-4 text-slate-400" />
-                        <span>
-                          This tier is currently locked. Clear the {row.subtitle} assessment to unlock this badge.
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+      {!isBadgesLoading && !isBadgesError && skillSections.length > 0 && (
+        <div className="flex flex-col gap-10">
+          {skillSections.map((section) => (
+            <div key={section.skillName} className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <h3 className="text-xl font-bold text-slate-800">
+                  {section.skillName} Badges
+                </h3>
+                <div className="h-px flex-1 bg-slate-200"></div>
               </div>
-            );
-          })}
-
-          {filteredBadges.length === 0 && (
-            <div className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-5 text-center text-[13px] text-gray-500">
-              <Award className="mr-2 inline h-4 w-4 align-text-bottom text-gray-400" />
-              {selectedSkill === ALL_SKILLS
-                ? "No badges earned yet. Complete and clear a level test to unlock your first badge."
-                : `No badges earned yet for ${selectedSkill}.`}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {section.rows.map((row) => (
+                  <BadgeCard key={row.level} row={row} />
+                ))}
+              </div>
             </div>
-          )}
+          ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function SummaryCard({
-  label,
-  value,
-  icon,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  icon: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${
-        highlight
-          ? "border-none bg-admin-orange text-white"
-          : "border border-admin-border bg-white text-admin-text"
-      }`}
-    >
-      <span className="text-[22px]">{icon}</span>
-      <p className="mb-0.5 mt-2 text-[13px] opacity-85">{label}</p>
-      <h3 className="m-0 text-[24px] font-bold">{value}</h3>
     </div>
   );
 }

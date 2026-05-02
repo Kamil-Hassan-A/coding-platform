@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { getSkills, getUserProgress } from "../candidate/candidateService";
+import { getSkills, getUserProgress } from "../candidateService";
 
 const LEVEL_LABELS: Record<string, string> = {
   beginner: "Beginner",

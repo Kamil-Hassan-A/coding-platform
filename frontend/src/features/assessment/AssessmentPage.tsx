@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetSession, useRunCode, useSubmitSession } from "./hooks/useAssessment";
 import { useEditor } from "./hooks/useEditor";
 import Toolbar from "./components/Toolbar";
@@ -133,10 +133,11 @@ function getProblemKey(problem: SessionProblemPayload, index: number): string {
 export default function AssessmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { sessionId: routeSessionId } = useParams<{ sessionId: string }>();
   const isProctoringEnabled = import.meta.env.VITE_DISABLE_PROCTORING !== "true";
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
-  const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
+  const [sessionId, setSessionId] = useState<string | null>(routeSessionId || initialState?.session_id || null);
   const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
   const [skillName, setSkillName] = useState<string | null>(initialState?.skill_name || null);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
