@@ -321,6 +321,17 @@ def seed_problems_from_payload(
                     source_url = to_str(question.get("url")) or None
                     solution_text = to_str(question.get("solution")) or None
                     difficulty_label = to_str(question.get("difficulty")) or difficulty
+                    question_type = str(question.get("question_type") or "coding").strip().lower()
+
+                    raw_options = question.get("options")
+                    raw_correct = question.get("correct_option")
+                    if question_type == "mcq" and raw_options:
+                        type_data = {
+                            "options": raw_options,
+                            "correct_option": raw_correct,
+                        }
+                    else:
+                        type_data = None
 
                     problem = Problem(
                         skill_id=skill.id,
@@ -338,6 +349,8 @@ def seed_problems_from_payload(
                         source_url=source_url,
                         source_dataset=dataset_name,
                         solution_text=solution_text,
+                        question_type=question_type,
+                        type_data=type_data,
                     )
                     db.add(problem)
                     seen_external_ids.add(external_task_id)
