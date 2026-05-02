@@ -2,8 +2,12 @@ import axios, { type AxiosError } from "axios";
 
 import useUserStore from "../stores/userStore";
 
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+// Keep local development working even when .env is not created yet.
+const apiBaseUrl = envBaseUrl || (import.meta.env.DEV ? "http://127.0.0.1:8000" : undefined);
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: apiBaseUrl,
 });
 
 axiosInstance.interceptors.request.use((config) => {

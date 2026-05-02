@@ -27,21 +27,23 @@ export type DashboardStats = {
 
 export type AdminCandidate = {
   user_id: string;
-  employee_id?: string;
-  employeeId?: string;
   name: string;
   gender: string;
   dept: string;
-  latest_session_id?: string | null;
-  latest_skill_name?: string | null;
-  exp_indium_years?: number;
-  expIndium?: number;
-  exp_overall_years?: number;
-  expOverall?: number;
   skill: string;
   score: number;
-  latest_submitted_at?: string | null;
   status: "Pass" | "Fail" | "Pending";
+};
+
+export type AdminCredential = {
+  id: string;
+  employeeId: string;
+  name: string;
+  department: string;
+  expIndium: number;
+  expOverall: number;
+  verifiedSkills: string[];
+  status: "Active" | "Inactive";
 };
 
 export type TagConfig = {
@@ -55,6 +57,10 @@ export type StatCard = {
 };
 
 export type CategoryFilter = "All" | SkillCategory;
+
+export type SortKey = keyof AdminCredential;
+
+export type SortOrder = "asc" | "desc";
 
 export type SkillCardProps = {
   skill: Skill;

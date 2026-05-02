@@ -1,6 +1,5 @@
 import { LayoutGrid, Users } from 'lucide-react';
 import type { SidebarProps } from '../../types/layout';
-import useUserStore from '../../stores/userStore';
 
 function SidebarIcon({ id }: { id: string }) {
   if (id === 'dashboard') return <LayoutGrid size={15} strokeWidth={2} />;
@@ -8,12 +7,6 @@ function SidebarIcon({ id }: { id: string }) {
 }
 
 export default function Sidebar({ items, active, onChange }: SidebarProps) {
-  const user = useUserStore();
-
-  const displayName = user?.name?.trim() || (user?.role === 'admin' ? 'Platform Admin' : 'Candidate User');
-  const subtitle = user?.department?.trim() || (user?.role === 'admin' ? 'Admin' : 'Assessment Platform');
-  const initials = (user?.name?.trim()?.[0] || user?.role?.[0] || 'U').toUpperCase();
-
   return (
     <aside className='flex w-[220px] shrink-0 flex-col border-r border-admin-border bg-admin-white'>
       <div className='border-b border-admin-border px-5 pb-4 pt-5'>
@@ -37,7 +30,7 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
             >
               <span className={`shrink-0 ${isActive ? 'text-admin-orange' : 'text-admin-text-light'}`}><SidebarIcon id={item.id} /></span>
               {item.label}
-              {isActive && <span className='ml-auto text-[16px] text-admin-orange'></span>}
+              {isActive && <span className='ml-auto text-[16px] text-admin-orange'>›</span>}
             </button>
           );
         })}
@@ -45,10 +38,10 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
 
       <div className='border-t border-admin-border px-4 py-3.5'>
         <div className='flex items-center gap-2.5'>
-          <div className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-admin-white'>{initials}</div>
+          <div className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-admin-white'>TU</div>
           <div>
-            <div className='text-[12px] font-bold text-admin-text'>{displayName}</div>
-            <div className='text-[11px] text-admin-text-light'>{subtitle}</div>
+            <div className='text-[12px] font-bold text-admin-text'>Platform Admin</div>
+            <div className='text-[11px] text-admin-text-light'>Test User</div>
           </div>
         </div>
       </div>

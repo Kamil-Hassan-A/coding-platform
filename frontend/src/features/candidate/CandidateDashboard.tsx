@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../../components/layout/Sidebar";
 import { logout } from "../auth/authService";
 import useUserStore from "../../stores/userStore";
@@ -11,6 +11,9 @@ import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
 import type {
   BackendLevel,
   CandidateScreen,
+  CandidateSelection,
+  CandidateSelectionIds,
+  ConfirmedScreenProps,
   HomeScreenProps,
   SkillWithProgress,
 } from "./types/candidate";
@@ -56,11 +59,14 @@ const LEVEL_META: Record<
 export default function CandidateDashboard() {
   const navigate = useNavigate();
   const user = useUserStore();
+  const [confirmed, setConfirmed] = useState<CandidateSelection | null>(null);
+  const [confirmedIds, setConfirmedIds] =
+    useState<CandidateSelectionIds | null>(null);
   const [screen, setScreen] = useState<CandidateScreen>("home");
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useStartSession();
+  const { mutate: startSession, isPending: isStarting } = useStartSession();
 
   const {
     data: apiSkills,
@@ -70,12 +76,11 @@ export default function CandidateDashboard() {
     queryKey: ["skills"],
     queryFn: getSkills,
     staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-    placeholderData: keepPreviousData,
   });
 
   const {
     data: progress,
+    isLoading: isProgressLoading,
     isError: isProgressError,
   } = useQuery({
     queryKey: ["user-progress"],
@@ -120,23 +125,48 @@ export default function CandidateDashboard() {
     skill_id: string,
   ) => {
     const skillObj = skillsList.find((s) => s.skill_id === skill_id);
-    const selection = {
-      skill,
-      levelLabel,
-      allowedLanguages: skillObj?.allowed_languages || [],
-    };
-    const selectionIds = { skill_id, level };
-
-    navigate("/candidate/instructions", {
-      state: {
-        confirmed: selection,
-        confirmedIds: selectionIds,
-      },
+    setConfirmed({ 
+      skill, 
+      levelLabel, 
+      allowedLanguages: skillObj?.allowed_languages || [] 
     });
+    setConfirmedIds({ skill_id, level });
+    setScreen("confirmed");
   };
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleBeginAssessment = () => {
+    if (!confirmedIds || !confirmed) return;
+    const activeConfirmed = confirmed;
+
+    startSession(confirmedIds, {
+      onSuccess: (data) => {
+        navigate("/candidate/assessment", {
+          state: { 
+            session_id: data.session_id, 
+            problem: data.problem, 
+            problems: data.problems ?? [],
+            skill_name: activeConfirmed.skill, 
+            allowed_languages: data.allowed_languages ?? [] 
+          },
+        });
+      },
+      onError: (error: unknown) => {
+        const detail =
+          typeof (error as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail === "string"
+            ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail ?? null)
+            : null;
+
+        alert(
+          detail
+            ? `Failed to start assessment session: ${detail}`
+            : "Failed to start assessment session. Please try again.",
+        );
+      },
+    });
   };
 
   return (
@@ -198,7 +228,7 @@ export default function CandidateDashboard() {
         </header>
 
         <main className="flex-1 overflow-y-auto px-6 py-10">
-          {isSkillsLoading && (
+          {(isSkillsLoading || isProgressLoading) && (
             <div className="mt-10 text-left text-slate-500">
               Loading your skills...
             </div>
@@ -212,7 +242,6 @@ export default function CandidateDashboard() {
 
           {screen === "home" ? (
             <HomeScreen
-              isSkillsLoading={isSkillsLoading}
               skillsList={skillsList}
               onStart={(data) => {
                 handleConfirm(
@@ -232,14 +261,23 @@ export default function CandidateDashboard() {
             />
           ) : screen === "past_assessments" ? (
             <PastAssessmentsScreen />
-          ) : null}
+          ) : (
+            confirmed && (
+              <ConfirmedScreen
+                confirmed={confirmed}
+                onChangeSkill={() => setScreen("home")}
+                onBegin={handleBeginAssessment}
+                isStarting={isStarting}
+              />
+            )
+          )}
         </main>
       </div>
     </div>
   );
 }
 
-function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & { isSkillsLoading: boolean }) {
+function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
   const user = useUserStore();
   const [search, setSearch] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
@@ -270,10 +308,10 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
   };
 
   return (
-    <div className="mx-auto w-full max-w-[900px] pb-14">
+    <div className="w-full max-w-[900px] pb-14">
       <div className="mb-8 rounded-2xl bg-gradient-to-br from-admin-orange to-orange-600 p-8 text-white shadow-[0_4px_12px_rgba(249,115,22,0.15)]">
         <h1 className="mb-2 mt-0 text-[28px] font-bold">
-          Welcome back, {user?.name ? user.name : "Candidate"} .
+          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"} .
           👋
         </h1>
         <p className="m-0 text-[16px] text-white/90">
@@ -292,28 +330,12 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
         </div>
 
         <div className="flex flex-wrap gap-2.5">
-          {isSkillsLoading && Array.from({ length: 8 }).map((_, index) => (
-            <button
-              key={`skill-placeholder-${index}`}
-              disabled
-              className="cursor-default rounded-full border border-slate-200 px-[18px] py-2.5 text-[13px] font-semibold transition-all"
-              style={{
-                background: "#e2e8f0",
-                color: "transparent",
-                cursor: "default",
-                width: index % 2 === 0 ? 80 : 120,
-              }}
-            >
-              Loading
-            </button>
-          ))}
-
-          {!isSkillsLoading && filteredSkills.length === 0 && (
+          {filteredSkills.length === 0 && (
             <div className="w-full py-5 text-center text-[14px] text-slate-400">
               No skills found.
             </div>
           )}
-          {!isSkillsLoading && filteredSkills.map((skill) => {
+          {filteredSkills.map((skill) => {
             const isSelected = selectedSkillId === skill.skill_id;
             return (
               <button
@@ -438,3 +460,83 @@ function HomeScreen({ isSkillsLoading, skillsList, onStart }: HomeScreenProps & 
   );
 }
 
+function ConfirmedScreen({
+  confirmed,
+  onChangeSkill,
+  onBegin,
+  isStarting,
+}: ConfirmedScreenProps) {
+  return (
+    <div className="w-full max-w-[600px] text-center">
+      <div className="rounded-[20px] bg-white px-12 py-14 shadow-[0_4px_24px_rgba(0,0,0,0.07)]">
+        <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-[20px] bg-green-500/10 text-[32px]">
+          ✅
+        </div>
+
+        <h2 className="mb-2 text-[22px] font-extrabold text-[#111]">
+          You're all set!
+        </h2>
+        <p className="mb-8 text-[14px] text-[#888]">
+          Your assessment is ready. The editor will be launched by your proctor.
+        </p>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-4 rounded-xl bg-[#f8f9fa] p-6">
+          <div className="flex flex-col items-center px-4">
+            <span className="text-[10px] font-semibold tracking-[0.8px] text-[#999]">
+              SKILL
+            </span>
+            <span className="mt-1 text-[16px] font-extrabold text-admin-orange">
+              {confirmed.skill}
+            </span>
+          </div>
+          <div className="self-stretch w-px bg-[#e0e0e0]" />
+          <div className="flex flex-col items-center px-4">
+            <span className="text-[10px] font-semibold tracking-[0.8px] text-[#999]">
+              LEVEL
+            </span>
+            <span className="mt-1 text-[16px] font-extrabold text-[#111]">
+              {confirmed.levelLabel}
+            </span>
+          </div>
+        </div>
+
+        <div className="mb-6 flex items-center gap-3 rounded-[10px] border border-admin-orange/20 bg-admin-orange/10 px-5 py-3.5">
+          <PulsingDot />
+          <span className="text-[13px] text-[#555]">
+            {confirmed.skill === "Agile"
+              ? "Preparing Agile MCQ assessment..."
+              : "Waiting for Monaco Editor to be launched..."}
+          </span>
+        </div>
+
+        <button
+          onClick={onBegin}
+          disabled={isStarting}
+          className="mb-4 flex w-full items-center justify-center gap-2.5 rounded-[10px] border-none bg-admin-orange px-4 py-4 text-[16px] font-bold text-white shadow-admin-orange/25 shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isStarting ? (
+            <>
+              <div className="h-[18px] w-[18px] animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span>Starting Session...</span>
+            </>
+          ) : (
+            "Begin Assessment →"
+          )}
+        </button>
+
+        <button
+          onClick={onChangeSkill}
+          className="cursor-pointer rounded-lg border-[1.5px] border-[#ddd] bg-transparent px-7 py-[11px] text-[13px] text-[#777]"
+        >
+          ← Change Skill / Level
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PulsingDot() {
+  return (
+    <div className="h-2.5 w-2.5 shrink-0 animate-pulse-fast rounded-full bg-admin-orange" />
+  );
+}

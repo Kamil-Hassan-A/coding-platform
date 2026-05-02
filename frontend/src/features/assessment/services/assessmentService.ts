@@ -35,11 +35,12 @@ export const submitSession = async (
 export const runCode = async (
   sessionId: string,
   code: string,
-  language: string
+  language: string,
+  problemId?: string
 ): Promise<SessionRunResponse> => {
   const response = await axiosInstance.post<SessionRunResponse>(
     `/sessions/${sessionId}/run`,
-    { code, language }
+    { code, language, problem_id: problemId }
   );
   return response.data;
 };
@@ -63,15 +64,4 @@ export const getSubmissionResults = async (
     `/submissions/${submission_id}/results`
   );
   return response.data;
-};
-
-export const reportViolation = async (
-  sessionId: string,
-  payload: { type: string; timestamp: string; metadata?: Record<string, unknown> | null },
-): Promise<void> => {
-  try {
-    await axiosInstance.post(`/sessions/${sessionId}/violation`, payload);
-  } catch {
-    // Intentionally ignored so assessment flow is never blocked.
-  }
 };

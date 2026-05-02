@@ -43,16 +43,13 @@ export const loginWithSSO = async (): Promise<User> => {
     ? storedRole
     : "candidate";
 
-  const user: User = {
-    id: role === "candidate" ? "b150f408-9876-454b-ba44-6317179698d6" : "6f2f373d-aaa3-4472-a0e2-b3ecd9806d3d",
-    name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
-    role,
-    level: role === "candidate" ? "Beginner" : null,
-    department: role === "admin" ? "Engineering" : "Candidate Relations",       
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMTUwZjQwOC05ODc2LTQ1NGItYmE0NC02MzE3MTc5Njk4ZDYiLCJleHAiOjE3NzU0ODAzNTQsInJvbGUiOiJjYW5kaWRhdGUiLCJuYW1lIjoiVGVzdCBDYW5kaWRhdGUiLCJlbWFpbCI6ImNhbmRpZGF0ZUBleGFtcGxlLmNvbSJ9.yYKvmGPMCbFs3Nyk1nOoRTjl8_HfaE1IqlSM0wjlzig",
-  };
+  // For dev SSO, exchange role for known seeded credentials so token is always fresh.
+  const creds =
+    role === "admin"
+      ? { email: "admin@example.com", password: "AdminPass123!" }
+      : { email: "candidate@example.com", password: "Passw0rd!" };
 
-  useUserStore.getState().setUser(user);
+  const user = await loginWithCredentials(creds.email, creds.password);
   localStorage.removeItem("test_role");
   return user;
 };

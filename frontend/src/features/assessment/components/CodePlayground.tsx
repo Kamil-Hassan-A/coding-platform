@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import MonacoEditor from '@monaco-editor/react';
-import type { OnMount } from '@monaco-editor/react';
 
 interface CodePlaygroundProps {
   code?: string;
   onChange?: (val: string) => void;
-  onPaste?: () => void;
+  runSignal?: number;
+  onRunResult?: (result: { ok: boolean; message: string; sandboxUrl?: string }) => void;
 }
 
 type FrameMessage = {
@@ -14,13 +14,23 @@ type FrameMessage = {
   payload: string;
 };
 
-const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, onPaste }) => {
+const CodePlayground: React.FC<CodePlaygroundProps> = ({
+  code = "{}",
+  onChange,
+  runSignal,
+  onRunResult,
+}) => {
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
   const [jsCode, setJsCode] = useState('');
-  
-  // Track if we've initialized from props to avoid overwriting during edits
+  const [sandboxMessage, setSandboxMessage] = useState('');
   const [initialized, setInitialized] = useState(false);
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const lastRunSignalRef = useRef<number | undefined>(runSignal);
+  const [srcDoc, setSrcDoc] = useState<string>("");
+  const [logs, setLogs] = useState<string[]>([]);
+  const [runtimeError, setRuntimeError] = useState<string>("");
 
   useEffect(() => {
     if (!initialized && code) {
@@ -30,52 +40,47 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
         if (parsed.css !== undefined) setCssCode(parsed.css);
         if (parsed.javascript !== undefined) setJsCode(parsed.javascript);
         else if (parsed.js !== undefined) setJsCode(parsed.js);
-        setInitialized(true);
-      } catch (e) {
-        // Fallback or ignore
+      } finally {
         setInitialized(true);
       }
     }
   }, [code, initialized]);
 
+  const htmlReady = htmlCode.trim().length > 0;
+  const cssReady = cssCode.trim().length > 0;
+  const jsReady = jsCode.trim().length > 0;
+  const canEditCss = htmlReady;
+  const canEditJs = htmlReady && cssReady;
+
   const handleEditorChange = (type: 'html' | 'css' | 'js', val: string) => {
+    if (type === 'css' && !canEditCss) {
+      return;
+    }
+    if (type === 'js' && !canEditJs) {
+      return;
+    }
+
     let newHtml = htmlCode;
     let newCss = cssCode;
     let newJs = jsCode;
-    if (type === 'html') { newHtml = val; setHtmlCode(val); }
-    if (type === 'css') { newCss = val; setCssCode(val); }
-    if (type === 'js') { newJs = val; setJsCode(val); }
-    
+
+    if (type === 'html') {
+      newHtml = val;
+      setHtmlCode(val);
+    }
+    if (type === 'css') {
+      newCss = val;
+      setCssCode(val);
+    }
+    if (type === 'js') {
+      newJs = val;
+      setJsCode(val);
+    }
+
     onChange?.(JSON.stringify({ html: newHtml, css: newCss, js: newJs }));
   };
 
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [srcDoc, setSrcDoc] = useState<string>("");
-  const [logs, setLogs] = useState<string[]>([]);
-  const [runtimeError, setRuntimeError] = useState<string>("");
-
   const safeJsCode = useMemo(() => jsCode.replace(/<\/script>/gi, "<\\/script>"), [jsCode]);
-
-  const handleMount = useCallback<OnMount>((editor) => {
-    const disposables = [] as { dispose: () => void }[];
-
-    if (typeof editor.onDidPaste === "function") {
-      disposables.push(editor.onDidPaste(() => onPaste?.()));
-    } else {
-      disposables.push(
-        editor.onDidChangeModelContent((event) => {
-          if (event.isFlush) return;
-          if (event.changes.some((change) => change.text.length > 5)) {
-            onPaste?.();
-          }
-        }),
-      );
-    }
-
-    return () => {
-      disposables.forEach((disposable) => disposable.dispose());
-    };
-  }, [onPaste]);
 
   const buildSrcDoc = useCallback((html: string, css: string, js: string) => {
     return `<!DOCTYPE html>
@@ -164,6 +169,79 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
     setSrcDoc(buildSrcDoc(htmlCode, cssCode, safeJsCode));
   }, [buildSrcDoc, cssCode, htmlCode, safeJsCode]);
 
+  const executeInCodeSandbox = useCallback(async () => {
+    if (!htmlReady) {
+      const message = "Enter HTML code first.";
+      setSandboxMessage(message);
+      onRunResult?.({ ok: false, message });
+      return;
+    }
+    if (!cssReady) {
+      const message = "Enter CSS code after HTML.";
+      setSandboxMessage(message);
+      onRunResult?.({ ok: false, message });
+      return;
+    }
+    if (!jsReady) {
+      const message = "Enter JavaScript code after CSS.";
+      setSandboxMessage(message);
+      onRunResult?.({ ok: false, message });
+      return;
+    }
+
+    const indexHtml = `<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <link rel="stylesheet" href="./style.css" />\n  </head>\n  <body>\n${htmlCode}\n    <script src="./script.js"></script>\n  </body>\n</html>`;
+
+    const sandboxPayload = {
+      files: {
+        "index.html": { content: indexHtml },
+        "style.css": { content: cssCode },
+        "script.js": { content: jsCode },
+        "sandbox.config.json": { content: JSON.stringify({ template: "static" }) },
+      },
+    };
+
+    try {
+      const response = await fetch("https://codesandbox.io/api/v1/sandboxes/define?json=1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sandboxPayload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`CodeSandbox request failed (${response.status})`);
+      }
+
+      const data = (await response.json()) as { sandbox_id?: string };
+      if (!data?.sandbox_id) {
+        throw new Error("CodeSandbox did not return a sandbox id");
+      }
+
+      const sandboxUrl = `https://codesandbox.io/s/${data.sandbox_id}?file=/index.html`;
+      window.open(sandboxUrl, "_blank", "noopener,noreferrer");
+      handleRunCode();
+
+      const message = "Executed in CodeSandbox. Check the opened sandbox for output.";
+      setSandboxMessage(message);
+      onRunResult?.({ ok: true, message, sandboxUrl });
+      window.setTimeout(() => setSandboxMessage(""), 5000);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to execute in CodeSandbox";
+      setSandboxMessage(message);
+      onRunResult?.({ ok: false, message });
+    }
+  }, [cssCode, cssReady, handleRunCode, htmlCode, htmlReady, jsCode, jsReady, onRunResult]);
+
+  useEffect(() => {
+    if (runSignal === undefined) {
+      return;
+    }
+    if (lastRunSignalRef.current === runSignal) {
+      return;
+    }
+    lastRunSignalRef.current = runSignal;
+    void executeInCodeSandbox();
+  }, [executeInCodeSandbox, runSignal]);
+
   const handleMessage = useCallback((event: MessageEvent<FrameMessage>) => {
     if (event.source !== iframeRef.current?.contentWindow) return;
     if (!event.data || event.data.source !== "code-playground") return;
@@ -181,16 +259,13 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
   }, [handleMessage]);
 
   useEffect(() => {
-    // Optional: auto-run when completely loaded first time
     if (initialized) {
       handleRunCode();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialized]);
+  }, [handleRunCode, initialized]);
 
   return (
     <div className="flex h-full w-full bg-[#1e1e1e] font-sans">
-      {/* Editors Panel (Left) */}
       <div className="flex flex-1 flex-col border-r border-[#333]">
         <div className="flex flex-1 flex-col border-b border-[#333]">
           <div className="bg-[#2d2d2d] px-4 py-2 text-[13px] font-semibold tracking-wider text-[#ccc] uppercase">
@@ -203,12 +278,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
               theme="vs-dark"
               value={htmlCode}
               onChange={(val) => handleEditorChange('html', val || '')}
-              onMount={handleMount}
               options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
             />
           </div>
         </div>
-        
+
         <div className="flex flex-1 flex-col border-b border-[#333]">
           <div className="bg-[#2d2d2d] px-4 py-2 text-[13px] font-semibold tracking-wider text-[#ccc] uppercase">
             CSS
@@ -220,10 +294,14 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
               theme="vs-dark"
               value={cssCode}
               onChange={(val) => handleEditorChange('css', val || '')}
-              onMount={handleMount}
-              options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
+              options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on", readOnly: !canEditCss }}
             />
           </div>
+          {!canEditCss && (
+            <div className="border-t border-[#3a2d2d] bg-[#241919] px-3 py-1 text-[11px] text-[#f0b3b3]">
+              Complete HTML first to unlock CSS.
+            </div>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col">
@@ -237,28 +315,39 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
               theme="vs-dark"
               value={jsCode}
               onChange={(val) => handleEditorChange('js', val || '')}
-              onMount={handleMount}
-              options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on" }}
+              options={{ minimap: { enabled: false }, fontSize: 13, tabSize: 2, wordWrap: "on", readOnly: !canEditJs }}
             />
           </div>
+          {!canEditJs && (
+            <div className="border-t border-[#3a2d2d] bg-[#241919] px-3 py-1 text-[11px] text-[#f0b3b3]">
+              Complete CSS after HTML to unlock JavaScript.
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Preview & Console Panel (Right) */}
       <div className="flex flex-1 flex-col bg-[#1e1e1e]">
         <div className="flex items-center justify-between border-b border-[#333] bg-[#2d2d2d] px-4 py-2">
           <div className="text-[13px] font-semibold tracking-wider text-[#ccc] uppercase">
             Live Preview
           </div>
           <button
-            onClick={handleRunCode}
-            className="rounded bg-[#007acc] px-4 py-1.5 text-[13px] font-bold text-white transition-colors hover:bg-[#0062a3]"
+            onClick={() => void executeInCodeSandbox()}
+            className="rounded border border-[#2f7f61] bg-[#1d4f3d] px-3 py-1.5 text-[12px] font-bold text-[#ccf6df] transition-colors hover:bg-[#225c47]"
           >
-            Refresh Preview
+            Execute in CodeSandbox
           </button>
         </div>
-        
-        <div className="flex flex-1 flex-col bg-white overflow-hidden relative">
+        {sandboxMessage && (
+          <div className="border-b border-[#2d5645] bg-[#10281f] px-4 py-2 text-[12px] text-[#9fe5c2]">
+            {sandboxMessage}
+          </div>
+        )}
+        <div className="border-b border-[#333] bg-[#1a2331] px-4 py-2 text-[11px] text-[#b8c7de]">
+          Required order: HTML -&gt; CSS -&gt; JavaScript. Run Code executes in CodeSandbox.
+        </div>
+
+        <div className="flex flex-1 flex-col overflow-hidden relative bg-white">
           {runtimeError && (
             <div className="absolute top-0 left-0 right-0 z-10 border-b border-red-200 bg-red-50 p-3 text-[13px] text-red-700 whitespace-pre-wrap font-mono shadow-sm">
               {runtimeError}
@@ -280,7 +369,7 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ code = "{}", onChange, 
           <div className="flex-1 overflow-y-auto p-3 font-mono text-[13px] text-[#d4d4d4]">
             {logs.length === 0 ? (
               <span className="italic text-[#888] opacity-50">
-                Console is empty. Click "Refresh Preview" to execute.
+                Console is empty. Click Run Code to execute.
               </span>
             ) : (
               logs.map((log, index) => (

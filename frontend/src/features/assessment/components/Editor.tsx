@@ -1,37 +1,55 @@
 import Editor from "@monaco-editor/react";
-import type { OnMount } from "@monaco-editor/react";
 
 interface Props {
   code: string;
   onChange: (value: string) => void;
   language: string;
-  onPaste?: () => void;
 }
 
-export default function CodeEditor({ code, onChange, language, onPaste }: Props) {
+function normalizeMonacoLanguage(language: string): string {
+  const raw = (language || "").trim().toLowerCase();
+  const collapsed = raw.replace(/[\s._(),-]+/g, "");
+
+  if (
+    raw === "c#" ||
+    raw === "csharp" ||
+    raw === "cs" ||
+    raw === "dotnet" ||
+    raw === ".net" ||
+    raw === ".net, c#" ||
+    raw === ".net,c#" ||
+    collapsed === "c#" ||
+    collapsed === "csharp" ||
+    collapsed === "cs" ||
+    collapsed === "dotnet" ||
+    collapsed === "net" ||
+    collapsed === "netc#" ||
+    collapsed === "netcsharp"
+  ) {
+    return "csharp";
+  }
+
+  if (
+    raw === "vb" ||
+    raw === "vb.net" ||
+    raw === "vbnet" ||
+    raw === "visual basic" ||
+    raw === "visual basic.net" ||
+    raw === "visual basic .net" ||
+    collapsed === "vb" ||
+    collapsed === "vbnet" ||
+    collapsed === "visualbasic" ||
+    collapsed === "visualbasicnet"
+  ) {
+    return "vb";
+  }
+
+  return raw;
+}
+
+export default function CodeEditor({ code, onChange, language }: Props) {
   // Map internal language names to Monaco identifiers
-  const monacoLanguage = language === "cpp" ? "cpp" : language;
-
-  const handleMount: OnMount = (editor) => {
-    const disposables = [] as { dispose: () => void }[];
-
-    if (typeof editor.onDidPaste === "function") {
-      disposables.push(editor.onDidPaste(() => onPaste?.()));
-    } else {
-      disposables.push(
-        editor.onDidChangeModelContent((event) => {
-          if (event.isFlush) return;
-          if (event.changes.some((change) => change.text.length > 5)) {
-            onPaste?.();
-          }
-        }),
-      );
-    }
-
-    return () => {
-      disposables.forEach((disposable) => disposable.dispose());
-    };
-  };
+  const monacoLanguage = normalizeMonacoLanguage(language);
 
   const loadingFallback = (
     <div className='flex h-full w-full flex-col items-center justify-center bg-[#1e1e1e] font-sans'>
@@ -49,7 +67,6 @@ export default function CodeEditor({ code, onChange, language, onPaste }: Props)
         language={monacoLanguage}
         value={code}
         onChange={(val) => onChange(val ?? "")}
-        onMount={handleMount}
         loading={loadingFallback}
         options={{
           fontSize: 14,

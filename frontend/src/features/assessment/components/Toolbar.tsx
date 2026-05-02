@@ -14,6 +14,8 @@ interface Props {
   allowedLanguages?: LanguageOption[];
   secondsRemaining?: number;
   hideRunCode?: boolean;
+  hideLanguageSelect?: boolean;
+  submitButtonLabel?: string;
 }
 
 export default function Toolbar({
@@ -29,6 +31,8 @@ export default function Toolbar({
   allowedLanguages,
   secondsRemaining,
   hideRunCode,
+  hideLanguageSelect,
+  submitButtonLabel,
 }: Props) {
   const [timeLeft, setTimeLeft] = useState<number | null>(
     secondsRemaining !== undefined ? secondsRemaining : (timeLimit ? timeLimit * 60 : null)
@@ -88,34 +92,38 @@ export default function Toolbar({
 
         <div className='flex items-center gap-3'>
           <button
-            type='button'
-            onClick={onEndTest}
+            onClick={() => {
+              if (window.confirm("Are you sure you want to end the test? This cannot be undone.")) {
+                onEndTest();
+              }
+            }}
             className='rounded-lg border-none bg-red-500 px-5 py-[9px] text-[13px] font-semibold text-white transition-colors hover:bg-red-600'
           >
             End Test
           </button>
 
-          <select
-            value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
-            disabled={!allowedLanguages || allowedLanguages.length === 0}
-            className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
-          >
-            {(!allowedLanguages || allowedLanguages.length === 0) && (
-              <option value="" disabled>
-                No languages configured
-              </option>
-            )}
-            {(allowedLanguages ?? []).map((lang) => (
-              <option key={lang.id} value={lang.monaco}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
+          {!hideLanguageSelect && (
+            <select
+              value={language}
+              onChange={(e) => onLanguageChange(e.target.value)}
+              disabled={!allowedLanguages || allowedLanguages.length === 0}
+              className='cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2 text-[13px] font-medium outline-none transition-all hover:border-admin-orange focus:border-admin-orange focus:ring-2 focus:ring-admin-orange/20'
+            >
+              {(!allowedLanguages || allowedLanguages.length === 0) && (
+                <option value="" disabled>
+                  No languages configured
+                </option>
+              )}
+              {(allowedLanguages ?? []).map((lang) => (
+                <option key={lang.id} value={lang.monaco}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          )}
 
           {!hideRunCode && (
             <button
-              type='button'
               onClick={onRun}
               disabled={isRunning}
               className={`rounded-lg border px-5 py-[9px] text-[13px] font-semibold transition-all ${isRunning ? "cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400" : "cursor-pointer border-slate-300 bg-white text-slate-700 hover:border-admin-orange hover:text-admin-orange"}`}
@@ -125,12 +133,11 @@ export default function Toolbar({
           )}
 
           <button
-            type='button'
             onClick={onSubmit}
             disabled={isSubmitting}
             className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white transition-all ${isSubmitting ? "cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none" : "cursor-pointer bg-admin-orange shadow-lg shadow-admin-orange/20 hover:-translate-y-0.5 hover:shadow-admin-orange/40"}`}
           >
-            {isSubmitting ? "Submitting..." : "Submit Solution"}
+            {isSubmitting ? "Submitting..." : submitButtonLabel || "Submit Solution"}
           </button>
         </div>
       </div>

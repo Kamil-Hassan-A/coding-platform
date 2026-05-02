@@ -34,11 +34,13 @@ export const useRunCode = () => {
       sessionId,
       code,
       language,
+      problemId,
     }: {
       sessionId: string;
       code: string;
       language: string;
-    }) => runCode(sessionId, code, language),
+      problemId?: string;
+    }) => runCode(sessionId, code, language, problemId),
     retry: false,
   });
 };
