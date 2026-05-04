@@ -1,5 +1,17 @@
-import { LayoutGrid, Users } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, Users } from 'lucide-react';
 import type { SidebarProps } from '../../types/layout';
+import { logout } from '../../features/auth/authService';
+import useUserStore from '../../stores/userStore';
+
+export default function Sidebar({ items }: SidebarProps) {
+  const user = useUserStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const displayName = user?.name?.trim() ?? '';
+  const subtitle = user?.department?.trim() ?? '';
+  const initials = (user?.name?.trim()?.[0] || user?.role?.[0] || '').toUpperCase();
 
 function SidebarIcon({ id }: { id: string }) {
   if (id === 'dashboard') return <LayoutGrid size={15} strokeWidth={2} />;
@@ -17,18 +29,22 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
       <nav className='flex-1 px-2 py-3'>
         <div className='px-3 pb-2 pt-1.5 text-[9px] font-bold uppercase tracking-[1.8px] text-admin-text-light'>Overview</div>
         {items.map(item => {
-          const isActive = active === item.id;
+          const isActive = location.pathname.startsWith(item.path);
           return (
             <button
-              key={item.id}
-              onClick={() => onChange(item.id)}
-              className={`mb-0.5 flex w-full items-center gap-2.5 rounded-lg border-0 px-3 py-[9px] text-left text-[13px] transition-all duration-150 ${
+              key={item.path}
+              type='button'
+              onClick={() => navigate(item.path)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`mb-0.5 flex w-full items-center gap-2.5 rounded-lg border-0 px-3 py-[9px] text-left text-[13px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-orange/40 ${
                 isActive
                   ? 'bg-admin-orange-light font-bold text-admin-orange'
                   : 'bg-transparent font-medium text-admin-text-muted'
               }`}
             >
-              <span className={`shrink-0 ${isActive ? 'text-admin-orange' : 'text-admin-text-light'}`}><SidebarIcon id={item.id} /></span>
+              <span className={`shrink-0 ${isActive ? 'text-admin-orange' : 'text-admin-text-light'}`}>
+                {item.icon ?? <Users size={15} strokeWidth={2} />}
+              </span>
               {item.label}
               {isActive && <span className='ml-auto text-[16px] text-admin-orange'>›</span>}
             </button>
@@ -38,11 +54,23 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
 
       <div className='border-t border-admin-border px-4 py-3.5'>
         <div className='flex items-center gap-2.5'>
+          <div className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-admin-white'>{initials}</div>
+          <div className='min-w-0 flex-1'>
+            <div className='truncate text-[12px] font-bold text-admin-text'>{displayName}</div>
+            <div className='truncate text-[11px] text-admin-text-light'>{subtitle}</div>
           <div className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-admin-white'>TU</div>
           <div>
             <div className='text-[12px] font-bold text-admin-text'>Platform Admin</div>
             <div className='text-[11px] text-admin-text-light'>Test User</div>
           </div>
+          <button
+            type='button'
+            onClick={() => void logout()}
+            title='Sign out'
+            className='ml-auto shrink-0 rounded-md p-1.5 text-admin-text-light transition-colors hover:bg-red-50 hover:text-red-500'
+          >
+            <LogOut size={14} strokeWidth={2} />
+          </button>
         </div>
       </div>
     </aside>

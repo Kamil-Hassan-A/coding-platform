@@ -4,20 +4,12 @@ import type {
   AdminCandidate,
   AdminCredential,
   DashboardStats,
-  Skill,
-  SkillCategory,
-  SkillTag,
-  StatCard,
-  TagConfig,
 } from "./types/admin";
 
 export type {
   AdminCandidate,
   AdminCredential,
   DashboardStats,
-  Skill,
-  SkillCategory,
-  SkillTag,
 } from "./types/admin";
 
 export const SKILLS: Skill[] = [

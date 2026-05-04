@@ -151,9 +151,9 @@ export default function AdminDashboard() {
     .sort();
 
   const NAV = [
-    { id: "dashboard", label: "Dashboard" },
-    { id: "candidates", label: "Candidates" },
-    { id: "credentials", label: "Credentials" },
+    { path: "/admin/dashboard", label: "Dashboard" },
+    { path: "/admin/candidates", label: "Candidates" },
+    { path: "/admin/credentials", label: "Credentials" },
   ];
 
   return (
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
       <Sidebar
         items={NAV}
         active={page}
-        onChange={(id) => setPage(id as "dashboard" | "candidates" | "credentials")}
+        onChange={(id: string) => setPage(id as "dashboard" | "candidates" | "credentials")}
       />
 
       <main className='flex flex-1 flex-col overflow-hidden'>

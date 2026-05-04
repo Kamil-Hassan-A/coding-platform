@@ -83,30 +83,104 @@ def get_admin_stats(
 
 @router.get("/candidates", response_model=AdminCandidatesResponse)
 def get_admin_candidates(
+    employee_id: str | None = Query(None),
+    years_min: int | None = Query(None),
+    years_max: int | None = Query(None),
+    exp_min: int | None = Query(None),
+    exp_max: int | None = Query(None),
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ) -> AdminCandidatesResponse:
-    candidate_users = db.scalars(select(User).where(User.role == UserRole.CANDIDATE).order_by(User.created_at.desc())).all()
+    query = select(User).where(User.role == UserRole.CANDIDATE)
+
+    if employee_id:
+        query = query.where(User.employee_id.ilike(f"%{employee_id}%"))
+    if years_min is not None:
+        query = query.where(User.exp_indium_years >= years_min)
+    if years_max is not None:
+        query = query.where(User.exp_indium_years <= years_max)
+    if exp_min is not None:
+        query = query.where(User.exp_overall_years >= exp_min)
+    if exp_max is not None:
+        query = query.where(User.exp_overall_years <= exp_max)
+
+    candidate_users = db.scalars(query.order_by(User.created_at.desc())).all()
+
+    all_sessions = db.scalars(
+        select(AssessmentSession)
+        .options(selectinload(AssessmentSession.skill), selectinload(AssessmentSession.submissions))
+        .order_by(AssessmentSession.started_at.desc())
+    ).all()
+
+    # Group sessions by user_id and skill_id, keeping the first (latest) one we see per skill
+    sessions_by_user: dict[UUID, dict[UUID, AssessmentSession]] = {}
+    for session in all_sessions:
+        u_id = session.user_id
+        if u_id not in sessions_by_user:
+            sessions_by_user[u_id] = {}
+        s_id = session.skill_id
+        if s_id not in sessions_by_user[u_id]:
+            sessions_by_user[u_id][s_id] = session
 
     rows: list[AdminCandidateRow] = []
     for candidate in candidate_users:
-        latest_submission = db.scalar(
-            select(Submission)
-            .where(Submission.user_id == candidate.id)
-            .order_by(Submission.submitted_at.desc())
-            .limit(1)
-        )
+        user_sessions = sessions_by_user.get(candidate.id, {})
 
-        latest_skill_name: str | None = None
-        score = 0
-        status = "Pending"
+        if not user_sessions:
+            rows.append(
+                AdminCandidateRow(
+                    user_id=candidate.id,
+                    name=candidate.name,
+                    gender=candidate.gender or "Unknown",
+                    dept=candidate.department or "N/A",
+                    skill="Not Attempted",
+                    latest_session_id=None,
+                    latest_skill_name=None,
+                    latest_submitted_at=None,
+                    score=0,
+                    status="Pending",
+                )
+            )
+        else:
+            for skill_id, session in user_sessions.items():
+                latest_submission = None
+                if session.submissions:
+                    latest_submission = max(
+                        session.submissions,
+                        key=lambda s: (s.submitted_at or datetime.min.replace(tzinfo=timezone.utc), s.id)
+                    )
 
-        if latest_submission is not None:
-            latest_skill = db.scalar(select(Skill).where(Skill.id == latest_submission.skill_id))
-            latest_skill_name = latest_skill.name if latest_skill else None
-            score = latest_submission.score
-            status = "Pass" if latest_submission.status == SubmissionStatus.CLEARED else "Fail"
+                skill_name = session.skill.name if session.skill else "Unknown"
 
+                status = "Pending"
+                score = 0
+                if latest_submission:
+                    score = latest_submission.score
+                    status = "Pass" if latest_submission.status == SubmissionStatus.CLEARED else "Fail"
+                else:
+                    if session.status in [SessionStatus.TIMED_OUT, SessionStatus.AUTO_SUBMITTED]:
+                        status = "Fail"
+                    elif session.status == SessionStatus.SUBMITTED:
+                        status = "Pass"
+                    else:
+                        status = "Pending"
+
+                submitted_at = latest_submission.submitted_at if latest_submission else session.submitted_at
+
+                rows.append(
+                    AdminCandidateRow(
+                        user_id=candidate.id,
+                        name=candidate.name,
+                        gender=candidate.gender or "Unknown",
+                        dept=candidate.department or "N/A",
+                        skill=skill_name,
+                        latest_session_id=session.id,
+                        latest_skill_name=skill_name,
+                        latest_submitted_at=submitted_at,
+                        score=score,
+                        status=status,
+                    )
+                )
         rows.append(
             AdminCandidateRow(
                 user_id=candidate.id,

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { getSkills, getUserProgress } from "../candidate/candidateService";
+import { getSkills, getUserProgress } from "../candidateService";
 
 const LEVEL_LABELS: Record<string, string> = {
   beginner: "Beginner",
@@ -20,7 +20,7 @@ type LevelRow = {
   cleared: boolean;
 };
 
-export default function PastScores() {
+export default function PastScoresPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "cleared" | "active" | "locked">(
     "all",

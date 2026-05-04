@@ -159,6 +159,14 @@ function isQuestionSetMetadata(raw: string | null | undefined): boolean {
   }
 }
 
+/** Pick a clean per-language scaffold for the editor.
+ *
+ *  For SQL we never let raw CREATE TABLE / INSERT INTO setup (which legacy
+ *  datasets sometimes stored under the `default` key) reach the candidate.
+ *  Instead we surface a HackerRank-style comment that explains how to write
+ *  their query. The hidden setup is prepended on the backend before Judge0
+ *  runs the candidate's code.
+ */
 function resolveProblemBoilerplate(
   problem: SessionProblemPayload | null | undefined,
   skillName: string | null,
@@ -178,6 +186,20 @@ function resolveProblemBoilerplate(
       return problem.templateCode;
     }
     return JSON.stringify({ html: "", css: "", js: "" });
+  }
+
+  const requestedLanguage = (language || "").trim().toLowerCase();
+  const sqlLike =
+    isSqlLikeLanguage(requestedLanguage) ||
+    (Array.isArray(problem.schema_tables) && problem.schema_tables.length > 0);
+
+  if (sqlLike) {
+    // Hard-reset: every SQL problem starts with the same clean comment.
+    // The dataset/backend may sometimes pre-fill the answer in
+    // starter_code.sql (e.g. recursive CTE problems where the starter IS
+    // the solution); we never want that to leak into the candidate's
+    // editor. Per-question drafts persist via questionDrafts elsewhere.
+    return SQL_STARTER_COMMENT;
   }
 
   if (typeof problem.templateCode === "string" && problem.templateCode.trim()) {
@@ -228,7 +250,7 @@ export default function AssessmentPage() {
   const navigate = useNavigate();
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
-  const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
+  const [sessionId, setSessionId] = useState<string | null>(routeSessionId || initialState?.session_id || null);
   const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
   const [skillName, setSkillName] = useState<string | null>(initialState?.skill_name || null);
   const isAgileMcq = (skillName ?? "").trim().toLowerCase() === "agile";
@@ -336,6 +358,10 @@ export default function AssessmentPage() {
     if (!displayedProblem) return "";
     return getProblemKey(displayedProblem, activeQuestionIndex);
   }, [displayedProblem, activeQuestionIndex]);
+
+  /** Latest question key — used so async run callbacks ignore stale completions after switching questions. */
+  const currentQuestionKeyRef = useRef(currentQuestionKey);
+  currentQuestionKeyRef.current = currentQuestionKey;
 
   useEffect(() => {
     if (!displayedProblem) return;
@@ -702,6 +728,8 @@ export default function AssessmentPage() {
       </div>
     );
   }
+
+
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-admin-bg font-['Segoe_UI',sans-serif]">

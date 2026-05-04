@@ -8,9 +8,17 @@ const Login = lazy(() => import("../features/auth/Login"));
 const AdminDashboard = lazy(() => import("../features/admin/AdminDashboard"));
 const CandidateDashboard = lazy(() => import("../features/candidate/CandidateDashboard"));
 const ThankYouPage = lazy(() => import("../features/candidate/ThankYouPage"));
+const OverviewPage = lazy(() => import("../features/admin/screens/OverviewPage"));
+const CandidatesPage = lazy(() => import("../features/admin/screens/CandidatesPage"));
+
+const DashboardPage = lazy(() => import("../features/candidate/screens/DashboardPage"));
+const BadgesPage = lazy(() => import("../features/candidate/screens/BadgesPage"));
+const InstructionsPage = lazy(() => import("../features/assessment/InstructionsPage"));
+const ThankYouPage = lazy(() => import("../features/assessment/ThankYouPage"));
 const AssessmentPage = lazy(() => import("../features/assessment/AssessmentPage"));
 const AgileAnalysisPage = lazy(() => import("../features/assessment/AgileAnalysisPage"));
 const PastScores = lazy(() => import("../features/assessment/PastScores"));
+const PastScoresPage = lazy(() => import("../features/candidate/screens/PastScoresPage"));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center bg-admin-bg font-['Segoe_UI',sans-serif]">
@@ -20,6 +28,8 @@ const PageLoader = () => (
     </div>
   </div>
 );
+
+import DashboardLayout from "../components/layout/DashboardLayout";
 
 const AppRoutes = () => {
   return (
@@ -32,12 +42,21 @@ const AppRoutes = () => {
             <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
             <Route path="/candidate/assessment" element={<AssessmentPage />} />
             <Route path="/candidate/agile-analysis" element={<AgileAnalysisPage />} />
+            <Route path="/candidate" element={<DashboardLayout role="candidate" />}>
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="badges" element={<BadgesPage />} />
+              <Route path="scores" element={<PastScoresPage />} />
+            </Route>
+            <Route path="/candidate/instructions" element={<InstructionsPage />} />
+            <Route path="/candidate/assessment/:sessionId" element={<AssessmentPage />} />
             <Route path="/candidate/thankyou" element={<ThankYouPage />} />
-            <Route path="/candidate/scores" element={<PastScores />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin" element={<DashboardLayout role="admin" />}>
+              <Route path="dashboard" element={<OverviewPage />} />
+              <Route path="candidates" element={<CandidatesPage />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
