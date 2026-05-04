@@ -1,16 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import useUserStore from "../../../stores/userStore";
-import type { BackendLevel, SkillWithProgress } from "../types/candidate";
-import { getSkills, getUserProgress } from "../candidateService";
 import { useQuery } from "@tanstack/react-query";
+import { LogOut } from "lucide-react";
+import useUserStore from "../../../stores/userStore";
 import Sidebar from "../../components/layout/Sidebar";
-import { logout } from "../auth/authService";
-import useUserStore from "../../stores/userStore";
 import BadgesScreen from "./BadgesScreen";
-import PastAssessmentsScreen from "./PastAssessmentsScreen.tsx";
-import { getSkills, getUserBadges, getUserProgress } from "./candidateService";
+import PastAssessmentsScreen from "./PastAssessmentsScreen";
+import { getSkills, getUserBadges, getUserProgress } from "../candidateService";
+import { logout } from "../auth/authService";
+import { useStartSession } from "../assessment/hooks/useAssessment";
 import type {
   BackendLevel,
   CandidateScreen,
@@ -19,8 +17,7 @@ import type {
   ConfirmedScreenProps,
   HomeScreenProps,
   SkillWithProgress,
-} from "./types/candidate";
-import { useStartSession } from "../assessment/hooks/useAssessment";
+} from "../types/candidate";
 
 const CANDIDATE_MENU = [
   { id: "dashboard", label: "Dashboard" },
@@ -92,6 +89,16 @@ export default function DashboardPage() {
     queryKey: ["user-progress"],
     queryFn: getUserProgress,
     staleTime: 1000 * 60,
+  });
+
+  const {
+    data: badges,
+    isLoading: isBadgesLoading,
+    isError: isBadgesError,
+  } = useQuery({
+    queryKey: ["user-badges"],
+    queryFn: getUserBadges,
+    staleTime: 1000 * 60 * 5,
   });
 
   const skillsList: SkillWithProgress[] = useMemo(() => {
@@ -278,6 +285,7 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
   const [search, setSearch] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<BackendLevel | null>(null);
+  const navigate = useNavigate();
 
   const filteredSkills = useMemo(
     () =>
@@ -312,16 +320,9 @@ function HomeScreen({ skillsList, onStart }: HomeScreenProps) {
 
   return (
     <div className="mx-auto w-full max-w-[900px] pb-14">
-      {(isSkillsError || isProgressError) && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-rose-50 px-5 py-4 text-[14px] text-red-700">
-          Failed to load dashboard data from backend. Please try again.
-        </div>
-      )}
-    <div className="w-full max-w-[900px] pb-14">
       <div className="mb-8 rounded-2xl bg-gradient-to-br from-admin-orange to-orange-600 p-8 text-white shadow-[0_4px_12px_rgba(249,115,22,0.15)]">
         <h1 className="mb-2 mt-0 text-[28px] font-bold">
-          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"} .
-          👋
+          Welcome back, {user?.name ? user.name.split(" ")[0] : "Candidate"} 👋
         </h1>
         <p className="m-0 text-[16px] text-white/90">
           Ready to take your next assessment? Select a skill and level below.

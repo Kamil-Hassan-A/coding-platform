@@ -1,10 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Users } from 'lucide-react';
+import { LogOut, Users, LayoutGrid } from 'lucide-react';
 import type { SidebarProps } from '../../types/layout';
 import { logout } from '../../features/auth/authService';
 import useUserStore from '../../stores/userStore';
 
-export default function Sidebar({ items }: SidebarProps) {
+function SidebarIcon({ id }: { id: string }) {
+  if (id === 'dashboard') return <LayoutGrid size={15} strokeWidth={2} />;
+  return <Users size={15} strokeWidth={2} />;
+}
+
+export default function Sidebar({ items, active, onChange }: SidebarProps) {
   const user = useUserStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,12 +18,6 @@ export default function Sidebar({ items }: SidebarProps) {
   const subtitle = user?.department?.trim() ?? '';
   const initials = (user?.name?.trim()?.[0] || user?.role?.[0] || '').toUpperCase();
 
-function SidebarIcon({ id }: { id: string }) {
-  if (id === 'dashboard') return <LayoutGrid size={15} strokeWidth={2} />;
-  return <Users size={15} strokeWidth={2} />;
-}
-
-export default function Sidebar({ items, active, onChange }: SidebarProps) {
   return (
     <aside className='flex w-[220px] shrink-0 flex-col border-r border-admin-border bg-admin-white'>
       <div className='border-b border-admin-border px-5 pb-4 pt-5'>
@@ -58,10 +57,6 @@ export default function Sidebar({ items, active, onChange }: SidebarProps) {
           <div className='min-w-0 flex-1'>
             <div className='truncate text-[12px] font-bold text-admin-text'>{displayName}</div>
             <div className='truncate text-[11px] text-admin-text-light'>{subtitle}</div>
-          <div className='grid h-8 w-8 shrink-0 place-items-center rounded-full bg-admin-orange text-[12px] font-bold text-admin-white'>TU</div>
-          <div>
-            <div className='text-[12px] font-bold text-admin-text'>Platform Admin</div>
-            <div className='text-[11px] text-admin-text-light'>Test User</div>
           </div>
           <button
             type='button'
