@@ -1,0 +1,179 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": [
+            "id",
+            "title",
+            "skill",
+            "difficulty",
+            "level",
+            "question_type",
+            "tags",
+            "description",
+            "solution"
+        ],
+        "properties": {
+            "id": {
+                "type": "string"
+            },
+            "title": {
+                "type": "string"
+            },
+            "skill": {
+                "type": "string"
+            },
+            "difficulty": {
+                "type": "string",
+                "enum": [
+                    "Easy",
+                    "Medium",
+                    "Hard"
+                ]
+            },
+            "level": {
+                "type": "string",
+                "enum": [
+                    "Beginner",
+                    "Intermediate_1",
+                    "Intermediate_2",
+                    "Specialist_1",
+                    "Specialist_2"
+                ]
+            },
+            "question_type": {
+                "type": "string",
+                "enum": [
+                    "coding",
+                    "mcq",
+                    "framework",
+                    "sql"
+                ]
+            },
+            "tags": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "description": {
+                "type": "string"
+            },
+            "solution": {
+                "type": [
+                    "string",
+                    "null"
+                ]
+            },
+            "starter_code": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
+            "test_cases": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "input",
+                        "output"
+                    ],
+                    "properties": {
+                        "input": {
+                            "type": "string"
+                        },
+                        "output": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "hidden_test_cases": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "input",
+                        "output"
+                    ],
+                    "properties": {
+                        "input": {
+                            "type": "string"
+                        },
+                        "output": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "options": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "correct_option_index": {
+                "type": "number"
+            },
+            "starter_files": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "path",
+                        "content"
+                    ],
+                    "properties": {
+                        "path": {
+                            "type": "string"
+                        },
+                        "content": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "entry_point": {
+                "type": "string"
+            },
+            "test_harness": {
+                "type": "string"
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "table",
+                        "columns"
+                    ],
+                    "properties": {
+                        "table": {
+                            "type": "string"
+                        },
+                        "columns": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
