@@ -42,12 +42,23 @@ export interface SqlTableSchema {
   columns: SqlTableColumn[];
 }
 
+export interface StarterCodeFile {
+  path: string;
+  content: string;
+}
+
+export interface MultiFileStarterCode {
+  files: StarterCodeFile[];
+  entry_point: string;
+  readonly_files: string[];
+}
+
 export interface SessionProblemPayload {
   problem_id?: string;
   title: string;
   description: string;
   templateCode?: string;
-  starter_code?: Record<string, any>;
+  starter_code?: Record<string, any> | MultiFileStarterCode;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
   schema_tables?: SqlTableSchema[];

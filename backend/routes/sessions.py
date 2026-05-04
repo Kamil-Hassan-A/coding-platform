@@ -213,7 +213,9 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
     if is_sql_problem:
         template_code = SQL_STARTER_COMMENT
     else:
-        template_code = resolve_template_code(sanitized_starter or problem.starter_code)
+        template_code = resolve_multifile_template_code(sanitized_starter) or resolve_template_code(
+            sanitized_starter or problem.starter_code
+        )
 
     # For SQL problems we INTENTIONALLY drop sample_test_cases entirely: the
     # legacy dataset entries here are descriptive prose / placeholder rows
@@ -250,6 +252,51 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         ),
 
     )
+
+
+def resolve_multifile_template_code(starter_code: Any) -> str | None:
+    if not isinstance(starter_code, dict):
+        return None
+
+    files = starter_code.get("files")
+    if not isinstance(files, list):
+        return None
+
+    readonly = starter_code.get("readonly_files")
+    readonly_set = {str(p) for p in readonly} if isinstance(readonly, list) else set()
+
+    def read_file_content(target_path: str) -> str | None:
+        for entry in files:
+            if not isinstance(entry, dict):
+                continue
+            if str(entry.get("path") or "").strip() == target_path:
+                content = entry.get("content")
+                return content if isinstance(content, str) else None
+        return None
+
+    # Prefer solution.py when present, then any non-readonly file, then first file.
+    preferred = read_file_content("solution.py")
+    if preferred:
+        return preferred
+
+    for entry in files:
+        if not isinstance(entry, dict):
+            continue
+        path = str(entry.get("path") or "").strip()
+        if not path or path in readonly_set:
+            continue
+        content = entry.get("content")
+        if isinstance(content, str):
+            return content
+
+    for entry in files:
+        if not isinstance(entry, dict):
+            continue
+        content = entry.get("content")
+        if isinstance(content, str):
+            return content
+
+    return None
 
 
 def get_session_problem_set(db: Session, session_obj: AssessmentSession) -> list[Problem]:
@@ -371,11 +418,39 @@ def execute_problem(
 
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
 
+    starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
+    is_multifile = is_multifile_starter(starter_dict)
+
     is_sql = str(problem.question_type or "").strip().lower() == "sql"
     setup_snapshot = ""
+    if is_multifile:
+        request_id = uuid4().hex[:8]
+        print("=== EXECUTE_PROBLEM (MULTI-FILE) ===")
+        print("REQUEST ID:", request_id)
+        print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
+        print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco)
+
+        files = build_multifile_payload_files(starter_dict, code)
+        execution_result = judge0_service.execute_multifile(
+            files=files,
+            entry_point=str(starter_dict.get("entry_point") or "test_solution.py"),
+            problem_id=str(problem.id),
+            request_id=request_id,
+        )
+
+        cases: list[Any] = list(execution_result.get("cases") or [])
+        return {
+            "resolved_monaco": resolved_monaco,
+            "score": int(execution_result.get("score", 0)),
+            "passed_tests": int(execution_result.get("passed_tests", 0)),
+            "total_tests": int(execution_result.get("total_tests", 0)),
+            "time_taken": int(execution_result.get("time_taken", 0)),
+            "cases": cases,
+            "is_sql_execution": False,
+        }
+
     if is_sql:
         # STRICT: setup comes ONLY from this problem's own `__hidden_setup__`.
-        starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
         raw_setup = starter_dict.get("__hidden_setup__") or ""
         if not isinstance(raw_setup, str):
             raw_setup = ""
@@ -558,6 +633,55 @@ def execute_problem(
         out["stdout"] = sql_stdout_val
         out["expected_output"] = sql_expected_val
     return out
+
+
+def is_multifile_starter(starter_code: dict[str, Any]) -> bool:
+    if not isinstance(starter_code, dict):
+        return False
+    files = starter_code.get("files")
+    entry_point = starter_code.get("entry_point")
+    return isinstance(files, list) and bool(files) and isinstance(entry_point, str)
+
+
+def build_multifile_payload_files(
+    starter_code: dict[str, Any],
+    updated_solution: str,
+) -> list[dict[str, Any]]:
+    files = starter_code.get("files")
+    if not isinstance(files, list):
+        return []
+
+    readonly = starter_code.get("readonly_files")
+    readonly_set = {str(p) for p in readonly} if isinstance(readonly, list) else set()
+    entry_point = str(starter_code.get("entry_point") or "test_solution.py").strip() or "test_solution.py"
+
+    payload_files: list[dict[str, Any]] = []
+    solution_replaced = False
+
+    for entry in files:
+        if not isinstance(entry, dict):
+            continue
+        path = str(entry.get("path") or "").strip()
+        content = entry.get("content")
+        if not path:
+            continue
+
+        # Only keep the single test file (entry_point) from readonly tests.
+        if path in readonly_set and path != entry_point and path.startswith("test_") and path.endswith(".py"):
+            continue
+
+        if path == "solution.py" and path not in readonly_set:
+            payload_files.append({"path": path, "content": updated_solution})
+            solution_replaced = True
+            continue
+
+        if isinstance(content, str):
+            payload_files.append({"path": path, "content": content})
+
+    if not solution_replaced and "solution.py" not in readonly_set:
+        payload_files.append({"path": "solution.py", "content": updated_solution})
+
+    return payload_files
 
 
 def _truncate_text(value: Any, limit: int = 2000) -> str:

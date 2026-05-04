@@ -1,7 +1,10 @@
+import base64
+import io
 import logging
 import os
 import re
 import time
+import zipfile
 from collections import Counter
 from typing import Any
 
@@ -258,6 +261,100 @@ class Judge0Service:
         print("===========================\n")
         logger.info("Judge0 case execution result: %s", _compact_judge0_result(result))
         return result
+
+    def _build_multifile_archive(
+        self,
+        *,
+        files: list[dict[str, Any]],
+        entry_point: str,
+    ) -> str:
+        if not files:
+            raise ValueError("Multi-file execution requires at least one file.")
+
+        entry_path = (entry_point or "").strip() or "test_solution.py"
+        entry_present = any(
+            isinstance(entry, dict) and str(entry.get("path") or "").strip() == entry_path
+            for entry in files
+        )
+        if not entry_present:
+            raise ValueError(f"Entry point file not found: {entry_path}")
+
+        run_script = (
+            "#!/usr/bin/env bash\n"
+            "set -e\n"
+            f"python {entry_path}\n"
+        )
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr("run", run_script)
+            for entry in files:
+                if not isinstance(entry, dict):
+                    continue
+                path = str(entry.get("path") or "").strip()
+                content = entry.get("content")
+                if not path or not isinstance(content, str):
+                    continue
+                zf.writestr(path, content)
+
+        return base64.b64encode(buffer.getvalue()).decode("ascii")
+
+    def execute_multifile(
+        self,
+        *,
+        files: list[dict[str, Any]],
+        entry_point: str,
+        problem_id: str | None = None,
+        request_id: str | None = None,
+    ) -> dict[str, Any]:
+        additional_files = self._build_multifile_archive(
+            files=files,
+            entry_point=entry_point,
+        )
+
+        payload: dict[str, Any] = {
+            "language_id": 89,
+            "additional_files": additional_files,
+        }
+
+        result = self._post_submission(payload, wait=True)
+        normalized_status, normalized_error = map_status(result)
+        status_obj = result.get("status")
+        status = status_obj if isinstance(status_obj, dict) else {"id": 0, "description": "Unknown"}
+        status_id = status.get("id")
+        passed = status_id == 3
+
+        case_result = {
+            "token": result.get("token"),
+            "stdin": "",
+            "expected_output": None,
+            "stdout": result.get("stdout"),
+            "stderr": result.get("stderr"),
+            "compile_output": result.get("compile_output"),
+            "message": result.get("message"),
+            "status": status,
+            "time": result.get("time"),
+            "memory": result.get("memory"),
+            "normalized_status": normalized_status,
+            "normalized_error": normalized_error,
+            "passed": passed,
+        }
+
+        total_millis = 0
+        try:
+            seconds = float(case_result.get("time") or 0)
+        except (TypeError, ValueError):
+            seconds = 0
+        total_millis = int(seconds * 1000)
+
+        return {
+            "passed": passed,
+            "passed_tests": 1 if passed else 0,
+            "total_tests": 1,
+            "score": 100 if passed else 0,
+            "time_taken": total_millis,
+            "cases": [case_result],
+        }
 
     def run_sql_reference(
         self,

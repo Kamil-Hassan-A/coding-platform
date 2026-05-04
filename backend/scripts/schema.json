@@ -11,8 +11,8 @@
       },
       "skills": {
         "type": "array",
-        "minItems": 20,
-        "maxItems": 20,
+        "minItems": 21,
+        "maxItems": 21,
         "items": {
           "type": "object",
           "required": ["skill", "allowed_languages", "levels"],
@@ -29,6 +29,7 @@
                 "Angular",
                 "Python",
                 "Python with Flask",
+                "Python with FastAPI",
                 "Python with Django",
                 "Python for Data Science",
                 "Java",
@@ -141,8 +142,10 @@
             "items": { "type": "string" }
           },
           "starter_code": {
-            "type": "object",
-            "additionalProperties": { "type": "string" }
+            "oneOf": [
+              { "$ref": "#/definitions/starterCodeSimple" },
+              { "$ref": "#/definitions/starterCodeMultiFile" }
+            ]
           },
           "sample_test_cases": {
             "type": "array",
@@ -197,6 +200,37 @@
           "input": { "type": "string" },
           "output": { "type": "string" }
         }
+      },
+
+      "starterCodeSimple": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      },
+
+      "starterCodeMultiFile": {
+        "type": "object",
+        "required": ["files", "entry_point", "readonly_files"],
+        "properties": {
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["path", "content"],
+              "properties": {
+                "path": { "type": "string" },
+                "content": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "entry_point": { "type": "string" },
+          "readonly_files": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
       }
     }
   }

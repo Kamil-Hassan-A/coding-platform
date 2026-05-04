@@ -5786,6 +5786,244 @@
       }
     },
     {
+      "skill": "Python with FastAPI",
+      "allowed_languages": [
+        {
+          "id": 71,
+          "name": "Python (3.8.1)",
+          "monaco": "python"
+        },
+        {
+          "id": 92,
+          "name": "Python (3.11.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 100,
+          "name": "Python (3.12.5)",
+          "monaco": "python"
+        },
+        {
+          "id": 109,
+          "name": "Python (3.13.2)",
+          "monaco": "python"
+        },
+        {
+          "id": 113,
+          "name": "Python (3.14.0)",
+          "monaco": "python"
+        }
+      ],
+      "levels": {
+        "Beginner": {
+          "Easy": [
+            {
+              "id": "fastapi_1",
+              "slug": "echo-message",
+              "title": "Echo Message API",
+              "difficulty": "Easy",
+              "skill": "Python with FastAPI",
+              "skill_level": "Beginner",
+              "tags": [
+                "fastapi",
+                "path-param"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/echo/{msg}')\ndef echo(msg: str):\n    # TODO\n    pass"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_echo():\n    res = client.get('/echo/hello')\n    assert res.status_code == 200\n    assert res.json() == {\"message\": \"hello\"}"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Create a GET endpoint `/echo/{msg}` that returns `{ \"message\": msg }`.",
+              "solution": "@app.get('/echo/{msg}')\ndef echo(msg: str):\n    return {\"message\": msg}"
+            },
+            {
+              "id": "fastapi_2",
+              "slug": "sum-query",
+              "title": "Sum Query Parameters",
+              "difficulty": "Easy",
+              "skill": "Python with FastAPI",
+              "skill_level": "Beginner",
+              "tags": [
+                "query"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/sum')\ndef get_sum(a: int, b: int):\n    # TODO\n    pass"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_sum():\n    res = client.get('/sum?a=2&b=3')\n    assert res.status_code == 200\n    assert res.json() == {\"result\": 5}"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Create `/sum?a=2&b=3` endpoint that returns `{ \"result\": a + b }`.",
+              "solution": "@app.get('/sum')\ndef get_sum(a: int, b: int):\n    return {\"result\": a + b}"
+            }
+          ],
+          "Medium": [],
+          "Hard": []
+        },
+        "Intermediate_1": {
+          "Easy": [
+            {
+              "id": "fastapi_3",
+              "slug": "delete-item",
+              "title": "Delete Item API",
+              "difficulty": "Medium",
+              "skill": "Python with FastAPI",
+              "skill_level": "Intermediate_1",
+              "tags": [
+                "crud"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI, HTTPException\n\napp = FastAPI()\n\nitems = {1: \"Pen\", 2: \"Book\"}\n\n@app.delete('/items/{item_id}')\ndef delete_item(item_id: int):\n    # TODO\n    pass"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_delete():\n    res = client.delete('/items/1')\n    assert res.status_code == 200\n    assert res.json()[\"message\"] == \"Deleted\"\n\n    res2 = client.delete('/items/999')\n    assert res2.status_code == 404"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Delete item from dictionary. Return 404 if not found.",
+              "solution": "if item_id not in items:\n    raise HTTPException(status_code=404)\n\ndel items[item_id]\nreturn {\"message\": \"Deleted\"}"
+            }
+          ],
+          "Medium": [
+            {
+              "id": "fastapi_3",
+              "slug": "delete-item",
+              "title": "Delete Item API",
+              "difficulty": "Medium",
+              "skill": "Python with FastAPI",
+              "skill_level": "Intermediate_1",
+              "tags": [
+                "crud"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI, HTTPException\n\napp = FastAPI()\n\nitems = {1: \"Pen\", 2: \"Book\"}\n\n@app.delete('/items/{item_id}')\ndef delete_item(item_id: int):\n    # TODO\n    pass"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_delete():\n    res = client.delete('/items/1')\n    assert res.status_code == 200\n    assert res.json()[\"message\"] == \"Deleted\"\n\n    res2 = client.delete('/items/999')\n    assert res2.status_code == 404"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Delete item from dictionary. Return 404 if not found.",
+              "solution": "if item_id not in items:\n    raise HTTPException(status_code=404)\n\ndel items[item_id]\nreturn {\"message\": \"Deleted\"}"
+            },
+            {
+              "id": "fastapi_4",
+              "slug": "api-key-auth",
+              "title": "API Key Authentication",
+              "difficulty": "Medium",
+              "skill": "Python with FastAPI",
+              "skill_level": "Intermediate_1",
+              "tags": [
+                "dependency",
+                "auth"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI, Depends, HTTPException, Header\n\napp = FastAPI()\n\ndef verify(api_key: str = Header(None)):\n    # TODO\n    pass\n\n@app.get('/secure')\ndef secure(dep=Depends(verify)):\n    return {\"message\": \"success\"}"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_auth_success():\n    res = client.get('/secure', headers={\"api-key\": \"secret\"})\n    assert res.status_code == 200\n\n\ndef test_auth_fail():\n    res = client.get('/secure')\n    assert res.status_code == 403"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Allow access only if header `api-key` equals `secret`.",
+              "solution": "if api_key != 'secret':\n    raise HTTPException(status_code=403)"
+            }
+          ],
+          "Hard": [
+            {
+              "id": "fastapi_5",
+              "slug": "discounted-price",
+              "title": "Discounted Price Calculator",
+              "difficulty": "Hard",
+              "skill": "Python with FastAPI",
+              "skill_level": "Intermediate_2",
+              "tags": [
+                "validation",
+                "logic"
+              ],
+              "starter_code": {
+                "files": [
+                  {
+                    "path": "solution.py",
+                    "content": "from fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass Product(BaseModel):\n    price: float\n    discount: float\n\n@app.post('/final-price')\ndef final_price(p: Product):\n    # TODO\n    pass"
+                  },
+                  {
+                    "path": "test_solution.py",
+                    "content": "from fastapi.testclient import TestClient\nfrom solution import app\n\nclient = TestClient(app)\n\ndef test_price():\n    res = client.post('/final-price', json={\"price\": 100, \"discount\": 10})\n    assert res.status_code == 200\n    assert res.json()[\"final_price\"] == 90\n\n\ndef test_invalid():\n    res = client.post('/final-price', json={\"price\": 100, \"discount\": 150})\n    assert res.status_code == 400"
+                  }
+                ],
+                "entry_point": "test_solution.py",
+                "readonly_files": [
+                  "test_solution.py"
+                ]
+              },
+              "content": "Calculate final price after discount. If discount > 100, return 400.",
+              "solution": "if p.discount > 100:\n    from fastapi import HTTPException\n    raise HTTPException(status_code=400)\n\nreturn {\"final_price\": p.price * (1 - p.discount/100)}"
+            }
+          ]
+        },
+        "Intermediate_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_1": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        },
+        "Specialist_2": {
+          "Easy": [],
+          "Medium": [],
+          "Hard": []
+        }
+      }
+    },
+    {
       "skill": "Python with Flask",
       "allowed_languages": [
         {
