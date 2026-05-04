@@ -4,8 +4,7 @@
     "target": "ES2023",
     "lib": ["ES2023"],
     "module": "ESNext",
-    "types": ["node"],
-    "skipLibCheck": true,
+        "skipLibCheck": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
