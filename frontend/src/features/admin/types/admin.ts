@@ -37,3 +37,31 @@ export type AdminCandidateFilters = {
   experienceMin?: number | null;
   experienceMax?: number | null;
 };
+
+export type Skill = {
+  id: number;
+  name: string;
+  category: string;
+  tag: string;
+};
+
+export type SkillCategory = {
+  id: number;
+  name: string;
+};
+
+export type SkillTag = "fe" | "be" | "db" | "qa" | "pm";
+
+export type StatCard = {
+  label: string;
+  value: string | number;
+  sub?: string;
+};
+
+export type TagConfig = {
+  label: string;
+  style: {
+    background: string;
+    color: string;
+  };
+};
