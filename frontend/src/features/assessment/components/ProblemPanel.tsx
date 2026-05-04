@@ -1,12 +1,8 @@
 import type { SessionProblemPayload, SqlTableSchema } from "../types/assessment";
-import { isSqlLikeLanguage, looksLikeRawSqlSetup } from "../utils/sqlUi";
+import { looksLikeRawSqlSetup } from "../utils/sqlUi";
 
 interface Props {
   problem: SessionProblemPayload;
-  /** Currently selected language (Monaco id). Used to decide whether to render
-   *  the SQL Schema panel and to suppress sample test-cases that contain raw
-   *  CREATE/INSERT setup. */
-  language?: string | null;
 }
 
 /**
@@ -22,12 +18,12 @@ interface Props {
  *  - For non-SQL problems we render Sample / Expected blocks as before, while
  *    still filtering anything that smells like raw CREATE/INSERT SQL setup.
  */
-export default function ProblemPanel({ problem, language }: Props) {
+export default function ProblemPanel({ problem }: Props) {
   const schemaTables: SqlTableSchema[] = Array.isArray(problem.schema_tables)
     ? problem.schema_tables
     : [];
   const hasSchema = schemaTables.length > 0;
-  const isSql = hasSchema || isSqlLikeLanguage(language ?? "");
+  const isSql = (problem.question_type || "").trim().toLowerCase() === "sql";
 
   const visibleSamples = isSql
     ? []
@@ -46,7 +42,7 @@ export default function ProblemPanel({ problem, language }: Props) {
           {problem.description}
         </div>
 
-        {hasSchema && (
+        {isSql && hasSchema && (
           <div className="mb-10 border-t border-[#eee] pt-8">
             <h3 className="mb-5 text-[14px] font-bold uppercase tracking-[0.5px] text-[#999]">
               Schema Definition

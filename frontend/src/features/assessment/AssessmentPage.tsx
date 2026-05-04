@@ -8,7 +8,7 @@ import Editor from "./components/Editor";
 import CodePlayground from "./components/CodePlayground";
 import TestCases from "./components/TestCases";
 import { reportViolation } from "./services/assessmentService";
-import { isSqlLikeLanguage, SQL_STARTER_COMMENT } from "./utils/sqlUi";
+import { SQL_STARTER_COMMENT } from "./utils/sqlUi";
 import type {
   SessionSubmitResponse,
   SessionRunResponse,
@@ -84,11 +84,9 @@ function resolveProblemBoilerplate(
   }
 
   const requestedLanguage = (language || "").trim().toLowerCase();
-  const sqlLike =
-    isSqlLikeLanguage(requestedLanguage) ||
-    (Array.isArray(problem.schema_tables) && problem.schema_tables.length > 0);
+  const isSqlQuestion = (problem.question_type || "").trim().toLowerCase() === "sql";
 
-  if (sqlLike) {
+  if (isSqlQuestion) {
     // Hard-reset: every SQL problem starts with the same clean comment.
     // The dataset/backend may sometimes pre-fill the answer in
     // starter_code.sql (e.g. recursive CTE problems where the starter IS
@@ -1081,7 +1079,7 @@ export default function AssessmentPage() {
           )}
 
           <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
-            <ProblemPanel problem={displayedProblem} language={activeLanguage?.monaco ?? language} />
+            <ProblemPanel problem={displayedProblem} />
           </div>
         </div>
 

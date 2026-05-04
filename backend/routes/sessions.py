@@ -196,9 +196,9 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         problem.sample_test_cases or [],
         problem.hidden_test_cases or [],
     )
-    is_sql_problem = bool(schema_tables) or (
-        isinstance(raw_starter, dict) and "sql" in raw_starter
-    )
+    is_sql_problem = str(problem.question_type or "").strip().lower() == "sql"
+    if not is_sql_problem:
+        schema_tables = []
 
     sanitized_starter = sanitize_starter_code_for_payload(raw_starter)
     if is_sql_problem and isinstance(sanitized_starter, dict):
@@ -371,7 +371,7 @@ def execute_problem(
 
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
 
-    is_sql = resolved_monaco == "sql" or "sql" in resolved_monaco
+    is_sql = str(problem.question_type or "").strip().lower() == "sql"
     setup_snapshot = ""
     if is_sql:
         # STRICT: setup comes ONLY from this problem's own `__hidden_setup__`.
