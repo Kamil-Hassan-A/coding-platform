@@ -10748,50 +10748,2360 @@
         "Beginner": {
           "Easy": [
             {
-              "id": "sql-beg-easy-1",
-              "title": "Basic SQL Task",
+              "id": "sql-beginner-easy-1",
+              "title": "American Cities by Population",
               "skill": "SQL",
               "difficulty": "Easy",
               "level": "Beginner",
               "question_type": "sql",
-              "tags": ["sql", "beginner", "easy"],
-              "description": "Complete the basic task for SQL. Ensure your implementation satisfies the requirements.",
-              "solution": "Here is the solution for the task...",
+              "tags": [],
+              "description": "Query all columns for all American cities in the CITY table with populations larger than 100000. The CountryCode for America is USA. Order rows by ID ascending.",
+              "solution": "SELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000 ORDER BY ID ASC;",
               "schema": [
                 {
-                  "table": "",
+                  "table": "CITY",
                   "columns": [
                     {
-                      "name": "",
-                      "type": ""
+                      "name": "ID",
+                      "type": "NUMBER"
+                    },
+                    {
+                      "name": "NAME",
+                      "type": "VARCHAR2(17)"
+                    },
+                    {
+                      "name": "COUNTRYCODE",
+                      "type": "VARCHAR2(3)"
+                    },
+                    {
+                      "name": "DISTRICT",
+                      "type": "VARCHAR2(20)"
+                    },
+                    {
+                      "name": "POPULATION",
+                      "type": "NUMBER"
                     }
                   ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000 ORDER BY ID ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-2",
+              "title": "Combine Two Tables",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "left-join",
+                "null-handling",
+                "joins",
+                "Beginner",
+                "Easy"
+              ],
+              "description": "Report firstName, lastName, city, state for each person. NULL if no address.",
+              "solution": "SELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\nLEFT JOIN Address a ON p.PersonId = a.PersonId;",
+              "schema": [
+                {
+                  "table": "Person",
+                  "columns": [
+                    {
+                      "name": "PersonId",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "FirstName",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "LastName",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "Address",
+                  "columns": [
+                    {
+                      "name": "AddressId",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "PersonId",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "City",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "State",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Person (PersonId INTEGER PRIMARY KEY, FirstName TEXT, LastName TEXT);\nCREATE TABLE Address (AddressId INTEGER PRIMARY KEY, PersonId INTEGER, City TEXT, State TEXT);\nINSERT INTO Person VALUES (1, 'Allen', 'Wang');\nINSERT INTO Person VALUES (2, 'Bob',   'Alice');\nINSERT INTO Address VALUES (1, 2, 'New York City', 'NY');\n\nSELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\nLEFT JOIN Address a ON p.PersonId = a.PersonId;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-3",
+              "title": "Customers Who Never Order",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "left-join",
+                "subquery",
+                "null-check",
+                "Beginner",
+                "Easy"
+              ],
+              "description": "Find all customers who never placed an order.",
+              "solution": "SELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE o.Id IS NULL;",
+              "schema": [
+                {
+                  "table": "Customers",
+                  "columns": [
+                    {
+                      "name": "Id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "Name",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "Orders",
+                  "columns": [
+                    {
+                      "name": "Id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "CustomerId",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Customers (Id INTEGER PRIMARY KEY, Name TEXT);\nCREATE TABLE Orders (Id INTEGER PRIMARY KEY, CustomerId INTEGER);\nINSERT INTO Customers VALUES (1, 'Joe');\nINSERT INTO Customers VALUES (2, 'Henry');\nINSERT INTO Customers VALUES (3, 'Sam');\nINSERT INTO Customers VALUES (4, 'Max');\nINSERT INTO Orders VALUES (1, 3);\nINSERT INTO Orders VALUES (2, 1);\n\nSELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE o.Id IS NULL;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-4",
+              "title": "Employees Earning More Than Their Managers",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "self-join",
+                "comparison",
+                "joins",
+                "Beginner",
+                "Easy"
+              ],
+              "description": "Find all employees who earn more than their manager.",
+              "solution": "SELECT e.Name AS Employee\nFROM Employee e\nJOIN Employee m ON e.ManagerId = m.Id\nWHERE e.Salary > m.Salary;",
+              "schema": [
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "Id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "Name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "Salary",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "ManagerId",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employee (Id INTEGER PRIMARY KEY, Name TEXT, Salary INTEGER, ManagerId INTEGER);\nINSERT INTO Employee VALUES (1, 'Joe',   70000, 3);\nINSERT INTO Employee VALUES (2, 'Henry', 80000, 4);\nINSERT INTO Employee VALUES (3, 'Sam',   60000, NULL);\nINSERT INTO Employee VALUES (4, 'Max',   90000, NULL);\n\nSELECT e.Name AS Employee\nFROM Employee e\nJOIN Employee m ON e.ManagerId = m.Id\nWHERE e.Salary > m.Salary;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-5",
+              "title": "Filter Rows with WHERE",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "where",
+                "filtering",
+                "basics",
+                "Beginner",
+                "Easy"
+              ],
+              "description": "Query all columns for all American cities in CITY with POPULATION > 100000.",
+              "solution": "SELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;",
+              "schema": [
+                {
+                  "table": "CITY",
+                  "columns": [
+                    {
+                      "name": "ID",
+                      "type": "NUMBER"
+                    },
+                    {
+                      "name": "NAME",
+                      "type": "VARCHAR2(17)"
+                    },
+                    {
+                      "name": "COUNTRYCODE",
+                      "type": "VARCHAR2(3)"
+                    },
+                    {
+                      "name": "DISTRICT",
+                      "type": "VARCHAR2(20)"
+                    },
+                    {
+                      "name": "POPULATION",
+                      "type": "NUMBER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-6",
+              "title": "Select All from Table",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "select",
+                "basics",
+                "Beginner",
+                "Easy"
+              ],
+              "description": "Query all columns for every row in the CITY table.",
+              "solution": "SELECT * FROM CITY;",
+              "schema": [
+                {
+                  "table": "CITY",
+                  "columns": [
+                    {
+                      "name": "ID",
+                      "type": "NUMBER"
+                    },
+                    {
+                      "name": "NAME",
+                      "type": "VARCHAR2(17)"
+                    },
+                    {
+                      "name": "COUNTRYCODE",
+                      "type": "VARCHAR2(3)"
+                    },
+                    {
+                      "name": "DISTRICT",
+                      "type": "VARCHAR2(20)"
+                    },
+                    {
+                      "name": "POPULATION",
+                      "type": "NUMBER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-easy-7",
+              "title": "Target Department High Earners",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Select the ID and name of employees in department 10 with a salary of 5000 or more. Order by ID ascending.",
+              "solution": "SELECT id, name FROM EMPLOYEES WHERE department_id = 10 AND salary >= 5000 ORDER BY id ASC;",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'Alice',10,5000),(2,'Bob',20,6000),(3,'Charlie',10,4000);\nINSERT INTO EMPLOYEES VALUES (1,'Dave',10,7000),(2,'Eve',10,NULL),(3,'Frank',20,4000);\n\nSELECT id, name FROM EMPLOYEES WHERE department_id = 10 AND salary >= 5000 ORDER BY id ASC;",
+                  "output": ""
                 }
               ]
             }
           ],
-          "Medium": [],
-          "Hard": []
+          "Medium": [
+            {
+              "id": "sql-beginner-medium-1",
+              "title": "Critical Open Tickets",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the ID and user ID of all OPEN tickets that hold a priority of either HIGH or MEDIUM. Order by ticket ID ascending.",
+              "solution": "SELECT id, user_id FROM TICKETS WHERE status = 'OPEN' AND (priority = 'HIGH' OR priority = 'MEDIUM') ORDER BY id ASC;",
+              "schema": [
+                {
+                  "table": "TICKETS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "user_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "status",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "priority",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE TICKETS (id INTEGER, user_id INTEGER, status TEXT, priority TEXT);\nINSERT INTO TICKETS VALUES (1,101,'OPEN','HIGH'),(2,102,'CLOSED','HIGH'),(3,103,'OPEN','LOW');\nINSERT INTO TICKETS VALUES (1,104,'OPEN','MEDIUM'),(2,105,'OPEN','HIGH'),(3,106,NULL,'HIGH');\n\nSELECT id, user_id FROM TICKETS WHERE status = 'OPEN' AND (priority = 'HIGH' OR priority = 'MEDIUM') ORDER BY id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-medium-2",
+              "title": "Delete Duplicate Emails",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "delete",
+                "self-join",
+                "deduplication",
+                "Beginner",
+                "Medium"
+              ],
+              "description": "Delete all duplicate emails, keeping only the one with the smallest Id.",
+              "solution": "DELETE FROM Person WHERE ROWID NOT IN (SELECT MIN(ROWID) FROM Person GROUP BY Email);\nSELECT Id, Email FROM Person ORDER BY Id ASC;",
+              "schema": [
+                {
+                  "table": "Person",
+                  "columns": [
+                    {
+                      "name": "Id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "Email",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Person (Id INTEGER PRIMARY KEY, Email TEXT);\nINSERT INTO Person VALUES (1, 'a@b.com');\nINSERT INTO Person VALUES (2, 'c@d.com');\nINSERT INTO Person VALUES (3, 'a@b.com');\n\nDELETE FROM Person WHERE ROWID NOT IN (SELECT MIN(ROWID) FROM Person GROUP BY Email);\nSELECT Id, Email FROM Person ORDER BY Id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-medium-3",
+              "title": "In-Stock Gamer Gear",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [],
+              "description": "List the name and price of products starting with 'ProGamer' that are currently in stock (stock > 0). Order by price descending.",
+              "solution": "SELECT name, price FROM PRODUCTS WHERE name LIKE 'ProGamer%' AND stock > 0 ORDER BY price DESC;",
+              "schema": [
+                {
+                  "table": "PRODUCTS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "price",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "stock",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE PRODUCTS (id INTEGER, name TEXT, price INTEGER, stock INTEGER);\nINSERT INTO PRODUCTS VALUES (1,'ProGamer Mouse',50,10),(2,'ProGamer Keyboard',100,0),(3,'Basic Mouse',20,5);\nINSERT INTO PRODUCTS VALUES (1,'ProGamer Headset',80,0),(2,'Gamer Desk',150,1),(3,'ProGamer Chair',200,5);\n\nSELECT name, price FROM PRODUCTS WHERE name LIKE 'ProGamer%' AND stock > 0 ORDER BY price DESC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-medium-4",
+              "title": "Type of Triangle",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "case-when",
+                "conditional",
+                "triangle-classification",
+                "Beginner",
+                "Medium"
+              ],
+              "description": "Write a query that classifies each row in TRIANGLES as Equilateral, Isosceles, Scalene, or Not A Triangle.",
+              "solution": "SELECT CASE\n  WHEN A+B<=C OR A+C<=B OR B+C<=A THEN 'Not A Triangle'\n  WHEN A=B AND B=C THEN 'Equilateral'\n  WHEN A=B OR B=C OR A=C THEN 'Isosceles'\n  ELSE 'Scalene'\nEND FROM TRIANGLES;",
+              "schema": [
+                {
+                  "table": "TRIANGLES",
+                  "columns": [
+                    {
+                      "name": "A",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "B",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "C",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE TRIANGLES (A INTEGER, B INTEGER, C INTEGER);\nINSERT INTO TRIANGLES VALUES (3, 3, 3);\nINSERT INTO TRIANGLES VALUES (3, 4, 5);\nINSERT INTO TRIANGLES VALUES (1, 1, 10);\nINSERT INTO TRIANGLES VALUES (3, 3, 4);\n\nSELECT CASE\n  WHEN A+B<=C OR A+C<=B OR B+C<=A THEN 'Not A Triangle'\n  WHEN A=B AND B=C THEN 'Equilateral'\n  WHEN A=B OR B=C OR A=C THEN 'Isosceles'\n  ELSE 'Scalene'\nEND FROM TRIANGLES;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "sql-beginner-hard-1",
+              "title": "Distinct Daily Logins",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Retrieve a unique list of IP addresses that logged in exactly on the date '2023-11-05'. Order by IP address alphabetically.",
+              "solution": "SELECT DISTINCT ip_address FROM SESSIONS WHERE login_time LIKE '2023-11-05%' ORDER BY ip_address ASC;",
+              "schema": [
+                {
+                  "table": "SESSIONS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "ip_address",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "login_time",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SESSIONS (id INTEGER, ip_address TEXT, login_time TEXT);\nINSERT INTO SESSIONS VALUES (1,'192.168.1.1','2023-11-05 08:30:00'),(2,'192.168.1.2','2023-11-05 10:15:00'),(3,'192.168.1.1','2023-11-06 09:00:00');\nINSERT INTO SESSIONS VALUES (1,'10.0.0.1','2023-11-05 07:00:00'),(2,'10.0.0.1',NULL),(3,'10.0.0.2','2023-11-05 14:00:00');\n\nSELECT DISTINCT ip_address FROM SESSIONS WHERE login_time LIKE '2023-11-05%' ORDER BY ip_address ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-hard-2",
+              "title": "Valid Active Promotions",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Select the promo code and discount amount for active promos. Exclude those with NULL discounts. Order by discount descending, then code ascending.",
+              "solution": "SELECT code, discount FROM PROMOTIONS WHERE is_active = 1 AND discount IS NOT NULL ORDER BY discount DESC, code ASC;",
+              "schema": [
+                {
+                  "table": "PROMOTIONS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "code",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "is_active",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "discount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE PROMOTIONS (id INTEGER, code TEXT, is_active INTEGER, discount INTEGER);\nINSERT INTO PROMOTIONS VALUES (1,'SAVE10',1,10),(2,'SAVE20',0,20),(3,'SAVE15',1,15);\nINSERT INTO PROMOTIONS VALUES (1,'WELCOME',1,25),(2,'FAIL',NULL,10),(3,'WINTER',1,50);\n\nSELECT code, discount FROM PROMOTIONS WHERE is_active = 1 AND discount IS NOT NULL ORDER BY discount DESC, code ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-beginner-hard-3",
+              "title": "Weather Observation Station 5",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Beginner",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "string-functions",
+                "length",
+                "union",
+                "order-by",
+                "Beginner",
+                "Hard"
+              ],
+              "description": "Query the two cities with the shortest and longest CITY names. On ties, pick alphabetically first/last.",
+              "solution": "SELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) ASC, CITY ASC LIMIT 1)\nUNION ALL\nSELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) DESC, CITY DESC LIMIT 1);",
+              "schema": [
+                {
+                  "table": "STATION",
+                  "columns": [
+                    {
+                      "name": "ID",
+                      "type": "NUMBER"
+                    },
+                    {
+                      "name": "CITY",
+                      "type": "VARCHAR2(21)"
+                    },
+                    {
+                      "name": "STATE",
+                      "type": "VARCHAR2(2)"
+                    },
+                    {
+                      "name": "LAT_N",
+                      "type": "NUMBER"
+                    },
+                    {
+                      "name": "LONG_W",
+                      "type": "NUMBER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE STATION (\n  ID INTEGER PRIMARY KEY,\n  CITY TEXT,\n  STATE TEXT,\n  LAT_N REAL,\n  LONG_W REAL\n);\nINSERT INTO STATION VALUES (1, 'Acme', 'CA', 37.7, 122.4);\nINSERT INTO STATION VALUES (2, 'A',    'AZ', 33.4, 112.0);\nINSERT INTO STATION VALUES (3, 'Albuquerque', 'NM', 35.1, 106.6);\nINSERT INTO STATION VALUES (4, 'Marysvale', 'UT', 38.4, 112.2);\nINSERT INTO STATION VALUES (5, 'Denver', 'CO', 39.7, 104.9);\n\nSELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) ASC, CITY ASC LIMIT 1)\nUNION ALL\nSELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) DESC, CITY DESC LIMIT 1);",
+                  "output": ""
+                }
+              ]
+            }
+          ]
         },
         "Intermediate_1": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "sql-intermediate1-easy-1",
+              "title": "Category Sales Summaries",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Calculate the total sum of amounts and the count of sales per category. Order the results by category alphabetically.",
+              "solution": "SELECT category, SUM(amount), COUNT(*) FROM SALES GROUP BY category ORDER BY category ASC;",
+              "schema": [
+                {
+                  "table": "SALES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "category",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SALES (id INTEGER, category TEXT, amount INTEGER);\nINSERT INTO SALES VALUES (1,'Electronics',500),(2,'Electronics',300),(3,'Books',40);\nINSERT INTO SALES VALUES (1,'Home',100),(2,'Home',150),(3,'Toys',50),(4,'Toys',NULL);\n\nSELECT category, SUM(amount), COUNT(*) FROM SALES GROUP BY category ORDER BY category ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-easy-2",
+              "title": "Region Revenue Distinct",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Calculate the total number of distinct customers and the total revenue sum for each region where the order status is COMPLETED. Order by region ascending.",
+              "solution": "SELECT region, COUNT(DISTINCT customer_id), SUM(amount) FROM ORDERS WHERE status = 'COMPLETED' GROUP BY region ORDER BY region ASC;",
+              "schema": [
+                {
+                  "table": "ORDERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "region",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "customer_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "status",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE ORDERS (id INTEGER, region TEXT, customer_id INTEGER, amount INTEGER, status TEXT);\nINSERT INTO ORDERS VALUES (1, 'North', 101, 500, 'COMPLETED'),(2, 'North', 102, 300, 'COMPLETED'),(3, 'South', 101, 700, 'CANCELLED');\nINSERT INTO ORDERS VALUES (1, 'East', 101, 100, 'COMPLETED'),(2, 'East', 101, 200, 'COMPLETED'),(3, 'West', 102, 50, 'COMPLETED'),(4, 'West', 103, 50, 'CANCELLED');\n\nSELECT region, COUNT(DISTINCT customer_id), SUM(amount) FROM ORDERS WHERE status = 'COMPLETED' GROUP BY region ORDER BY region ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-easy-3",
+              "title": "Rising Temperature",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "self-join",
+                "date-functions",
+                "comparison",
+                "Intermediate_1",
+                "Easy"
+              ],
+              "description": "Find all dates where the temperature is higher than the previous day.",
+              "solution": "SELECT w1.id FROM Weather w1\nJOIN Weather w2 ON julianday(w1.recordDate) - julianday(w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature ORDER BY w1.id ASC;",
+              "schema": [
+                {
+                  "table": "Weather",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "recordDate",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "temperature",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Weather (id INTEGER PRIMARY KEY, recordDate TEXT, temperature INTEGER);\nINSERT INTO Weather VALUES (1, '2024-01-01', 10);\nINSERT INTO Weather VALUES (2, '2024-01-02', 15);\nINSERT INTO Weather VALUES (3, '2024-01-03', 12);\nINSERT INTO Weather VALUES (4, '2024-01-04', 20);\n\nSELECT w1.id FROM Weather w1\nJOIN Weather w2 ON julianday(w1.recordDate) - julianday(w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature ORDER BY w1.id ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "sql-intermediate1-medium-1",
+              "title": "Classes With Multiple Students",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the class_id and the count of students for classes that have strictly more than 1 student enrolled. Order by class_id ascending.",
+              "solution": "SELECT class_id, COUNT(*) as cnt FROM STUDENTS GROUP BY class_id HAVING COUNT(*) > 1 ORDER BY class_id ASC;",
+              "schema": [
+                {
+                  "table": "STUDENTS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "class_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE STUDENTS (id INTEGER, name TEXT, class_id INTEGER);\nINSERT INTO STUDENTS VALUES (1,'John',10),(2,'Jane',10),(3,'Doe',20);\nINSERT INTO STUDENTS VALUES (1,'Bob',30),(2,'Alice',30),(3,'Eve',30),(4,'Greg',40);\n\nSELECT class_id, COUNT(*) as cnt FROM STUDENTS GROUP BY class_id HAVING COUNT(*) > 1 ORDER BY class_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-medium-2",
+              "title": "Cumulative Running Total",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "window-functions",
+                "running-total",
+                "sum-over",
+                "Intermediate_1",
+                "Medium"
+              ],
+              "description": "Calculate a running total of sales amounts ordered by date.",
+              "solution": "SELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;",
+              "schema": [
+                {
+                  "table": "Sales",
+                  "columns": [
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "ROW",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "running_total",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "sale_date",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Sales (amount INTEGER, ROW INTEGER, running_total TEXT, sale_date TEXT);\nINSERT INTO Sales VALUES (10000, 10, 'sample1', '2024-01-01');\nINSERT INTO Sales VALUES (20000, 20, 'sample2', '2024-02-02');\nINSERT INTO Sales VALUES (30000, 30, 'sample3', '2024-03-03');\nINSERT INTO Sales VALUES (40000, 40, 'sample4', '2024-04-04');\n\nSELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-medium-3",
+              "title": "Duplicate Emails",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Detect duplicate emails in the system. Return the email string and the count of occurrences, filtering to only those that appear more than once. Order by email ascending.",
+              "solution": "SELECT Email, COUNT(*) AS occurrences FROM Person GROUP BY Email HAVING COUNT(*) > 1 ORDER BY Email ASC;",
+              "schema": [
+                {
+                  "table": "Person",
+                  "columns": [
+                    {
+                      "name": "Id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "Email",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Person (Id INTEGER PRIMARY KEY, Email TEXT);\nINSERT INTO Person VALUES (1, 'a@b.com');\nINSERT INTO Person VALUES (2, 'c@d.com');\nINSERT INTO Person VALUES (3, 'a@b.com');\n\nSELECT Email, COUNT(*) AS occurrences FROM Person GROUP BY Email HAVING COUNT(*) > 1 ORDER BY Email ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-medium-4",
+              "title": "Rank Employees by Salary with Window Functions",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "window-functions",
+                "dense-rank",
+                "partition-by",
+                "Intermediate_1",
+                "Medium"
+              ],
+              "description": "Rank all employees by salary within their department using DENSE_RANK().",
+              "solution": "SELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;",
+              "schema": [
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "DepartmentId",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "Name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "rnk",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "Salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employee (DepartmentId INTEGER, Name TEXT, rnk TEXT, Salary INTEGER);\nINSERT INTO Employee VALUES (10, 'Alice', 'sample1', 10000);\nINSERT INTO Employee VALUES (20, 'Bob', 'sample2', 20000);\nINSERT INTO Employee VALUES (30, 'Charlie', 'sample3', 30000);\nINSERT INTO Employee VALUES (40, 'Diana', 'sample4', 40000);\n\nSELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "sql-intermediate1-hard-1",
+              "title": "Customers Without Orders",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the names of customers who exist in the database but have never placed an order. Order by name ascending.",
+              "solution": "SELECT c.name FROM CUSTOMERS c LEFT JOIN ORDERS o ON c.id = o.customer_id WHERE o.id IS NULL ORDER BY c.name ASC;",
+              "schema": [
+                {
+                  "table": "CUSTOMERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "ORDERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "customer_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE CUSTOMERS (id INTEGER, name TEXT);\nCREATE TABLE ORDERS (id INTEGER, customer_id INTEGER, amount INTEGER);\nINSERT INTO CUSTOMERS VALUES (1, 'Alice'),(2, 'Bob'),(3, 'Charlie');\nINSERT INTO ORDERS VALUES (101, 1, 500), (102, 3, 300);\nINSERT INTO CUSTOMERS VALUES (4, 'Dave'),(5, 'Eve');\nINSERT INTO ORDERS VALUES (103, 5, 100);\n\nSELECT c.name FROM CUSTOMERS c LEFT JOIN ORDERS o ON c.id = o.customer_id WHERE o.id IS NULL ORDER BY c.name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-hard-2",
+              "title": "High Average Dept",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "List the dept_id and average salary (alias avg_sal) for departments where the average salary is 5000 or greater. Order by avg_sal descending.",
+              "solution": "SELECT dept_id, AVG(salary) as avg_sal FROM EMPLOYEES GROUP BY dept_id HAVING AVG(salary) >= 5000 ORDER BY avg_sal DESC;",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "dept_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, dept_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',10,4000),(2,'B',10,4500),(3,'C',20,8000);\nINSERT INTO EMPLOYEES VALUES (1,'A',30,9000),(2,'B',30,9000),(3,'C',40,2000),(4,'D',40,3000);\n\nSELECT dept_id, AVG(salary) as avg_sal FROM EMPLOYEES GROUP BY dept_id HAVING AVG(salary) >= 5000 ORDER BY avg_sal DESC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate1-hard-3",
+              "title": "Pivot Monthly Sales",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "pivot",
+                "conditional-aggregation",
+                "case-when",
+                "Intermediate_1",
+                "Hard"
+              ],
+              "description": "Pivot monthly sales data so each month is a column. Use conditional aggregation.",
+              "solution": "SELECT product_id,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 2 THEN amount ELSE 0 END) AS Feb,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 3 THEN amount ELSE 0 END) AS Mar\nFROM Sales\nGROUP BY product_id\nORDER BY product_id ASC;",
+              "schema": [
+                {
+                  "table": "Sales",
+                  "columns": [
+                    {
+                      "name": "product_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "sale_date",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Sales (product_id INTEGER, sale_date TEXT, amount INTEGER);\nINSERT INTO Sales VALUES (10, '2024-01-05', 1000);\nINSERT INTO Sales VALUES (10, '2024-02-10', 2000);\nINSERT INTO Sales VALUES (10, '2024-03-15', 3000);\nINSERT INTO Sales VALUES (20, '2024-01-20', 500);\nINSERT INTO Sales VALUES (20, '2024-02-25', 600);\n\nSELECT product_id,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 2 THEN amount ELSE 0 END) AS Feb,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 3 THEN amount ELSE 0 END) AS Mar\nFROM Sales\nGROUP BY product_id\nORDER BY product_id ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ]
         },
         "Intermediate_2": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "sql-intermediate2-easy-1",
+              "title": "Basic Common Table Expression (CTE)",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "cte",
+                "aggregation",
+                "avg",
+                "subquery",
+                "Intermediate_2",
+                "Easy"
+              ],
+              "description": "Use a CTE to find all departments with average salary above the company average.",
+              "solution": "WITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees\n  GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal\nFROM dept_avg, company_avg\nWHERE avg_sal > co_avg;",
+              "schema": [
+                {
+                  "table": "Employees",
+                  "columns": [
+                    {
+                      "name": "avg_sal",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "co_avg",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employees (avg_sal TEXT, co_avg TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO Employees VALUES ('sample1', 'sample1', 10, 10000);\nINSERT INTO Employees VALUES ('sample2', 'sample2', 20, 20000);\nINSERT INTO Employees VALUES ('sample3', 'sample3', 30, 30000);\nINSERT INTO Employees VALUES ('sample4', 'sample4', 40, 40000);\n\nWITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees\n  GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal\nFROM dept_avg, company_avg\nWHERE avg_sal > co_avg;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-easy-2",
+              "title": "Department Employee Counts",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "List every department name and the total count of employees in that department (including departments with 0 employees). Order by department name ascending.",
+              "solution": "SELECT d.name, COUNT(e.id) FROM DEPARTMENTS d LEFT JOIN EMPLOYEES e ON d.id = e.department_id GROUP BY d.id, d.name ORDER BY d.name ASC;",
+              "schema": [
+                {
+                  "table": "DEPARTMENTS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE DEPARTMENTS (id INTEGER, name TEXT);\nCREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER);\nINSERT INTO DEPARTMENTS VALUES (10,'HR'),(20,'Sales');\nINSERT INTO EMPLOYEES VALUES (1,'Alice',10);\nINSERT INTO DEPARTMENTS VALUES (30,'IT'),(40,'Dev');\nINSERT INTO EMPLOYEES VALUES (2,'Bob',30),(3,'Charlie',NULL);\n\nSELECT d.name, COUNT(e.id) FROM DEPARTMENTS d LEFT JOIN EMPLOYEES e ON d.id = e.department_id GROUP BY d.id, d.name ORDER BY d.name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-easy-3",
+              "title": "Loyal Spenders",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "List the names of users and their total order amount, but only for users who have been active for 30 days or more. Order by name ascending.",
+              "solution": "SELECT u.name, SUM(o.amount) FROM USERS u INNER JOIN ORDERS o ON u.id = o.user_id WHERE u.active_days >= 30 GROUP BY u.name ORDER BY u.name ASC;",
+              "schema": [
+                {
+                  "table": "USERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "active_days",
+                      "type": "INTEGER"
+                    }
+                  ]
+                },
+                {
+                  "table": "ORDERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "user_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE USERS (id INTEGER, name TEXT, active_days INTEGER);\nCREATE TABLE ORDERS (id INTEGER, user_id INTEGER, amount INTEGER);\nINSERT INTO USERS VALUES (1,'Alice',40),(2,'Bob',15);\nINSERT INTO ORDERS VALUES (101,1,500),(102,1,200),(103,2,800);\nINSERT INTO USERS VALUES (3,'Charlie',30),(4,'Dave',5);\nINSERT INTO ORDERS VALUES (104,3,100),(105,4,200);\n\nSELECT u.name, SUM(o.amount) FROM USERS u INNER JOIN ORDERS o ON u.id = o.user_id WHERE u.active_days >= 30 GROUP BY u.name ORDER BY u.name ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "sql-intermediate2-medium-1",
+              "title": "Above Average Earners",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the name and salary of employees who earn strictly more than the company's overall average salary. Order by salary descending, then name ascending.",
+              "solution": "SELECT name, salary FROM EMPLOYEES WHERE salary > (SELECT AVG(salary) FROM EMPLOYEES) ORDER BY salary DESC, name ASC;",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',5000),(2,'B',4000),(3,'C',7000);\nINSERT INTO EMPLOYEES VALUES (1,'D',10000),(2,'E',2000),(3,'F',2000);\n\nSELECT name, salary FROM EMPLOYEES WHERE salary > (SELECT AVG(salary) FROM EMPLOYEES) ORDER BY salary DESC, name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-medium-2",
+              "title": "Coalesced Pricing",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Return all item names and their prices. If an item has no price listed, treat it as 0. Order by the numeric price descending, then item name ascending.",
+              "solution": "SELECT i.name, COALESCE(p.price, 0) as exact_price FROM ITEMS i LEFT JOIN PRICES p ON i.id = p.item_id ORDER BY exact_price DESC, i.name ASC;",
+              "schema": [
+                {
+                  "table": "ITEMS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "PRICES",
+                  "columns": [
+                    {
+                      "name": "item_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "price",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE ITEMS (id INTEGER, name TEXT);\nCREATE TABLE PRICES (item_id INTEGER, price INTEGER);\nINSERT INTO ITEMS VALUES (1,'Pen'),(2,'Pencil');\nINSERT INTO PRICES VALUES (1,5);\nINSERT INTO ITEMS VALUES (3,'Eraser'),(4,'Ruler'),(5,'Marker');\nINSERT INTO PRICES VALUES (3,10),(5,15);\n\nSELECT i.name, COALESCE(p.price, 0) as exact_price FROM ITEMS i LEFT JOIN PRICES p ON i.id = p.item_id ORDER BY exact_price DESC, i.name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-medium-3",
+              "title": "Employee Hierarchy with Self Join",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "self-join",
+                "hierarchy",
+                "employee-tree",
+                "Intermediate_2",
+                "Medium"
+              ],
+              "description": "List each employee with their manager's name using a self-join.",
+              "solution": "SELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;",
+              "schema": [
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "employee",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "manager",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "manager_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employee (id INTEGER, employee TEXT, manager INTEGER, manager_id INTEGER, name TEXT);\nINSERT INTO Employee VALUES (10, 'sample1', 10, 10, 'Alice');\nINSERT INTO Employee VALUES (20, 'sample2', 20, 20, 'Bob');\nINSERT INTO Employee VALUES (30, 'sample3', 30, 30, 'Charlie');\nINSERT INTO Employee VALUES (40, 'sample4', 40, 40, 'Diana');\n\nSELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-medium-4",
+              "title": "Month-over-Month Growth with LAG()",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "lag",
+                "window-functions",
+                "growth-calculation",
+                "Intermediate_2",
+                "Medium"
+              ],
+              "description": "Calculate month-over-month revenue growth percentage using the LAG window function.",
+              "solution": "SELECT month, revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY month)) / NULLIF(LAG(revenue) OVER (ORDER BY month), 0), 2) AS growth_pct\nFROM MonthlyRevenue ORDER BY month ASC;",
+              "schema": [
+                {
+                  "table": "MonthlyRevenue",
+                  "columns": [
+                    {
+                      "name": "month",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "revenue",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE MonthlyRevenue (month INTEGER PRIMARY KEY, revenue INTEGER);\nINSERT INTO MonthlyRevenue VALUES (1, 10000);\nINSERT INTO MonthlyRevenue VALUES (2, 12000);\nINSERT INTO MonthlyRevenue VALUES (3, 9000);\nINSERT INTO MonthlyRevenue VALUES (4, 15000);\n\nSELECT month, revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY month)) / NULLIF(LAG(revenue) OVER (ORDER BY month), 0), 2) AS growth_pct\nFROM MonthlyRevenue ORDER BY month ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "sql-intermediate2-hard-1",
+              "title": "High Value Customers",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Using a subquery, find the names of customers who have made at least one order strictly greater than 80 in amount. Order by name ascending.",
+              "solution": "SELECT name FROM CUSTOMERS WHERE id IN (SELECT customer_id FROM ORDERS WHERE amount > 80) ORDER BY name ASC;",
+              "schema": [
+                {
+                  "table": "CUSTOMERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "country",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "ORDERS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "customer_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE CUSTOMERS (id INTEGER, name TEXT, country TEXT);\nCREATE TABLE ORDERS (id INTEGER, customer_id INTEGER, amount INTEGER);\nINSERT INTO CUSTOMERS VALUES (1,'A','USA'),(2,'B','UK');\nINSERT INTO ORDERS VALUES (101,1,100),(102,2,50);\nINSERT INTO CUSTOMERS VALUES (3,'C','CAN'),(4,'D','CAN'),(5,'E','FRA');\nINSERT INTO ORDERS VALUES (103,4,200),(104,3,10);\n\nSELECT name FROM CUSTOMERS WHERE id IN (SELECT customer_id FROM ORDERS WHERE amount > 80) ORDER BY name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-hard-2",
+              "title": "Outearning Managers",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the names of employees who earn strictly more than their immediate manager. Order by the employee's name ascending.",
+              "solution": "SELECT e1.name FROM EMPLOYEES e1 INNER JOIN EMPLOYEES e2 ON e1.manager_id = e2.id WHERE e1.salary > e2.salary ORDER BY e1.name ASC;",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "manager_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER, manager_id INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'Boss',10000,NULL),(2,'Underling',11000,1),(3,'Normal',5000,1);\nINSERT INTO EMPLOYEES VALUES (4,'Manager',5000,NULL),(5,'Worker1',6000,4),(6,'Worker2',4000,4);\n\nSELECT e1.name FROM EMPLOYEES e1 INNER JOIN EMPLOYEES e2 ON e1.manager_id = e2.id WHERE e1.salary > e2.salary ORDER BY e1.name ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-intermediate2-hard-3",
+              "title": "Recursive CTE for Org Chart",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Intermediate_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "recursive-cte",
+                "hierarchy",
+                "graph-traversal",
+                "Intermediate_2",
+                "Hard"
+              ],
+              "description": "Use a recursive CTE to walk an org-chart from CEO down, outputting each employee's level depth.",
+              "solution": "WITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth + 1\n  FROM Employee e JOIN org o ON e.manager_id = o.id\n)\nSELECT name, depth FROM org ORDER BY depth ASC, name ASC;",
+              "schema": [
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "manager_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employee (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO Employee VALUES (1, 'CEO', NULL);\nINSERT INTO Employee VALUES (2, 'VP', 1);\nINSERT INTO Employee VALUES (3, 'Mgr', 2);\nINSERT INTO Employee VALUES (4, 'IC', 3);\n\nWITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth + 1\n  FROM Employee e JOIN org o ON e.manager_id = o.id\n)\nSELECT name, depth FROM org ORDER BY depth ASC, name ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ]
         },
         "Specialist_1": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "sql-specialist1-easy-1",
+              "title": "Grade Distributions",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Categorize scores into grades: 'A' (>=90), 'B' (>=70 and <90), 'C' (<70). Return the grade and the count of students inside it. Order alphabetically by grade.",
+              "solution": "SELECT CASE WHEN score >= 90 THEN 'A' WHEN score >= 70 THEN 'B' ELSE 'C' END as grade, COUNT(*) FROM SCORES GROUP BY grade ORDER BY grade ASC;",
+              "schema": [
+                {
+                  "table": "SCORES",
+                  "columns": [
+                    {
+                      "name": "student_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "score",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SCORES (student_id INTEGER, score INTEGER);\nINSERT INTO SCORES VALUES (1,95),(2,75),(3,55);\nINSERT INTO SCORES VALUES (1,40),(2,80),(3,85),(4,90);\n\nSELECT CASE WHEN score >= 90 THEN 'A' WHEN score >= 70 THEN 'B' ELSE 'C' END as grade, COUNT(*) FROM SCORES GROUP BY grade ORDER BY grade ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-easy-2",
+              "title": "Materialized View Refresh Strategy",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "materialized-view",
+                "performance",
+                "caching",
+                "Specialist_1",
+                "Easy"
+              ],
+              "description": "Explain when to use a materialized view vs regular view. Write a CREATE MATERIALIZED VIEW for daily sales summary.",
+              "solution": "-- SQLite rollup snapshot (no MATERIALIZED VIEW)\nSELECT sale_date, SUM(amount) AS total FROM Sales GROUP BY sale_date ORDER BY sale_date ASC;",
+              "schema": [
+                {
+                  "table": "Sales",
+                  "columns": [
+                    {
+                      "name": "sale_date",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Sales (sale_date TEXT, amount INTEGER);\nINSERT INTO Sales VALUES ('2024-01-01', 100);\nINSERT INTO Sales VALUES ('2024-01-01', 50);\nINSERT INTO Sales VALUES ('2024-01-02', 200);\n\n-- SQLite rollup snapshot (no MATERIALIZED VIEW)\nSELECT sale_date, SUM(amount) AS total FROM Sales GROUP BY sale_date ORDER BY sale_date ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-easy-3",
+              "title": "Normalize Inventory",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Select the product name and its quantity. If the quantity is strictly less than 0, return 0 instead using a CASE statement. Alias this as adjusted_qty. Order by product name ascending.",
+              "solution": "SELECT product, CASE WHEN quantity < 0 THEN 0 ELSE quantity END as adjusted_qty FROM INVENTORY ORDER BY product ASC;",
+              "schema": [
+                {
+                  "table": "INVENTORY",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "product",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "quantity",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE INVENTORY (id INTEGER, product TEXT, quantity INTEGER);\nINSERT INTO INVENTORY VALUES (1,'Apple',10),(2,'Banana',-5),(3,'Orange',0);\nINSERT INTO INVENTORY VALUES (1,'Desk',-1),(2,'Chair',20),(3,'Lamp',-10);\n\nSELECT product, CASE WHEN quantity < 0 THEN 0 ELSE quantity END as adjusted_qty FROM INVENTORY ORDER BY product ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "sql-specialist1-medium-1",
+              "title": "High Sales Departments",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Use a derived table (a subquery in the FROM clause) to calculate total sales per department, and then select the department_id and total where the total > 1000. Order by department_id ascending.",
+              "solution": "SELECT s.department_id, s.total FROM (SELECT department_id, SUM(amount) as total FROM SALES GROUP BY department_id) s WHERE s.total > 1000 ORDER BY s.department_id ASC;",
+              "schema": [
+                {
+                  "table": "SALES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SALES (id INTEGER, department_id INTEGER, amount INTEGER);\nINSERT INTO SALES VALUES (1,10,500),(2,10,2000),(3,20,300),(4,20,400);\nINSERT INTO SALES VALUES (1,30,5000),(2,30,100),(3,40,1000);\n\nSELECT s.department_id, s.total FROM (SELECT department_id, SUM(amount) as total FROM SALES GROUP BY department_id) s WHERE s.total > 1000 ORDER BY s.department_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-medium-2",
+              "title": "Never Repeated Items",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find item_ids that have been purchased exactly once globally. Order by item_id ascending.",
+              "solution": "SELECT item_id FROM PURCHASES GROUP BY item_id HAVING COUNT(*) = 1 ORDER BY item_id ASC;",
+              "schema": [
+                {
+                  "table": "PURCHASES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "user_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "item_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE PURCHASES (id INTEGER, user_id INTEGER, item_id INTEGER);\nINSERT INTO PURCHASES VALUES (1,101,50),(2,101,50),(3,102,60),(4,103,70),(5,103,70);\nINSERT INTO PURCHASES VALUES (1,101,10),(2,102,20),(3,103,30),(4,101,10);\n\nSELECT item_id FROM PURCHASES GROUP BY item_id HAVING COUNT(*) = 1 ORDER BY item_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-medium-3",
+              "title": "NTH_VALUE and NTILE Analytics",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "window-functions",
+                "ntile",
+                "nth-value",
+                "analytics",
+                "Specialist_1",
+                "Medium"
+              ],
+              "description": "Assign quartiles to employees by salary using NTILE(4), and find the 2nd highest salary per department with NTH_VALUE.",
+              "solution": "SELECT name, department_id, salary,\n  NTILE(4) OVER (ORDER BY salary) AS quartile,\n  NTH_VALUE(salary, 2) OVER (\n    PARTITION BY department_id\n    ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS second_highest\nFROM Employee;",
+              "schema": [
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "quartile",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "second_highest",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Employee (department_id INTEGER, name TEXT, quartile TEXT, salary INTEGER, second_highest TEXT);\nINSERT INTO Employee VALUES (10, 'Alice', 'sample1', 10000, 'sample1');\nINSERT INTO Employee VALUES (20, 'Bob', 'sample2', 20000, 'sample2');\nINSERT INTO Employee VALUES (30, 'Charlie', 'sample3', 30000, 'sample3');\nINSERT INTO Employee VALUES (40, 'Diana', 'sample4', 40000, 'sample4');\n\nSELECT name, department_id, salary,\n  NTILE(4) OVER (ORDER BY salary) AS quartile,\n  NTH_VALUE(salary, 2) OVER (\n    PARTITION BY department_id\n    ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS second_highest\nFROM Employee;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-medium-4",
+              "title": "Project Employees III",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "subquery",
+                "join",
+                "max",
+                "correlated",
+                "Specialist_1",
+                "Medium"
+              ],
+              "description": "Find the most experienced employee(s) per project.",
+              "solution": "SELECT p.project_id, p.employee_id\nFROM Project p\nJOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years)\n  FROM Project p2 JOIN Employee e2 ON p2.employee_id=e2.employee_id\n  GROUP BY p2.project_id\n);",
+              "schema": [
+                {
+                  "table": "Project",
+                  "columns": [
+                    {
+                      "name": "employee_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "project_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                },
+                {
+                  "table": "Employee",
+                  "columns": [
+                    {
+                      "name": "employee_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "experience_years",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Project (employee_id INTEGER, project_id INTEGER);\nINSERT INTO Project VALUES (10, 10);\nINSERT INTO Project VALUES (20, 20);\nINSERT INTO Project VALUES (30, 30);\nINSERT INTO Project VALUES (40, 40);\n\nCREATE TABLE Employee (employee_id INTEGER, experience_years INTEGER);\nINSERT INTO Employee VALUES (10, 2020);\nINSERT INTO Employee VALUES (20, 2021);\nINSERT INTO Employee VALUES (30, 2022);\nINSERT INTO Employee VALUES (40, 2023);\n\nSELECT p.project_id, p.employee_id\nFROM Project p\nJOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years)\n  FROM Project p2 JOIN Employee e2 ON p2.employee_id=e2.employee_id\n  GROUP BY p2.project_id\n);",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "sql-specialist1-hard-1",
+              "title": "Game Play Analysis V — Day-1 Retention",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "aggregation",
+                "date-functions",
+                "retention-analysis",
+                "Specialist_1",
+                "Hard"
+              ],
+              "description": "For each install date, compute number of installs and Day-1 retention rate.",
+              "solution": "SELECT a1.install_dt,\n  COUNT(DISTINCT a1.player_id) AS installs,\n  ROUND(CAST(COUNT(DISTINCT a2.player_id) AS REAL) / NULLIF(COUNT(DISTINCT a1.player_id), 0), 2) AS Day1_retention\nFROM (\n  SELECT player_id, MIN(event_date) AS install_dt FROM Activity GROUP BY player_id\n) a1\nLEFT JOIN Activity a2\n  ON a1.player_id = a2.player_id\n AND julianday(a2.event_date) - julianday(a1.install_dt) = 1\nGROUP BY a1.install_dt\nORDER BY a1.install_dt ASC;",
+              "schema": [
+                {
+                  "table": "Activity",
+                  "columns": [
+                    {
+                      "name": "player_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "event_date",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Activity (player_id INTEGER, event_date TEXT);\nINSERT INTO Activity VALUES (1, '2023-08-01');\nINSERT INTO Activity VALUES (1, '2023-08-02');\nINSERT INTO Activity VALUES (2, '2023-08-01');\nINSERT INTO Activity VALUES (3, '2023-08-03');\n\nSELECT a1.install_dt,\n  COUNT(DISTINCT a1.player_id) AS installs,\n  ROUND(CAST(COUNT(DISTINCT a2.player_id) AS REAL) / NULLIF(COUNT(DISTINCT a1.player_id), 0), 2) AS Day1_retention\nFROM (\n  SELECT player_id, MIN(event_date) AS install_dt FROM Activity GROUP BY player_id\n) a1\nLEFT JOIN Activity a2\n  ON a1.player_id = a2.player_id\n AND julianday(a2.event_date) - julianday(a1.install_dt) = 1\nGROUP BY a1.install_dt\nORDER BY a1.install_dt ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-hard-2",
+              "title": "Pass Rate Percentages",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Calculate each student's pass rate (Sum of passes divided by total exams * 100). Use ROUND(value, 2) to fix to 2 decimals. (Cast SUM to FLOAT first). Order by pass_rate descending, then student_id ascending.",
+              "solution": "SELECT student_id, ROUND(CAST(SUM(passed) AS FLOAT) / COUNT(*) * 100, 2) as pass_rate FROM EXAMS GROUP BY student_id ORDER BY pass_rate DESC, student_id ASC;",
+              "schema": [
+                {
+                  "table": "EXAMS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "student_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "passed",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EXAMS (id INTEGER, student_id INTEGER, passed INTEGER);\nINSERT INTO EXAMS VALUES (1,101,1),(2,101,0),(3,102,1),(4,103,0);\nINSERT INTO EXAMS VALUES (1,104,1),(2,104,1),(3,105,0),(4,105,0),(5,106,1);\n\nSELECT student_id, ROUND(CAST(SUM(passed) AS FLOAT) / COUNT(*) * 100, 2) as pass_rate FROM EXAMS GROUP BY student_id ORDER BY pass_rate DESC, student_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist1-hard-3",
+              "title": "Positive Account Balances",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_1",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Calculate the net balance (Sum of CREDITs minus Sum of DEBITs) per account. Only return accounts with a balance stringently > 0. Order by balance descending, then account_id ascending.",
+              "solution": "SELECT account_id, SUM(CASE WHEN type='CREDIT' THEN amount ELSE 0 END) - SUM(CASE WHEN type='DEBIT' THEN amount ELSE 0 END) as balance FROM TRANSACTIONS GROUP BY account_id HAVING balance > 0 ORDER BY balance DESC, account_id ASC;",
+              "schema": [
+                {
+                  "table": "TRANSACTIONS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "account_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "type",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE TRANSACTIONS (id INTEGER, account_id INTEGER, type TEXT, amount INTEGER);\nINSERT INTO TRANSACTIONS VALUES (1,101,'CREDIT',500),(2,101,'DEBIT',100),(3,102,'CREDIT',200),(4,102,'DEBIT',300);\nINSERT INTO TRANSACTIONS VALUES (1,103,'CREDIT',1000),(2,104,'DEBIT',500),(3,104,'CREDIT',100);\n\nSELECT account_id, SUM(CASE WHEN type='CREDIT' THEN amount ELSE 0 END) - SUM(CASE WHEN type='DEBIT' THEN amount ELSE 0 END) as balance FROM TRANSACTIONS GROUP BY account_id HAVING balance > 0 ORDER BY balance DESC, account_id ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ]
         },
         "Specialist_2": {
-          "Easy": [],
-          "Medium": [],
-          "Hard": []
+          "Easy": [
+            {
+              "id": "sql-specialist2-easy-1",
+              "title": "Index Strategy and EXPLAIN ANALYZE",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "indexes",
+                "explain-analyze",
+                "query-optimization",
+                "Specialist_2",
+                "Easy"
+              ],
+              "description": "Identify a missing index for a slow query filtering on (status, created_at). Write the CREATE INDEX statement and interpret EXPLAIN ANALYZE output.",
+              "solution": "CREATE INDEX idx_orders_status_created ON orders(status, created_at DESC);\nSELECT COUNT(*) FROM orders WHERE status = 'pending' AND created_at >= '2024-01-01';",
+              "schema": [
+                {
+                  "table": "orders",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "status",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "created_at",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE orders (id INTEGER PRIMARY KEY, status TEXT, created_at TEXT);\nINSERT INTO orders VALUES (1,'pending','2024-01-01');\nINSERT INTO orders VALUES (2,'pending','2024-01-05');\nINSERT INTO orders VALUES (3,'done','2024-02-01');\n\nCREATE INDEX idx_orders_status_created ON orders(status, created_at DESC);\nSELECT COUNT(*) FROM orders WHERE status = 'pending' AND created_at >= '2024-01-01';",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-easy-2",
+              "title": "Second Highest Salary",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the second highest distinct salary utilizing a nested subquery (strictly do not use LIMIT or OFFSET).",
+              "solution": "SELECT MAX(salary) FROM EMPLOYEES WHERE salary < (SELECT MAX(salary) FROM EMPLOYEES);",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',5000),(2,'B',8000),(3,'C',8000),(4,'D',6000);\nINSERT INTO EMPLOYEES VALUES (1,'X',10000),(2,'Y',9000),(3,'Z',9000),(4,'W',10000);\n\nSELECT MAX(salary) FROM EMPLOYEES WHERE salary < (SELECT MAX(salary) FROM EMPLOYEES);",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-easy-3",
+              "title": "Second Lowest Score",
+              "skill": "SQL",
+              "difficulty": "Easy",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the second lowest distinct score using a nested subquery (strictly do not use LIMIT or OFFSET).",
+              "solution": "SELECT MIN(score) FROM SCORES WHERE score > (SELECT MIN(score) FROM SCORES);",
+              "schema": [
+                {
+                  "table": "SCORES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "score",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SCORES (id INTEGER, score INTEGER);\nINSERT INTO SCORES VALUES (1,10),(2,10),(3,20),(4,30);\nINSERT INTO SCORES VALUES (1,50),(2,60),(3,50),(4,70);\n\nSELECT MIN(score) FROM SCORES WHERE score > (SELECT MIN(score) FROM SCORES);",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Medium": [
+            {
+              "id": "sql-specialist2-medium-1",
+              "title": "Cheapest Project Per Dept",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the department_id, project id, and cost of the cheapest project(s) per department using correlated subqueries. Order by department_id ascending, then project id ascending.",
+              "solution": "SELECT p1.department_id, p1.id, p1.cost FROM PROJECTS p1 WHERE p1.cost = (SELECT MIN(p2.cost) FROM PROJECTS p2 WHERE p1.department_id = p2.department_id) ORDER BY p1.department_id ASC, p1.id ASC;",
+              "schema": [
+                {
+                  "table": "PROJECTS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "cost",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE PROJECTS (id INTEGER, department_id INTEGER, cost INTEGER);\nINSERT INTO PROJECTS VALUES (1,10,1000),(2,10,500),(3,20,300),(4,20,300);\nINSERT INTO PROJECTS VALUES (1,30,8000),(2,30,8000),(3,40,9000),(4,40,10000);\n\nSELECT p1.department_id, p1.id, p1.cost FROM PROJECTS p1 WHERE p1.cost = (SELECT MIN(p2.cost) FROM PROJECTS p2 WHERE p1.department_id = p2.department_id) ORDER BY p1.department_id ASC, p1.id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-medium-2",
+              "title": "Table Partitioning by Range",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "partitioning",
+                "range-partition",
+                "ddl",
+                "Specialist_2",
+                "Medium"
+              ],
+              "description": "Create a partitioned sales table partitioned by year range. Create partitions for 2023 and 2024.",
+              "solution": "-- SQLite: logical monthly slice (physical RANGE partitions are unsupported)\nSELECT COUNT(*) AS cnt_jan FROM events WHERE event_month = '2024-01';",
+              "schema": [
+                {
+                  "table": "events",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "event_month",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "payload",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE events (id INTEGER PRIMARY KEY, event_month TEXT, payload TEXT);\nINSERT INTO events VALUES (1,'2024-01','a');\nINSERT INTO events VALUES (2,'2024-01','b');\nINSERT INTO events VALUES (3,'2024-02','c');\n\n-- SQLite: logical monthly slice (physical RANGE partitions are unsupported)\nSELECT COUNT(*) AS cnt_jan FROM events WHERE event_month = '2024-01';",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-medium-3",
+              "title": "Top Earner Per Dept",
+              "skill": "SQL",
+              "difficulty": "Medium",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the department_id, name, and salary of the top earner(s) in each department using correlated subqueries (WHERE equals MAX inside same dept). Order by department_id ascending, then name ascending.",
+              "solution": "SELECT e1.department_id, e1.name, e1.salary FROM EMPLOYEES e1 WHERE e1.salary = (SELECT MAX(e2.salary) FROM EMPLOYEES e2 WHERE e1.department_id = e2.department_id) ORDER BY e1.department_id ASC, e1.name ASC;",
+              "schema": [
+                {
+                  "table": "EMPLOYEES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "name",
+                      "type": "TEXT"
+                    },
+                    {
+                      "name": "department_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "salary",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',10,5000),(2,'B',10,7000),(3,'C',10,7000),(4,'D',20,10000);\nINSERT INTO EMPLOYEES VALUES (1,'X',30,2000),(2,'Y',30,5000),(3,'Z',40,8000),(4,'W',40,1000);\n\nSELECT e1.department_id, e1.name, e1.salary FROM EMPLOYEES e1 WHERE e1.salary = (SELECT MAX(e2.salary) FROM EMPLOYEES e2 WHERE e1.department_id = e2.department_id) ORDER BY e1.department_id ASC, e1.name ASC;",
+                  "output": ""
+                }
+              ]
+            }
+          ],
+          "Hard": [
+            {
+              "id": "sql-specialist2-hard-1",
+              "title": "Elite Sellers",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Find the seller_ids of sellers whose individual total sales amount is strictly greater than the average total sales amount across all sellers. Order by seller_id ascending.",
+              "solution": "SELECT s.seller_id FROM (SELECT seller_id, SUM(amount) as t FROM SALES GROUP BY seller_id) s WHERE s.t > (SELECT AVG(t) FROM (SELECT SUM(amount) as t FROM SALES GROUP BY seller_id)) ORDER BY s.seller_id ASC;",
+              "schema": [
+                {
+                  "table": "SALES",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "seller_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "amount",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE SALES (id INTEGER, seller_id INTEGER, amount INTEGER);\nINSERT INTO SALES VALUES (1,101,500),(2,101,600),(3,102,100),(4,102,200),(5,103,1000);\nINSERT INTO SALES VALUES (1,104,800),(2,105,900),(3,106,100),(4,106,50);\n\nSELECT s.seller_id FROM (SELECT seller_id, SUM(amount) as t FROM SALES GROUP BY seller_id) s WHERE s.t > (SELECT AVG(t) FROM (SELECT SUM(amount) as t FROM SALES GROUP BY seller_id)) ORDER BY s.seller_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-hard-2",
+              "title": "Find the Subtasks That Did Not Execute",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "recursive-cte",
+                "left-join",
+                "subtask-tracking",
+                "Specialist_2",
+                "Hard"
+              ],
+              "description": "Find subtasks that were not executed using a recursive CTE.",
+              "solution": "WITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id - 1 FROM sub WHERE sub_id > 1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s\nLEFT JOIN Executed e ON s.task_id = e.task_id AND s.sub_id = e.subtask_id\nWHERE e.subtask_id IS NULL\nORDER BY s.task_id ASC, subtask_id ASC;",
+              "schema": [
+                {
+                  "table": "Tasks",
+                  "columns": [
+                    {
+                      "name": "task_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "subtasks_count",
+                      "type": "INTEGER"
+                    }
+                  ]
+                },
+                {
+                  "table": "Executed",
+                  "columns": [
+                    {
+                      "name": "task_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "subtask_id",
+                      "type": "INTEGER"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Tasks (task_id INTEGER PRIMARY KEY, subtasks_count INTEGER);\nINSERT INTO Tasks VALUES (1, 3);\nINSERT INTO Tasks VALUES (2, 2);\nCREATE TABLE Executed (task_id INTEGER, subtask_id INTEGER);\nINSERT INTO Executed VALUES (1, 1);\nINSERT INTO Executed VALUES (2, 1);\n\nWITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id - 1 FROM sub WHERE sub_id > 1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s\nLEFT JOIN Executed e ON s.task_id = e.task_id AND s.sub_id = e.subtask_id\nWHERE e.subtask_id IS NULL\nORDER BY s.task_id ASC, subtask_id ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-hard-3",
+              "title": "Hopper Company Queries II",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [
+                "sql",
+                "cte",
+                "aggregation",
+                "driver-retention",
+                "advanced",
+                "Specialist_2",
+                "Hard"
+              ],
+              "description": "For each month, compute the percentage of working drivers who accepted at least one ride.",
+              "solution": "WITH months(month) AS (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12),\nactive AS (\n  SELECT driver_id,\n         CAST(strftime('%m', join_date) AS INTEGER) AS join_month,\n         CAST(strftime('%Y', join_date) AS INTEGER) AS join_year\n  FROM Drivers WHERE strftime('%Y', join_date) = '2020'\n)\nSELECT m.month,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN r.driver_id IS NOT NULL THEN a.driver_id END) / NULLIF(COUNT(DISTINCT a.driver_id), 0), 2) AS working_percentage\nFROM months m\nLEFT JOIN active a ON a.join_month <= m.month AND a.join_year = 2020\nLEFT JOIN Rides r ON r.driver_id = a.driver_id AND CAST(strftime('%m', r.requested_at) AS INTEGER) = m.month\nAND strftime('%Y', r.requested_at) = '2020'\nGROUP BY m.month\nORDER BY m.month ASC;",
+              "schema": [
+                {
+                  "table": "Drivers",
+                  "columns": [
+                    {
+                      "name": "driver_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "join_date",
+                      "type": "TEXT"
+                    }
+                  ]
+                },
+                {
+                  "table": "Rides",
+                  "columns": [
+                    {
+                      "name": "driver_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "requested_at",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE Drivers (driver_id INTEGER PRIMARY KEY, join_date TEXT);\nCREATE TABLE Rides (driver_id INTEGER, requested_at TEXT);\nINSERT INTO Drivers VALUES (1, '2020-01-05');\nINSERT INTO Drivers VALUES (2, '2020-05-01');\nINSERT INTO Rides VALUES (1, '2020-06-10');\nINSERT INTO Rides VALUES (1, '2020-06-15');\n\nWITH months(month) AS (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12),\nactive AS (\n  SELECT driver_id,\n         CAST(strftime('%m', join_date) AS INTEGER) AS join_month,\n         CAST(strftime('%Y', join_date) AS INTEGER) AS join_year\n  FROM Drivers WHERE strftime('%Y', join_date) = '2020'\n)\nSELECT m.month,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN r.driver_id IS NOT NULL THEN a.driver_id END) / NULLIF(COUNT(DISTINCT a.driver_id), 0), 2) AS working_percentage\nFROM months m\nLEFT JOIN active a ON a.join_month <= m.month AND a.join_year = 2020\nLEFT JOIN Rides r ON r.driver_id = a.driver_id AND CAST(strftime('%m', r.requested_at) AS INTEGER) = m.month\nAND strftime('%Y', r.requested_at) = '2020'\nGROUP BY m.month\nORDER BY m.month ASC;",
+                  "output": ""
+                }
+              ]
+            },
+            {
+              "id": "sql-specialist2-hard-4",
+              "title": "User Cohort Retention",
+              "skill": "SQL",
+              "difficulty": "Hard",
+              "level": "Specialist_2",
+              "question_type": "sql",
+              "tags": [],
+              "description": "Calculate the overall ratio of users who logged in during a month AND also logged in exactly one month later. (Use strftime('%m', ...) logic bridging l1 and l2). Return the ratio unrounded.",
+              "solution": "SELECT COUNT(DISTINCT l2.user_id) * 1.0 / COUNT(DISTINCT l1.user_id) as retention_rate FROM LOGINS l1 LEFT JOIN LOGINS l2 ON l1.user_id = l2.user_id AND strftime('%m', l2.login_date) = strftime('%m', date(l1.login_date, '+1 month'));",
+              "schema": [
+                {
+                  "table": "LOGINS",
+                  "columns": [
+                    {
+                      "name": "id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "user_id",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "name": "login_date",
+                      "type": "TEXT"
+                    }
+                  ]
+                }
+              ],
+              "test_cases": [
+                {
+                  "input": "CREATE TABLE LOGINS (id INTEGER, user_id INTEGER, login_date TEXT);\nINSERT INTO LOGINS VALUES (1,101,'2023-01-15'),(2,101,'2023-02-10'),(3,102,'2023-01-20');\nINSERT INTO LOGINS VALUES (1,103,'2023-03-05'),(2,103,'2023-04-10'),(3,104,'2023-03-15'),(4,103,'2023-04-12');\n\nSELECT COUNT(DISTINCT l2.user_id) * 1.0 / COUNT(DISTINCT l1.user_id) as retention_rate FROM LOGINS l1 LEFT JOIN LOGINS l2 ON l1.user_id = l2.user_id AND strftime('%m', l2.login_date) = strftime('%m', date(l1.login_date, '+1 month'));",
+                  "output": ""
+                }
+              ]
+            }
+          ]
         }
       }
     },
