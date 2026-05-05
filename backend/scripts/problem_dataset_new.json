@@ -10787,7 +10787,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000 ORDER BY ID ASC;",
-                  "output": ""
+                  "output": "3878,Scottsdale,USA,Arizona,202705\n3965,Corona,USA,California,124966\n4101,Phoenix,USA,Arizona,1660272"
                 }
               ]
             },
@@ -10851,7 +10851,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Person (PersonId INTEGER PRIMARY KEY, FirstName TEXT, LastName TEXT);\nCREATE TABLE Address (AddressId INTEGER PRIMARY KEY, PersonId INTEGER, City TEXT, State TEXT);\nINSERT INTO Person VALUES (1, 'Allen', 'Wang');\nINSERT INTO Person VALUES (2, 'Bob',   'Alice');\nINSERT INTO Address VALUES (1, 2, 'New York City', 'NY');\n\nSELECT p.FirstName, p.LastName, a.City, a.State\nFROM Person p\nLEFT JOIN Address a ON p.PersonId = a.PersonId;",
-                  "output": ""
+                  "output": "Allen,Wang,None,None\nBob,Alice,New York City,NY"
                 }
               ]
             },
@@ -10903,7 +10903,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Customers (Id INTEGER PRIMARY KEY, Name TEXT);\nCREATE TABLE Orders (Id INTEGER PRIMARY KEY, CustomerId INTEGER);\nINSERT INTO Customers VALUES (1, 'Joe');\nINSERT INTO Customers VALUES (2, 'Henry');\nINSERT INTO Customers VALUES (3, 'Sam');\nINSERT INTO Customers VALUES (4, 'Max');\nINSERT INTO Orders VALUES (1, 3);\nINSERT INTO Orders VALUES (2, 1);\n\nSELECT c.Name AS Customers\nFROM Customers c\nLEFT JOIN Orders o ON c.Id = o.CustomerId\nWHERE o.Id IS NULL;",
-                  "output": ""
+                  "output": "Henry\nMax"
                 }
               ]
             },
@@ -10950,7 +10950,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employee (Id INTEGER PRIMARY KEY, Name TEXT, Salary INTEGER, ManagerId INTEGER);\nINSERT INTO Employee VALUES (1, 'Joe',   70000, 3);\nINSERT INTO Employee VALUES (2, 'Henry', 80000, 4);\nINSERT INTO Employee VALUES (3, 'Sam',   60000, NULL);\nINSERT INTO Employee VALUES (4, 'Max',   90000, NULL);\n\nSELECT e.Name AS Employee\nFROM Employee e\nJOIN Employee m ON e.ManagerId = m.Id\nWHERE e.Salary > m.Salary;",
-                  "output": ""
+                  "output": "Joe"
                 }
               ]
             },
@@ -11001,7 +11001,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;",
-                  "output": ""
+                  "output": "3878,Scottsdale,USA,Arizona,202705\n3965,Corona,USA,California,124966\n4101,Phoenix,USA,Arizona,1660272"
                 }
               ]
             },
@@ -11012,13 +11012,7 @@
               "difficulty": "Easy",
               "level": "Beginner",
               "question_type": "sql",
-              "tags": [
-                "sql",
-                "select",
-                "basics",
-                "Beginner",
-                "Easy"
-              ],
+              "tags": ["sql", "select", "basics", "Beginner", "Easy"],
               "description": "Query all columns for every row in the CITY table.",
               "solution": "SELECT * FROM CITY;",
               "schema": [
@@ -11051,7 +11045,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE CITY (\n  ID INTEGER PRIMARY KEY,\n  NAME TEXT,\n  COUNTRYCODE TEXT,\n  DISTRICT TEXT,\n  POPULATION INTEGER\n);\nINSERT INTO CITY VALUES (3878, 'Scottsdale', 'USA', 'Arizona', 202705);\nINSERT INTO CITY VALUES (3965, 'Corona',     'USA', 'California', 124966);\nINSERT INTO CITY VALUES (4001, 'Smallville', 'USA', 'Kansas', 50000);\nINSERT INTO CITY VALUES (4101, 'Phoenix',    'USA', 'Arizona', 1660272);\nINSERT INTO CITY VALUES (5500, 'Toronto',    'CAN', 'Ontario', 2615060);\nINSERT INTO CITY VALUES (5501, 'Vancouver',  'CAN', 'BC', 631486);\n\nSELECT * FROM CITY;",
-                  "output": ""
+                  "output": "3878,Scottsdale,USA,Arizona,202705\n3965,Corona,USA,California,124966\n4001,Smallville,USA,Kansas,50000\n4101,Phoenix,USA,Arizona,1660272\n5500,Toronto,CAN,Ontario,2615060\n5501,Vancouver,CAN,BC,631486"
                 }
               ]
             },
@@ -11091,7 +11085,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'Alice',10,5000),(2,'Bob',20,6000),(3,'Charlie',10,4000);\nINSERT INTO EMPLOYEES VALUES (1,'Dave',10,7000),(2,'Eve',10,NULL),(3,'Frank',20,4000);\n\nSELECT id, name FROM EMPLOYEES WHERE department_id = 10 AND salary >= 5000 ORDER BY id ASC;",
-                  "output": ""
+                  "output": "1,Alice\n1,Dave"
                 }
               ]
             }
@@ -11133,7 +11127,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE TICKETS (id INTEGER, user_id INTEGER, status TEXT, priority TEXT);\nINSERT INTO TICKETS VALUES (1,101,'OPEN','HIGH'),(2,102,'CLOSED','HIGH'),(3,103,'OPEN','LOW');\nINSERT INTO TICKETS VALUES (1,104,'OPEN','MEDIUM'),(2,105,'OPEN','HIGH'),(3,106,NULL,'HIGH');\n\nSELECT id, user_id FROM TICKETS WHERE status = 'OPEN' AND (priority = 'HIGH' OR priority = 'MEDIUM') ORDER BY id ASC;",
-                  "output": ""
+                  "output": "1,101\n1,104\n2,105"
                 }
               ]
             },
@@ -11172,7 +11166,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Person (Id INTEGER PRIMARY KEY, Email TEXT);\nINSERT INTO Person VALUES (1, 'a@b.com');\nINSERT INTO Person VALUES (2, 'c@d.com');\nINSERT INTO Person VALUES (3, 'a@b.com');\n\nDELETE FROM Person WHERE ROWID NOT IN (SELECT MIN(ROWID) FROM Person GROUP BY Email);\nSELECT Id, Email FROM Person ORDER BY Id ASC;",
-                  "output": ""
+                  "output": "1,a@b.com\n2,c@d.com"
                 }
               ]
             },
@@ -11212,7 +11206,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE PRODUCTS (id INTEGER, name TEXT, price INTEGER, stock INTEGER);\nINSERT INTO PRODUCTS VALUES (1,'ProGamer Mouse',50,10),(2,'ProGamer Keyboard',100,0),(3,'Basic Mouse',20,5);\nINSERT INTO PRODUCTS VALUES (1,'ProGamer Headset',80,0),(2,'Gamer Desk',150,1),(3,'ProGamer Chair',200,5);\n\nSELECT name, price FROM PRODUCTS WHERE name LIKE 'ProGamer%' AND stock > 0 ORDER BY price DESC;",
-                  "output": ""
+                  "output": "ProGamer Chair,200\nProGamer Mouse,50"
                 }
               ]
             },
@@ -11255,7 +11249,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE TRIANGLES (A INTEGER, B INTEGER, C INTEGER);\nINSERT INTO TRIANGLES VALUES (3, 3, 3);\nINSERT INTO TRIANGLES VALUES (3, 4, 5);\nINSERT INTO TRIANGLES VALUES (1, 1, 10);\nINSERT INTO TRIANGLES VALUES (3, 3, 4);\n\nSELECT CASE\n  WHEN A+B<=C OR A+C<=B OR B+C<=A THEN 'Not A Triangle'\n  WHEN A=B AND B=C THEN 'Equilateral'\n  WHEN A=B OR B=C OR A=C THEN 'Isosceles'\n  ELSE 'Scalene'\nEND FROM TRIANGLES;",
-                  "output": ""
+                  "output": "Equilateral\nScalene\nNot A Triangle\nIsosceles"
                 }
               ]
             }
@@ -11293,7 +11287,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SESSIONS (id INTEGER, ip_address TEXT, login_time TEXT);\nINSERT INTO SESSIONS VALUES (1,'192.168.1.1','2023-11-05 08:30:00'),(2,'192.168.1.2','2023-11-05 10:15:00'),(3,'192.168.1.1','2023-11-06 09:00:00');\nINSERT INTO SESSIONS VALUES (1,'10.0.0.1','2023-11-05 07:00:00'),(2,'10.0.0.1',NULL),(3,'10.0.0.2','2023-11-05 14:00:00');\n\nSELECT DISTINCT ip_address FROM SESSIONS WHERE login_time LIKE '2023-11-05%' ORDER BY ip_address ASC;",
-                  "output": ""
+                  "output": "10.0.0.1\n10.0.0.2\n192.168.1.1\n192.168.1.2"
                 }
               ]
             },
@@ -11333,7 +11327,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE PROMOTIONS (id INTEGER, code TEXT, is_active INTEGER, discount INTEGER);\nINSERT INTO PROMOTIONS VALUES (1,'SAVE10',1,10),(2,'SAVE20',0,20),(3,'SAVE15',1,15);\nINSERT INTO PROMOTIONS VALUES (1,'WELCOME',1,25),(2,'FAIL',NULL,10),(3,'WINTER',1,50);\n\nSELECT code, discount FROM PROMOTIONS WHERE is_active = 1 AND discount IS NOT NULL ORDER BY discount DESC, code ASC;",
-                  "output": ""
+                  "output": "WINTER,50\nWELCOME,25\nSAVE15,15\nSAVE10,10"
                 }
               ]
             },
@@ -11385,7 +11379,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE STATION (\n  ID INTEGER PRIMARY KEY,\n  CITY TEXT,\n  STATE TEXT,\n  LAT_N REAL,\n  LONG_W REAL\n);\nINSERT INTO STATION VALUES (1, 'Acme', 'CA', 37.7, 122.4);\nINSERT INTO STATION VALUES (2, 'A',    'AZ', 33.4, 112.0);\nINSERT INTO STATION VALUES (3, 'Albuquerque', 'NM', 35.1, 106.6);\nINSERT INTO STATION VALUES (4, 'Marysvale', 'UT', 38.4, 112.2);\nINSERT INTO STATION VALUES (5, 'Denver', 'CO', 39.7, 104.9);\n\nSELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) ASC, CITY ASC LIMIT 1)\nUNION ALL\nSELECT CITY, LENGTH(CITY) FROM STATION\nWHERE ROWID IN (SELECT ROWID FROM STATION ORDER BY LENGTH(CITY) DESC, CITY DESC LIMIT 1);",
-                  "output": ""
+                  "output": "A,1\nAlbuquerque,11"
                 }
               ]
             }
@@ -11425,7 +11419,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SALES (id INTEGER, category TEXT, amount INTEGER);\nINSERT INTO SALES VALUES (1,'Electronics',500),(2,'Electronics',300),(3,'Books',40);\nINSERT INTO SALES VALUES (1,'Home',100),(2,'Home',150),(3,'Toys',50),(4,'Toys',NULL);\n\nSELECT category, SUM(amount), COUNT(*) FROM SALES GROUP BY category ORDER BY category ASC;",
-                  "output": ""
+                  "output": "Books,40,1\nElectronics,800,2\nHome,250,2\nToys,50,2"
                 }
               ]
             },
@@ -11469,7 +11463,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE ORDERS (id INTEGER, region TEXT, customer_id INTEGER, amount INTEGER, status TEXT);\nINSERT INTO ORDERS VALUES (1, 'North', 101, 500, 'COMPLETED'),(2, 'North', 102, 300, 'COMPLETED'),(3, 'South', 101, 700, 'CANCELLED');\nINSERT INTO ORDERS VALUES (1, 'East', 101, 100, 'COMPLETED'),(2, 'East', 101, 200, 'COMPLETED'),(3, 'West', 102, 50, 'COMPLETED'),(4, 'West', 103, 50, 'CANCELLED');\n\nSELECT region, COUNT(DISTINCT customer_id), SUM(amount) FROM ORDERS WHERE status = 'COMPLETED' GROUP BY region ORDER BY region ASC;",
-                  "output": ""
+                  "output": "East,1,300\nNorth,2,800\nWest,1,50"
                 }
               ]
             },
@@ -11512,7 +11506,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Weather (id INTEGER PRIMARY KEY, recordDate TEXT, temperature INTEGER);\nINSERT INTO Weather VALUES (1, '2024-01-01', 10);\nINSERT INTO Weather VALUES (2, '2024-01-02', 15);\nINSERT INTO Weather VALUES (3, '2024-01-03', 12);\nINSERT INTO Weather VALUES (4, '2024-01-04', 20);\n\nSELECT w1.id FROM Weather w1\nJOIN Weather w2 ON julianday(w1.recordDate) - julianday(w2.recordDate) = 1\nWHERE w1.temperature > w2.temperature ORDER BY w1.id ASC;",
-                  "output": ""
+                  "output": "2\n4"
                 }
               ]
             }
@@ -11550,7 +11544,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE STUDENTS (id INTEGER, name TEXT, class_id INTEGER);\nINSERT INTO STUDENTS VALUES (1,'John',10),(2,'Jane',10),(3,'Doe',20);\nINSERT INTO STUDENTS VALUES (1,'Bob',30),(2,'Alice',30),(3,'Eve',30),(4,'Greg',40);\n\nSELECT class_id, COUNT(*) as cnt FROM STUDENTS GROUP BY class_id HAVING COUNT(*) > 1 ORDER BY class_id ASC;",
-                  "output": ""
+                  "output": "10,2\n30,3"
                 }
               ]
             },
@@ -11597,7 +11591,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Sales (amount INTEGER, ROW INTEGER, running_total TEXT, sale_date TEXT);\nINSERT INTO Sales VALUES (10000, 10, 'sample1', '2024-01-01');\nINSERT INTO Sales VALUES (20000, 20, 'sample2', '2024-02-02');\nINSERT INTO Sales VALUES (30000, 30, 'sample3', '2024-03-03');\nINSERT INTO Sales VALUES (40000, 40, 'sample4', '2024-04-04');\n\nSELECT sale_date, amount,\n  SUM(amount) OVER (ORDER BY sale_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\nFROM Sales\nORDER BY sale_date;",
-                  "output": ""
+                  "output": "2024-01-01,10000,10000\n2024-02-02,20000,30000\n2024-03-03,30000,60000\n2024-04-04,40000,100000"
                 }
               ]
             },
@@ -11629,7 +11623,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Person (Id INTEGER PRIMARY KEY, Email TEXT);\nINSERT INTO Person VALUES (1, 'a@b.com');\nINSERT INTO Person VALUES (2, 'c@d.com');\nINSERT INTO Person VALUES (3, 'a@b.com');\n\nSELECT Email, COUNT(*) AS occurrences FROM Person GROUP BY Email HAVING COUNT(*) > 1 ORDER BY Email ASC;",
-                  "output": ""
+                  "output": "a@b.com,2"
                 }
               ]
             },
@@ -11676,7 +11670,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employee (DepartmentId INTEGER, Name TEXT, rnk TEXT, Salary INTEGER);\nINSERT INTO Employee VALUES (10, 'Alice', 'sample1', 10000);\nINSERT INTO Employee VALUES (20, 'Bob', 'sample2', 20000);\nINSERT INTO Employee VALUES (30, 'Charlie', 'sample3', 30000);\nINSERT INTO Employee VALUES (40, 'Diana', 'sample4', 40000);\n\nSELECT DepartmentId, Name, Salary,\n  DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC) AS rnk\nFROM Employee;",
-                  "output": ""
+                  "output": "10,Alice,10000,1\n20,Bob,20000,1\n30,Charlie,30000,1\n40,Diana,40000,1"
                 }
               ]
             }
@@ -11727,7 +11721,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE CUSTOMERS (id INTEGER, name TEXT);\nCREATE TABLE ORDERS (id INTEGER, customer_id INTEGER, amount INTEGER);\nINSERT INTO CUSTOMERS VALUES (1, 'Alice'),(2, 'Bob'),(3, 'Charlie');\nINSERT INTO ORDERS VALUES (101, 1, 500), (102, 3, 300);\nINSERT INTO CUSTOMERS VALUES (4, 'Dave'),(5, 'Eve');\nINSERT INTO ORDERS VALUES (103, 5, 100);\n\nSELECT c.name FROM CUSTOMERS c LEFT JOIN ORDERS o ON c.id = o.customer_id WHERE o.id IS NULL ORDER BY c.name ASC;",
-                  "output": ""
+                  "output": "Bob\nDave"
                 }
               ]
             },
@@ -11767,7 +11761,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, dept_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',10,4000),(2,'B',10,4500),(3,'C',20,8000);\nINSERT INTO EMPLOYEES VALUES (1,'A',30,9000),(2,'B',30,9000),(3,'C',40,2000),(4,'D',40,3000);\n\nSELECT dept_id, AVG(salary) as avg_sal FROM EMPLOYEES GROUP BY dept_id HAVING AVG(salary) >= 5000 ORDER BY avg_sal DESC;",
-                  "output": ""
+                  "output": "30,9000.0\n20,8000.0"
                 }
               ]
             },
@@ -11810,7 +11804,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Sales (product_id INTEGER, sale_date TEXT, amount INTEGER);\nINSERT INTO Sales VALUES (10, '2024-01-05', 1000);\nINSERT INTO Sales VALUES (10, '2024-02-10', 2000);\nINSERT INTO Sales VALUES (10, '2024-03-15', 3000);\nINSERT INTO Sales VALUES (20, '2024-01-20', 500);\nINSERT INTO Sales VALUES (20, '2024-02-25', 600);\n\nSELECT product_id,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 1 THEN amount ELSE 0 END) AS Jan,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 2 THEN amount ELSE 0 END) AS Feb,\n  SUM(CASE WHEN CAST(strftime('%m', sale_date) AS INTEGER) = 3 THEN amount ELSE 0 END) AS Mar\nFROM Sales\nGROUP BY product_id\nORDER BY product_id ASC;",
-                  "output": ""
+                  "output": "10,1000,2000,3000\n20,500,600,0"
                 }
               ]
             }
@@ -11862,7 +11856,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employees (avg_sal TEXT, co_avg TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO Employees VALUES ('sample1', 'sample1', 10, 10000);\nINSERT INTO Employees VALUES ('sample2', 'sample2', 20, 20000);\nINSERT INTO Employees VALUES ('sample3', 'sample3', 30, 30000);\nINSERT INTO Employees VALUES ('sample4', 'sample4', 40, 40000);\n\nWITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM Employees\n  GROUP BY department_id\n),\ncompany_avg AS (SELECT AVG(salary) AS co_avg FROM Employees)\nSELECT department_id, avg_sal\nFROM dept_avg, company_avg\nWHERE avg_sal > co_avg;",
-                  "output": ""
+                  "output": "30,30000.0\n40,40000.0"
                 }
               ]
             },
@@ -11911,7 +11905,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE DEPARTMENTS (id INTEGER, name TEXT);\nCREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER);\nINSERT INTO DEPARTMENTS VALUES (10,'HR'),(20,'Sales');\nINSERT INTO EMPLOYEES VALUES (1,'Alice',10);\nINSERT INTO DEPARTMENTS VALUES (30,'IT'),(40,'Dev');\nINSERT INTO EMPLOYEES VALUES (2,'Bob',30),(3,'Charlie',NULL);\n\nSELECT d.name, COUNT(e.id) FROM DEPARTMENTS d LEFT JOIN EMPLOYEES e ON d.id = e.department_id GROUP BY d.id, d.name ORDER BY d.name ASC;",
-                  "output": ""
+                  "output": "Dev,0\nHR,1\nIT,1\nSales,0"
                 }
               ]
             },
@@ -11964,7 +11958,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE USERS (id INTEGER, name TEXT, active_days INTEGER);\nCREATE TABLE ORDERS (id INTEGER, user_id INTEGER, amount INTEGER);\nINSERT INTO USERS VALUES (1,'Alice',40),(2,'Bob',15);\nINSERT INTO ORDERS VALUES (101,1,500),(102,1,200),(103,2,800);\nINSERT INTO USERS VALUES (3,'Charlie',30),(4,'Dave',5);\nINSERT INTO ORDERS VALUES (104,3,100),(105,4,200);\n\nSELECT u.name, SUM(o.amount) FROM USERS u INNER JOIN ORDERS o ON u.id = o.user_id WHERE u.active_days >= 30 GROUP BY u.name ORDER BY u.name ASC;",
-                  "output": ""
+                  "output": "Alice,700\nCharlie,100"
                 }
               ]
             }
@@ -12002,7 +11996,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',5000),(2,'B',4000),(3,'C',7000);\nINSERT INTO EMPLOYEES VALUES (1,'D',10000),(2,'E',2000),(3,'F',2000);\n\nSELECT name, salary FROM EMPLOYEES WHERE salary > (SELECT AVG(salary) FROM EMPLOYEES) ORDER BY salary DESC, name ASC;",
-                  "output": ""
+                  "output": "D,10000\nC,7000"
                 }
               ]
             },
@@ -12047,7 +12041,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE ITEMS (id INTEGER, name TEXT);\nCREATE TABLE PRICES (item_id INTEGER, price INTEGER);\nINSERT INTO ITEMS VALUES (1,'Pen'),(2,'Pencil');\nINSERT INTO PRICES VALUES (1,5);\nINSERT INTO ITEMS VALUES (3,'Eraser'),(4,'Ruler'),(5,'Marker');\nINSERT INTO PRICES VALUES (3,10),(5,15);\n\nSELECT i.name, COALESCE(p.price, 0) as exact_price FROM ITEMS i LEFT JOIN PRICES p ON i.id = p.item_id ORDER BY exact_price DESC, i.name ASC;",
-                  "output": ""
+                  "output": "Marker,15\nEraser,10\nPen,5\nPencil,0\nRuler,0"
                 }
               ]
             },
@@ -12098,7 +12092,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employee (id INTEGER, employee TEXT, manager INTEGER, manager_id INTEGER, name TEXT);\nINSERT INTO Employee VALUES (10, 'sample1', 10, 10, 'Alice');\nINSERT INTO Employee VALUES (20, 'sample2', 20, 20, 'Bob');\nINSERT INTO Employee VALUES (30, 'sample3', 30, 30, 'Charlie');\nINSERT INTO Employee VALUES (40, 'sample4', 40, 40, 'Diana');\n\nSELECT e.name AS employee, m.name AS manager\nFROM Employee e\nLEFT JOIN Employee m ON e.manager_id = m.id\nORDER BY e.name;",
-                  "output": ""
+                  "output": "Alice,Alice\nBob,Bob\nCharlie,Charlie\nDiana,Diana"
                 }
               ]
             },
@@ -12137,7 +12131,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE MonthlyRevenue (month INTEGER PRIMARY KEY, revenue INTEGER);\nINSERT INTO MonthlyRevenue VALUES (1, 10000);\nINSERT INTO MonthlyRevenue VALUES (2, 12000);\nINSERT INTO MonthlyRevenue VALUES (3, 9000);\nINSERT INTO MonthlyRevenue VALUES (4, 15000);\n\nSELECT month, revenue,\n  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,\n  ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY month)) / NULLIF(LAG(revenue) OVER (ORDER BY month), 0), 2) AS growth_pct\nFROM MonthlyRevenue ORDER BY month ASC;",
-                  "output": ""
+                  "output": "1,10000,None,None\n2,12000,10000,20.0\n3,9000,12000,-25.0\n4,15000,9000,66.67"
                 }
               ]
             }
@@ -12192,7 +12186,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE CUSTOMERS (id INTEGER, name TEXT, country TEXT);\nCREATE TABLE ORDERS (id INTEGER, customer_id INTEGER, amount INTEGER);\nINSERT INTO CUSTOMERS VALUES (1,'A','USA'),(2,'B','UK');\nINSERT INTO ORDERS VALUES (101,1,100),(102,2,50);\nINSERT INTO CUSTOMERS VALUES (3,'C','CAN'),(4,'D','CAN'),(5,'E','FRA');\nINSERT INTO ORDERS VALUES (103,4,200),(104,3,10);\n\nSELECT name FROM CUSTOMERS WHERE id IN (SELECT customer_id FROM ORDERS WHERE amount > 80) ORDER BY name ASC;",
-                  "output": ""
+                  "output": "A\nD"
                 }
               ]
             },
@@ -12232,7 +12226,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER, manager_id INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'Boss',10000,NULL),(2,'Underling',11000,1),(3,'Normal',5000,1);\nINSERT INTO EMPLOYEES VALUES (4,'Manager',5000,NULL),(5,'Worker1',6000,4),(6,'Worker2',4000,4);\n\nSELECT e1.name FROM EMPLOYEES e1 INNER JOIN EMPLOYEES e2 ON e1.manager_id = e2.id WHERE e1.salary > e2.salary ORDER BY e1.name ASC;",
-                  "output": ""
+                  "output": "Underling\nWorker1"
                 }
               ]
             },
@@ -12275,7 +12269,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employee (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO Employee VALUES (1, 'CEO', NULL);\nINSERT INTO Employee VALUES (2, 'VP', 1);\nINSERT INTO Employee VALUES (3, 'Mgr', 2);\nINSERT INTO Employee VALUES (4, 'IC', 3);\n\nWITH RECURSIVE org AS (\n  SELECT id, name, manager_id, 0 AS depth FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.id, e.name, e.manager_id, o.depth + 1\n  FROM Employee e JOIN org o ON e.manager_id = o.id\n)\nSELECT name, depth FROM org ORDER BY depth ASC, name ASC;",
-                  "output": ""
+                  "output": "CEO,0\nVP,1\nMgr,2\nIC,3"
                 }
               ]
             }
@@ -12311,7 +12305,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SCORES (student_id INTEGER, score INTEGER);\nINSERT INTO SCORES VALUES (1,95),(2,75),(3,55);\nINSERT INTO SCORES VALUES (1,40),(2,80),(3,85),(4,90);\n\nSELECT CASE WHEN score >= 90 THEN 'A' WHEN score >= 70 THEN 'B' ELSE 'C' END as grade, COUNT(*) FROM SCORES GROUP BY grade ORDER BY grade ASC;",
-                  "output": ""
+                  "output": "A,2\nB,3\nC,2"
                 }
               ]
             },
@@ -12350,7 +12344,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Sales (sale_date TEXT, amount INTEGER);\nINSERT INTO Sales VALUES ('2024-01-01', 100);\nINSERT INTO Sales VALUES ('2024-01-01', 50);\nINSERT INTO Sales VALUES ('2024-01-02', 200);\n\n-- SQLite rollup snapshot (no MATERIALIZED VIEW)\nSELECT sale_date, SUM(amount) AS total FROM Sales GROUP BY sale_date ORDER BY sale_date ASC;",
-                  "output": ""
+                  "output": "2024-01-01,150\n2024-01-02,200"
                 }
               ]
             },
@@ -12386,7 +12380,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE INVENTORY (id INTEGER, product TEXT, quantity INTEGER);\nINSERT INTO INVENTORY VALUES (1,'Apple',10),(2,'Banana',-5),(3,'Orange',0);\nINSERT INTO INVENTORY VALUES (1,'Desk',-1),(2,'Chair',20),(3,'Lamp',-10);\n\nSELECT product, CASE WHEN quantity < 0 THEN 0 ELSE quantity END as adjusted_qty FROM INVENTORY ORDER BY product ASC;",
-                  "output": ""
+                  "output": "Apple,10\nBanana,0\nChair,20\nDesk,0\nLamp,0\nOrange,0"
                 }
               ]
             }
@@ -12424,7 +12418,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SALES (id INTEGER, department_id INTEGER, amount INTEGER);\nINSERT INTO SALES VALUES (1,10,500),(2,10,2000),(3,20,300),(4,20,400);\nINSERT INTO SALES VALUES (1,30,5000),(2,30,100),(3,40,1000);\n\nSELECT s.department_id, s.total FROM (SELECT department_id, SUM(amount) as total FROM SALES GROUP BY department_id) s WHERE s.total > 1000 ORDER BY s.department_id ASC;",
-                  "output": ""
+                  "output": "10,2500\n30,5100"
                 }
               ]
             },
@@ -12460,7 +12454,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE PURCHASES (id INTEGER, user_id INTEGER, item_id INTEGER);\nINSERT INTO PURCHASES VALUES (1,101,50),(2,101,50),(3,102,60),(4,103,70),(5,103,70);\nINSERT INTO PURCHASES VALUES (1,101,10),(2,102,20),(3,103,30),(4,101,10);\n\nSELECT item_id FROM PURCHASES GROUP BY item_id HAVING COUNT(*) = 1 ORDER BY item_id ASC;",
-                  "output": ""
+                  "output": "20\n30\n60"
                 }
               ]
             },
@@ -12512,7 +12506,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Employee (department_id INTEGER, name TEXT, quartile TEXT, salary INTEGER, second_highest TEXT);\nINSERT INTO Employee VALUES (10, 'Alice', 'sample1', 10000, 'sample1');\nINSERT INTO Employee VALUES (20, 'Bob', 'sample2', 20000, 'sample2');\nINSERT INTO Employee VALUES (30, 'Charlie', 'sample3', 30000, 'sample3');\nINSERT INTO Employee VALUES (40, 'Diana', 'sample4', 40000, 'sample4');\n\nSELECT name, department_id, salary,\n  NTILE(4) OVER (ORDER BY salary) AS quartile,\n  NTH_VALUE(salary, 2) OVER (\n    PARTITION BY department_id\n    ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS second_highest\nFROM Employee;",
-                  "output": ""
+                  "output": "Alice,10,10000,1,None\nBob,20,20000,2,None\nCharlie,30,30000,3,None\nDiana,40,40000,4,None"
                 }
               ]
             },
@@ -12565,7 +12559,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Project (employee_id INTEGER, project_id INTEGER);\nINSERT INTO Project VALUES (10, 10);\nINSERT INTO Project VALUES (20, 20);\nINSERT INTO Project VALUES (30, 30);\nINSERT INTO Project VALUES (40, 40);\n\nCREATE TABLE Employee (employee_id INTEGER, experience_years INTEGER);\nINSERT INTO Employee VALUES (10, 2020);\nINSERT INTO Employee VALUES (20, 2021);\nINSERT INTO Employee VALUES (30, 2022);\nINSERT INTO Employee VALUES (40, 2023);\n\nSELECT p.project_id, p.employee_id\nFROM Project p\nJOIN Employee e ON p.employee_id=e.employee_id\nWHERE (p.project_id, e.experience_years) IN (\n  SELECT p2.project_id, MAX(e2.experience_years)\n  FROM Project p2 JOIN Employee e2 ON p2.employee_id=e2.employee_id\n  GROUP BY p2.project_id\n);",
-                  "output": ""
+                  "output": "10,10\n20,20\n30,30\n40,40"
                 }
               ]
             }
@@ -12606,7 +12600,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Activity (player_id INTEGER, event_date TEXT);\nINSERT INTO Activity VALUES (1, '2023-08-01');\nINSERT INTO Activity VALUES (1, '2023-08-02');\nINSERT INTO Activity VALUES (2, '2023-08-01');\nINSERT INTO Activity VALUES (3, '2023-08-03');\n\nSELECT a1.install_dt,\n  COUNT(DISTINCT a1.player_id) AS installs,\n  ROUND(CAST(COUNT(DISTINCT a2.player_id) AS REAL) / NULLIF(COUNT(DISTINCT a1.player_id), 0), 2) AS Day1_retention\nFROM (\n  SELECT player_id, MIN(event_date) AS install_dt FROM Activity GROUP BY player_id\n) a1\nLEFT JOIN Activity a2\n  ON a1.player_id = a2.player_id\n AND julianday(a2.event_date) - julianday(a1.install_dt) = 1\nGROUP BY a1.install_dt\nORDER BY a1.install_dt ASC;",
-                  "output": ""
+                  "output": "2023-08-01,2,0.5\n2023-08-03,1,0.0"
                 }
               ]
             },
@@ -12642,7 +12636,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EXAMS (id INTEGER, student_id INTEGER, passed INTEGER);\nINSERT INTO EXAMS VALUES (1,101,1),(2,101,0),(3,102,1),(4,103,0);\nINSERT INTO EXAMS VALUES (1,104,1),(2,104,1),(3,105,0),(4,105,0),(5,106,1);\n\nSELECT student_id, ROUND(CAST(SUM(passed) AS FLOAT) / COUNT(*) * 100, 2) as pass_rate FROM EXAMS GROUP BY student_id ORDER BY pass_rate DESC, student_id ASC;",
-                  "output": ""
+                  "output": "102,100.0\n104,100.0\n106,100.0\n101,50.0\n103,0.0\n105,0.0"
                 }
               ]
             },
@@ -12682,7 +12676,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE TRANSACTIONS (id INTEGER, account_id INTEGER, type TEXT, amount INTEGER);\nINSERT INTO TRANSACTIONS VALUES (1,101,'CREDIT',500),(2,101,'DEBIT',100),(3,102,'CREDIT',200),(4,102,'DEBIT',300);\nINSERT INTO TRANSACTIONS VALUES (1,103,'CREDIT',1000),(2,104,'DEBIT',500),(3,104,'CREDIT',100);\n\nSELECT account_id, SUM(CASE WHEN type='CREDIT' THEN amount ELSE 0 END) - SUM(CASE WHEN type='DEBIT' THEN amount ELSE 0 END) as balance FROM TRANSACTIONS GROUP BY account_id HAVING balance > 0 ORDER BY balance DESC, account_id ASC;",
-                  "output": ""
+                  "output": "103,1000\n101,400"
                 }
               ]
             }
@@ -12729,7 +12723,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE orders (id INTEGER PRIMARY KEY, status TEXT, created_at TEXT);\nINSERT INTO orders VALUES (1,'pending','2024-01-01');\nINSERT INTO orders VALUES (2,'pending','2024-01-05');\nINSERT INTO orders VALUES (3,'done','2024-02-01');\n\nCREATE INDEX idx_orders_status_created ON orders(status, created_at DESC);\nSELECT COUNT(*) FROM orders WHERE status = 'pending' AND created_at >= '2024-01-01';",
-                  "output": ""
+                  "output": "2"
                 }
               ]
             },
@@ -12765,7 +12759,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',5000),(2,'B',8000),(3,'C',8000),(4,'D',6000);\nINSERT INTO EMPLOYEES VALUES (1,'X',10000),(2,'Y',9000),(3,'Z',9000),(4,'W',10000);\n\nSELECT MAX(salary) FROM EMPLOYEES WHERE salary < (SELECT MAX(salary) FROM EMPLOYEES);",
-                  "output": ""
+                  "output": "9000"
                 }
               ]
             },
@@ -12797,7 +12791,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SCORES (id INTEGER, score INTEGER);\nINSERT INTO SCORES VALUES (1,10),(2,10),(3,20),(4,30);\nINSERT INTO SCORES VALUES (1,50),(2,60),(3,50),(4,70);\n\nSELECT MIN(score) FROM SCORES WHERE score > (SELECT MIN(score) FROM SCORES);",
-                  "output": ""
+                  "output": "20"
                 }
               ]
             }
@@ -12835,7 +12829,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE PROJECTS (id INTEGER, department_id INTEGER, cost INTEGER);\nINSERT INTO PROJECTS VALUES (1,10,1000),(2,10,500),(3,20,300),(4,20,300);\nINSERT INTO PROJECTS VALUES (1,30,8000),(2,30,8000),(3,40,9000),(4,40,10000);\n\nSELECT p1.department_id, p1.id, p1.cost FROM PROJECTS p1 WHERE p1.cost = (SELECT MIN(p2.cost) FROM PROJECTS p2 WHERE p1.department_id = p2.department_id) ORDER BY p1.department_id ASC, p1.id ASC;",
-                  "output": ""
+                  "output": "10,2,500\n20,3,300\n20,4,300\n30,1,8000\n30,2,8000\n40,3,9000"
                 }
               ]
             },
@@ -12878,7 +12872,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE events (id INTEGER PRIMARY KEY, event_month TEXT, payload TEXT);\nINSERT INTO events VALUES (1,'2024-01','a');\nINSERT INTO events VALUES (2,'2024-01','b');\nINSERT INTO events VALUES (3,'2024-02','c');\n\n-- SQLite: logical monthly slice (physical RANGE partitions are unsupported)\nSELECT COUNT(*) AS cnt_jan FROM events WHERE event_month = '2024-01';",
-                  "output": ""
+                  "output": "2"
                 }
               ]
             },
@@ -12918,7 +12912,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE EMPLOYEES (id INTEGER, name TEXT, department_id INTEGER, salary INTEGER);\nINSERT INTO EMPLOYEES VALUES (1,'A',10,5000),(2,'B',10,7000),(3,'C',10,7000),(4,'D',20,10000);\nINSERT INTO EMPLOYEES VALUES (1,'X',30,2000),(2,'Y',30,5000),(3,'Z',40,8000),(4,'W',40,1000);\n\nSELECT e1.department_id, e1.name, e1.salary FROM EMPLOYEES e1 WHERE e1.salary = (SELECT MAX(e2.salary) FROM EMPLOYEES e2 WHERE e1.department_id = e2.department_id) ORDER BY e1.department_id ASC, e1.name ASC;",
-                  "output": ""
+                  "output": "10,B,7000\n10,C,7000\n20,D,10000\n30,Y,5000\n40,Z,8000"
                 }
               ]
             }
@@ -12956,7 +12950,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE SALES (id INTEGER, seller_id INTEGER, amount INTEGER);\nINSERT INTO SALES VALUES (1,101,500),(2,101,600),(3,102,100),(4,102,200),(5,103,1000);\nINSERT INTO SALES VALUES (1,104,800),(2,105,900),(3,106,100),(4,106,50);\n\nSELECT s.seller_id FROM (SELECT seller_id, SUM(amount) as t FROM SALES GROUP BY seller_id) s WHERE s.t > (SELECT AVG(t) FROM (SELECT SUM(amount) as t FROM SALES GROUP BY seller_id)) ORDER BY s.seller_id ASC;",
-                  "output": ""
+                  "output": "101\n103\n104\n105"
                 }
               ]
             },
@@ -13008,7 +13002,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Tasks (task_id INTEGER PRIMARY KEY, subtasks_count INTEGER);\nINSERT INTO Tasks VALUES (1, 3);\nINSERT INTO Tasks VALUES (2, 2);\nCREATE TABLE Executed (task_id INTEGER, subtask_id INTEGER);\nINSERT INTO Executed VALUES (1, 1);\nINSERT INTO Executed VALUES (2, 1);\n\nWITH RECURSIVE sub AS (\n  SELECT task_id, subtasks_count AS sub_id FROM Tasks\n  UNION ALL\n  SELECT task_id, sub_id - 1 FROM sub WHERE sub_id > 1\n)\nSELECT s.task_id, s.sub_id AS subtask_id\nFROM sub s\nLEFT JOIN Executed e ON s.task_id = e.task_id AND s.sub_id = e.subtask_id\nWHERE e.subtask_id IS NULL\nORDER BY s.task_id ASC, subtask_id ASC;",
-                  "output": ""
+                  "output": "1,2\n1,3\n2,2"
                 }
               ]
             },
@@ -13061,7 +13055,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE Drivers (driver_id INTEGER PRIMARY KEY, join_date TEXT);\nCREATE TABLE Rides (driver_id INTEGER, requested_at TEXT);\nINSERT INTO Drivers VALUES (1, '2020-01-05');\nINSERT INTO Drivers VALUES (2, '2020-05-01');\nINSERT INTO Rides VALUES (1, '2020-06-10');\nINSERT INTO Rides VALUES (1, '2020-06-15');\n\nWITH months(month) AS (SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12),\nactive AS (\n  SELECT driver_id,\n         CAST(strftime('%m', join_date) AS INTEGER) AS join_month,\n         CAST(strftime('%Y', join_date) AS INTEGER) AS join_year\n  FROM Drivers WHERE strftime('%Y', join_date) = '2020'\n)\nSELECT m.month,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN r.driver_id IS NOT NULL THEN a.driver_id END) / NULLIF(COUNT(DISTINCT a.driver_id), 0), 2) AS working_percentage\nFROM months m\nLEFT JOIN active a ON a.join_month <= m.month AND a.join_year = 2020\nLEFT JOIN Rides r ON r.driver_id = a.driver_id AND CAST(strftime('%m', r.requested_at) AS INTEGER) = m.month\nAND strftime('%Y', r.requested_at) = '2020'\nGROUP BY m.month\nORDER BY m.month ASC;",
-                  "output": ""
+                  "output": "1,0.0\n2,0.0\n3,0.0\n4,0.0\n5,0.0\n6,50.0\n7,0.0\n8,0.0\n9,0.0\n10,0.0\n11,0.0\n12,0.0"
                 }
               ]
             },
@@ -13097,7 +13091,7 @@
               "test_cases": [
                 {
                   "input": "CREATE TABLE LOGINS (id INTEGER, user_id INTEGER, login_date TEXT);\nINSERT INTO LOGINS VALUES (1,101,'2023-01-15'),(2,101,'2023-02-10'),(3,102,'2023-01-20');\nINSERT INTO LOGINS VALUES (1,103,'2023-03-05'),(2,103,'2023-04-10'),(3,104,'2023-03-15'),(4,103,'2023-04-12');\n\nSELECT COUNT(DISTINCT l2.user_id) * 1.0 / COUNT(DISTINCT l1.user_id) as retention_rate FROM LOGINS l1 LEFT JOIN LOGINS l2 ON l1.user_id = l2.user_id AND strftime('%m', l2.login_date) = strftime('%m', date(l1.login_date, '+1 month'));",
-                  "output": ""
+                  "output": "0.5"
                 }
               ]
             }
