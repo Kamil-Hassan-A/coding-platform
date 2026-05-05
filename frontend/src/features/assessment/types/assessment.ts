@@ -63,7 +63,15 @@ export interface SessionProblemPayload {
   time_limit_minutes: number;
   schema_tables?: SqlTableSchema[];
   question_type?: string | null;
-  type_data?: Record<string, any> | null;
+  
+  // MCQ specific
+  options?: string[] | null;
+
+  // Framework specific
+  starter_files?: Array<Record<string, any>> | null;
+  entry_point?: string | null;
+  test_harness?: string | null;
+  database_schema?: Array<Record<string, any>> | null;
 }
 
 export interface SessionStartResponse {

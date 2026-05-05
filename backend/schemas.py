@@ -42,7 +42,6 @@ class SkillResponse(BaseModel):
     skill_id: UUID
     name: str
     description: str | None
-    icon_url: str | None
     allowed_languages: list[LanguageResponse]
 
 
@@ -65,7 +64,6 @@ class CandidateBadgeResponse(BaseModel):
     badge_id: UUID
     name: str
     description: str | None
-    icon_url: str | None
     criteria: str
     awarded_at: datetime
 
@@ -101,7 +99,18 @@ class SessionProblemPayload(BaseModel):
     time_limit_minutes: int
     schema_tables: list[SqlTableSchema] = Field(default_factory=list)
     question_type: str | None = None
-    type_data: dict[str, Any] | None = None
+    
+    # MCQ
+    options: list[str] | None = None
+    # correct_option_index is intentionally excluded from the payload for the frontend
+    
+    # Framework
+    starter_files: list[dict[str, Any]] | None = None
+    entry_point: str | None = None
+    test_harness: str | None = None
+    
+    # SQL
+    database_schema: list[dict[str, Any]] | None = None
 
 
 class SessionStartResponse(BaseModel):

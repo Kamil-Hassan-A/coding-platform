@@ -197,6 +197,7 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         problem.hidden_test_cases or [],
     )
     is_sql_problem = str(problem.question_type or "").strip().lower() == "sql"
+    is_framework_problem = str(problem.question_type or "").strip().lower() == "framework"
     if not is_sql_problem:
         schema_tables = []
 
@@ -212,6 +213,14 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
 
     if is_sql_problem:
         template_code = SQL_STARTER_COMMENT
+    elif is_framework_problem:
+        template_code = None
+        if isinstance(problem.starter_files, list) and len(problem.starter_files) > 0:
+            first_file = problem.starter_files[0]
+            if isinstance(first_file, dict):
+                val = first_file.get("content")
+                if isinstance(val, str):
+                    template_code = val
     else:
         template_code = resolve_multifile_template_code(sanitized_starter) or resolve_template_code(
             sanitized_starter or problem.starter_code
@@ -246,13 +255,12 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         time_limit_minutes=problem.time_limit_minutes,
         schema_tables=schema_tables,
         question_type=problem.question_type,
-        type_data=(
-            {k: v for k, v in (problem.type_data or {}).items() if k != "correct_option"}
-            if problem.type_data else None
-        ),
-
+        options=problem.options,
+        starter_files=problem.starter_files,
+        entry_point=problem.entry_point,
+        test_harness=problem.test_harness,
+        database_schema=problem.database_schema,
     )
-
 
 def resolve_multifile_template_code(starter_code: Any) -> str | None:
     if not isinstance(starter_code, dict):
@@ -386,14 +394,20 @@ def execute_problem(
     use_hidden_cases: bool,
 ) -> dict[str, Any]:
     if problem.question_type == "mcq":
-        correct = (problem.type_data or {}).get("correct_option")
-        selected = (code or "").strip().upper()
-        passed = bool(correct and selected and selected == correct)
+        # MCQ evaluates against correct_option_index
+        selected_index_str = (code or "").strip()
+        passed = False
+        try:
+            if selected_index_str and problem.correct_option_index is not None:
+                passed = int(selected_index_str) == problem.correct_option_index
+        except ValueError:
+            pass
+
         score = 100 if passed else 0
         case = {
-            "stdin": selected,
-            "expected_output": correct or "",
-            "stdout": selected,
+            "stdin": selected_index_str,
+            "expected_output": str(problem.correct_option_index) if problem.correct_option_index is not None else "",
+            "stdout": selected_index_str,
             "stderr": None,
             "compile_output": None,
             "status": {
@@ -419,21 +433,23 @@ def execute_problem(
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
 
     starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
-    is_multifile = is_multifile_starter(starter_dict)
 
     is_sql = str(problem.question_type or "").strip().lower() == "sql"
+    is_framework = str(problem.question_type or "").strip().lower() == "framework"
     setup_snapshot = ""
-    if is_multifile:
+
+    if is_framework:
         request_id = uuid4().hex[:8]
-        print("=== EXECUTE_PROBLEM (MULTI-FILE) ===")
+        print("=== EXECUTE_PROBLEM (FRAMEWORK) ===")
         print("REQUEST ID:", request_id)
         print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
         print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco)
 
-        files = build_multifile_payload_files(starter_dict, code)
+        files = build_framework_payload_files(problem, code)
+        entry = str(problem.entry_point or "test_main.py").strip()
         execution_result = judge0_service.execute_multifile(
             files=files,
-            entry_point=str(starter_dict.get("entry_point") or "test_solution.py"),
+            entry_point=entry if entry else "test_main.py",
             problem_id=str(problem.id),
             request_id=request_id,
         )
@@ -635,30 +651,14 @@ def execute_problem(
     return out
 
 
-def is_multifile_starter(starter_code: dict[str, Any]) -> bool:
-    if not isinstance(starter_code, dict):
-        return False
-    files = starter_code.get("files")
-    entry_point = starter_code.get("entry_point")
-    return isinstance(files, list) and bool(files) and isinstance(entry_point, str)
-
-
-def build_multifile_payload_files(
-    starter_code: dict[str, Any],
+def build_framework_payload_files(
+    problem: Problem,
     updated_solution: str,
 ) -> list[dict[str, Any]]:
-    files = starter_code.get("files")
-    if not isinstance(files, list):
-        return []
-
-    readonly = starter_code.get("readonly_files")
-    readonly_set = {str(p) for p in readonly} if isinstance(readonly, list) else set()
-    entry_point = str(starter_code.get("entry_point") or "test_solution.py").strip() or "test_solution.py"
-
     payload_files: list[dict[str, Any]] = []
-    solution_replaced = False
 
-    for entry in files:
+    files = problem.starter_files if isinstance(problem.starter_files, list) else []
+    for i, entry in enumerate(files):
         if not isinstance(entry, dict):
             continue
         path = str(entry.get("path") or "").strip()
@@ -666,20 +666,22 @@ def build_multifile_payload_files(
         if not path:
             continue
 
-        # Only keep the single test file (entry_point) from readonly tests.
-        if path in readonly_set and path != entry_point and path.startswith("test_") and path.endswith(".py"):
-            continue
-
-        if path == "solution.py" and path not in readonly_set:
+        # We assume the user submitted code completely replaces the first file's content
+        if i == 0:
             payload_files.append({"path": path, "content": updated_solution})
-            solution_replaced = True
             continue
 
         if isinstance(content, str):
             payload_files.append({"path": path, "content": content})
 
-    if not solution_replaced and "solution.py" not in readonly_set:
-        payload_files.append({"path": "solution.py", "content": updated_solution})
+    # Always inject the test harness natively
+    harness = str(problem.test_harness or "").strip()
+    entry_point = str(problem.entry_point or "test_main.py").strip() or "test_main.py"
+    if harness:
+        payload_files.append({
+            "path": entry_point,
+            "content": harness
+        })
 
     return payload_files
 
@@ -769,7 +771,6 @@ def award_level_badge(
             name=badge_name,
             description=description,
             criteria=criteria,
-            icon_url=None,
         )
         db.add(badge)
         db.flush()

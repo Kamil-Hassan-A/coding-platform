@@ -5424,23 +5424,42 @@
         "Beginner": {
           "Easy": [
             {
-              "id": "python-with-fastapi-beg-easy-1",
-              "title": "Basic Python with FastAPI Task",
+              "id": "q_fastapi_01",
+              "title": "Welcome Greeting API",
               "skill": "Python with FastAPI",
               "difficulty": "Easy",
               "level": "Beginner",
               "question_type": "framework",
-              "tags": ["python-with-fastapi", "beginner", "easy"],
-              "description": "Complete the basic task for Python with FastAPI. Ensure your implementation satisfies the requirements.",
-              "solution": "Here is the solution for the task...",
+              "tags": ["fastapi", "get", "query"],
+              "description": "Create a FastAPI GET endpoint at `/greet` that accepts a query parameter `name` and returns `{\"message\": \"Welcome, {name}!\"}`. If `name` is not provided, it should default to `{\"message\": \"Welcome, Guest!\"}`.",
               "starter_files": [
                 {
-                  "path": "",
-                  "content": ""
+                  "path": "main.py",
+                  "content": "from fastapi import FastAPI\n\napp = FastAPI()\n\n# Implement /greet endpoint here\n"
                 }
               ],
-              "entry_point": "",
-              "test_harness": ""
+              "entry_point": "test_main.py",
+              "test_harness": "from fastapi.testclient import TestClient\nfrom main import app\n\nclient = TestClient(app)\n\ndef test_greet_with_name():\n    response = client.get('/greet?name=Alice')\n    assert response.status_code == 200\n    assert response.json() == {\"message\": \"Welcome, Alice!\"}\n\ndef test_greet_default():\n    response = client.get('/greet')\n    assert response.status_code == 200\n    assert response.json() == {\"message\": \"Welcome, Guest!\"}",
+              "solution": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/greet')\ndef greet(name: str = 'Guest'):\n    return {\"message\": f\"Welcome, {name}!\"}"
+            },
+            {
+              "id": "q_fastapi_02",
+              "title": "User Registration Payload",
+              "skill": "Python with FastAPI",
+              "difficulty": "Medium",
+              "level": "Intermediate_1",
+              "question_type": "framework",
+              "tags": ["fastapi", "post", "pydantic", "validation"],
+              "description": "Create a FastAPI POST endpoint at `/register` that accepts a JSON body containing `username` (string) and `age` (integer) using a Pydantic BaseModel. The endpoint should return `{\"status\": \"success\", \"user_id\": 1, \"username\": <username>}`. The Pydantic model will automatically return a 422 error if the data types are invalid.",
+              "starter_files": [
+                {
+                  "path": "main.py",
+                  "content": "from fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\n# Define Pydantic model and implement /register endpoint here\n"
+                }
+              ],
+              "entry_point": "test_main.py",
+              "test_harness": "from fastapi.testclient import TestClient\nfrom main import app\n\nclient = TestClient(app)\n\ndef test_register_valid_user():\n    response = client.post('/register', json={\"username\": \"john_doe\", \"age\": 25})\n    assert response.status_code == 200\n    assert response.json() == {\"status\": \"success\", \"user_id\": 1, \"username\": \"john_doe\"}\n\ndef test_register_invalid_payload():\n    # Age is expected to be an integer, providing a non-numeric string should fail\n    response = client.post('/register', json={\"username\": \"john_doe\", \"age\": \"twenty_five\"})\n    assert response.status_code == 422\n\ndef test_register_missing_fields():\n    response = client.post('/register', json={\"username\": \"john_doe\"})\n    assert response.status_code == 422",
+              "solution": "from fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass UserRequest(BaseModel):\n    username: str\n    age: int\n\n@app.post('/register')\ndef register_user(user: UserRequest):\n    return {\"status\": \"success\", \"user_id\": 1, \"username\": user.username}"
             }
           ],
           "Medium": [],
