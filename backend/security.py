@@ -2,12 +2,10 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 ALGORITHM = "HS256"
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def get_jwt_secret() -> str:
     return os.getenv("JWT_SECRET_KEY", "dev-only-insecure-secret")
@@ -21,11 +19,16 @@ def get_jwt_expire_hours() -> int:
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
+    pwd_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password=pwd_bytes, salt=salt)
+    string_password = hashed_password.decode("utf-8")
+    return string_password
 
 def verify_password(plain_password: str, password_hash: str) -> bool:
-    return pwd_context.verify(plain_password, password_hash)
+    password_byte_enc = plain_password.encode("utf-8")
+    password_hash = password_hash.encode("utf-8")
+    return bcrypt.checkpw(password=password_byte_enc, hashed_password=password_hash)
 
 
 def create_access_token(subject: str, extra_claims: dict[str, Any] | None = None) -> tuple[str, datetime]:
