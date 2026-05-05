@@ -33,7 +33,7 @@ from schemas import (
     TestCaseDetail,
     ViolationDetail,
 )
-from scripts.seed import DEFAULT_JSON_FILE, run_seed
+from scripts.seed_v2 import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 # Dynamically resolve templates directory relative to this file
