@@ -194,12 +194,18 @@ class Judge0Service:
                 "No program was sent to the code runner. Enter your solution in the editor, then run again."
             )
 
-        if setup_sql and setup_sql.strip():
+        if language_id == 82:
             # SQLite via Judge0 (language_id=82) ignores stdin: the entire
             # SQL script lives in source_code. We prepend the hidden setup
-            # so the candidate's query can `SELECT * FROM EMPLOYEES` etc.
-            # without ever seeing the CREATE TABLE / INSERT INTO rows.
-            final_code = f"{setup_sql.rstrip()}\n\n{user_code_stripped}"
+            # (or the test case input) so the candidate's query works.
+            setup = (setup_sql.rstrip() + "\n\n") if setup_sql and setup_sql.strip() else ""
+            if stdin and stdin.strip():
+                # In SQL dataset, test cases 'input' contains setup AND the reference query separated by '\n\n'.
+                # We must strip the last block (the query) so it doesn't execute along with the candidate's code.
+                blocks = stdin.strip().split("\n\n")
+                setup_from_stdin = "\n\n".join(blocks[:-1]) if len(blocks) > 1 else stdin.strip()
+                setup += setup_from_stdin + "\n\n"
+            final_code = f"{setup}{user_code_stripped}"
             stdin_to_send = ""
         else:
             final_code = user_code_stripped
