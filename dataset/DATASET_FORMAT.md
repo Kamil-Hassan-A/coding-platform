@@ -2,11 +2,11 @@
 
 This format is designed for your requirement:
 
-- Exactly 19 skills
+- Exactly 21 skills
 - Each skill has 5 levels
 - Each level has 3 difficulty buckets: Easy, Medium, Hard
 
-## Canonical Skills (19)
+## Canonical Skills (21)
 
 1. Agile
 2. HTML, CSS, JS
@@ -15,18 +15,20 @@ This format is designed for your requirement:
 5. TypeScript
 6. Next JS
 7. Angular
-8. Python with Flask
-9. Python with Django
-10. Python for Data Science
-11. Java
-12. Java Spring Boot
-13. .NET, C#
-14. .NET, VB.NET
-15. SQL
-16. MongoDB
-17. PostgreSQL
-18. Java Selenium
-19. Python Selenium
+8. Python
+9. Python with Flask
+10. Python with FastAPI
+11. Python with Django
+12. Python for Data Science
+13. Java
+14. Java Spring Boot
+15. .NET, C#
+16. .NET, VB.NET
+17. SQL
+18. MongoDB
+19. PostgreSQL
+20. Java Selenium
+21. Python Selenium
 
 ## Canonical Levels (5)
 
@@ -45,11 +47,11 @@ Use these exact keys:
 - `schema_version` (string)
 - `dataset_name` (string)
 - `generated_at_utc` (ISO string)
-- `skills` (array of 19 skill objects)
+- `skills` (array of 21 skill objects)
 
 ### Skill object
 
-- `skill` (string, one of the 19 canonical skills)
+- `skill` (string, one of the 21 canonical skills)
 - `allowed_languages` (array of language descriptors accepted for this skill)
   - Each item shape: `{ "id": number, "name": string, "monaco": string }`
 - `levels` (object with exactly 5 level keys)
@@ -74,6 +76,21 @@ Use these exact keys:
 - `hidden_test_cases` (array of `{ "input": string, "output": string }`, optional)
 - `content` (string)
 - `solution` (string)
+
+### Multi-file starter_code (optional)
+
+For framework-based tasks, `starter_code` can use a multi-file format instead of the simple key/value map:
+
+```json
+{
+  "files": [
+    { "path": "solution.py", "content": "..." },
+    { "path": "test_solution.py", "content": "..." }
+  ],
+  "entry_point": "test_solution.py",
+  "readonly_files": ["test_solution.py"]
+}
+```
 
 ## JSON Showcase
 

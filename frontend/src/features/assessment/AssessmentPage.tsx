@@ -8,6 +8,8 @@ import Editor from "./components/Editor";
 import CodePlayground from "./components/CodePlayground";
 import AgileMcqPanel from "./components/AgileMcqPanel";
 import TestCases from "./components/TestCases";
+import { reportViolation } from "./services/assessmentService";
+import { SQL_STARTER_COMMENT } from "./utils/sqlUi";
 import type {
   SessionSubmitResponse,
   SessionRunResponse,
@@ -174,8 +176,8 @@ function resolveProblemBoilerplate(
 ): string {
   if (!problem) return "";
 
-  if (isWebSandboxProblem(problem, skillName)) {
-    if (problem.starter_code) {
+  if (skillName === "HTML, CSS, JS") {
+    if (problem.starter_code && !("files" in problem.starter_code)) {
       return JSON.stringify({
         html: problem.starter_code.html || "",
         css: problem.starter_code.css || "",
@@ -189,11 +191,9 @@ function resolveProblemBoilerplate(
   }
 
   const requestedLanguage = (language || "").trim().toLowerCase();
-  const sqlLike =
-    isSqlLikeLanguage(requestedLanguage) ||
-    (Array.isArray(problem.schema_tables) && problem.schema_tables.length > 0);
+  const isSqlQuestion = (problem.question_type || "").trim().toLowerCase() === "sql";
 
-  if (sqlLike) {
+  if (isSqlQuestion) {
     // Hard-reset: every SQL problem starts with the same clean comment.
     // The dataset/backend may sometimes pre-fill the answer in
     // starter_code.sql (e.g. recursive CTE problems where the starter IS
@@ -208,6 +208,39 @@ function resolveProblemBoilerplate(
 
   const starter = problem.starter_code;
   if (starter && typeof starter === "object") {
+    const files = Array.isArray((starter as { files?: unknown }).files)
+      ? (starter as { files: Array<{ path?: string; content?: unknown }> }).files
+      : [];
+    const readonlyFiles = Array.isArray((starter as { readonly_files?: unknown }).readonly_files)
+      ? new Set((starter as { readonly_files: string[] }).readonly_files)
+      : new Set<string>();
+
+    const readFileContent = (targetPath: string): string | null => {
+      for (const entry of files) {
+        if (!entry || typeof entry !== "object") continue;
+        const path = String(entry.path ?? "").trim();
+        if (path === targetPath && typeof entry.content === "string") {
+          return entry.content;
+        }
+      }
+      return null;
+    };
+
+    const preferredFile = readFileContent("solution.py");
+    if (preferredFile) return preferredFile;
+
+    for (const entry of files) {
+      if (!entry || typeof entry !== "object") continue;
+      const path = String(entry.path ?? "").trim();
+      if (!path || readonlyFiles.has(path)) continue;
+      if (typeof entry.content === "string") return entry.content;
+    }
+
+    for (const entry of files) {
+      if (!entry || typeof entry !== "object") continue;
+      if (typeof entry.content === "string") return entry.content;
+    }
+
     const entries = Object.entries(starter).filter(
       ([, value]) => typeof value === "string" && value.trim().length > 0,
     ) as Array<[string, string]>;
@@ -220,8 +253,8 @@ function resolveProblemBoilerplate(
       if (matched) return matched[1];
     }
 
-    const preferred = entries.find(([key]) => key.trim().toLowerCase() === "default");
-    if (preferred) return preferred[1];
+    const defaultEntry = entries.find(([key]) => key.trim().toLowerCase() === "default");
+    if (defaultEntry) return defaultEntry[1];
 
     return entries[0][1];
   }
@@ -803,6 +836,26 @@ export default function AssessmentPage() {
                   })}
                 </div>
               </div>
+            </div>
+          )}
+
+          <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
+            <ProblemPanel problem={displayedProblem} />
+          </div>
+        </div>
+
+        {/* Right Panel - 60% */}
+        <div className='flex w-3/5 flex-col bg-[#1e1e1e]'>
+          <div className='flex-1 overflow-hidden'>
+            {skillName === "HTML, CSS, JS" ? (
+              <CodePlayground code={code} onChange={handleCodeChange} onPaste={() => sendViolation("paste")} />
+            ) : (
+              <Editor
+                code={code}
+                onChange={handleCodeChange}
+                language={activeLanguage?.monaco || "plaintext"}
+                onPaste={() => sendViolation("paste")}
+              />
             )}
 
             <div className='flex flex-1 flex-col bg-[#1e1e1e]'>

@@ -13,9 +13,8 @@ SkillPulse supports three question types:
 |---|---|---|---|
 | `coding` | Candidate writes a function in a programming language | Judge0 | Python, Java, .NET |
 | `mcq` | Candidate picks one of four options | None | Agile |
-| `coding` (language: sql) | Candidate writes a SQL query | Judge0 (SQLite) | SQL, PostgreSQL |
+| `sql` | Candidate writes a SQL query | Judge0 (SQLite) | SQL, PostgreSQL |
 
-> SQL questions use `question_type = "coding"` with `language = "sql"`. They are distinguished at runtime by their Monaco language key, not by a separate question_type value.
 
 ---
 
@@ -33,7 +32,7 @@ SkillPulse supports three question types:
 | `time_limit_minutes` | Integer | No | Default 45 |
 | `tags` | JSON | No | Array of lowercase strings |
 | `difficulty_label` | String(50) | Yes | `"Easy"`, `"Medium"`, `"Hard"` |
-| `question_type` | String(50) | Yes | `"coding"` or `"mcq"` — null treated as coding |
+| `question_type` | String(50) | Yes | `"coding"`, `"mcq"`, or `"sql"` — null treated as coding |
 | `type_data` | JSON | Yes | Type-specific data — MCQ only, null for coding/SQL |
 | `source_name` | String(100) | Yes | Source platform e.g. `"LeetCode"` |
 | `source_url` | String(1000) | Yes | Link to original problem |
@@ -149,7 +148,7 @@ SQL questions use a special `starter_code` dict with reserved keys:
   "tags": ["sql", "select"],
   "sample_test_cases": [],
   "time_limit_minutes": 45,
-  "question_type": "coding",
+  "question_type": "sql",
   "type_data": null,
   "schema_tables": [
     {
@@ -269,6 +268,7 @@ SQL questions live in `dataset/sql_problems.json`. This is a flat array (not ski
   {
     "title": "American Cities by Population",
     "description": "Query all columns for all American cities with populations larger than 100000. The CountryCode for America is USA. Order rows by ID ascending.",
+    "question_type": "sql",
     "level": "BEGINNER",
     "tags": [],
     "difficulty_label": "Easy",
@@ -310,7 +310,7 @@ SQL questions live in `dataset/sql_problems.json`. This is a flat array (not ski
 - `slug` must be lowercase and hyphen-separated — include it for future-proofing
 - `difficulty` must be exactly: `"Easy"`, `"Medium"`, or `"Hard"`
 - `tags` must be an array of lowercase strings
-- `question_type` must be exactly `"coding"` or `"mcq"` for coding/MCQ questions — omit for SQL (defaults to `"coding"`)
+- `question_type` must be exactly `"coding"`, `"mcq"`, or `"sql"`
 
 > `id`, `slug`, `tags`, and `source` are not currently persisted by the seeder. Include them anyway — they will be stored once the seeder is updated.
 
@@ -338,13 +338,14 @@ SQL questions live in `dataset/sql_problems.json`. This is a flat array (not ski
 ### SQL Rules
 
 - SQL questions go in `dataset/sql_problems.json` — **not** in `problem_dataset.json`
+- `question_type` must be `"sql"`
 - `level` must be ALL CAPS with underscores: `"BEGINNER"`, `"INTERMEDIATE_1"` etc.
 - `starter_code` must have exactly these keys:
   - `"sql"` — the comment block the candidate sees (always reset to a clean comment by the platform)
   - `"__schema__"` — array of table objects with `table` and `columns` (shown in Schema panel)
   - `"__hidden_setup__"` — CREATE TABLE + INSERT statements run before the candidate's query (never shown to candidate)
 - `solution` must be a valid SQL query ending with a semicolon
-- Do **NOT** include `question_type`, `options`, or `correct_option`
+- Do **NOT** include `options` or `correct_option`
 - `sample_test_cases` and `hidden_test_cases` should be `[]` — SQL comparison is done against the reference solution output, not test case strings
 
 ---
@@ -382,6 +383,7 @@ SQL questions live in `dataset/sql_problems.json`. This is a flat array (not ski
 ### For `sql_problems.json` (SQL) — separate seeder
 
 - Flat array format — no skills/levels nesting
+- `question_type` is stored as `"sql"`
 - `level` values are ALL CAPS
 - `__hidden_setup__` is stored in `starter_code` and never sent to frontend
 - `__schema__` is converted to `schema_tables` in the API payload

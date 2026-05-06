@@ -8,9 +8,13 @@
     "setup:backend": "cd backend && python -m venv venv && venv\\Scripts\\pip install -r requirements.txt",
     "setup": "npm run setup:frontend && npm run setup:backend",
     "start:frontend": "cd frontend && npm run dev",
-    "start:backend": "cd backend && venv\\Scripts\\uvicorn main:app --reload",
+    "start:backend": "cd backend && venv\\Scripts\\activate && uvicorn main:app --reload",
     "start": "start cmd /k \"npm run start:backend\" && npm run start:frontend",
     "seed": "cd backend && venv\\Scripts\\python scripts\\seed.py",
-    "seed:new": "cd backend && venv\\Scripts\\python scripts\\seed_new.py"
+
+    "setup:backend:linux": "bash scripts/linux/setup-backend.sh",
+    "setup:linux": "npm run setup:frontend && npm run setup:backend:linux",
+    "start:backend:linux": "bash scripts/linux/start-backend.sh",
+    "start:linux": "concurrently \"npm run start:backend:linux\" \"npm run start:frontend\""
   }
 }

@@ -42,18 +42,36 @@ export interface SqlTableSchema {
   columns: SqlTableColumn[];
 }
 
+export interface StarterCodeFile {
+  path: string;
+  content: string;
+}
+
+export interface MultiFileStarterCode {
+  files: StarterCodeFile[];
+  entry_point: string;
+  readonly_files: string[];
+}
+
 export interface SessionProblemPayload {
   problem_id: string;
   title: string;
   description: string;
   templateCode?: string;
-  starter_code?: Record<string, any>;
-  tags?: string[];
+  starter_code?: Record<string, any> | MultiFileStarterCode;
   sample_test_cases: SampleTestCase[];
   time_limit_minutes: number;
   schema_tables?: SqlTableSchema[];
   question_type?: string | null;
-  type_data?: Record<string, any> | null;
+  
+  // MCQ specific
+  options?: string[] | null;
+
+  // Framework specific
+  starter_files?: Array<Record<string, any>> | null;
+  entry_point?: string | null;
+  test_harness?: string | null;
+  database_schema?: Array<Record<string, any>> | null;
 }
 
 export interface SessionStartResponse {

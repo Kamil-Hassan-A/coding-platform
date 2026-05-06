@@ -45,7 +45,6 @@ def list_skills(
             skill_id=skill.id, 
             name=skill.name, 
             description=skill.description, 
-            icon_url=skill.icon_url,
             allowed_languages=skill.allowed_languages
         )
         for skill in skills
@@ -147,7 +146,6 @@ def get_user_badges(
             badge_id=badge.id,
             name=badge.name,
             description=badge.description,
-            icon_url=badge.icon_url,
             criteria=badge.criteria,
             awarded_at=user_badge.awarded_at,
         )

@@ -54,13 +54,6 @@ class SubmissionStatus(str, Enum):
     AUTO_SUBMITTED = "auto_submitted"
 
 
-class AiFeedbackStatus(str, Enum):
-    PENDING = "pending"
-    GENERATING = "generating"
-    DONE = "done"
-    FAILED = "failed"
-
-
 class User(Base):
     __tablename__ = "users"
     __table_args__ = (
@@ -97,7 +90,6 @@ class Skill(Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
-    icon_url: Mapped[str | None] = mapped_column(String(500))
     allowed_languages: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
@@ -111,9 +103,6 @@ class Problem(Base):
     __tablename__ = "problems"
     __table_args__ = (
         Index("ix_problems_skill_level", "skill_id", "level"),
-        Index("ix_problems_external_task", "external_task_id"),
-        Index("ix_problems_source_dataset", "source_dataset"),
-        Index("ix_problems_source_name", "source_name"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -127,13 +116,21 @@ class Problem(Base):
     tags: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     starter_code: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     difficulty_label: Mapped[str | None] = mapped_column(String(50))
-    external_task_id: Mapped[str | None] = mapped_column(String(255))
-    source_name: Mapped[str | None] = mapped_column(String(100))
-    source_url: Mapped[str | None] = mapped_column(String(1000))
-    source_dataset: Mapped[str | None] = mapped_column(String(100))
     solution_text: Mapped[str | None] = mapped_column(Text)
     question_type: Mapped[str | None] = mapped_column(String(50), nullable=True, default=None)
-    type_data: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True, default=None)
+    
+    # MCQ Specific Fields
+    options: Mapped[list[Any] | None] = mapped_column(JSON)
+    correct_option_index: Mapped[int | None] = mapped_column(Integer)
+
+    # Framework Specific Fields
+    starter_files: Mapped[list[Any] | None] = mapped_column(JSON)
+    entry_point: Mapped[str | None] = mapped_column(String(255))
+    test_harness: Mapped[str | None] = mapped_column(Text)
+
+    # SQL Specific Fields
+    database_schema: Mapped[list[Any] | None] = mapped_column(JSON)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     skill: Mapped[Skill] = relationship(back_populates="problems")
@@ -209,11 +206,6 @@ class Submission(Base):
     time_taken_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     judge_result: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     ai_feedback: Mapped[str | None] = mapped_column(Text)
-    ai_feedback_status: Mapped[AiFeedbackStatus] = mapped_column(
-        SqlEnum(AiFeedbackStatus, native_enum=False),
-        nullable=False,
-        default=AiFeedbackStatus.PENDING,
-    )
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     session: Mapped[AssessmentSession] = relationship(back_populates="submission")
@@ -229,7 +221,6 @@ class Badge(Base):
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
     criteria: Mapped[str] = mapped_column(Text, nullable=False)
-    icon_url: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
     user_badges: Mapped[list["UserBadge"]] = relationship(back_populates="badge", cascade="all, delete-orphan")

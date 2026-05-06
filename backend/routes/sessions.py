@@ -479,9 +479,10 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         problem.sample_test_cases or [],
         problem.hidden_test_cases or [],
     )
-    is_sql_problem = bool(schema_tables) or (
-        isinstance(raw_starter, dict) and "sql" in raw_starter
-    )
+    is_sql_problem = str(problem.question_type or "").strip().lower() == "sql"
+    is_framework_problem = str(problem.question_type or "").strip().lower() == "framework"
+    if not is_sql_problem:
+        schema_tables = []
 
     sanitized_starter = sanitize_starter_code_for_payload(raw_starter)
     if is_sql_problem and isinstance(sanitized_starter, dict):
@@ -495,8 +496,18 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
 
     if is_sql_problem:
         template_code = SQL_STARTER_COMMENT
+    elif is_framework_problem:
+        template_code = None
+        if isinstance(problem.starter_files, list) and len(problem.starter_files) > 0:
+            first_file = problem.starter_files[0]
+            if isinstance(first_file, dict):
+                val = first_file.get("content")
+                if isinstance(val, str):
+                    template_code = val
     else:
-        template_code = resolve_template_code(sanitized_starter or problem.starter_code)
+        template_code = resolve_multifile_template_code(sanitized_starter) or resolve_template_code(
+            sanitized_starter or problem.starter_code
+        )
 
     # For SQL problems we INTENTIONALLY drop sample_test_cases entirely: the
     # legacy dataset entries here are descriptive prose / placeholder rows
@@ -527,12 +538,56 @@ def build_problem_payload(problem: Problem) -> SessionProblemPayload:
         time_limit_minutes=problem.time_limit_minutes,
         schema_tables=schema_tables,
         question_type=problem.question_type,
-        type_data=(
-            {k: v for k, v in (problem.type_data or {}).items() if k != "correct_option"}
-            if problem.type_data else None
-        ),
-
+        options=problem.options,
+        starter_files=problem.starter_files,
+        entry_point=problem.entry_point,
+        test_harness=problem.test_harness,
+        database_schema=problem.database_schema,
     )
+
+def resolve_multifile_template_code(starter_code: Any) -> str | None:
+    if not isinstance(starter_code, dict):
+        return None
+
+    files = starter_code.get("files")
+    if not isinstance(files, list):
+        return None
+
+    readonly = starter_code.get("readonly_files")
+    readonly_set = {str(p) for p in readonly} if isinstance(readonly, list) else set()
+
+    def read_file_content(target_path: str) -> str | None:
+        for entry in files:
+            if not isinstance(entry, dict):
+                continue
+            if str(entry.get("path") or "").strip() == target_path:
+                content = entry.get("content")
+                return content if isinstance(content, str) else None
+        return None
+
+    # Prefer solution.py when present, then any non-readonly file, then first file.
+    preferred = read_file_content("solution.py")
+    if preferred:
+        return preferred
+
+    for entry in files:
+        if not isinstance(entry, dict):
+            continue
+        path = str(entry.get("path") or "").strip()
+        if not path or path in readonly_set:
+            continue
+        content = entry.get("content")
+        if isinstance(content, str):
+            return content
+
+    for entry in files:
+        if not isinstance(entry, dict):
+            continue
+        content = entry.get("content")
+        if isinstance(content, str):
+            return content
+
+    return None
 
 
 def get_session_problem_set(db: Session, session_obj: AssessmentSession) -> list[Problem]:
@@ -669,13 +724,128 @@ def execute_problem(
     *,
     use_hidden_cases: bool,
 ) -> dict[str, Any]:
-    if is_mcq_problem(problem, skill):
-        selected_option = extract_mcq_selected_option(code)
-        return evaluate_mcq_submission(problem, selected_option)
+    if problem.question_type == "mcq":
+        # MCQ evaluates against correct_option_index
+        selected_index_str = (code or "").strip()
+        passed = False
+        try:
+            if selected_index_str and problem.correct_option_index is not None:
+                passed = int(selected_index_str) == problem.correct_option_index
+        except ValueError:
+            pass
+
+        score = 100 if passed else 0
+        case = {
+            "stdin": selected_index_str,
+            "expected_output": str(problem.correct_option_index) if problem.correct_option_index is not None else "",
+            "stdout": selected_index_str,
+            "stderr": None,
+            "compile_output": None,
+            "status": {
+                "id": 3 if passed else 4,
+                "description": "Accepted" if passed else "Wrong Answer",
+            },
+            "passed": passed,
+            "time": "0",
+            "memory": "0",
+        }
+        return {
+            "resolved_monaco": (language or "mcq").strip().lower() or "mcq",
+            "passed": passed,
+            "passed_tests": 1 if passed else 0,
+            "total_tests": 1,
+            "score": score,
+            "time_taken": 0,
+            "cases": [case],
+        }
 
     resolved_monaco, resolved_language_id = resolve_language_from_skill(language, skill.allowed_languages or [])
 
     test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
+
+    starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
+
+    is_sql = str(problem.question_type or "").strip().lower() == "sql"
+    is_framework = str(problem.question_type or "").strip().lower() == "framework"
+    setup_snapshot = ""
+
+    if is_framework:
+        request_id = uuid4().hex[:8]
+        print("=== EXECUTE_PROBLEM (FRAMEWORK) ===")
+        print("REQUEST ID:", request_id)
+        print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
+        print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco)
+
+        files = build_framework_payload_files(problem, code)
+        entry = str(problem.entry_point or "test_main.py").strip()
+        execution_result = judge0_service.execute_multifile(
+            files=files,
+            entry_point=entry if entry else "test_main.py",
+            problem_id=str(problem.id),
+            request_id=request_id,
+        )
+
+        cases: list[Any] = list(execution_result.get("cases") or [])
+        return {
+            "resolved_monaco": resolved_monaco,
+            "score": int(execution_result.get("score", 0)),
+            "passed_tests": int(execution_result.get("passed_tests", 0)),
+            "total_tests": int(execution_result.get("total_tests", 0)),
+            "time_taken": int(execution_result.get("time_taken", 0)),
+            "cases": cases,
+            "is_sql_execution": False,
+        }
+
+    if is_sql:
+        # STRICT: setup comes ONLY from this problem's own `__hidden_setup__`.
+        raw_setup = starter_dict.get("__hidden_setup__") or ""
+        if not isinstance(raw_setup, str):
+            raw_setup = ""
+        # Immutable snapshot: same string object passed to user run and reference run (str is immutable).
+        setup_snapshot = raw_setup.rstrip()
+
+    request_id = uuid4().hex[:8]
+    print("=== EXECUTE_PROBLEM ===")
+    print("REQUEST ID:", request_id)
+    print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
+    print("CODE LENGTH:", len(code or ""), "CODE PREVIEW:", _truncate_text(code, 400))
+    print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco, "LANG_ID:", resolved_language_id)
+    print("USE_HIDDEN_CASES:", use_hidden_cases, "TEST CASES:", len(test_inputs or []))
+    if is_sql:
+        # Cross-check: the schema panel the candidate just saw vs the setup
+        # we are about to execute. If they reference different tables we have
+        # a real cross-leak and should bail out rather than silently run.
+        schema_tables = starter_dict.get("__schema__") or []
+        schema_names = sorted(
+            {(t.get("table") or "").upper() for t in schema_tables if isinstance(t, dict) and t.get("table")}
+        )
+        setup_table_names = sorted(
+            {m.group(1).upper() for m in _CREATE_RE_LOG.finditer(setup_snapshot or "")}
+        )
+        print("SQL SCHEMA TABLES :", schema_names)
+        print("SQL SETUP  TABLES :", setup_table_names)
+        print("SQL SETUP LENGTH  :", len(setup_snapshot), "PREVIEW:", _truncate_text(setup_snapshot, 300))
+        if schema_names and setup_table_names and not (set(schema_names) & set(setup_table_names)):
+            print(
+                f"!!! CROSS-LEAK suspected for problem {problem.id} ({problem.title!r}) — "
+                f"schema={schema_names} but setup={setup_table_names}. "
+                f"Refusing to run; check fix_missing_sql_setup.py + clean_invalid_sql_tables.py."
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=(
+                    f"SQL problem {problem.title!r} has inconsistent schema/setup. "
+                    f"Schema lists {schema_names}, setup creates {setup_table_names}. "
+                    f"Run scripts/clean_invalid_sql_tables.py --apply to repair."
+                ),
+            )
+        if not setup_snapshot.strip():
+            print(
+                f"!!! SQL problem {problem.id} ({problem.title!r}) has NO __hidden_setup__ — "
+                f"candidate query will run against an empty SQLite session."
+            )
+    print("=======================")
+
     try:
         if resolved_monaco in WEB_MONACO_LANGUAGES and is_web_sandbox_problem(problem):
             execution_result = evaluate_web_submission(problem, code)
@@ -783,6 +953,68 @@ def execute_problem(
         "time_taken": int(execution_result.get("time_taken", 0)),
         "cases": execution_result.get("cases", []),
     }
+    if is_sql:
+        out["stdout"] = sql_stdout_val
+        out["expected_output"] = sql_expected_val
+    return out
+
+
+def build_framework_payload_files(
+    problem: Problem,
+    updated_solution: str,
+) -> list[dict[str, Any]]:
+    payload_files: list[dict[str, Any]] = []
+
+    files = problem.starter_files if isinstance(problem.starter_files, list) else []
+    for i, entry in enumerate(files):
+        if not isinstance(entry, dict):
+            continue
+        path = str(entry.get("path") or "").strip()
+        content = entry.get("content")
+        if not path:
+            continue
+
+        # We assume the user submitted code completely replaces the first file's content
+        if i == 0:
+            payload_files.append({"path": path, "content": updated_solution})
+            continue
+
+        if isinstance(content, str):
+            payload_files.append({"path": path, "content": content})
+
+    # Always inject the test harness natively
+    harness = str(problem.test_harness or "").strip()
+    entry_point = str(problem.entry_point or "test_main.py").strip() or "test_main.py"
+    if harness:
+        payload_files.append({
+            "path": entry_point,
+            "content": harness
+        })
+
+    return payload_files
+
+
+def _truncate_text(value: Any, limit: int = 2000) -> str:
+    text = "" if value is None else str(value)
+    if len(text) <= limit:
+        return text
+    return f"{text[:limit]}...<truncated:{len(text) - limit}>"
+
+
+def _compute_overall_status(cases: list[dict[str, Any]]) -> str:
+    if not cases:
+        return "runtime_error"
+
+    statuses = [str(case.get("normalized_status") or "").strip() for case in cases if isinstance(case, dict)]
+    if any(status == "compile_error" for status in statuses):
+        return "compile_error"
+    if any(status == "runtime_error" for status in statuses):
+        return "runtime_error"
+    if any(status == "time_limit_exceeded" for status in statuses):
+        return "time_limit_exceeded"
+    if statuses and all(status == "success" for status in statuses):
+        return "success"
+    return "runtime_error"
 
 
 def resolve_template_code(starter_code: object) -> str | None:
@@ -847,7 +1079,6 @@ def award_level_badge(
             name=badge_name,
             description=description,
             criteria=criteria,
-            icon_url=None,
         )
         db.add(badge)
         db.flush()

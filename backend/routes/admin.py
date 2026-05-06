@@ -14,7 +14,7 @@ from schemas import (
     AdminCredentialsResponse,
     AdminStatsResponse,
 )
-from scripts.seed_new import DEFAULT_JSON_FILE, run_seed
+from scripts.seed_v2 import DEFAULT_JSON_FILE, run_seed
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
