@@ -51,6 +51,10 @@ export interface MultiFileStarterCode {
   files: StarterCodeFile[];
   entry_point: string;
   readonly_files: string[];
+  html?: string;
+  css?: string;
+  javascript?: string;
+  js?: string;
 }
 
 export interface SessionProblemPayload {
@@ -63,6 +67,7 @@ export interface SessionProblemPayload {
   time_limit_minutes: number;
   schema_tables?: SqlTableSchema[];
   question_type?: string | null;
+  tags?: string[] | null;
   
   // MCQ specific
   options?: string[] | null;

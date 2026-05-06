@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useGetSession, useRunCode, useSubmitSession } from "./hooks/useAssessment";
 import { useEditor } from "./hooks/useEditor";
@@ -8,7 +8,7 @@ import Editor from "./components/Editor";
 import CodePlayground from "./components/CodePlayground";
 import AgileMcqPanel from "./components/AgileMcqPanel";
 import TestCases from "./components/TestCases";
-import { reportViolation } from "./services/assessmentService";
+import { getTestQuestions, getSession, getSubmissionResults, runCode, startSession, submitSession } from "./services/assessmentService";
 import { SQL_STARTER_COMMENT } from "./utils/sqlUi";
 import type {
   SessionSubmitResponse,
@@ -283,7 +283,7 @@ export default function AssessmentPage() {
   const navigate = useNavigate();
   // 1. Session ID Recovery
   const initialState = location.state as InitialAssessmentState | null;
-  const [sessionId, setSessionId] = useState<string | null>(routeSessionId || initialState?.session_id || null);
+  const [sessionId, setSessionId] = useState<string | null>(initialState?.session_id || null);
   const [allowedLanguages, setAllowedLanguages] = useState<LanguageOption[]>(initialState?.allowed_languages ?? []);
   const [skillName, setSkillName] = useState<string | null>(initialState?.skill_name || null);
   const isAgileMcq = (skillName ?? "").trim().toLowerCase() === "agile";
@@ -808,78 +808,81 @@ export default function AssessmentPage() {
       <div className='flex flex-1 overflow-hidden'>
         {isAgileMcq ? (
           <>
-            {sessionProblems.length > 1 && (
-              <div className='w-[92px] shrink-0 border-r border-admin-border bg-slate-50 p-3'>
-                <div className='mb-3 px-1 text-xs font-semibold uppercase tracking-[0.4px] text-slate-500'>
-                  Questions
+            {/* Left Panel - 40% */}
+            <div className='flex w-2/5 flex-col'>
+              {sessionProblems.length > 1 && (
+                <div className='w-[92px] shrink-0 border-r border-admin-border bg-slate-50 p-3'>
+                  <div className='mb-3 px-1 text-xs font-semibold uppercase tracking-[0.4px] text-slate-500'>
+                    Questions
+                  </div>
+                  <div className='max-h-full space-y-2 overflow-y-auto pr-1'>
+                    {sessionProblems.map((problem, index) => {
+                      const isActive = index === activeQuestionIndex;
+                      const questionKey = getProblemKey(problem, index);
+                      const isSaved = Boolean(mcqSavedAnswers[questionKey]);
+                      return (
+                        <button
+                          key={`${problem.problem_id ?? "problem"}-${index}`}
+                          onClick={() => setActiveQuestionIndex(index)}
+                          className={`w-full rounded-lg border px-3 py-2.5 text-center text-sm transition-all ${
+                            isActive
+                              ? "border-admin-orange bg-admin-orange/10 text-admin-orange"
+                              : isSaved
+                                ? "border-orange-300 bg-orange-50 text-admin-orange"
+                                : "border-slate-200 bg-white text-slate-700 hover:border-orange-300"
+                          }`}
+                        >
+                          <span className={`${isSaved ? "font-extrabold" : "font-semibold"}`}>{`Q${index + 1}`}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className='max-h-full space-y-2 overflow-y-auto pr-1'>
-                  {sessionProblems.map((problem, index) => {
-                    const isActive = index === activeQuestionIndex;
-                    const questionKey = getProblemKey(problem, index);
-                    const isSaved = Boolean(mcqSavedAnswers[questionKey]);
-                    return (
-                      <button
-                        key={`${problem.problem_id ?? "problem"}-${index}`}
-                        onClick={() => setActiveQuestionIndex(index)}
-                        className={`w-full rounded-lg border px-3 py-2.5 text-center text-sm transition-all ${
-                          isActive
-                            ? "border-admin-orange bg-admin-orange/10 text-admin-orange"
-                            : isSaved
-                              ? "border-orange-300 bg-orange-50 text-admin-orange"
-                              : "border-slate-200 bg-white text-slate-700 hover:border-orange-300"
-                        }`}
-                      >
-                        <span className={`${isSaved ? "font-extrabold" : "font-semibold"}`}>{`Q${index + 1}`}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              )}
+
+              <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
+                <ProblemPanel problem={displayedProblem} />
               </div>
             </div>
-          )}
 
-          <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
-            <ProblemPanel problem={displayedProblem} />
-          </div>
-        </div>
-
-        {/* Right Panel - 60% */}
-        <div className='flex w-3/5 flex-col bg-[#1e1e1e]'>
-          <div className='flex-1 overflow-hidden'>
-            {skillName === "HTML, CSS, JS" ? (
-              <CodePlayground code={code} onChange={handleCodeChange} onPaste={() => sendViolation("paste")} />
-            ) : (
-              <Editor
-                code={code}
-                onChange={handleCodeChange}
-                language={activeLanguage?.monaco || "plaintext"}
-                onPaste={() => sendViolation("paste")}
-              />
-            )}
-
-            <div className='flex flex-1 flex-col bg-[#1e1e1e]'>
+            {/* Right Panel - 60% */}
+            <div className='flex w-3/5 flex-col bg-[#1e1e1e]'>
               <div className='flex-1 overflow-hidden'>
-                <AgileMcqPanel
-                  problem={displayedProblem}
-                  selectedOption={mcqAnswers[currentQuestionKey] ?? null}
-                  savedOption={mcqSavedAnswers[currentQuestionKey] ?? null}
-                  onSelect={(option) => {
-                    if (!currentQuestionKey) return;
-                    setMcqAnswers((previous) => ({
-                      ...previous,
-                      [currentQuestionKey]: option,
-                    }));
-                  }}
-                  onSaveAnswer={saveCurrentMcqAnswer}
-                  onClearResponse={clearCurrentMcqAnswer}
-                  onNextQuestion={goToNextQuestion}
-                  onSubmitTest={submitFromLastQuestion}
-                  isLastQuestion={activeQuestionIndex >= sessionProblems.length - 1}
-                />
+                {skillName === "HTML, CSS, JS" ? (
+                  <CodePlayground code={code} onChange={handleCodeChange} />
+                ) : (
+                  <Editor
+                    code={code}
+                    onChange={handleCodeChange}
+                    language={activeLanguage?.monaco || "plaintext"}
+                  />
+                )}
+              </div>
+
+              <div className='flex flex-1 flex-col bg-[#1e1e1e]'>
+                <div className='flex-1 overflow-hidden'>
+                  <AgileMcqPanel
+                    problem={displayedProblem}
+                    selectedOption={mcqAnswers[currentQuestionKey] ?? null}
+                    savedOption={mcqSavedAnswers[currentQuestionKey] ?? null}
+                    onSelect={(option) => {
+                      if (!currentQuestionKey) return;
+                      setMcqAnswers((previous) => ({
+                        ...previous,
+                        [currentQuestionKey]: option,
+                      }));
+                    }}
+                    onSaveAnswer={saveCurrentMcqAnswer}
+                    onClearResponse={clearCurrentMcqAnswer}
+                    onNextQuestion={goToNextQuestion}
+                    onSubmitTest={submitFromLastQuestion}
+                    isLastQuestion={activeQuestionIndex >= sessionProblems.length - 1}
+                  />
+                </div>
               </div>
             </div>
           </>
+
         ) : (
           <>
             <div className='flex w-full min-h-0 gap-4 p-4'>
@@ -913,7 +916,7 @@ export default function AssessmentPage() {
                 )}
 
                 <div className='min-h-0 min-w-0 flex-1 overflow-y-auto'>
-                  <ProblemPanel problem={displayedProblem} hideSampleTestCases={false} />
+                  <ProblemPanel problem={displayedProblem} />
                 </div>
               </div>
 
