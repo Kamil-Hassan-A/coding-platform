@@ -36,9 +36,7 @@ export const runCode = async (
   sessionId: string,
   code: string,
   language: string,
-  problemId?: string | null,
-  language: string,
-  problemId?: string
+  problemId?: string | null
 ): Promise<SessionRunResponse> => {
   const body: Record<string, unknown> = { code, language };
   if (problemId != null && String(problemId).trim()) {
@@ -46,8 +44,7 @@ export const runCode = async (
   }
   const response = await axiosInstance.post<SessionRunResponse>(
     `/sessions/${sessionId}/run`,
-    body,
-    { code, language, problem_id: problemId }
+    body
   );
   return response.data;
 };

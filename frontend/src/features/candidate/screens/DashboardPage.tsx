@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
 import useUserStore from "../../../stores/userStore";
-import Sidebar from "../../components/layout/Sidebar";
-import BadgesScreen from "./BadgesScreen";
-import PastAssessmentsScreen from "./PastAssessmentsScreen";
+import Sidebar from "../../../components/layout/Sidebar";
+// import BadgesScreen from "./BadgesScreen"; // Missing file
+// import PastAssessmentsScreen from "./PastAssessmentsScreen"; // Missing file
 import { getSkills, getUserBadges, getUserProgress } from "../candidateService";
-import { logout } from "../auth/authService";
-import { useStartSession } from "../assessment/hooks/useAssessment";
+import { logout } from "../../auth/authService";
+import { useStartSession } from "../../assessment/hooks/useAssessment";
 import type {
   BackendLevel,
   CandidateScreen,
@@ -20,9 +20,9 @@ import type {
 } from "../types/candidate";
 
 const CANDIDATE_MENU = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "badges", label: "Badges" },
-  { id: "past_assessments", label: "Past Assessments" },
+  { id: "dashboard", label: "Dashboard", path: "/candidate/dashboard" },
+  { id: "badges", label: "Badges", path: "/candidate/badges" },
+  { id: "past_assessments", label: "Past Assessments", path: "/candidate/scores" },
 ];
 
 const LEVEL_META: Record<
@@ -174,27 +174,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden font-['Segoe_UI',sans-serif]">
-      <Sidebar
-        items={CANDIDATE_MENU}
-        active={
-          screen === "past_assessments"
-            ? "past_assessments"
-            : screen === "badges"
-              ? "badges"
-              : "dashboard"
-        }
-        onChange={(id) => {
-          if (id === "past_assessments") {
-            setScreen("past_assessments");
-            return;
-          }
-          if (id === "badges") {
-            setScreen("badges");
-            return;
-          }
-          setScreen("home");
-        }}
-      />
+      <Sidebar items={CANDIDATE_MENU} />
 
       <div className="flex flex-1 flex-col overflow-hidden bg-admin-bg">
         <header className="flex h-[60px] shrink-0 items-center justify-end border-b border-slate-200 bg-white px-7">
@@ -256,14 +236,15 @@ export default function DashboardPage() {
               }}
             />
           ) : screen === "badges" ? (
-            <BadgesScreen
-              badges={badges}
-              allSkillNames={skillsList.map((skill) => skill.name)}
-              isBadgesLoading={isBadgesLoading}
-              isBadgesError={isBadgesError}
-            />
+            <div className="text-center py-10">
+              <h3 className="text-lg font-semibold mb-2">Badges</h3>
+              <p className="text-gray-500">Badges component coming soon...</p>
+            </div>
           ) : screen === "past_assessments" ? (
-            <PastAssessmentsScreen />
+            <div className="text-center py-10">
+              <h3 className="text-lg font-semibold mb-2">Past Assessments</h3>
+              <p className="text-gray-500">Past assessments component coming soon...</p>
+            </div>
           ) : (
             confirmed && (
               <ConfirmedScreen

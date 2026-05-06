@@ -6,18 +6,18 @@ import ProtectedRoute from "../features/auth/ProtectedRoute";
 
 const Login = lazy(() => import("../features/auth/Login"));
 const AdminDashboard = lazy(() => import("../features/admin/AdminDashboard"));
-const CandidateDashboard = lazy(() => import("../features/candidate/CandidateDashboard"));
-const ThankYouPage = lazy(() => import("../features/candidate/ThankYouPage"));
+// const CandidateDashboard = lazy(() => import("../features/candidate/CandidateDashboard")); // Using DashboardLayout instead
+// const ThankYouPage = lazy(() => import("../features/candidate/ThankYouPage")); // Using AssessmentThankYouPage instead
 const OverviewPage = lazy(() => import("../features/admin/screens/OverviewPage"));
 const CandidatesPage = lazy(() => import("../features/admin/screens/CandidatesPage"));
 
 const DashboardPage = lazy(() => import("../features/candidate/screens/DashboardPage"));
 const BadgesPage = lazy(() => import("../features/candidate/screens/BadgesPage"));
 const InstructionsPage = lazy(() => import("../features/assessment/InstructionsPage"));
-const ThankYouPage = lazy(() => import("../features/assessment/ThankYouPage"));
+const AssessmentThankYouPage = lazy(() => import("../features/assessment/ThankYouPage"));
 const AssessmentPage = lazy(() => import("../features/assessment/AssessmentPage"));
 const AgileAnalysisPage = lazy(() => import("../features/assessment/AgileAnalysisPage"));
-const PastScores = lazy(() => import("../features/assessment/PastScores"));
+// const PastScores = lazy(() => import("../features/assessment/PastScores")); // Using PastScoresPage instead
 const PastScoresPage = lazy(() => import("../features/candidate/screens/PastScoresPage"));
 
 const PageLoader = () => (
@@ -39,7 +39,9 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
 
           <Route element={<ProtectedRoute allowedRoles={["candidate"]} />}>
-            <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
+            <Route path="/candidate/dashboard" element={<DashboardLayout role="candidate" />}>
+              <Route index element={<DashboardPage />} />
+            </Route>
             <Route path="/candidate/assessment" element={<AssessmentPage />} />
             <Route path="/candidate/agile-analysis" element={<AgileAnalysisPage />} />
             <Route path="/candidate" element={<DashboardLayout role="candidate" />}>
@@ -49,7 +51,7 @@ const AppRoutes = () => {
             </Route>
             <Route path="/candidate/instructions" element={<InstructionsPage />} />
             <Route path="/candidate/assessment/:sessionId" element={<AssessmentPage />} />
-            <Route path="/candidate/thankyou" element={<ThankYouPage />} />
+            <Route path="/candidate/thankyou" element={<AssessmentThankYouPage />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
