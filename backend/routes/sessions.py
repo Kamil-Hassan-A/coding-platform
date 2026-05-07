@@ -2,20 +2,9 @@ import os
 import random
 import logging
 import json
-import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import UUID, uuid4
-
-# Compiled once at import time — used to sanity-check that the per-problem
-# `__hidden_setup__` we are about to send to Judge0 references the same
-# tables that the candidate just saw in the schema panel.
-_CREATE_RE_LOG = re.compile(
-    r"create\s+table\s+(?:if\s+not\s+exists\s+)?[`\"\[]?([A-Za-z_][A-Za-z0-9_]*)",
-    re.IGNORECASE,
-)
-
-_ORDER_BY_HINT_RE = re.compile(r"\border\s+by\b", re.IGNORECASE)
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -26,10 +15,9 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from dependencies import require_candidate
-from judge0_service import Judge0Service, sql_stdout_matches
+from judge0_service import Judge0Service
 from sql_schema import (
     SQL_STARTER_COMMENT,
-    get_visible_schema,
     looks_like_raw_setup,
     sanitize_starter_code_for_payload,
 )
@@ -183,66 +171,46 @@ def parse_question_ids(raw: str | None, primary_problem_id: UUID) -> list[UUID]:
 
 
 def build_problem_payload(problem: Problem) -> SessionProblemPayload:
-    """Build a candidate-facing payload that:
-    - never leaks `__hidden_setup__` / `default` raw CREATE+INSERT SQL,
-    - exposes a clean `schema` list for SQL problems,
-    - ALWAYS forces a clean HackerRank-style starter comment for SQL — we
-      never echo the dataset's own SQL (some dataset entries historically
-      pre-filled the answer in `starter_code.sql`).
-    """
-    raw_starter = problem.starter_code if isinstance(problem.starter_code, dict) else None
-    schema_tables = get_visible_schema(
-        raw_starter,
-        problem.sample_test_cases or [],
-        problem.hidden_test_cases or [],
-    )
     is_sql_problem = str(problem.question_type or "").strip().lower() == "sql"
     is_framework_problem = str(problem.question_type or "").strip().lower() == "framework"
-    if not is_sql_problem:
-        schema_tables = []
 
-    sanitized_starter = sanitize_starter_code_for_payload(raw_starter)
-    if is_sql_problem and isinstance(sanitized_starter, dict):
-        # Hard-reset SQL editor content to the clean comment — never let the
-        # dataset's `starter_code.sql` (which may be a full reference query)
-        # reach the candidate's editor.
-        sanitized_starter["sql"] = SQL_STARTER_COMMENT
-        # Drop any other language keys an SQL problem shouldn't carry.
-        for stale_key in [k for k in list(sanitized_starter.keys()) if k != "sql"]:
-            del sanitized_starter[stale_key]
+    if is_sql_problem:
+        schema_tables = [
+            entry for entry in (problem.database_schema or [])
+            if isinstance(entry, dict) and entry.get("table") and isinstance(entry.get("columns"), list)
+        ]
+    else:
+        schema_tables = []
 
     if is_sql_problem:
         template_code = SQL_STARTER_COMMENT
+        sanitized_starter = None
     elif is_framework_problem:
+        sanitized_starter = sanitize_starter_code_for_payload(
+            problem.starter_code if isinstance(problem.starter_code, dict) else None
+        )
         template_code = None
-        if isinstance(problem.starter_files, list) and len(problem.starter_files) > 0:
+        if isinstance(problem.starter_files, list) and problem.starter_files:
             first_file = problem.starter_files[0]
             if isinstance(first_file, dict):
                 val = first_file.get("content")
                 if isinstance(val, str):
                     template_code = val
     else:
+        sanitized_starter = sanitize_starter_code_for_payload(
+            problem.starter_code if isinstance(problem.starter_code, dict) else None
+        )
         template_code = resolve_multifile_template_code(sanitized_starter) or resolve_template_code(
             sanitized_starter or problem.starter_code
         )
 
-    # For SQL problems we INTENTIONALLY drop sample_test_cases entirely: the
-    # legacy dataset entries here are descriptive prose / placeholder rows
-    # that do NOT match the real `__hidden_setup__` Judge0 actually executes.
-    # Showing them caused candidate confusion (mismatched CREATE TABLEs,
-    # wrong "expected output", etc.). The schema panel + the candidate's own
-    # `Run Code` output is the source of truth instead.
-    #
-    # For non-SQL problems we still strip any case whose `input` looks like
-    # raw CREATE/INSERT SQL — those would also leak hidden setup.
     if is_sql_problem:
         sanitized_samples: list = []
     else:
-        sanitized_samples = []
-        for case in problem.sample_test_cases or []:
-            if isinstance(case, dict) and looks_like_raw_setup(case.get("input")):
-                continue
-            sanitized_samples.append(case)
+        sanitized_samples = [
+            case for case in (problem.sample_test_cases or [])
+            if not (isinstance(case, dict) and looks_like_raw_setup(case.get("input")))
+        ]
 
     return SessionProblemPayload(
         problem_id=problem.id,
@@ -435,19 +403,12 @@ def execute_problem(
     test_inputs = sample_cases_list + hidden_cases_list if use_hidden_cases else sample_cases_list
     sample_count = len(sample_cases_list)
 
-    starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
-
     is_sql = str(problem.question_type or "").strip().lower() == "sql"
     is_framework = str(problem.question_type or "").strip().lower() == "framework"
     setup_snapshot = ""
 
     if is_framework:
         request_id = uuid4().hex[:8]
-        print("=== EXECUTE_PROBLEM (FRAMEWORK) ===")
-        print("REQUEST ID:", request_id)
-        print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
-        print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco)
-
         files = build_framework_payload_files(problem, code)
         entry = str(problem.entry_point or "test_main.py").strip()
         execution_result = judge0_service.execute_multifile(
@@ -469,54 +430,19 @@ def execute_problem(
         }
 
     if is_sql:
-        # STRICT: setup comes ONLY from this problem's own `__hidden_setup__`.
-        raw_setup = starter_dict.get("__hidden_setup__") or ""
-        if not isinstance(raw_setup, str):
-            raw_setup = ""
-        # Immutable snapshot: same string object passed to user run and reference run (str is immutable).
-        setup_snapshot = raw_setup.rstrip()
+        setup_snapshot = ""
+        for tc in (problem.sample_test_cases or []):
+            tc_input = tc.get("input") if isinstance(tc, dict) else None
+            if isinstance(tc_input, str) and looks_like_raw_setup(tc_input):
+                setup_lines = []
+                for line in tc_input.splitlines():
+                    if line.strip().upper().startswith("SELECT"):
+                        break
+                    setup_lines.append(line)
+                setup_snapshot = "\n".join(setup_lines).strip()
+                break
 
     request_id = uuid4().hex[:8]
-    print("=== EXECUTE_PROBLEM ===")
-    print("REQUEST ID:", request_id)
-    print("PROBLEM ID:", problem.id, "TITLE:", problem.title)
-    print("CODE LENGTH:", len(code or ""), "CODE PREVIEW:", _truncate_text(code, 400))
-    print("LANGUAGE:", language, "RESOLVED_MONACO:", resolved_monaco, "LANG_ID:", resolved_language_id)
-    print("USE_HIDDEN_CASES:", use_hidden_cases, "TEST CASES:", len(test_inputs or []))
-    if is_sql:
-        # Cross-check: the schema panel the candidate just saw vs the setup
-        # we are about to execute. If they reference different tables we have
-        # a real cross-leak and should bail out rather than silently run.
-        schema_tables = starter_dict.get("__schema__") or []
-        schema_names = sorted(
-            {(t.get("table") or "").upper() for t in schema_tables if isinstance(t, dict) and t.get("table")}
-        )
-        setup_table_names = sorted(
-            {m.group(1).upper() for m in _CREATE_RE_LOG.finditer(setup_snapshot or "")}
-        )
-        print("SQL SCHEMA TABLES :", schema_names)
-        print("SQL SETUP  TABLES :", setup_table_names)
-        print("SQL SETUP LENGTH  :", len(setup_snapshot), "PREVIEW:", _truncate_text(setup_snapshot, 300))
-        if schema_names and setup_table_names and not (set(schema_names) & set(setup_table_names)):
-            print(
-                f"!!! CROSS-LEAK suspected for problem {problem.id} ({problem.title!r}) — "
-                f"schema={schema_names} but setup={setup_table_names}. "
-                f"Refusing to run; check fix_missing_sql_setup.py + clean_invalid_sql_tables.py."
-            )
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=(
-                    f"SQL problem {problem.title!r} has inconsistent schema/setup. "
-                    f"Schema lists {schema_names}, setup creates {setup_table_names}. "
-                    f"Run scripts/clean_invalid_sql_tables.py --apply to repair."
-                ),
-            )
-        if not setup_snapshot.strip():
-            print(
-                f"!!! SQL problem {problem.id} ({problem.title!r}) has NO __hidden_setup__ — "
-                f"candidate query will run against an empty SQLite session."
-            )
-    print("=======================")
 
     try:
         if resolved_monaco in ("html_css_js", "html", "css", "javascript_web"):
@@ -553,96 +479,27 @@ def execute_problem(
                 request_id=request_id,
             )
     except ValueError as exc:
-        print("=== EXECUTE_PROBLEM VALIDATION ERROR ===", str(exc))
         logger.exception("execute_problem validation error: %s", exc)
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     except (requests.RequestException, TimeoutError, RuntimeError) as exc:
-        print("=== EXECUTE_PROBLEM JUDGE0 ERROR ===", str(exc))
         logger.exception("execute_problem judge0 error: %s", exc)
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Judge0 execution failed: {str(exc)}") from exc
     except HTTPException:
         raise
     except Exception as exc:
-        print("=== EXECUTE_PROBLEM UNEXPECTED ERROR ===", repr(exc))
         logger.exception("execute_problem unexpected error: %s", exc)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Execution failed: {str(exc)}") from exc
 
     cases: list[Any] = list(execution_result.get("cases") or [])
 
-    sql_stdout_val: str | None = None
-    sql_expected_val: str | None = None
-
-    if is_sql:
-        sql_stdout_val = None
-        if cases and isinstance(cases[0], dict):
-            ou = cases[0].get("stdout")
-            sql_stdout_val = None if ou is None else str(ou)
-
-        # Reference SQL lives in Problem.solution_text (same convention as scraped `solution`).
-        expected_solution_sql = (problem.solution_text or "").strip()
-        ref_solution_has_order_by = (
-            bool(_ORDER_BY_HINT_RE.search(expected_solution_sql))
-            if expected_solution_sql
-            else False
-        )
-        if expected_solution_sql and not ref_solution_has_order_by:
-            logger.warning(
-                "SQL dataset quality: problem %s (%r) solution_text has no ORDER BY — row order may be non-deterministic",
-                problem.id,
-                problem.title,
-            )
-
-        ref_stdout: str | None = None
-        if (
-            expected_solution_sql
-            and setup_snapshot.strip()
-            and resolved_language_id
-        ):
-            logger.info(
-                "Running reference for problem_id=%s, title=%s",
-                problem.id,
-                problem.title,
-            )
-            try:
-                ref_raw = judge0_service.run_sql_reference(
-                    reference_query=expected_solution_sql,
-                    language_id=resolved_language_id,
-                    setup_sql=setup_snapshot,
-                    problem_id=str(problem.id),
-                    request_id=f"{request_id}-ref",
-                )
-                if (ref_raw.get("status") or {}).get("id") == 3:
-                    rv = ref_raw.get("stdout")
-                    ref_stdout = None if rv is None else str(rv)
-                else:
-                    print(
-                        "SQL REFERENCE RUN non-Accepted:",
-                        problem.id,
-                        ref_raw.get("status"),
-                        _truncate_text(ref_raw.get("stderr"), 400),
-                    )
-            except (ValueError, requests.RequestException, TimeoutError, RuntimeError) as ref_exc:
-                print("SQL REFERENCE RUN failed:", ref_exc)
-
-        sql_expected_val = ref_stdout
-
-        if ref_stdout is not None and len(cases) == 1 and isinstance(cases[0], dict):
-            cases[0]["expected_output"] = ref_stdout
-            user_ok = (cases[0].get("status") or {}).get("id") == 3
-            cases[0]["passed"] = user_ok and sql_stdout_matches(
-                sql_stdout_val,
-                ref_stdout,
-                reference_has_order_by=ref_solution_has_order_by,
-            )
-            ok = bool(cases[0]["passed"])
-            execution_result["score"] = 100 if ok else 0
-            execution_result["passed_tests"] = 1 if ok else 0
-            execution_result["total_tests"] = 1
-
-    # Tag each case with is_hidden so submit_session can redact sensitive fields.
     for idx, case in enumerate(cases):
         if isinstance(case, dict):
             case["is_hidden"] = idx >= sample_count
+
+    sql_stdout: str | None = None
+    if is_sql and cases and isinstance(cases[0], dict):
+        raw = cases[0].get("stdout")
+        sql_stdout = None if raw is None else str(raw)
 
     out: dict[str, Any] = {
         "resolved_monaco": resolved_monaco,
@@ -655,8 +512,8 @@ def execute_problem(
         "sample_count": sample_count,
     }
     if is_sql:
-        out["stdout"] = sql_stdout_val
-        out["expected_output"] = sql_expected_val
+        out["stdout"] = sql_stdout
+        out["expected_output"] = None
     return out
 
 
@@ -1173,19 +1030,6 @@ def submit_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionSubmitResponse:
-    print("=== SUBMIT REQUEST ===")
-    print("SESSION_ID:", session_id)
-    print("CODE LENGTH:", len(payload.code or ""))
-    print("CODE PREVIEW:", _truncate_text(payload.code, 500))
-    print("LANGUAGE:", payload.language)
-    print("ANSWERS COUNT:", len(payload.answers or []))
-    if payload.answers:
-        for idx, ans in enumerate(payload.answers):
-            print(
-                f"  ANSWER[{idx}] problem_id={ans.problem_id} language={ans.language} "
-                f"code_len={len(ans.code or '')} preview={_truncate_text(ans.code, 200)}"
-            )
-    print("======================")
     logger.info(
         "submit_session request: session_id=%s code=%s language=%s",
         session_id,
@@ -1366,14 +1210,12 @@ def submit_session(
         db.refresh(submission)
     except SQLAlchemyError as exc:
         db.rollback()
-        print("=== SUBMIT DB ERROR ===", repr(exc))
         logger.exception("submit_session SQLAlchemy error: %s", exc)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to persist submission: {str(exc)}") from exc
     except HTTPException:
         raise
     except Exception as exc:
         db.rollback()
-        print("=== SUBMIT UNEXPECTED ERROR ===", repr(exc))
         logger.exception("submit_session unexpected error: %s", exc)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Submit failed: {str(exc)}") from exc
 
@@ -1412,16 +1254,6 @@ def submit_session(
         time_taken_seconds=submission.time_taken_seconds,
         cases=sanitized_cases,
     )
-    print(
-        "=== SUBMIT RESPONSE === submission_id=%s status=%s overall=%s passed=%s/%s"
-        % (
-            response_payload.submission_id,
-            response_payload.status,
-            overall_status,
-            response_payload.passed_tests,
-            response_payload.total_tests,
-        )
-    )
     logger.info(
         "submit_session response: session_id=%s submission_id=%s status=%s overall_status=%s passed_tests=%s total_tests=%s submission_number=%s",
         session_id,
@@ -1442,13 +1274,6 @@ def run_session_code(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_candidate),
 ) -> SessionRunResponse:
-    print("=== RUN REQUEST ===")
-    print("SESSION_ID:", session_id)
-    print("CODE LENGTH:", len(payload.code or ""))
-    print("CODE PREVIEW:", _truncate_text(payload.code, 500))
-    print("LANGUAGE:", payload.language)
-    print("PROBLEM_ID:", payload.problem_id)
-    print("===================")
     logger.info(
         "run_session_code request: session_id=%s problem_id=%s code=%s language=%s",
         session_id,
