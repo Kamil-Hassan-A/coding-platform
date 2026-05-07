@@ -168,6 +168,7 @@ class SessionRunRequest(BaseModel):
     code: str
     language: str = Field(min_length=1)
     problem_id: UUID | None = None
+    use_hidden: bool = False
 
 
 class TestCaseResult(BaseModel):
@@ -182,6 +183,7 @@ class TestCaseResult(BaseModel):
     time: str | None = None
     memory: int | None = None
     passed: bool
+    is_hidden: bool = False
 
 
 class SessionSubmitResponse(BaseModel):
@@ -201,6 +203,7 @@ class SessionRunResponse(BaseModel):
     sql_run: bool = False
     stdout: str | None = None
     expected_output: str | None = None
+    overall_status: str | None = None
 
 
 class SubmissionResultsResponse(BaseModel):

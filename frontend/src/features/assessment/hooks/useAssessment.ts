@@ -35,13 +35,15 @@ export const useRunCode = () => {
       code,
       language,
       problemId,
+      use_hidden,
     }: {
       sessionId: string;
       code: string;
       language: string;
       /** Required for multi-question SQL/code runs so Judge0/setup/reference match this tab */
       problemId?: string | null;
-    }) => runCode(sessionId, code, language, problemId),
+      use_hidden?: boolean;
+    }) => runCode(sessionId, code, language, problemId, use_hidden),
     retry: false,
   });
 };

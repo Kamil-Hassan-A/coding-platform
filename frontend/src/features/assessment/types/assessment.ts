@@ -30,7 +30,10 @@ export interface TestCaseResult {
   message: string | null;
   status: { description?: string } & Record<string, unknown>;
   passed: boolean;
+  is_hidden?: boolean;
 }
+
+export type QuestionSubmissionStatus = "not-submitted" | "passed" | "failed";
 
 export interface SqlTableColumn {
   name: string;
@@ -90,9 +93,16 @@ export interface StartSessionPayload {
   level: string;
 }
 
+export interface AssessmentAnswer {
+  problem_id: string;
+  code: string;
+  language: string;
+}
+
 export interface SubmitSessionPayload {
   code: string;
   language: string;
+  answers?: AssessmentAnswer[];
   metadata?: Record<string, unknown>;
 }
 
@@ -114,6 +124,11 @@ export interface SessionRunResponse {
   sql_run?: boolean;
   stdout?: string | null;
   expected_output?: string | null;
+  overall_status?: string | null;
+  
+  // Custom properties added by UI
+  _isSubmit?: boolean;
+  _sampleCount?: number;
 }
 
 export interface SubmissionResultsResponse {

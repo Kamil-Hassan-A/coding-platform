@@ -430,7 +430,10 @@ def execute_problem(
 
     resolved_monaco, resolved_language_id = resolve_language_from_skill(language, skill.allowed_languages or [])
 
-    test_inputs = problem.hidden_test_cases if use_hidden_cases else problem.sample_test_cases
+    sample_cases_list = list(problem.sample_test_cases or [])
+    hidden_cases_list = list(problem.hidden_test_cases or []) if use_hidden_cases else []
+    test_inputs = sample_cases_list + hidden_cases_list if use_hidden_cases else sample_cases_list
+    sample_count = len(sample_cases_list)
 
     starter_dict = problem.starter_code if isinstance(problem.starter_code, dict) else {}
 
@@ -636,6 +639,11 @@ def execute_problem(
             execution_result["passed_tests"] = 1 if ok else 0
             execution_result["total_tests"] = 1
 
+    # Tag each case with is_hidden so submit_session can redact sensitive fields.
+    for idx, case in enumerate(cases):
+        if isinstance(case, dict):
+            case["is_hidden"] = idx >= sample_count
+
     out: dict[str, Any] = {
         "resolved_monaco": resolved_monaco,
         "score": int(execution_result.get("score", 0)),
@@ -644,6 +652,7 @@ def execute_problem(
         "time_taken": int(execution_result.get("time_taken", 0)),
         "cases": cases,
         "is_sql_execution": is_sql,
+        "sample_count": sample_count,
     }
     if is_sql:
         out["stdout"] = sql_stdout_val
@@ -1070,7 +1079,7 @@ def save_draft(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     ensure_session_owner(session_obj, current_user)
 
-    if session_obj.status != SessionStatus.ACTIVE:
+    if session_obj.status not in (SessionStatus.ACTIVE, SessionStatus.SUBMITTED):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not active")
 
     session_obj.last_draft_code = payload.code
@@ -1222,9 +1231,6 @@ def submit_session(
 
     try:
         if answer_items:
-            if session_obj.submissions:
-                raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session already submitted")
-
             skill = db.scalar(select(Skill).where(Skill.id == session_obj.skill_id))
             if skill is None:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
@@ -1374,6 +1380,28 @@ def submit_session(
     raw_cases = submission.judge_result.get("cases", []) if isinstance(submission.judge_result, dict) else []
     normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
     overall_status = _compute_overall_status(normalized_cases)
+
+    # Redact hidden test cases: never send input/output details to the frontend.
+    # Only pass/fail status and the is_hidden flag are retained.
+    sanitized_cases: list[Any] = []
+    for case in normalized_cases:
+        if case.get("is_hidden"):
+            sanitized_cases.append({
+                "stdin": "",
+                "expected_output": None,
+                "stdout": None,
+                "stderr": None,
+                "compile_output": None,
+                "message": None,
+                "status": case.get("status", {"id": 0, "description": "Hidden"}),
+                "time": case.get("time"),
+                "memory": case.get("memory"),
+                "passed": bool(case.get("passed", False)),
+                "is_hidden": True,
+            })
+        else:
+            sanitized_cases.append(case)
+
     response_payload = SessionSubmitResponse(
         submission_id=submission.id,
         session_id=session_obj.id,
@@ -1382,7 +1410,7 @@ def submit_session(
         passed_tests=submission.passed_tests,
         total_tests=submission.total_tests,
         time_taken_seconds=submission.time_taken_seconds,
-        cases=raw_cases,
+        cases=sanitized_cases,
     )
     print(
         "=== SUBMIT RESPONSE === submission_id=%s status=%s overall=%s passed=%s/%s"
@@ -1458,7 +1486,7 @@ def run_session_code(
             skill=skill,
             code=payload.code,
             language=payload.language,
-            use_hidden_cases=False,
+            use_hidden_cases=payload.use_hidden,
         )
     except HTTPException:
         raise
@@ -1471,10 +1499,32 @@ def run_session_code(
     normalized_cases = [case for case in raw_cases if isinstance(case, dict)]
     overall_status = _compute_overall_status(normalized_cases)
 
+    # Redact hidden case details when use_hidden was requested (Submit Question flow).
+    # Only pass/fail + status + is_hidden flag are sent; inputs/outputs are stripped.
+    cases_for_response: list[Any] = []
+    for case in normalized_cases:
+        if case.get("is_hidden"):
+            cases_for_response.append({
+                "stdin": "",
+                "expected_output": None,
+                "stdout": None,
+                "stderr": None,
+                "compile_output": None,
+                "message": None,
+                "status": case.get("status", {"id": 0, "description": "Hidden"}),
+                "time": case.get("time"),
+                "memory": case.get("memory"),
+                "passed": bool(case.get("passed", False)),
+                "is_hidden": True,
+            })
+        else:
+            cases_for_response.append(case)
+
     payload_kwargs: dict[str, Any] = {
-        "cases": raw_cases,
+        "cases": cases_for_response,
         "time_taken_ms": int(execution_result.get("time_taken", 0)),
         "sql_run": bool(execution_result.get("is_sql_execution")),
+        "overall_status": overall_status,
     }
     if "stdout" in execution_result:
         payload_kwargs["stdout"] = execution_result["stdout"]

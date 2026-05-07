@@ -13,6 +13,7 @@ interface Props {
   timeLimit?: number; // in minutes
   allowedLanguages?: LanguageOption[];
   secondsRemaining?: number;
+  expiresAt?: string;
   hideRunCode?: boolean;
 }
 
@@ -28,11 +29,22 @@ export default function Toolbar({
   timeLimit,
   allowedLanguages,
   secondsRemaining,
+  expiresAt,
   hideRunCode,
 }: Props) {
-  const [timeLeft, setTimeLeft] = useState<number | null>(
-    secondsRemaining !== undefined ? secondsRemaining : (timeLimit ? timeLimit * 60 : null)
-  );
+  const [timeLeft, setTimeLeft] = useState<number | null>(() => {
+    if (secondsRemaining !== undefined) return secondsRemaining;
+    if (expiresAt) {
+      return Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+    }
+    return timeLimit ? timeLimit * 60 : null;
+  });
+
+  useEffect(() => {
+    if (secondsRemaining !== undefined) {
+      setTimeLeft(secondsRemaining);
+    }
+  }, [secondsRemaining]);
 
   const onSubmitRef = useRef(onSubmit);
   const onTimeExpiredRef = useRef(onTimeExpired);
@@ -127,10 +139,10 @@ export default function Toolbar({
           <button
             type='button'
             onClick={onSubmit}
-            disabled={isSubmitting}
-            className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white transition-all ${isSubmitting ? "cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none" : "cursor-pointer bg-admin-orange shadow-lg shadow-admin-orange/20 hover:-translate-y-0.5 hover:shadow-admin-orange/40"}`}
+            disabled={isSubmitting || isRunning}
+            className={`rounded-lg border-none px-6 py-2.5 text-[14px] font-bold text-white transition-all ${(isSubmitting || isRunning) ? "cursor-not-allowed bg-slate-400 hover:translate-y-0 hover:shadow-none" : "cursor-pointer bg-admin-orange shadow-lg shadow-admin-orange/20 hover:-translate-y-0.5 hover:shadow-admin-orange/40"}`}
           >
-            {isSubmitting ? "Submitting..." : "Submit Solution"}
+            {isSubmitting ? "Submitting..." : "Submit Question"}
           </button>
         </div>
       </div>

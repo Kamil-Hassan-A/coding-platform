@@ -37,10 +37,14 @@ export const runCode = async (
   code: string,
   language: string,
   problemId?: string | null,
+  useHidden?: boolean,
 ): Promise<SessionRunResponse> => {
   const body: Record<string, unknown> = { code, language };
   if (problemId != null && String(problemId).trim()) {
     body.problem_id = problemId.trim();
+  }
+  if (useHidden) {
+    body.use_hidden = useHidden;
   }
   const response = await axiosInstance.post<SessionRunResponse>(
     `/sessions/${sessionId}/run`,

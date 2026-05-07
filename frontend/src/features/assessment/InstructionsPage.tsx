@@ -81,6 +81,7 @@ export default function InstructionsPage() {
             skill_name: confirmed.skill,
             allowed_languages: data.allowed_languages ?? [],
             auto_start: enteredFullscreen,
+            expires_at: data.expires_at,
           },
         });
       },

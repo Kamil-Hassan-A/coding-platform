@@ -10,7 +10,6 @@ import TestCases from "./components/TestCases";
 import { reportViolation } from "./services/assessmentService";
 import { SQL_STARTER_COMMENT } from "./utils/sqlUi";
 import type {
-  SessionSubmitResponse,
   SessionRunResponse,
   SessionProblemPayload,
   LanguageOption,
@@ -31,6 +30,7 @@ type InitialAssessmentState = {
   skill_name?: string;
   allowed_languages?: LanguageOption[];
   auto_start?: boolean;
+  expires_at?: string;
 };
 
 type ViolationToast = {
@@ -205,6 +205,12 @@ export default function AssessmentPage() {
   const warnedThresholdRef = useRef(false);
   const isIntentionalExitRef = useRef(false);
   const intentionalExitResetTimerRef = useRef<number | null>(null);
+  /** Always-current snapshot of questionDrafts — safe to read in effects/handlers without stale closure issues. */
+  const questionDraftsRef = useRef<Record<string, string>>({});
+  /** Always-current snapshot of sessionProblems — used in submit/end-test to build answers[]. */
+  const sessionProblemsRef = useRef<SessionProblemPayload[]>([]);
+  /** True while Submit Question (/run with use_hidden) is in flight. */
+  const submitQuestionInFlightRef = useRef(false);
 
   const markIntentionalFullscreenExit = useCallback(() => {
     isIntentionalExitRef.current = true;
@@ -574,10 +580,10 @@ export default function AssessmentPage() {
 
   // 2. Data Fetching (Recovery/Refresh)
   const { data: recoveredSession, isLoading: isRecovering } = useGetSession(
-    !initialState ? sessionId : null,
-  );
+    sessionId,
+    );
 
-  const activeProblem = initialProblem || recoveredSession?.problem;
+    const activeProblem = initialProblem || recoveredSession?.problem;
   const sessionProblems = useMemo(() => {
     const fromInitial = initialState?.problems ?? [];
     const fromRecovered = recoveredSession?.problems ?? [];
@@ -684,23 +690,27 @@ export default function AssessmentPage() {
   }, [resolvedAllowedLanguages, language]);
 
   const activeLanguage = resolvedAllowedLanguages.find((l) => l.monaco === language);
-  const [submissionResult, setSubmissionResult] = useState<SessionSubmitResponse | null>(null);
+  /** Per-question results from "Submit Question" (/run with use_hidden=true). Keyed by questionKey. */
+  const [questionSubmitResults, setQuestionSubmitResults] = useState<Record<string, SessionRunResponse>>({});
   const [runResult, setRunResult] = useState<SessionRunResponse | null>(null);
+  /** UI loading state for the Submit Question button specifically. */
+  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
 
   // 4. Submission Logic
   const { mutate: submit, mutateAsync: submitAsync, isPending: isSubmitting } = useSubmitSession();
   const { mutate: run, isPending: isRunning, reset: resetRunMutation } = useRunCode();
 
-  /** Stdout / expected output / cases all live on `runResult`; clear when the active question changes. */
+  /** Sync mutable refs so handlers never capture stale state. */
+  useEffect(() => { questionDraftsRef.current = questionDrafts; }, [questionDrafts]);
+  useEffect(() => { sessionProblemsRef.current = sessionProblems; }, [sessionProblems]);
+  useEffect(() => { latestCodeRef.current = code; }, [code]);
+
+  /** Clear run result when the active question changes. */
   useEffect(() => {
     setRunResult(null);
     runInFlightRef.current = false;
     resetRunMutation();
   }, [currentQuestionKey, resetRunMutation]);
-
-  useEffect(() => {
-    latestCodeRef.current = code;
-  }, [code]);
 
   useEffect(() => {
     if (!isProctoringEnabled || !sessionId || isSessionExpired || hasViolationAutoSubmittedRef.current || hasSubmittedRef.current) {
@@ -739,13 +749,20 @@ export default function AssessmentPage() {
     console.log("Violation burst detected:", recent);
     console.info("[AssessmentPage] Auto-submit reason:", AUTO_SUBMIT_VIOLATIONS_REASON);
     setSubmissionError("Assessment auto-submitted due to repeated violations.");
-    const autoSubmitPayload = {
-      code: latestCodeRef.current,
-      language,
-      metadata: {
-        trigger: AUTO_SUBMIT_VIOLATIONS_REASON,
-      },
-    };
+
+    // Build answers[] from all question drafts so every problem is submitted correctly.
+    const autoAnswers = sessionProblemsRef.current
+      .filter((p) => p.problem_id)
+      .map((p, idx) => ({
+        problem_id: p.problem_id as string,
+        code: questionDraftsRef.current[getProblemKey(p, idx)] ?? "",
+        language,
+      }));
+    const autoSubmitPayload =
+      autoAnswers.length > 1
+        ? { code: "", language, answers: autoAnswers, metadata: { trigger: AUTO_SUBMIT_VIOLATIONS_REASON } }
+        : { code: autoAnswers[0]?.code ?? latestCodeRef.current, language, metadata: { trigger: AUTO_SUBMIT_VIOLATIONS_REASON } };
+
     submit(
       { session_id: sessionId, payload: autoSubmitPayload },
       {
@@ -794,6 +811,7 @@ export default function AssessmentPage() {
     if (!sessionId || isSessionExpired || isLocked) return;
     if (runInFlightRef.current || isRunning) return;
     if (submitInFlightRef.current || isSubmitting) return;
+    if (submitQuestionInFlightRef.current || isSubmittingQuestion) return;
     if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
@@ -806,10 +824,17 @@ export default function AssessmentPage() {
     setSubmissionError(null);
     runInFlightRef.current = true;
     const runStartedForKey = currentQuestionKeyRef.current;
+    // Clear submit result for this question so run result is shown
+    setQuestionSubmitResults((prev) => {
+      if (!(runStartedForKey in prev)) return prev;
+      const next = { ...prev };
+      delete next[runStartedForKey];
+      return next;
+    });
     run(
       {
         sessionId,
-        code: latestCodeRef.current,
+        code: questionDraftsRef.current[runStartedForKey] ?? latestCodeRef.current,
         language,
         problemId: displayedProblem?.problem_id ?? null,
       },
@@ -822,8 +847,8 @@ export default function AssessmentPage() {
         onError: (error: any) => {
           runInFlightRef.current = false;
           if (currentQuestionKeyRef.current !== runStartedForKey) return;
-          const status = error?.response?.status;
-          if (status === 409 || status === 410) {
+          const httpStatus = error?.response?.status;
+          if (httpStatus === 409 || httpStatus === 410) {
             handleSessionExpired();
             return;
           }
@@ -833,53 +858,75 @@ export default function AssessmentPage() {
     );
   };
 
-  const handleSubmit = async () => {
+  /**
+   * Submit Question — LeetCode-style per-question submission.
+   * Runs the current question's code against ALL cases (including hidden) via /run.
+   * The session is NOT finalised — the user can keep editing and re-submit.
+   * End Test is the action that finalises the session.
+   */
+  const handleSubmit = () => {
     if (!sessionId || isSessionExpired || isLocked) return;
+    if (submitQuestionInFlightRef.current || isSubmittingQuestion) return;
+    if (runInFlightRef.current || isRunning) return;
     if (submitInFlightRef.current || isSubmitting) return;
     if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
     }
-
     if (!language) {
       setSubmissionError("No language selected. Please pick a language before submitting.");
       return;
     }
+    if (!displayedProblem?.problem_id) return;
 
     setSubmissionError(null);
-    submitInFlightRef.current = true;
-    try {
-      const data = await submitAsync({ session_id: sessionId, payload: { code: latestCodeRef.current, language } });
-      submitInFlightRef.current = false;
-      setSubmissionResult(data);
-      sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
-      sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
-      sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
-    } catch (error: any) {
-      submitInFlightRef.current = false;
-      const status = error?.response?.status;
-      if (status === 409 || status === 410) {
-        handleSessionExpired();
-        return;
+    submitQuestionInFlightRef.current = true;
+    setIsSubmittingQuestion(true);
+    // Clear run result so submit result is shown cleanly
+    setRunResult(null);
+    const submitStartedForKey = currentQuestionKeyRef.current;
+    run(
+      {
+        sessionId,
+        code: questionDraftsRef.current[submitStartedForKey] ?? latestCodeRef.current,
+        language,
+        problemId: displayedProblem.problem_id,
+        use_hidden: true,
+      },
+      {
+        onSuccess: (data) => {
+          submitQuestionInFlightRef.current = false;
+          setIsSubmittingQuestion(false);
+          if (currentQuestionKeyRef.current !== submitStartedForKey) return;
+          setQuestionSubmitResults((prev) => ({ ...prev, [submitStartedForKey]: data }));
+        },
+        onError: (error: any) => {
+          submitQuestionInFlightRef.current = false;
+          setIsSubmittingQuestion(false);
+          if (currentQuestionKeyRef.current !== submitStartedForKey) return;
+          const httpStatus = error?.response?.status;
+          if (httpStatus === 409 || httpStatus === 410) {
+            handleSessionExpired();
+            return;
+          }
+          setSubmissionError("Submission failed. Please try again.");
+        },
       }
-      setSubmissionError("Submission failed. Please try again.");
-    }
+    );
   };
 
+  /**
+   * End Test — finalises the session by submitting all questions via answers[].
+   * Each question's latest draft is pulled from questionDraftsRef so the correct
+   * code is submitted regardless of which tab is currently active.
+   */
   const handleEndTest = async () => {
     if (!sessionId || isSessionExpired || isLocked) return;
-    if (submissionResult !== null) {
-      markIntentionalFullscreenExit();
-      await exitFullscreenSafe();
-      navigate("/candidate/thankyou");
-      return;
-    }
     if (submitInFlightRef.current || isSubmitting) return;
     if (isProctoringEnabled && (!hasStartedAssessment || !isFullscreen)) {
       setSubmissionError("Please return to fullscreen mode to continue the assessment.");
       return;
     }
-
     if (!language) {
       setSubmissionError("No language selected. Please pick a language before ending the test.");
       return;
@@ -887,18 +934,32 @@ export default function AssessmentPage() {
 
     setSubmissionError(null);
     submitInFlightRef.current = true;
+
+    const allProblems = sessionProblemsRef.current.filter((p) => p.problem_id);
+    const answers = allProblems.map((p, idx) => ({
+      problem_id: p.problem_id as string,
+      code: questionDraftsRef.current[getProblemKey(p, idx)] ?? "",
+      language,
+    }));
+    const finalPayload =
+      answers.length > 1
+        ? { code: "", language, answers }
+        : { code: answers[0]?.code ?? latestCodeRef.current, language };
+
     try {
-      await submitAsync({ session_id: sessionId, payload: { code: latestCodeRef.current, language } });
+      await submitAsync({ session_id: sessionId, payload: finalPayload });
       submitInFlightRef.current = false;
       hasSubmittedRef.current = true;
       markIntentionalFullscreenExit();
       await exitFullscreenSafe();
+      sessionStorage.removeItem(SESSION_ID_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_LANGUAGES_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_SKILL_NAME_STORAGE_KEY);
       navigate("/candidate/thankyou");
     } catch (error: any) {
       submitInFlightRef.current = false;
-      console.log("End test submission error:", error);
-      const status = error?.response?.status;
-      if (status === 409 || status === 410) {
+      const httpStatus = error?.response?.status;
+      if (httpStatus === 409 || httpStatus === 410) {
         handleSessionExpired(true);
       } else {
         setSubmissionError("Failed to end test. Please try again.");
@@ -907,10 +968,6 @@ export default function AssessmentPage() {
   };
 
   const handleOpenEndTestModal = () => {
-    if (submissionResult !== null) {
-      void handleEndTest();
-      return;
-    }
     setShowEndTestModal(true);
   };
 
@@ -937,8 +994,20 @@ export default function AssessmentPage() {
 
     setSubmissionError(null);
     submitInFlightRef.current = true;
+
+    const allProblems = sessionProblemsRef.current.filter((p) => p.problem_id);
+    const answers = allProblems.map((p, idx) => ({
+      problem_id: p.problem_id as string,
+      code: questionDraftsRef.current[getProblemKey(p, idx)] ?? "",
+      language,
+    }));
+    const timedOutPayload =
+      answers.length > 1
+        ? { code: "", language, answers }
+        : { code: answers[0]?.code ?? latestCodeRef.current, language };
+
     submit(
-      { session_id: sessionId, payload: { code: latestCodeRef.current, language } },
+      { session_id: sessionId, payload: timedOutPayload },
       {
         onSuccess: async () => {
           markIntentionalFullscreenExit();
@@ -949,8 +1018,8 @@ export default function AssessmentPage() {
         },
         onError: (error: any) => {
           submitInFlightRef.current = false;
-          const status = error?.response?.status;
-          if (status === 409 || status === 410) {
+          const httpStatus = error?.response?.status;
+          if (httpStatus === 409 || httpStatus === 410) {
             handleSessionExpired(true);
           } else {
             hasAutoSubmittedRef.current = false;
@@ -979,7 +1048,8 @@ export default function AssessmentPage() {
     );
   }
 
-  if (isRecovering || !displayedProblem) {
+  const isLoadingSession = !initialState && isRecovering;
+  if (isLoadingSession || !displayedProblem) {
     return (
       <div className='flex h-screen items-center justify-center bg-admin-bg'>
         <div className='flex flex-col items-center gap-4'>
@@ -999,13 +1069,14 @@ export default function AssessmentPage() {
         onTimeExpired={handleTimeExpired}
         onRun={handleRun}
         onSubmit={handleSubmit}
-        isRunning={isRunning}
-        isSubmitting={isSubmitting}
+        isRunning={isRunning || submitQuestionInFlightRef.current}
+        isSubmitting={isSubmittingQuestion}
         language={language}
         onLanguageChange={setLanguage}
         timeLimit={displayedProblem.time_limit_minutes}
         allowedLanguages={resolvedAllowedLanguages}
         secondsRemaining={recoveredSession?.seconds_remaining}
+        expiresAt={recoveredSession?.expires_at || initialState?.expires_at}
       />
 
       {submissionError && (
@@ -1089,21 +1160,22 @@ export default function AssessmentPage() {
         {/* Left Panel - 40% */}
         <div className='flex w-2/5 border-r border-admin-border bg-white'>
           {sessionProblems.length > 1 && (
-            <div className='w-[132px] shrink-0 border-r border-admin-border bg-slate-50 p-3'>
-              <div className='flex flex-col gap-2'>
+            <div className='w-[64px] shrink-0 border-r border-admin-border bg-slate-50 p-3'>
+              <div className='flex flex-col gap-3'>
                 {sessionProblems.map((problem, index) => {
                   const isActive = index === activeQuestionIndex;
                   return (
                     <button
                       key={`${problem.problem_id ?? "problem"}-${index}`}
                       onClick={() => setActiveQuestionIndex(index)}
-                      className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition-all ${
+                      title={`Question ${index + 1}`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold transition-all ${
                         isActive
-                          ? "bg-admin-orange text-white"
-                          : "border border-slate-200 bg-white text-slate-700"
+                          ? "bg-admin-orange text-white shadow-md"
+                          : "border border-slate-200 bg-white text-slate-600 hover:border-admin-orange/50 hover:bg-orange-50 hover:text-admin-orange"
                       }`}
                     >
-                      {`Question ${index + 1}`}
+                      {index + 1}
                     </button>
                   );
                 })}
@@ -1131,11 +1203,11 @@ export default function AssessmentPage() {
             )}
           </div>
           
-          {(submissionResult || runResult) && skillName !== "HTML, CSS, JS" && (
+          {(questionSubmitResults[currentQuestionKey] || runResult) && skillName !== "HTML, CSS, JS" && (
             <div className='h-2/5 overflow-y-auto border-t-2 border-admin-orange bg-white'>
               <TestCases
                 key={currentQuestionKey || "tests"}
-                submissionResult={submissionResult}
+                submitResult={questionSubmitResults[currentQuestionKey] ?? null}
                 runResult={runResult}
               />
             </div>
