@@ -285,11 +285,18 @@ class Judge0Service:
         if not entry_present:
             raise ValueError(f"Entry point file not found: {entry_path}")
 
-        run_script = (
-            "#!/usr/bin/env bash\n"
-            "set -e\n"
-            f"python {entry_path}\n"
-        )
+        if entry_path.endswith((".test.js", ".test.jsx", ".test.ts", ".test.tsx")):
+            run_script = (
+                "#!/usr/bin/env bash\n"
+                "set -e\n"
+                f"npx jest {entry_path} --no-coverage\n"
+            )
+        else:
+            run_script = (
+                "#!/usr/bin/env bash\n"
+                "set -e\n"
+                f"python {entry_path}\n"
+            )
 
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
